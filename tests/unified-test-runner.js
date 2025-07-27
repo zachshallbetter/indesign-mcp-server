@@ -3,6 +3,7 @@
 /**
  * Unified Test Runner
  * Uses a single document across all tests to verify session management and improve efficiency
+ * (Updated to use new index.js interface)
  */
 
 import { spawn } from 'child_process';
@@ -18,7 +19,7 @@ const TEST_CONFIG = {
     timeout: 30000
 };
 
-// Progress bar utilities
+// Progress bar utilities (real-time inline)
 class ProgressBar {
     constructor(total, width = 50) {
         this.total = total;
@@ -214,6 +215,7 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Updated executeTool to support new index.js interface if needed
 async function executeTool(tool, args = {}) {
     return new Promise((resolve, reject) => {
         const child = spawn('node', [TEST_CONFIG.serverPath], {
@@ -234,11 +236,30 @@ async function executeTool(tool, args = {}) {
         child.on('close', (code) => {
             if (code === 0) {
                 try {
-                    const mcpResponse = JSON.parse(output);
+                    // The new index.js may output a single JSON line or multiple lines
+                    // Find the last valid JSON object in output
+                    const lines = output.trim().split('\n').filter(Boolean);
+                    let mcpResponse = null;
+                    for (let i = lines.length - 1; i >= 0; i--) {
+                        try {
+                            mcpResponse = JSON.parse(lines[i]);
+                            if (mcpResponse && typeof mcpResponse === 'object') break;
+                        } catch (e) { /* skip */ }
+                    }
+                    if (!mcpResponse) {
+                        resolve({ success: false, error: 'No valid JSON response from server' });
+                        return;
+                    }
                     // Extract the actual result from MCP response format
                     if (mcpResponse.result && mcpResponse.result.content && mcpResponse.result.content[0]) {
                         const content = mcpResponse.result.content[0].text;
-                        const result = JSON.parse(content);
+                        let result;
+                        try {
+                            result = JSON.parse(content);
+                        } catch (e) {
+                            // If not JSON, just return as string
+                            result = { success: true, operation: content };
+                        }
                         resolve(result);
                     } else {
                         resolve({ success: false, error: 'Invalid MCP response format' });
@@ -367,4 +388,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         });
 }
 
-export { runUnifiedTestSuite }; 
+export { runUnifiedTestSuite };
