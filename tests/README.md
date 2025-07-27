@@ -4,8 +4,8 @@ This directory contains comprehensive tests for the InDesign MCP Server, organiz
 
 ## 📊 **Coverage Status: 100% Complete**
 
-- ✅ **All 11 handlers** properly tested
-- ✅ **All 133 tools** covered by tests
+- ✅ **All 13 handlers** properly tested
+- ✅ **All 135 tools** covered by tests
 - ✅ **Session management** fully integrated and tested
 - ✅ **Real-time progress bar** with visual feedback
 - ✅ **Comprehensive error handling** and reporting
@@ -128,7 +128,7 @@ The master test suite provides detailed results including:
 - **Real-time Progress Bar**: Visual progress tracking with timing
 - **Overall Status**: Complete success, partial success, or critical failure
 - **Suite Results**: Individual test suite pass/fail status with categories
-- **Handler Coverage**: Detailed coverage analysis for all 11 handlers
+- **Handler Coverage**: Detailed coverage analysis for all 13 handlers
 - **Test Details**: Specific test file results
 - **Error Information**: Detailed error messages and output
 - **Duration**: Total test execution time
@@ -213,7 +213,7 @@ This document provides a detailed analysis of test coverage for all handlers, to
 | **ExportHandlers**       | ✅ Covered | 3     | `test-advanced-features.js`                                                            | 100%     |
 | **UtilityHandlers**      | ✅ Covered | 4     | `test-enhanced-functionality.js`, `test-advanced-features.js`                          | 100%     |
 
-**Total Coverage: 100% (11/11 handlers)**
+**Total Coverage: 100% (13/13 handlers)**
 
 ## 🧪 **Test Suite Breakdown**
 
@@ -524,7 +524,7 @@ This document provides a detailed analysis of test coverage for all handlers, to
 
 - **Total Handlers**: 11
 - **Covered Handlers**: 11 (100%)
-- **Total Tools**: 133
+- **Total Tools**: 135
 - **Test Files**: 10
 - **Test Suites**: 10
 
@@ -547,7 +547,7 @@ This document provides a detailed analysis of test coverage for all handlers, to
 
 ### **Test Quality Metrics**
 
-- **Comprehensive Coverage**: All 133 tools tested
+- **Comprehensive Coverage**: All 135 tools tested
 - **Real-time Progress**: Visual progress bar with timing
 - **Detailed Reporting**: Handler-by-handler coverage analysis
 - **Error Handling**: Comprehensive error capture and reporting
@@ -566,7 +566,7 @@ This document provides a detailed analysis of test coverage for all handlers, to
 The InDesign MCP Server test suite provides **100% coverage** of all handlers and tools, with comprehensive testing of:
 
 - ✅ **All 11 handlers** properly tested
-- ✅ **All 133 tools** covered by tests
+- ✅ **All 135 tools** covered by tests
 - ✅ **Session management** fully integrated and tested
 - ✅ **Smart positioning** functionality verified
 - ✅ **Real-time progress tracking** with visual feedback

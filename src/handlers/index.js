@@ -51,7 +51,7 @@ export { HelpHandlers } from './helpHandlers.js';
  * 🛠️ System Utilities (1 handler)
  * - UtilityHandlers: Code execution, session management
  * 
- * Total: 11 handler classes covering 50+ tools
+ * Total: 13 handler classes covering 135+ tools
  */
 
 /**
