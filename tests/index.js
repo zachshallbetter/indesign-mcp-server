@@ -155,6 +155,52 @@ const TEST_SUITES = [
         ],
         required: false,
         category: 'validation'
+    },
+    // --- Added tests as per instructions ---
+    {
+        name: 'Swatches and Backgrounds',
+        description: 'Tests swatch and background color management',
+        tests: [
+            'test-swatches-and-backgrounds.js'
+        ],
+        required: false,
+        category: 'content'
+    },
+    {
+        name: 'Real Image Placement',
+        description: 'Tests real image placement and handling',
+        tests: [
+            'test-real-image.js'
+        ],
+        required: false,
+        category: 'content'
+    },
+    {
+        name: 'Image Fix',
+        description: 'Tests image fix and correction routines',
+        tests: [
+            'test-image-fix.js'
+        ],
+        required: false,
+        category: 'content'
+    },
+    {
+        name: 'Image Assets',
+        description: 'Tests image asset management and linking',
+        tests: [
+            'test-image-assets.js'
+        ],
+        required: false,
+        category: 'content'
+    },
+    {
+        name: 'Absolute Path Handling',
+        description: 'Tests absolute path handling for images and assets',
+        tests: [
+            'test-absolute-path.js'
+        ],
+        required: false,
+        category: 'content'
     }
 ];
 
@@ -182,14 +228,25 @@ const HANDLER_COVERAGE = {
         ]
     },
     'GraphicsHandlers': {
-        tested: ['test-content-management.js', 'test-standard-document.js'],
+        tested: [
+            'test-content-management.js',
+            'test-standard-document.js',
+            'test-real-image.js',
+            'test-image-fix.js',
+            'test-image-assets.js',
+            'test-absolute-path.js'
+        ],
         tools: [
             'create_rectangle', 'create_ellipse', 'create_polygon', 'place_image',
             'create_object_style', 'list_object_styles', 'apply_object_style', 'get_image_info'
         ]
     },
     'StyleHandlers': {
-        tested: ['test-content-management.js', 'test-standard-document.js'],
+        tested: [
+            'test-content-management.js',
+            'test-standard-document.js',
+            'test-swatches-and-backgrounds.js'
+        ],
         tools: [
             'create_paragraph_style', 'create_character_style', 'apply_paragraph_style',
             'apply_character_style', 'apply_color', 'create_color_swatch', 'list_styles', 'list_color_swatches'
