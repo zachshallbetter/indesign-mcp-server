@@ -12,12 +12,14 @@ The InDesign MCP Server v1.1.0 is a comprehensive Model Context Protocol (MCP) i
 ## 🚀 Key Features
 
 ### Core Capabilities
+
 - **50+ Professional Tools** - Comprehensive InDesign automation
 - **Smart Session Management** - EventTarget-based with import/export
 - **Enhanced Error Handling** - Robust validation and recovery
 - **Modular Architecture** - Clean separation of concerns
 
 ### Advanced Features
+
 - **Help System** - Built-in documentation with tool-specific guidance
 - **Image Scaling** - Precise scaling (1-1000%) with multiple fit modes
 - **Smart Positioning** - Automatic bounds checking and optimal placement
@@ -28,7 +30,8 @@ The InDesign MCP Server v1.1.0 is a comprehensive Model Context Protocol (MCP) i
 ## 📊 Technical Specifications
 
 ### Architecture
-```
+
+```bash
 src/
 ├── core/           # Server, session management, script execution
 ├── handlers/       # 14 specialized handler classes
@@ -37,6 +40,7 @@ src/
 ```
 
 ### Handler Coverage
+
 - **DocumentHandlers** - Document creation, management, preferences
 - **PageHandlers** - Page operations, navigation, layout
 - **TextHandlers** - Text frames, tables, content editing
@@ -51,6 +55,7 @@ src/
 - **HelpHandlers** - Built-in help system
 
 ### Tool Categories
+
 - **Document Management** (8 tools)
 - **Page Operations** (10 tools)
 - **Content Creation** (5 tools)
@@ -63,11 +68,13 @@ src/
 ## 🔧 Installation & Setup
 
 ### Prerequisites
+
 - **Adobe InDesign** (macOS)
 - **Node.js 18+**
 - **macOS** (required for AppleScript integration)
 
 ### Quick Start
+
 ```bash
 # Clone repository
 git clone https://github.com/lucdesign/indesign-mcp-server.git
@@ -81,6 +88,7 @@ npm start
 ```
 
 ### MCP Integration
+
 ```json
 {
   "mcpServers": {
@@ -96,17 +104,20 @@ npm start
 ## 📚 Documentation
 
 ### User Guides
+
 - **[README.md](README.md)** - Comprehensive project overview
 - **[MCP_INSTRUCTIONS.md](MCP_INSTRUCTIONS.md)** - Setup and usage guide
 - **[LLM_PROMPT.md](LLM_PROMPT.md)** - AI assistant integration
 - **[CHANGELOG.md](CHANGELOG.md)** - Version history and changes
 
 ### Developer Resources
+
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
 - **[src/README.md](src/README.md)** - Technical architecture
 - **[tests/README.md](tests/README.md)** - Testing framework
 
 ### Built-in Help
+
 ```javascript
 // Get overview of all tools
 await tools.call("help");
@@ -121,12 +132,14 @@ await tools.call("help", { category: "text" });
 ## 🧪 Testing & Quality
 
 ### Test Coverage
+
 - **62 Test Files** - Comprehensive coverage
 - **Unified Test Runner** - Single-document testing
 - **Progress Tracking** - Real-time test execution
 - **Error Validation** - Proper failure reporting
 
 ### Test Categories
+
 - **Connectivity** - Basic InDesign and MCP protocol
 - **Document Foundation** - Core document operations
 - **Content Management** - Text, graphics, styles
@@ -134,6 +147,7 @@ await tools.call("help", { category: "text" });
 - **Validation** - Error handling and bounds checking
 
 ### Quality Metrics
+
 - **100% Handler Coverage** - All handlers tested
 - **Error Recovery** - Graceful failure handling
 - **Performance** - Optimized ExtendScript execution
@@ -142,6 +156,7 @@ await tools.call("help", { category: "text" });
 ## 🎯 Use Cases
 
 ### Document Creation
+
 ```javascript
 // Create professional document with styles
 await tools.call("create_document", { name: "Report", width: 210, height: 297 });
@@ -150,6 +165,7 @@ await tools.call("create_paragraph_style", { name: "Heading", fontSize: 24, font
 ```
 
 ### Content Automation
+
 ```javascript
 // Add content with smart positioning
 await tools.call("create_text_frame", { 
@@ -160,6 +176,7 @@ await tools.call("create_text_frame", {
 ```
 
 ### Image Management
+
 ```javascript
 // Place and scale images
 await tools.call("place_image", {
@@ -172,26 +189,31 @@ await tools.call("place_image", {
 ## 🔄 Migration from v1.0.0
 
 ### Breaking Changes
+
 - **None** - All existing functionality remains compatible
 
 ### New Features
+
 - Use `help` command for tool discovery
 - Leverage image scaling capabilities
 - Take advantage of smart positioning
 - Use enhanced color management
 
 ### Deprecations
+
 - **None** in this release
 
 ## 🚀 Performance Improvements
 
 ### Session Management
+
 - **EventTarget-based** - Better event handling
 - **Import/Export** - Session persistence
 - **Bounds Checking** - Automatic content positioning
 - **Error Recovery** - Graceful failure handling
 
 ### ExtendScript Optimization
+
 - **Error Handling** - Comprehensive try-catch blocks
 - **Resource Management** - Proper cleanup
 - **Performance** - Optimized execution
@@ -200,12 +222,14 @@ await tools.call("place_image", {
 ## 🔒 Security & Reliability
 
 ### Error Handling
+
 - **Comprehensive Validation** - Input parameter checking
 - **Graceful Degradation** - Fallback mechanisms
 - **Detailed Logging** - Debug information
 - **Resource Cleanup** - Proper memory management
 
 ### Security Features
+
 - **Input Sanitization** - Parameter validation
 - **Resource Limits** - Memory and execution limits
 - **Error Isolation** - Non-blocking failures
@@ -214,12 +238,14 @@ await tools.call("place_image", {
 ## 📈 Future Roadmap
 
 ### Planned Features (v1.2.0)
+
 - **Advanced Typography** - OpenType features, variable fonts
 - **Interactive Elements** - Buttons, forms, hyperlinks
 - **Data Integration** - CSV, JSON, database connectivity
 - **Template System** - Reusable document templates
 
 ### Long-term Goals
+
 - **Multi-platform Support** - Windows compatibility
 - **Cloud Integration** - Adobe Creative Cloud APIs
 - **Performance Monitoring** - Real-time metrics
@@ -228,12 +254,14 @@ await tools.call("place_image", {
 ## 🤝 Community & Support
 
 ### Getting Help
+
 - **GitHub Issues** - Bug reports and feature requests
 - **GitHub Discussions** - Questions and community support
 - **Documentation** - Comprehensive guides and examples
 - **Built-in Help** - `help` command for tool information
 
 ### Contributing
+
 - **Code Contributions** - Pull requests welcome
 - **Documentation** - Help improve guides
 - **Testing** - Report bugs and test fixes
@@ -242,12 +270,14 @@ await tools.call("place_image", {
 ## 📄 License & Legal
 
 ### License
+
 - **MIT License** - Open source, permissive
 - **Commercial Use** - Allowed with attribution
 - **Modification** - Allowed with license preservation
 - **Distribution** - Allowed with license inclusion
 
 ### Dependencies
+
 - **@modelcontextprotocol/sdk** - MCP protocol implementation
 - **Node.js Standard Library** - Core functionality
 - **Adobe InDesign** - Target application (not included)
@@ -263,4 +293,4 @@ InDesign MCP Server v1.1.0 represents a significant milestone in InDesign automa
 **Extensive Testing** ✅  
 **Community Support** ✅  
 
-*InDesign MCP Server v1.1.0 - Professional InDesign Automation* 
+*InDesign MCP Server v1.1.0 - Professional InDesign Automation*
