@@ -1,28 +1,56 @@
 # InDesign MCP Server
 
-A comprehensive Model Context Protocol (MCP) server for Adobe InDesign 2025, providing programmatic access to InDesign's powerful layout and design capabilities.
+**Transform Adobe InDesign into an AI-powered design automation platform with 135+ professional tools for seamless programmatic control over layout and design capabilities.**
 
-## Features
+A comprehensive Model Context Protocol (MCP) server that enables AI assistants and developers to automate Adobe InDesign workflows through natural language commands and programmatic control. Create professional documents, manage complex layouts, and streamline design processes with intelligent automation.
 
-### 🎯 Core Functionality
+## 🎯 Perfect For
 
-- **Document Management**: Create, open, save, and manage InDesign documents
-- **Page Management**: Add, delete, duplicate, and manipulate pages
-- **Content Creation**: Text frames, graphics, tables, and multimedia content
-- **Style Management**: Paragraph styles, character styles, and color swatches
-- **Layout Tools**: Master spreads, guides, grids, and layout preferences
-- **Export Capabilities**: PDF, images, and package export
-- **Book Management**: Multi-document book creation and synchronization
+- **Design Teams** automating repetitive layout tasks and maintaining brand consistency
+- **Content Creators** generating professional documents at scale with intelligent automation
+- **AI Assistants** providing comprehensive InDesign automation capabilities
+- **Developers** building design automation workflows and integrations
+- **Publishers** streamlining document creation, management, and production workflows
 
-### 🚀 Enhanced Features
+## 🚀 Key Features
 
-- **Session Management**: Smart positioning and page dimension tracking
-- **Smart Positioning**: Automatic content placement based on page dimensions
-- **Comprehensive API**: 135+ tools covering all major InDesign functionality
-- **Error Handling**: Robust error handling and recovery
-- **Modular Architecture**: Clean, maintainable code structure
+### 🎨 Core Functionality
 
-## Quick Start
+- **Document Management**: Create, open, save, and manage InDesign documents with intelligent automation
+- **Page Management**: Add, delete, duplicate, and manipulate pages with smart positioning
+- **Content Creation**: Text frames, graphics, tables, and multimedia content with automated styling
+- **Style Management**: Paragraph styles, character styles, and color swatches with brand consistency
+- **Layout Tools**: Master spreads, guides, grids, and layout preferences for professional results
+- **Export Capabilities**: PDF, images, and package export with automated workflows
+- **Book Management**: Multi-document book creation and synchronization for large projects
+
+### ⚡ Enhanced Capabilities
+
+- **Smart Session Management**: Intelligent positioning and page dimension tracking
+- **Advanced Image Handling**: Precise scaling (1-1000%) with multiple fit modes
+- **Comprehensive API**: 135+ professional tools covering all major InDesign functionality
+- **Built-in Help System**: Tool-specific guidance and examples for easy adoption
+- **Robust Error Handling**: Graceful recovery and detailed feedback for reliability
+- **Modular Architecture**: Clean, maintainable code structure for extensibility
+
+## 🎨 Real-World Applications
+
+### **Automated Report Generation**
+Create professional reports with consistent styling, automated layout, and dynamic content population.
+
+### **Brand Asset Management**
+Maintain brand consistency with automated color and style application across all documents.
+
+### **Document Templates**
+Build intelligent templates with dynamic content population and automated styling.
+
+### **Multi-page Publications**
+Streamline large document creation with automated pagination, layout, and content management.
+
+### **Design System Implementation**
+Implement comprehensive design systems with programmatic style and component management.
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
@@ -615,9 +643,28 @@ await callTool('create_text_frame', {
 // based on page dimensions and margins
 ```
 
+## ⚡ Why Choose This Server
+
+### **Complete Coverage**
+Every major InDesign feature accessible via MCP with 135+ professional tools.
+
+### **AI-Ready**
+Designed specifically for AI assistant integration with natural language commands.
+
+### **Professional Quality**
+Production-grade reliability and performance with comprehensive error handling.
+
+### **Active Development**
+Regular updates, community support, and continuous improvement.
+
+### **Comprehensive Documentation**
+Everything you need to get started with detailed guides and examples.
+
+**Transform your InDesign workflow from manual to magical with the power of AI-driven automation.** 🎨✨
+
 ## 📊 **Final Statistics**
 
-- **Total Handlers**: 11
+- **Total Handlers**: 13
 - **Total Tools**: 135
 - **Session Methods**: 9
 - **Test Coverage**: 100%
