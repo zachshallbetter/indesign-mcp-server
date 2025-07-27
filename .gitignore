@@ -73,3 +73,37 @@ pids
 # Test artifacts
 test-*.js
 !tests/test-*.js
+
+# Temporary test directories
+test-images/
+test-images-fix/
+debug-images/
+absolute-test-images/
+real-test-images/
+scaling-test-images/
+dramatic-scaling-images/
+
+# InDesign document files
+*.indd
+*.indt
+*.indb
+*.idlk
+
+# ExtendScript temporary files
+temp_script.jsx
+*.jsx~
+*.jsx.bak
+
+# MCP configuration
+.cursor-tools.env
+.cursor-tools.config.json
+
+# Development artifacts
+*.tmp
+*.temp
+.cache/
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
