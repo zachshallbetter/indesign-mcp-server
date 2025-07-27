@@ -36,18 +36,23 @@ A comprehensive Model Context Protocol (MCP) server that enables AI assistants a
 ## 🎨 Real-World Applications
 
 ### **Automated Report Generation**
+
 Create professional reports with consistent styling, automated layout, and dynamic content population.
 
 ### **Brand Asset Management**
+
 Maintain brand consistency with automated color and style application across all documents.
 
 ### **Document Templates**
+
 Build intelligent templates with dynamic content population and automated styling.
 
 ### **Multi-page Publications**
+
 Streamline large document creation with automated pagination, layout, and content management.
 
 ### **Design System Implementation**
+
 Implement comprehensive design systems with programmatic style and component management.
 
 ## 🚀 Quick Start
@@ -184,6 +189,7 @@ Comprehensive graphics and image handling:
 Comprehensive image handling with professional features:
 
 #### **Core Image Operations**
+
 - **Place Images**: `place_image` with file path, positioning, and linking options
 - **Image Scaling**: Scale images from 1% to 1000% with precise control
 - **Fit Modes**: PROPORTIONALLY, FILL_FRAME, FIT_CONTENT, FIT_FRAME
@@ -191,21 +197,25 @@ Comprehensive image handling with professional features:
 - **Smart Positioning**: Automatic bounds checking and optimal placement
 
 #### **Image Linking & Embedding**
+
 - **Linked Images**: External file references (smaller document size, auto-updates)
 - **Embedded Images**: Internal storage (self-contained, portable)
 - **Link Management**: Automatic link status tracking and validation
 
 #### **Image Styling & Formatting**
+
 - **Object Styles**: Apply consistent styling to image frames
 - **Frame Options**: Borders, corner radius, transparency, blending modes
 - **Image Fitting**: Proportional scaling, fill frame, content-aware fitting
 
 #### **Supported Formats**
+
 - **Vector**: SVG, AI, EPS, PDF (as images)
 - **Raster**: PNG, JPG, TIFF, GIF, PSD
 - **Web**: HTML (converted), various web formats
 
 #### **Advanced Features**
+
 - **Batch Operations**: Place multiple images with consistent styling
 - **Image Scaling**: Precise scale control with horizontal and vertical scaling
 - **Fit Modes**: Multiple fitting options for different layout needs
@@ -293,7 +303,7 @@ await callTool('create_text_frame', {
 
 ### Modular Structure
 
-```
+```bash
 src/
 ├── core/
 │   ├── InDesignMCPServer.js    # Main server class
@@ -646,18 +656,23 @@ await callTool('create_text_frame', {
 ## ⚡ Why Choose This Server
 
 ### **Complete Coverage**
+
 Every major InDesign feature accessible via MCP with 135+ professional tools.
 
 ### **AI-Ready**
+
 Designed specifically for AI assistant integration with natural language commands.
 
 ### **Professional Quality**
+
 Production-grade reliability and performance with comprehensive error handling.
 
 ### **Active Development**
+
 Regular updates, community support, and continuous improvement.
 
 ### **Comprehensive Documentation**
+
 Everything you need to get started with detailed guides and examples.
 
 **Transform your InDesign workflow from manual to magical with the power of AI-driven automation.** 🎨✨
