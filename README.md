@@ -18,7 +18,7 @@ A comprehensive Model Context Protocol (MCP) server for Adobe InDesign 2025, pro
 
 - **Session Management**: Smart positioning and page dimension tracking
 - **Smart Positioning**: Automatic content placement based on page dimensions
-- **Comprehensive API**: 50+ tools covering all major InDesign functionality
+- **Comprehensive API**: 135+ tools covering all major InDesign functionality
 - **Error Handling**: Robust error handling and recovery
 - **Modular Architecture**: Clean, maintainable code structure
 
@@ -369,8 +369,8 @@ node tests/index.js --coverage
 
 This test verifies:
 
-- All 11 handlers properly imported and accessible
-- Complete tool definitions (50+ tools)
+- All 13 handlers properly imported and accessible
+- Complete tool definitions (135+ tools)
 - Session manager integration is seamless
 - Smart positioning works without separate calls
 - MCP Server properly configured
@@ -451,10 +451,10 @@ The InDesign MCP Server is now completely integrated with all handlers, tool def
 
 ### **1. Complete Handler Integration**
 
-- ✅ **11 Handler Classes** properly imported and accessible
+- ✅ **13 Handler Classes** properly imported and accessible
 - ✅ **Central Handler Index** (`src/handlers/index.js`) for easy management
 - ✅ **All Handlers Registered** in MCP Server (`src/core/InDesignMCPServer.js`)
-- ✅ **133 Tool Definitions** covering all functionality
+- ✅ **135 Tool Definitions** covering all functionality
 
 ### **2. Seamless Session Management**
 
@@ -542,7 +542,7 @@ src/
 │   ├── masterSpreadHandlers.js # Master pages
 │   ├── exportHandlers.js       # Export operations
 │   └── utilityHandlers.js      # Utilities
-├── types/                      # Tool definitions (133 tools)
+├── types/                      # Tool definitions (135 tools)
 └── utils/
     └── stringUtils.js          # String utilities
 ```
@@ -561,10 +561,10 @@ src/
 
 ```bash
 ✅ Test 1: Handler Import Verification
-   - All 11 handlers properly imported
+   - All 13 handlers properly imported
 
 ✅ Test 2: Tool Definitions Verification
-   - 133 tool definitions complete
+   - 135 tool definitions complete
 
 ✅ Test 3: Session Manager Integration
    - All session methods present
@@ -618,7 +618,7 @@ await callTool('create_text_frame', {
 ## 📊 **Final Statistics**
 
 - **Total Handlers**: 11
-- **Total Tools**: 133
+- **Total Tools**: 135
 - **Session Methods**: 9
 - **Test Coverage**: 100%
 - **Integration Status**: Complete
