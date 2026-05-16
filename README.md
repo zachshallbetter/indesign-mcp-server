@@ -61,7 +61,14 @@ Implement comprehensive design systems with programmatic style and component man
 
 - Adobe InDesign 2025 (20.0.0.95 or later)
 - Node.js 18+
-- macOS (AppleScript support required)
+- **Windows** or **macOS** supported
+
+#### Windows
+Uses COM automation — InDesign must be running before executing any tool.
+No extra setup required: PowerShell is used automatically.
+
+#### macOS
+Uses AppleScript (`osascript`). Ensure InDesign has Automation permissions in System Preferences → Security & Privacy.
 
 ### Installation
 
