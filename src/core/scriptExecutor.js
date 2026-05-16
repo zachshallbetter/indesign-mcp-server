@@ -50,18 +50,18 @@ export class ScriptExecutor {
         // Экранируем путь для PowerShell
         const escapedPath = tempScriptPath.replace(/\\/g, '\\\\');
 
-        // Перебираем ProgID пока не найдём запущенный InDesign
+        // New-Object -ComObject подключается к запущенному InDesign (или запускает его)
         const psScript = `
 $progIds = @(${INDESIGN_PROGIDS.map(id => `'${id}'`).join(',')})
 $app = $null
 foreach ($id in $progIds) {
     try {
-        $app = [System.Runtime.InteropServices.Marshal]::GetActiveObject($id)
+        $app = New-Object -ComObject $id
         break
     } catch {}
 }
 if ($null -eq $app) {
-    Write-Error 'Adobe InDesign is not running. Please open InDesign first.'
+    Write-Error 'Adobe InDesign not found. Check installation.'
     exit 1
 }
 try {
