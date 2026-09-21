@@ -1,0 +1,96 @@
+# Antigravity indexer ignore — keep agent/indexer off build junk & media dumps
+# (mirrors common .gitignore; safe for monorepos)
+
+# Dependencies
+node_modules/
+.pnpm-store/
+.yarn/cache/
+.yarn/install-state.gz
+.bun/
+vendor/
+.bundle/
+Pods/
+
+# Build / caches
+dist/
+build/
+out/
+target/
+.next/
+.nuxt/
+.turbo/
+.vite/
+.cache/
+.parcel-cache/
+.svelte-kit/
+.astro/
+.vercel/
+.expo/
+.output/
+coverage/
+playwright-report/
+test-results/
+blob-report/
+*.tsbuildinfo
+graphify-out/
+.reports/
+.board_snapshot.*
+.coord-log/
+
+# Native / mobile
+DerivedData/
+.gradle/
+.cxx/
+**/android/.cxx/
+**/android/app/build/
+**/ios/build/
+**/ios/Pods/
+*.xcuserdata/
+*.xcuserstate
+.swiftpm/
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Large media / binaries (agent doesn't need these for code)
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.psd
+*.sketch
+*.fig
+*.zip
+*.7z
+*.rar
+*.dmg
+*.iso
+*.onnx
+*.gguf
+*.safetensors
+*.bin
+*.wasm
+*.cbz
+*.cbr
+*.epub
+
+# Env / secrets / OS
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+
+# VCS / tooling noise
+.git/
+.svn/
+.hg/
+.claude/
+.cursor/
+.codex/

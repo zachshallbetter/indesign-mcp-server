@@ -26,7 +26,6 @@ coverage/
 build/Release
 
 # Dependency directories
-node_modules/
 jspm_packages/
 
 # Optional npm cache directory
@@ -65,10 +64,6 @@ logs
 *.log
 
 # Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
 
 # Test artifacts
 test-*.js
@@ -84,14 +79,8 @@ scaling-test-images/
 dramatic-scaling-images/
 
 # InDesign document files
-*.indd
-*.indt
-*.indb
-*.idlk
 
 # ExtendScript temporary files
-temp_script.jsx
-*.jsx~
 *.jsx.bak
 
 # MCP configuration
@@ -107,3 +96,25 @@ temp_script.jsx
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+
+# --- added for Antigravity/indexer parity (auto) ---
+dist/
+build/
+out/
+target/
+.next/
+.turbo/
+.vercel/
+playwright-report/
+test-results/
+graphify-out/
+.reports/
+__pycache__/
+.venv/
+venv/
+DerivedData/
+.gradle/
+.expo/
+.env.*
+
+!.env.example
