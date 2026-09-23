@@ -8,15 +8,15 @@ The InDesign MCP Server provides programmatic access to Adobe InDesign through M
 
 ### Prerequisites
 
-- **Adobe InDesign**: Must be installed and running on macOS
-- **Node.js**: Version 16 or higher
-- **macOS**: Required for AppleScript integration
+- **Adobe InDesign**: 2023 or later recommended
+- **Node.js**: Version 18 or higher
+- **macOS** (AppleScript) or **Windows** (COM via PowerShell)
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/zachshallbetter/indesign-mcp-server.git
 cd indesign-mcp-server
 
 # Install dependencies

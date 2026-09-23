@@ -23,7 +23,11 @@
     "llm",
     "design-automation",
     "document-creation",
-    "layout-automation"
+    "layout-automation",
+    "windows",
+    "macos",
+    "com-automation",
+    "applescript"
   ],
   "author": "Zach Shallbetter",
   "license": "MIT",
