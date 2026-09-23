@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.3.0
+
+### Added
+- Optional **UXP execution backend** (`INDESIGN_BACKEND=uxp|auto|extendscript`)
+- Vendored bridge + plugin under `uxp/` (adapted from theloniuser/indesign-uxp-server)
+- `npm run uxp:bridge`, `start:uxp`, `start:auto`
+- `indesign_status` reports backend configured/resolved and UXP connection
+
+### Changed
+- `ScriptExecutor` routes scripts through UXP HTTP bridge when selected
+- Architecture docs describe multi-backend setup (issue #1 follow-up)
+
+
 ## 1.2.1
 
 ### Documentation

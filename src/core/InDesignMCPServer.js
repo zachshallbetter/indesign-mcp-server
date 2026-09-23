@@ -27,7 +27,7 @@ export class InDesignMCPServer {
         this.server = new Server(
             {
                 name: 'indesign-mcp-server',
-                version: '1.2.1',
+                version: '1.3.0',
             },
             {
                 capabilities: {

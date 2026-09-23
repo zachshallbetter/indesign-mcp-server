@@ -1,47 +1,61 @@
-# Execution models
+# Execution backends
 
-This repository and the community UXP fork solve the same problem (drive InDesign from MCP clients) with different bridges.
+This server can drive InDesign through **ExtendScript host automation** or an optional **UXP bridge**.
 
-## This project: ExtendScript via host automation
+## Selection
+
+| `INDESIGN_BACKEND` | Behavior |
+| --- | --- |
+| `extendscript` (default) | macOS AppleScript or Windows COM |
+| `uxp` | HTTP bridge → UXP plugin inside InDesign |
+| `auto` | Prefer UXP when the plugin is connected; otherwise ExtendScript |
+
+Related env:
+
+| Variable | Purpose |
+| --- | --- |
+| `UXP_BRIDGE_URL` | Bridge base URL (default `http://127.0.0.1:3000`) |
+| `BRIDGE_TOKEN` | Optional Bearer token (must match bridge) |
+| `UXP_HTTP_PORT` / `UXP_WS_PORT` | Bridge listen ports |
+
+`indesign_status` reports `backend.configured`, `backend.resolved`, and `backend.uxpConnected`.
+
+## ExtendScript (default)
 
 | | |
 | --- | --- |
-| **Bridge** | macOS AppleScript (`osascript` → `do script`) or Windows COM (`DoScript`) |
-| **Script runtime** | ExtendScript (ES3-era) |
-| **Platforms** | macOS + Windows |
-| **Returns** | Primarily strings (structured JSON helpers available) |
-| **Strengths** | Broad tool surface already implemented; no InDesign UXP plugin install |
-| **Limits** | Temp `.jsx` files; ES3 constraints; Adobe is moving away from ExtendScript/CEP |
+| **Bridge** | macOS `osascript` / Windows COM `DoScript` |
+| **Runtime** | ExtendScript |
+| **Setup** | InDesign installed; no plugin |
+| **Code** | `src/core/scriptExecutor.js` |
 
-Entry points: `src/core/scriptExecutor.js`, handlers under `src/handlers/`.
-
-## Community fork: UXP-native
-
-**Repo:** [theloniuser/indesign-uxp-server](https://github.com/theloniuser/indesign-uxp-server)
+## UXP (optional)
 
 | | |
 | --- | --- |
-| **Bridge** | Node HTTP/WebSocket ↔ UXP plugin inside InDesign |
-| **Script runtime** | Modern JS (async/await, structured objects) |
-| **Platforms** | macOS + Windows |
-| **Returns** | Structured JSON |
-| **Strengths** | Aligns with Adobe’s current platform; better DX for new code |
-| **Limits** | Separate plugin install; tool surface may differ |
+| **Bridge** | `uxp/bridge/server.js` (HTTP `/execute`, `/status` + WebSocket) |
+| **Plugin** | `uxp/plugin` loaded in InDesign via UXP Developer Tool |
+| **Runtime** | Modern JS in the plugin sandbox (`app` + limited `require`) |
 
-Useful UXP details called out by the fork author (and worth keeping if you port code either way):
+### Run UXP mode
 
-- InDesign collections need `.item(n)` — bracket access often returns `undefined`
-- `doc.filePath` is async in UXP — must `await`
-- Path strings work directly for `place()` / `exportFile()` in many cases
-- Enums via `require('indesign')`
+```bash
+npm install
+npm run uxp:bridge
+# Load uxp/plugin in InDesign, open Bridge panel
+INDESIGN_BACKEND=uxp npm start
+```
 
-## Decision (issue #1)
+See `uxp/README.md`. Bridge/plugin adapted from [theloniuser/indesign-uxp-server](https://github.com/theloniuser/indesign-uxp-server) (`uxp/NOTICE`).
 
-**Status: resolved as dual-track, not merge.**
+## Compatibility notes
 
-1. **This repo stays on ExtendScript/COM** for the existing ~120 wired MCP tools, Windows/macOS host automation, and users who want MCP without a UXP plugin.
-2. **UXP is the recommended direction for greenfield work** that needs modern JS and long-term Adobe alignment. Prefer [indesign-uxp-server](https://github.com/theloniuser/indesign-uxp-server) when starting fresh or when structured JSON returns matter more than this repo’s tool catalog.
-3. **No immediate monorepo merge.** Convergence (shared tool schemas, dual backend, or absorbing UXP) remains optional follow-up if maintainers align — not blocked work for either project.
-4. Collaboration is welcome: PRs here, contributions upstream to the UXP fork, or a future shared `tools` schema package.
+Handler scripts still use the InDesign DOM via `app`. Many work under both backends. UXP differences to watch:
 
-See GitHub issue [#1](https://github.com/zachshallbetter/indesign-mcp-server/issues/1).
+- Collections often need `.item(n)` instead of bracket access
+- Some paths/properties are async under UXP
+- Prefer modern syntax when authoring UXP-only helpers
+
+## Issue #1
+
+UXP is a **first-class optional backend** in this repository, not only an external fork. The community UXP server remains a useful reference and alternative packaging.

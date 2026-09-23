@@ -36,6 +36,7 @@ Design ops still means repeating the same layout chores by hand. This server exp
 
 - **macOS** — AppleScript (`osascript`) bridge; InDesign version is auto-detected (or set via `INDESIGN_APP_NAME`)
 - **Windows** — COM automation via PowerShell (`New-Object -ComObject`); tries current and recent InDesign ProgIDs
+- **UXP (optional)** — `INDESIGN_BACKEND=uxp|auto` via local bridge + plugin under `uxp/`
 - **Session manager** — tracks page dimensions and helps keep content on-page
 - **Help tool** — discover tools and categories from the client
 - **Safe JSX helpers** — `src/utils/jsxSafe.js` for validated string/number/path interpolation into ExtendScript
@@ -294,15 +295,16 @@ CI runs `check` + unit tests on every push/PR.
 
 ## Related projects
 
-### Execution models
+### Execution backends
 
-This server drives InDesign through **ExtendScript** on macOS (AppleScript) or Windows (COM). That keeps a large MCP tool surface without installing a UXP plugin.
+| Backend | How to enable |
+| --- | --- |
+| ExtendScript / COM (default) | unset or `INDESIGN_BACKEND=extendscript` |
+| UXP bridge + plugin | `INDESIGN_BACKEND=uxp` (or `auto`) + `npm run uxp:bridge` + load `uxp/plugin` |
 
-For **UXP-native** automation (modern JS, structured JSON, Adobe’s current extension platform), use the community fork:
+Details: [`docs/architecture-execution.md`](./docs/architecture-execution.md) and [`uxp/README.md`](./uxp/README.md).
 
-- **[theloniuser/indesign-uxp-server](https://github.com/theloniuser/indesign-uxp-server)** — HTTP/WebSocket bridge to a UXP plugin inside InDesign
-
-**Decision (issue [#1](https://github.com/zachshallbetter/indesign-mcp-server/issues/1)):** dual-track. This repo continues on ExtendScript/COM; UXP is recommended for greenfield work. No merge required. Full write-up: [`docs/architecture-execution.md`](./docs/architecture-execution.md).
+Optional packaging reference: [theloniuser/indesign-uxp-server](https://github.com/theloniuser/indesign-uxp-server) (bridge/plugin adapted into `uxp/` with attribution).
 
 ## Examples
 
