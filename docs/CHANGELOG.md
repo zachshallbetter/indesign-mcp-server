@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1
+
+### Documentation
+- Resolved issue #1: documented ExtendScript/COM vs UXP dual-track decision
+- Added `docs/architecture-execution.md` and expanded README related projects
+
 ## 1.2.0
 
 ### Added

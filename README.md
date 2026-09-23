@@ -294,7 +294,15 @@ CI runs `check` + unit tests on every push/PR.
 
 ## Related projects
 
-- [indesign-uxp-server](https://github.com/theloniuser/indesign-uxp-server) — UXP-native approach with an HTTP/WebSocket bridge (see [issue #1](https://github.com/zachshallbetter/indesign-mcp-server/issues/1)). Complementary architecture; useful if you prefer UXP over AppleScript/COM.
+### Execution models
+
+This server drives InDesign through **ExtendScript** on macOS (AppleScript) or Windows (COM). That keeps a large MCP tool surface without installing a UXP plugin.
+
+For **UXP-native** automation (modern JS, structured JSON, Adobe’s current extension platform), use the community fork:
+
+- **[theloniuser/indesign-uxp-server](https://github.com/theloniuser/indesign-uxp-server)** — HTTP/WebSocket bridge to a UXP plugin inside InDesign
+
+**Decision (issue [#1](https://github.com/zachshallbetter/indesign-mcp-server/issues/1)):** dual-track. This repo continues on ExtendScript/COM; UXP is recommended for greenfield work. No merge required. Full write-up: [`docs/architecture-execution.md`](./docs/architecture-execution.md).
 
 ## Examples
 
