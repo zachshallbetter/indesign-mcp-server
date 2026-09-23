@@ -1,14 +1,18 @@
 {
   "name": "indesign-mcp-server",
-  "version": "1.1.0",
-  "description": "MCP server that turns Adobe InDesign into an AI design automation platform \u2014 135+ tools for layout, styles, export, and publishing workflows",
+  "version": "1.2.0",
+  "description": "MCP server that turns Adobe InDesign into an AI design automation platform — 135+ tools for layout, styles, export, and publishing workflows",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --inspect src/index.js",
     "build": "echo 'No build step required for Node.js'",
-    "test": "echo 'No tests specified'"
+    "test": "node tests/unit/jsxSafe.test.js",
+    "test:unit": "node tests/unit/jsxSafe.test.js",
+    "test:integration": "node tests/index.js",
+    "test:unified": "node tests/unified-test-runner.js",
+    "check": "node --check src/index.js && node --check src/core/scriptExecutor.js && node --check src/core/InDesignMCPServer.js && node --check src/handlers/documentHandlers.js && node --check src/handlers/exportHandlers.js && node --check src/handlers/graphicsHandlers.js && node --check src/handlers/textHandlers.js && node --check src/handlers/pageHandlers.js && node --check src/handlers/utilityHandlers.js"
   },
   "keywords": [
     "mcp",

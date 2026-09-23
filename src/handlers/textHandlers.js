@@ -2,7 +2,7 @@
  * Text frame handlers
  */
 import { ScriptExecutor } from '../core/scriptExecutor.js';
-import { formatResponse, formatErrorResponse, escapeJsxString } from '../utils/stringUtils.js';
+import { formatResponse, formatErrorResponse, escapeJsxString, str, num, index } from '../utils/stringUtils.js';
 import { sessionManager } from '../core/sessionManager.js';
 
 export class TextHandlers {
@@ -40,10 +40,13 @@ export class TextHandlers {
             }
         }
 
-        const escapedContent = escapeJsxString(content);
-        const escapedFontName = escapeJsxString(fontName);
-        const escapedParagraphStyle = paragraphStyle ? escapeJsxString(paragraphStyle) : '';
-        const escapedCharacterStyle = characterStyle ? escapeJsxString(characterStyle) : '';
+        const contentLit = str(content ?? '');
+        const fontLit = str(fontName);
+        const paraLit = str(paragraphStyle || '');
+        const charLit = str(characterStyle || '');
+        const sizeN = num(fontSize, { name: 'fontSize', min: 0.1, max: 1000 });
+        const colorLit = str(textColor || 'Black');
+        const alignLit = str(alignment || 'LEFT');
 
         const script = [
             'if (app.documents.length === 0) {',
@@ -58,17 +61,17 @@ export class TextHandlers {
             '    // Create text frame',
             `    textFrame = page.textFrames.add();`,
             `    textFrame.geometricBounds = [${positioning.y}, ${positioning.x}, ${positioning.y + positioning.height}, ${positioning.x + positioning.width}];`,
-            `    textFrame.contents = "${escapedContent}";`,
+            `    textFrame.contents = ${contentLit};`,
             '',
             '    // Apply paragraph style if specified',
-            `    if ("${escapedParagraphStyle}" !== "") {`,
+            `    if (${paraLit} !== "") {`,
             '      try {',
-            `        var paragraphStyle = doc.paragraphStyles.itemByName("${escapedParagraphStyle}");`,
+            `        var paragraphStyle = doc.paragraphStyles.itemByName(${paraLit});`,
             '        if (paragraphStyle.isValid) {',
             '          textFrame.paragraphs[0].appliedParagraphStyle = paragraphStyle;',
-            `          styleMessage += "Paragraph style '${escapedParagraphStyle}' applied. ";`,
+            '          styleMessage += "Paragraph style applied. ";',
             '        } else {',
-            `          styleMessage += "Paragraph style '${escapedParagraphStyle}' not found. ";`,
+            '          styleMessage += "Paragraph style not found. ";',
             '        }',
             '      } catch (styleError) {',
             `        styleMessage += "Error applying paragraph style: " + styleError.message + ". ";`,
@@ -76,14 +79,14 @@ export class TextHandlers {
             '    }',
             '',
             '    // Apply character style if specified',
-            `    if ("${escapedCharacterStyle}" !== "") {`,
+            `    if (${charLit} !== "") {`,
             '      try {',
-            `        var characterStyle = doc.characterStyles.itemByName("${escapedCharacterStyle}");`,
+            `        var characterStyle = doc.characterStyles.itemByName(${charLit});`,
             '        if (characterStyle.isValid) {',
             '          textFrame.texts[0].appliedCharacterStyle = characterStyle;',
-            `          styleMessage += "Character style '${escapedCharacterStyle}' applied. ";`,
+            '          styleMessage += "Character style applied. ";',
             '        } else {',
-            `          styleMessage += "Character style '${escapedCharacterStyle}' not found. ";`,
+            '          styleMessage += "Character style not found. ";',
             '        }',
             '      } catch (styleError) {',
             `        styleMessage += "Error applying character style: " + styleError.message + ". ";`,
@@ -91,31 +94,31 @@ export class TextHandlers {
             '    }',
             '',
             '    // Apply direct formatting only if no styles were applied',
-            `    if ("${escapedParagraphStyle}" === "" && "${escapedCharacterStyle}" === "") {`,
+            `    if (${paraLit} === "" && ${charLit} === "") {`,
             '      // Apply text formatting',
             '      try {',
-            `        textFrame.texts[0].appliedFont = app.fonts.itemByName("${escapedFontName}");`,
+            `        textFrame.texts[0].appliedFont = app.fonts.itemByName(${fontLit});`,
             '      } catch (fontError) {',
             '        // Fallback to a default font if the specified font is not available',
             '        textFrame.texts[0].appliedFont = app.fonts.itemByName("Arial\\tRegular");',
             '      }',
-            `      textFrame.texts[0].pointSize = ${fontSize};`,
+            `      textFrame.texts[0].pointSize = ${sizeN};`,
             '',
             '      // Apply color',
-            `      if ("${textColor}" !== "Black") {`,
+            `      if (${colorLit} !== "Black") {`,
             '        try {',
-            `          textFrame.texts[0].fillColor = app.colors.itemByName("${textColor}");`,
+            `          textFrame.texts[0].fillColor = app.colors.itemByName(${colorLit});`,
             '        } catch (colorError) {',
             '          // Use default color if specified color not found',
             '        }',
             '      }',
             '',
             '      // Apply alignment',
-            `      if ("${alignment}" === "CENTER") {`,
+            `      if (${alignLit} === "CENTER") {`,
             '        textFrame.texts[0].justification = Justification.CENTER_ALIGN;',
-            `      } else if ("${alignment}" === "RIGHT") {`,
+            `      } else if (${alignLit} === "RIGHT") {`,
             '        textFrame.texts[0].justification = Justification.RIGHT_ALIGN;',
-            `      } else if ("${alignment}" === "JUSTIFY") {`,
+            `      } else if (${alignLit} === "JUSTIFY") {`,
             '        textFrame.texts[0].justification = Justification.FULLY_JUSTIFIED;',
             '      } else {',
             '        textFrame.texts[0].justification = Justification.LEFT_ALIGN;',
@@ -165,8 +168,12 @@ export class TextHandlers {
             alignment
         } = args;
 
-        const escapedContent = content ? escapeJsxString(content) : '';
-        const escapedFontName = fontName ? escapeJsxString(fontName) : '';
+        const contentLit = content != null && content !== '' ? str(content) : '""';
+        const fontLit = fontName ? str(fontName) : '""';
+        const frameIdx = index(frameIndex, { name: 'frameIndex' });
+        const colorLit = textColor ? str(textColor) : '""';
+        const alignLit = alignment ? str(alignment) : '""';
+        const sizeN = (fontSize != null && fontSize !== '') ? num(fontSize, { name: 'fontSize', min: 0.1, max: 1000 }) : null;
 
         const script = [
             'if (app.documents.length === 0) {',
@@ -176,37 +183,37 @@ export class TextHandlers {
             '  var page = doc.pages[0];',
             '',
             '  try {',
-            `    if (${frameIndex} >= page.textFrames.length) {`,
+            `    if (${frameIdx} >= page.textFrames.length) {`,
             '      "Text frame index out of range";',
             '    } else {',
-            `      var textFrame = page.textFrames[${frameIndex}];`,
+            `      var textFrame = page.textFrames[${frameIdx}];`,
             '',
-            `      if ("${escapedContent}" !== "") {`,
-            `        textFrame.contents = "${escapedContent}";`,
+            `      if (${contentLit} !== "") {`,
+            `        textFrame.contents = ${contentLit};`,
             '      }',
             '',
-            `      if (${fontSize}) {`,
-            `        textFrame.texts[0].pointSize = ${fontSize};`,
+            `      if (${sizeN} !== null) {`,
+            `        textFrame.texts[0].pointSize = ${sizeN};`,
             '      }',
             '',
-            `      if ("${escapedFontName}" !== "") {`,
-            `        textFrame.texts[0].appliedFont = app.fonts.itemByName("${escapedFontName}");`,
+            `      if (${fontLit} !== "") {`,
+            `        textFrame.texts[0].appliedFont = app.fonts.itemByName(${fontLit});`,
             '      }',
             '',
-            `      if ("${textColor}" !== "") {`,
+            `      if (${colorLit} !== "") {`,
             '      try {',
-            `        textFrame.texts[0].fillColor = app.colors.itemByName("${textColor}");`,
+            `        textFrame.texts[0].fillColor = app.colors.itemByName(${colorLit});`,
             '      } catch (colorError) {',
             '        // Use default color if specified color not found',
             '      }',
             '      }',
             '',
-            `      if ("${alignment}" !== "") {`,
-            `        if ("${alignment}" === "CENTER") {`,
+            `      if (${alignLit} !== "") {`,
+            `        if (${alignLit} === "CENTER") {`,
             '          textFrame.texts[0].justification = Justification.CENTER_ALIGN;',
-            `        } else if ("${alignment}" === "RIGHT") {`,
+            `        } else if (${alignLit} === "RIGHT") {`,
             '          textFrame.texts[0].justification = Justification.RIGHT_ALIGN;',
-            `        } else if ("${alignment}" === "JUSTIFY") {`,
+            `        } else if (${alignLit} === "JUSTIFY") {`,
             '          textFrame.texts[0].justification = Justification.FULLY_JUSTIFIED;',
             '        } else {',
             '          textFrame.texts[0].justification = Justification.LEFT_ALIGN;',

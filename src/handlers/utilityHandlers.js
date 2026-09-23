@@ -2,27 +2,48 @@
  * Utility handlers for InDesign MCP Server
  */
 import { ScriptExecutor } from '../core/scriptExecutor.js';
-import { formatResponse, formatErrorResponse, escapeJsxString } from '../utils/stringUtils.js';
+import {
+    formatResponse,
+    formatErrorResponse,
+} from '../utils/stringUtils.js';
 import { sessionManager } from '../core/sessionManager.js';
 
 export class UtilityHandlers {
+    /**
+     * Host + InDesign health check.
+     * probe=true runs a lightweight ExtendScript round-trip (requires InDesign).
+     */
+    static async getIndesignStatus(args = {}) {
+        const probe = Boolean(args?.probe);
+        const cleaned = ScriptExecutor.cleanupTempScripts();
+        const status = await ScriptExecutor.getStatus({ probeInDesign: probe });
+        status.tempScriptsRemoved = cleaned;
+        status.session = sessionManager.getSessionSummary();
+        return formatResponse(status, 'InDesign Status');
+    }
+
     /**
      * Execute custom InDesign code
      */
     static async executeInDesignCode(args) {
         const { code } = args;
-        const escapedCode = escapeJsxString(code);
-
+        if (typeof code !== 'string' || !code.trim()) {
+            return formatErrorResponse('code must be a non-empty string', 'Execute InDesign Code');
+        }
+        // Run caller code as the script body inside try/catch — do not re-escape into quotes.
         const script = [
             'try {',
-            `  ${escapedCode}`,
+            code,
             '} catch (error) {',
             '  "Error executing code: " + error.message;',
-            '}'
+            '}',
         ].join('\n');
 
         const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Execute InDesign Code");
+        const failed = /^Error executing code:/i.test(String(result));
+        return failed
+            ? formatErrorResponse(result, 'Execute InDesign Code')
+            : formatResponse(result, 'Execute InDesign Code');
     }
 
     /**
@@ -41,13 +62,12 @@ export class UtilityHandlers {
             '  info += "Zoom: " + app.activeWindow.zoomPercentage + "%\\n";',
             '  info += "View Mode: " + app.activeWindow.displaySettings.overprintPreview + "\\n";',
             '',
-            '  // Page information',
             '  if (doc.pages.length > 0) {',
             '    var page = doc.pages[0];',
             '    info += "\\n=== FIRST PAGE INFO ===\\n";',
             '    info += "Page Name: " + page.name + "\\n";',
-            '    info += "Page Width: " + page.bounds[3] - page.bounds[1] + "\\n";',
-            '    info += "Page Height: " + page.bounds[2] - page.bounds[0] + "\\n";',
+            '    info += "Page Width: " + (page.bounds[3] - page.bounds[1]) + "\\n";',
+            '    info += "Page Height: " + (page.bounds[2] - page.bounds[0]) + "\\n";',
             '    info += "Text Frames: " + page.textFrames.length + "\\n";',
             '    info += "Rectangles: " + page.rectangles.length + "\\n";',
             '    info += "Ovals: " + page.ovals.length + "\\n";',
@@ -55,11 +75,11 @@ export class UtilityHandlers {
             '  }',
             '',
             '  info;',
-            '}'
+            '}',
         ].join('\n');
 
         const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "View Document");
+        return formatResponse(result, 'View Document');
     }
 
     /**
@@ -67,7 +87,7 @@ export class UtilityHandlers {
      */
     static async getSessionInfo() {
         const sessionInfo = sessionManager.getSessionSummary();
-        return formatResponse(JSON.stringify(sessionInfo, null, 2), "Get Session Info");
+        return formatResponse(sessionInfo, 'Get Session Info');
     }
 
     /**
@@ -75,6 +95,6 @@ export class UtilityHandlers {
      */
     static async clearSession() {
         sessionManager.clearSession();
-        return formatResponse("Session data cleared successfully", "Clear Session");
+        return formatResponse('Session data cleared successfully', 'Clear Session');
     }
-} 
+}

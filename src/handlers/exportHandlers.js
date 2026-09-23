@@ -2,7 +2,16 @@
  * Export handlers
  */
 import { ScriptExecutor } from '../core/scriptExecutor.js';
-import { formatResponse, escapeJsxString } from '../utils/stringUtils.js';
+import {
+    formatResponse,
+    formatErrorResponse,
+    str,
+    bool,
+    enumOf,
+    ALLOWED,
+    validateFilePath,
+    jsxPath,
+} from '../utils/stringUtils.js';
 
 export class ExportHandlers {
     /**
@@ -12,39 +21,32 @@ export class ExportHandlers {
         const {
             filePath,
             preset = 'High Quality Print',
-            includeBookmarks = true,
-            includeHyperlinks = true,
-            includeNonPrinting = false,
-            cropMarks = false,
-            bleedMarks = false,
-            registrationMarks = false,
-            colorBars = false,
-            pageInformationMarks = false
         } = args;
 
-        const escapedFilePath = escapeJsxString(filePath);
-        const escapedPreset = escapeJsxString(preset);
+        const resolved = validateFilePath(filePath);
+        const jsx = jsxPath(resolved);
+        const presetLit = str(preset);
 
         const script = [
             'if (app.documents.length === 0) {',
             '  "No document open";',
             '} else {',
             '  var doc = app.activeDocument;',
-            '  var pdfFile = File("' + escapedFilePath + '");',
-            '',
+            `  var pdfFile = File(${jsx});`,
             '  try {',
-            '    // Export to PDF with preset',
-            '    doc.exportFile(ExportFormat.PDF_TYPE, pdfFile, false, "' + escapedPreset + '");',
-            '',
-            `    "PDF exported successfully to: ${escapedFilePath}";`,
+            `    doc.exportFile(ExportFormat.PDF_TYPE, pdfFile, false, ${presetLit});`,
+            `    "PDF exported successfully to: " + ${jsx};`,
             '  } catch (error) {',
             '    "Error exporting PDF: " + error.message;',
             '  }',
-            '}'
+            '}',
         ].join('\n');
 
         const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Export PDF");
+        const ok = String(result).includes('PDF exported successfully');
+        return ok
+            ? formatResponse(result, 'Export PDF')
+            : formatErrorResponse(result, 'Export PDF');
     }
 
     /**
@@ -54,71 +56,63 @@ export class ExportHandlers {
         const {
             folderPath,
             format = 'JPEG',
-            quality = 80,
-            resolution = 300,
-            pageRange = 'all'
+            pageRange = 'all',
         } = args;
 
-        const escapedFolderPath = escapeJsxString(folderPath);
+        const resolved = validateFilePath(folderPath);
+        const folderJsx = jsxPath(resolved);
+        const fmtRaw = String(format).toUpperCase() === 'JPG' ? 'JPEG' : String(format).toUpperCase();
+        const fmt = enumOf(fmtRaw, ALLOWED.imageFormat, { name: 'format' });
+        const ext = str(fmt.toLowerCase() === 'jpeg' ? 'jpg' : fmt.toLowerCase());
+        const rangeLit = str(pageRange);
+        const fmtLit = str(fmt);
 
         const script = [
             'if (app.documents.length === 0) {',
             '  "No document open";',
             '} else {',
             '  var doc = app.activeDocument;',
-            '  var folder = Folder("' + escapedFolderPath + '");',
-            '',
+            `  var folder = Folder(${folderJsx});`,
             '  try {',
-            '    if (!folder.exists) {',
-            '      folder.create();',
-            '    }',
-            '',
+            '    if (!folder.exists) { folder.create(); }',
             '    var exportFormat;',
-            `    if ("${format}" === "JPEG") {`,
-            '      exportFormat = ExportFormat.JPEG;',
-            `    } else if ("${format}" === "PNG") {`,
-            '      exportFormat = ExportFormat.PNG;',
-            `    } else if ("${format}" === "TIFF") {`,
-            '      exportFormat = ExportFormat.TIFF;',
-            '    } else {',
-            '      exportFormat = ExportFormat.JPEG;',
-            '    }',
-            '',
+            `    if (${fmtLit} === "JPEG") { exportFormat = ExportFormat.JPEG; }`,
+            `    else if (${fmtLit} === "PNG") { exportFormat = ExportFormat.PNG; }`,
+            `    else if (${fmtLit} === "TIFF") { exportFormat = ExportFormat.TIFF; }`,
+            `    else if (${fmtLit} === "GIF") { exportFormat = ExportFormat.GIF; }`,
+            '    else { exportFormat = ExportFormat.JPEG; }',
             '    var exportedCount = 0;',
-            '    var startPage = 0;',
-            '    var endPage = doc.pages.length - 1;',
-            '',
-            `    if ("${pageRange}" !== "all") {`,
-            '      // Parse page range (e.g., "1-3" or "1,3,5")',
-            '      var range = "' + pageRange + '".split(",");',
+            `    if (${rangeLit} !== "all") {`,
+            `      var range = String(${rangeLit}).split(",");`,
             '      for (var i = 0; i < range.length; i++) {',
-            '        var pageNum = parseInt(range[i]) - 1;',
+            '        var pageNum = parseInt(range[i], 10) - 1;',
             '        if (pageNum >= 0 && pageNum < doc.pages.length) {',
-            '          var fileName = folder.fsName + "/page_" + (pageNum + 1) + "." + "' + format.toLowerCase() + '";',
+            `          var fileName = folder.fsName + "/page_" + (pageNum + 1) + "." + ${ext};`,
             '          var imageFile = File(fileName);',
             '          doc.pages[pageNum].exportFile(exportFormat, imageFile, false);',
             '          exportedCount++;',
             '        }',
             '      }',
             '    } else {',
-            '      // Export all pages',
             '      for (var i = 0; i < doc.pages.length; i++) {',
-            '        var fileName = folder.fsName + "/page_" + (i + 1) + "." + "' + format.toLowerCase() + '";',
+            `        var fileName = folder.fsName + "/page_" + (i + 1) + "." + ${ext};`,
             '        var imageFile = File(fileName);',
             '        doc.pages[i].exportFile(exportFormat, imageFile, false);',
             '        exportedCount++;',
             '      }',
             '    }',
-            '',
-            `    exportedCount + " pages exported as ${format} images to: ${escapedFolderPath}";`,
+            `    exportedCount + " pages exported as " + ${fmtLit} + " images to: " + ${folderJsx};`,
             '  } catch (error) {',
             '    "Error exporting images: " + error.message;',
             '  }',
-            '}'
+            '}',
         ].join('\n');
 
         const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Export Images");
+        const ok = String(result).includes('pages exported');
+        return ok
+            ? formatResponse(result, 'Export Images')
+            : formatErrorResponse(result, 'Export Images');
     }
 
     /**
@@ -126,40 +120,36 @@ export class ExportHandlers {
      */
     static async packageDocument(args) {
         const { folderPath, includeFonts = true, includeLinks = true, includeProfiles = true } = args;
-        const escapedFolderPath = escapeJsxString(folderPath);
+        const resolved = validateFilePath(folderPath);
+        const folderJsx = jsxPath(resolved);
 
         const script = [
             'if (app.documents.length === 0) {',
             '  "No document open";',
             '} else {',
             '  var doc = app.activeDocument;',
-            '  var folder = Folder("' + escapedFolderPath + '");',
-            '',
+            `  var folder = Folder(${folderJsx});`,
             '  try {',
-            '    if (!folder.exists) {',
-            '      folder.create();',
-            '    }',
-            '',
-            '    // Set package preferences',
+            '    if (!folder.exists) { folder.create(); }',
             '    var packagePrefs = doc.packagePreferences;',
-            `    packagePrefs.includeFonts = ${includeFonts};`,
-            `    packagePrefs.includeLinks = ${includeLinks};`,
-            `    packagePrefs.includeProfiles = ${includeProfiles};`,
+            `    packagePrefs.includeFonts = ${bool(includeFonts)};`,
+            `    packagePrefs.includeLinks = ${bool(includeLinks)};`,
+            `    packagePrefs.includeProfiles = ${bool(includeProfiles)};`,
             '    packagePrefs.includeNonPrinting = false;',
             '    packagePrefs.includeHiddenLayers = false;',
             '    packagePrefs.includeEmptyPages = true;',
-            '',
-            '    // Package the document',
             '    doc.packageForPrint(folder);',
-            '',
-            `    "Document packaged successfully to: ${escapedFolderPath}";`,
+            `    "Document packaged successfully to: " + ${folderJsx};`,
             '  } catch (error) {',
             '    "Error packaging document: " + error.message;',
             '  }',
-            '}'
+            '}',
         ].join('\n');
 
         const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Package Document");
+        const ok = String(result).includes('Document packaged successfully');
+        return ok
+            ? formatResponse(result, 'Package Document')
+            : formatErrorResponse(result, 'Package Document');
     }
-} 
+}

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "indesign": {
+      "command": "node",
+      "args": ["/ABSOLUTE/PATH/TO/indesign-mcp-server/src/index.js"],
+      "env": {
+        "INDESIGN_APP_NAME": "Adobe InDesign 2026",
+        "INDESIGN_ALLOWED_DIRS": ""
+      }
+    }
+  }
+}

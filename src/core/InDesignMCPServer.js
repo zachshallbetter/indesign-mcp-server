@@ -20,13 +20,14 @@ import {
     UtilityHandlers
 } from '../handlers/index.js';
 import { formatResponse, formatErrorResponse } from '../utils/stringUtils.js';
+import { ScriptExecutor } from './scriptExecutor.js';
 
 export class InDesignMCPServer {
     constructor() {
         this.server = new Server(
             {
-                name: 'indesign-server-complete',
-                version: '1.0.0',
+                name: 'indesign-mcp-server',
+                version: '1.2.0',
             },
             {
                 capabilities: {
@@ -36,6 +37,7 @@ export class InDesignMCPServer {
         );
 
         this.setupToolHandlers();
+        ScriptExecutor.cleanupTempScripts();
     }
 
     setupToolHandlers() {
@@ -50,7 +52,10 @@ export class InDesignMCPServer {
                 const result = await this.handleToolCall(name, args);
                 return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
             } catch (error) {
-                return { content: [{ type: 'text', text: `Error: ${error.message}` }] };
+                return {
+                    content: [{ type: 'text', text: JSON.stringify({ success: false, error: error.message }, null, 2) }],
+                    isError: true,
+                };
             }
         });
     }
@@ -216,6 +221,7 @@ export class InDesignMCPServer {
             case 'set_group_properties': return await GroupHandlers.setGroupProperties(args);
 
             // Utility Functions
+            case 'indesign_status': return await UtilityHandlers.getIndesignStatus(args);
             case 'execute_indesign_code': return await UtilityHandlers.executeInDesignCode(args);
             case 'view_document': return await UtilityHandlers.viewDocument();
             case 'get_session_info': return await UtilityHandlers.getSessionInfo();

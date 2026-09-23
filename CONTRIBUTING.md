@@ -1,310 +1,66 @@
 # Contributing to InDesign MCP Server
 
-Thank you for your interest in contributing to the InDesign MCP Server! This document provides guidelines and information for contributors.
+Thanks for contributing.
 
-## 🚀 Quick Start
+## Quick start
 
-1. **Fork** the repository
-2. **Clone** your fork locally
-3. **Install** dependencies: `npm install`
-4. **Create** a feature branch
-5. **Make** your changes
-6. **Test** your changes
-7. **Submit** a pull request
+1. Fork and clone the repository
+2. `npm install`
+3. `npm run check` — syntax check core modules
+4. `npm test` — unit tests (no InDesign required)
+5. With InDesign running: `npm run test:integration` (optional)
 
-## 📋 Prerequisites
+## Prerequisites
 
-- **Adobe InDesign** (macOS) - Required for testing
-- **Node.js 18+** - For development and testing
-- **macOS** - Required for AppleScript integration
-- **Git** - For version control
+- Node.js 18+
+- Adobe InDesign 2023+ recommended for integration tests
+- macOS (AppleScript) or Windows (COM)
 
-## 🏗️ Project Structure
+## Project structure
 
-```
-indesign-mcp-server/
-├── src/
-│   ├── core/           # Core server and session management
-│   ├── handlers/       # Tool handlers organized by functionality
-│   ├── types/          # Tool definitions and schemas
-│   └── utils/          # Utility functions
-├── tests/              # Test suite and examples
-├── docs/               # Documentation
-└── examples/           # Usage examples
+```text
+src/
+  core/       # MCP server, script executor, session
+  handlers/   # Tool implementations by domain
+  types/      # MCP tool schemas
+  utils/      # stringUtils, jsxSafe
+tests/
+  unit/       # CI-safe tests
+  *.js        # Integration tests (need InDesign)
+examples/     # Starter workflows
+docs/         # MCP instructions, changelog
 ```
 
-## 🔧 Development Setup
+## Development guidelines
 
-### 1. Clone and Install
+### ExtendScript safety
 
-```bash
-git clone https://github.com/your-username/indesign-mcp-server.git
-cd indesign-mcp-server
-npm install
-```
+Values interpolated into ExtendScript must go through `src/utils/jsxSafe.js`:
 
-### 2. Start Development Server
+- Strings: `str()`
+- Numbers: `num()` / `index()`
+- Booleans: `bool()`
+- Enums: `enumOf(..., ALLOWED.*)`
+- Paths: `validateFilePath()` then `jsxPath()`
 
-```bash
-npm run dev
-```
+Do not concatenate raw `filePath` or free text into `File("...")` or string literals.
 
-### 3. Run Tests
+Prefer `ScriptExecutor.executeInDesignScriptStructured()` for new code that can consume `{ ok, result, error }`.
 
-```bash
-npm test
-```
+### Adding a tool
 
-## 📝 Code Style Guidelines
+1. Define schema in the appropriate `src/types/toolDefinitions*.js`
+2. Implement handler method
+3. Wire `case` in `src/core/InDesignMCPServer.js`
+4. Add unit coverage for any new pure helpers
+5. Document in README handler list if user-facing
 
-### JavaScript/Node.js
-- Use **ES6+** features
-- Follow **ESLint** configuration
-- Use **async/await** for asynchronous operations
-- Add **JSDoc** comments for public functions
+### Pull requests
 
-### ExtendScript (InDesign)
-- Use **var** for variable declarations
-- Follow **InDesign ExtendScript** conventions
-- Add **error handling** with try-catch blocks
-- Use **descriptive variable names**
+- Keep diffs focused
+- Run `npm run check && npm test` before opening a PR
+- Describe platform impact (macOS / Windows) when touching `scriptExecutor.js`
 
-### File Naming
-- **Handlers**: `camelCase.js` (e.g., `documentHandlers.js`)
-- **Types**: `camelCase.js` (e.g., `toolDefinitionsDocument.js`)
-- **Tests**: `test-descriptive-name.js` (e.g., `test-document-creation.js`)
+## Code of conduct
 
-## 🧪 Testing Guidelines
-
-### Test Structure
-```javascript
-// Test file: test-feature-name.js
-async function testFeatureName() {
-    // 1. Setup
-    // 2. Execute
-    // 3. Verify
-    // 4. Cleanup
-}
-```
-
-### Test Categories
-- **Unit Tests**: Individual handler functions
-- **Integration Tests**: End-to-end workflows
-- **Error Tests**: Error handling and edge cases
-- **Performance Tests**: Scaling and performance validation
-
-### Running Tests
-```bash
-# Run all tests
-npm test
-
-# Run specific test
-node tests/test-specific-feature.js
-
-# Run with debugging
-node --inspect tests/test-specific-feature.js
-```
-
-## 🔨 Adding New Tools
-
-### 1. Create Handler Method
-
-```javascript
-// src/handlers/exampleHandlers.js
-export class ExampleHandlers {
-    static async newTool(args) {
-        // Implementation
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "New Tool");
-    }
-}
-```
-
-### 2. Add Tool Definition
-
-```javascript
-// src/types/toolDefinitionsExample.js
-{
-    name: 'new_tool',
-    description: 'Description of the new tool',
-    inputSchema: {
-        type: 'object',
-        properties: {
-            // Parameter definitions
-        },
-        required: ['requiredParam']
-    }
-}
-```
-
-### 3. Register in Server
-
-```javascript
-// src/core/InDesignMCPServer.js
-case 'new_tool': return await ExampleHandlers.newTool(args);
-```
-
-### 4. Add Tests
-
-```javascript
-// tests/test-new-tool.js
-// Comprehensive test coverage
-```
-
-## 📚 Documentation
-
-### Code Documentation
-- **JSDoc** comments for all public methods
-- **Inline comments** for complex logic
-- **README** updates for new features
-
-### User Documentation
-- **MCP_INSTRUCTIONS.md** for setup and usage
-- **LLM_PROMPT.md** for AI assistant integration
-- **Examples** in the examples directory
-
-## 🐛 Bug Reports
-
-### Before Submitting
-1. **Search** existing issues
-2. **Test** with latest version
-3. **Reproduce** the issue consistently
-
-### Bug Report Template
-```markdown
-## Bug Description
-Brief description of the issue
-
-## Steps to Reproduce
-1. Step 1
-2. Step 2
-3. Step 3
-
-## Expected Behavior
-What should happen
-
-## Actual Behavior
-What actually happens
-
-## Environment
-- InDesign Version: [version]
-- Node.js Version: [version]
-- macOS Version: [version]
-
-## Additional Information
-Screenshots, logs, etc.
-```
-
-## 💡 Feature Requests
-
-### Before Submitting
-1. **Check** existing features
-2. **Search** existing requests
-3. **Consider** implementation complexity
-
-### Feature Request Template
-```markdown
-## Feature Description
-Brief description of the feature
-
-## Use Case
-Why this feature is needed
-
-## Proposed Implementation
-How it could be implemented
-
-## Alternatives Considered
-Other approaches considered
-
-## Additional Information
-Mockups, examples, etc.
-```
-
-## 🔄 Pull Request Process
-
-### Before Submitting
-1. **Test** your changes thoroughly
-2. **Update** documentation
-3. **Add** tests for new features
-4. **Follow** code style guidelines
-
-### PR Template
-```markdown
-## Description
-Brief description of changes
-
-## Type of Change
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Documentation update
-- [ ] Test addition
-
-## Testing
-- [ ] Unit tests pass
-- [ ] Integration tests pass
-- [ ] Manual testing completed
-
-## Documentation
-- [ ] Code comments added
-- [ ] README updated
-- [ ] Examples updated
-
-## Checklist
-- [ ] Code follows style guidelines
-- [ ] Self-review completed
-- [ ] No console.log statements left
-- [ ] Error handling implemented
-```
-
-## 🏷️ Versioning
-
-We follow [Semantic Versioning](https://semver.org/):
-- **MAJOR**: Breaking changes
-- **MINOR**: New features (backward compatible)
-- **PATCH**: Bug fixes (backward compatible)
-
-## 📄 License
-
-By contributing, you agree that your contributions will be licensed under the MIT License.
-
-## 🤝 Community
-
-### Getting Help
-- **Issues**: Use GitHub issues for bugs and feature requests
-- **Discussions**: Use GitHub discussions for questions and ideas
-- **Documentation**: Check the README and documentation files
-
-### Code of Conduct
-- **Be respectful** and inclusive
-- **Help others** learn and grow
-- **Focus on** constructive feedback
-- **Follow** the project's coding standards
-
-## 🎯 Contribution Areas
-
-### High Priority
-- **Bug fixes** and error handling improvements
-- **Documentation** updates and clarifications
-- **Test coverage** improvements
-- **Performance** optimizations
-
-### Medium Priority
-- **New tools** for InDesign automation
-- **Enhanced** error messages and debugging
-- **Additional** export formats
-- **Integration** with other Adobe products
-
-### Low Priority
-- **UI improvements** for development tools
-- **Advanced** features and workflows
-- **Third-party** integrations
-- **Performance** monitoring tools
-
-## 📞 Contact
-
-For questions about contributing:
-- **GitHub Issues**: For specific problems
-- **GitHub Discussions**: For general questions
-- **Email**: [your-email@example.com]
-
-Thank you for contributing to the InDesign MCP Server! 🚀 
+Be respectful. Report security issues privately to the maintainer when possible.

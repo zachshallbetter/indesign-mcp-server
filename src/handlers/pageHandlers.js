@@ -2,7 +2,7 @@
  * Page management handlers
  */
 import { ScriptExecutor } from '../core/scriptExecutor.js';
-import { formatResponse, escapeJsxString } from '../utils/stringUtils.js';
+import { formatResponse, formatErrorResponse, escapeJsxString, str, num, index, bool, validateFilePath, jsxPath } from '../utils/stringUtils.js';
 
 export class PageHandlers {
     /**
@@ -322,32 +322,46 @@ export class PageHandlers {
     static async placeFileOnPage(args) {
         const { pageIndex, filePath, x = 10, y = 10, layerName, showingOptions = false, autoflowing = false } = args;
 
-        const escapedFilePath = escapeJsxString(filePath);
-        const escapedLayerName = layerName ? escapeJsxString(layerName) : '';
+        const pIdx = index(pageIndex, { name: 'pageIndex' });
+        const resolved = validateFilePath(filePath);
+        const fileLit = jsxPath(resolved);
+        const xN = num(x, { name: 'x' });
+        const yN = num(y, { name: 'y' });
+        const layerLit = layerName ? str(layerName) : null;
 
-        const script = [
+        const scriptLines = [
             'if (app.documents.length === 0) {',
             '  "No document open";',
             '} else {',
             '  var doc = app.activeDocument;',
-            `  if (${pageIndex} >= doc.pages.length) {`,
+            `  if (${pIdx} >= doc.pages.length) {`,
             '    "Page index out of range";',
             '  } else {',
-            `    var page = doc.pages[${pageIndex}];`,
-            `    var file = File("${escapedFilePath}");`,
+            `    var page = doc.pages[${pIdx}];`,
+            `    var file = File(${fileLit});`,
             '    try {',
-            ...(escapedLayerName ? [`      var layer = doc.layers.itemByName("${escapedLayerName}");`] : []),
-            `      var placedItem = page.place(file, [${x}, ${y}], ${showingOptions}, ${autoflowing}${escapedLayerName ? ', layer' : ''});`,
+        ];
+        if (layerLit) {
+            scriptLines.push(`      var layer = doc.layers.itemByName(${layerLit});`);
+            scriptLines.push(`      var placedItem = page.place(file, [${xN}, ${yN}], ${bool(showingOptions)}, ${bool(autoflowing)}, layer);`);
+        } else {
+            scriptLines.push(`      var placedItem = page.place(file, [${xN}, ${yN}], ${bool(showingOptions)}, ${bool(autoflowing)});`);
+        }
+        scriptLines.push(
             '      "File placed successfully on page";',
             '    } catch (error) {',
             '      "Error placing file: " + error.message;',
             '    }',
             '  }',
             '}'
-        ].join('\n');
+        );
+        const script = scriptLines.join('\n');
 
         const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Place File on Page");
+        const ok = String(result).includes('File placed successfully');
+        return ok
+            ? formatResponse(result, "Place File on Page")
+            : formatErrorResponse(result, "Place File on Page");
     }
 
     /**
