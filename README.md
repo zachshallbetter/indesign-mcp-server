@@ -211,6 +211,7 @@ await callTool('create_paragraph_style', {
 
 ### Utility (`utilityHandlers.js`)
 
+- `indesign_status` — host/app health (`probe: true` for live round-trip)
 - `execute_indesign_code` — custom ExtendScript
 - `view_document`, `get_session_info`, `clear_session`
 
@@ -283,13 +284,21 @@ Existing handlers also use `escapeJsxString` from `stringUtils.js`. Prefer `jsxS
 ## Testing
 
 ```bash
-npm test
-# Handler-focused checks live under tests/
+npm run check          # syntax check core modules
+npm test               # unit tests (no InDesign required)
+npm run test:integration   # full suite — requires InDesign running
+npm run test:unified       # single-document unified runner
 ```
+
+CI runs `check` + unit tests on every push/PR.
 
 ## Related projects
 
 - [indesign-uxp-server](https://github.com/theloniuser/indesign-uxp-server) — UXP-native approach with an HTTP/WebSocket bridge (see [issue #1](https://github.com/zachshallbetter/indesign-mcp-server/issues/1)). Complementary architecture; useful if you prefer UXP over AppleScript/COM.
+
+## Examples
+
+See `examples/basic-flyer.md` and `examples/mcp-config.json` for a first-run workflow and client config.
 
 ## Contributing
 

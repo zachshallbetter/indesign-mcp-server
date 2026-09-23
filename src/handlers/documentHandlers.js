@@ -3,7 +3,7 @@
  * Merged from documentHandlers.js and documentAdvancedHandlers.js
  */
 import { ScriptExecutor } from '../core/scriptExecutor.js';
-import { formatResponse, formatErrorResponse, escapeJsxString } from '../utils/stringUtils.js';
+import { formatResponse, formatErrorResponse, escapeJsxString, str, num, bool, enumOf, ALLOWED, validateFilePath, jsxPath } from '../utils/stringUtils.js';
 import { sessionManager } from '../core/sessionManager.js';
 
 export class DocumentHandlers {
@@ -131,24 +131,31 @@ export class DocumentHandlers {
             marginRight = 20
         } = args;
 
+        const w = num(width, { name: 'width', min: 1, max: 1e5 });
+        const h = num(height, { name: 'height', min: 1, max: 1e5 });
+        const orient = enumOf(
+            (pageOrientation === 'PORTRAIT' || pageOrientation === 'LANDSCAPE')
+                ? pageOrientation
+                : 'PORTRAIT',
+            ALLOWED.pageOrientation,
+            { name: 'pageOrientation' }
+        );
+
         const script = [
             'try {',
-            '  // Create the document with basic parameters',
             '  var doc = app.documents.add();',
-            '',
-            '  // Set document preferences after creation',
-            `  doc.documentPreferences.pageWidth = ${width};`,
-            `  doc.documentPreferences.pageHeight = ${height};`,
-            `  doc.documentPreferences.facingPages = ${facingPages};`,
-            `  doc.documentPreferences.pageOrientation = PageOrientation.${pageOrientation === 'PORTRAIT' ? 'PORTRAIT' : 'LANDSCAPE'};`,
-            `  doc.documentPreferences.documentBleedTopOffset = ${bleedTop};`,
-            `  doc.documentPreferences.documentBleedBottomOffset = ${bleedBottom};`,
-            `  doc.documentPreferences.documentBleedInsideOrLeftOffset = ${bleedInside};`,
-            `  doc.documentPreferences.documentBleedOutsideOrRightOffset = ${bleedOutside};`,
-            `  doc.marginPreferences.top = ${marginTop};`,
-            `  doc.marginPreferences.bottom = ${marginBottom};`,
-            `  doc.marginPreferences.left = ${marginLeft};`,
-            `  doc.marginPreferences.right = ${marginRight};`,
+            `  doc.documentPreferences.pageWidth = ${w};`,
+            `  doc.documentPreferences.pageHeight = ${h};`,
+            `  doc.documentPreferences.facingPages = ${bool(facingPages)};`,
+            `  doc.documentPreferences.pageOrientation = PageOrientation.${orient};`,
+            `  doc.documentPreferences.documentBleedTopOffset = ${num(bleedTop, { name: 'bleedTop' })};`,
+            `  doc.documentPreferences.documentBleedBottomOffset = ${num(bleedBottom, { name: 'bleedBottom' })};`,
+            `  doc.documentPreferences.documentBleedInsideOrLeftOffset = ${num(bleedInside, { name: 'bleedInside' })};`,
+            `  doc.documentPreferences.documentBleedOutsideOrRightOffset = ${num(bleedOutside, { name: 'bleedOutside' })};`,
+            `  doc.marginPreferences.top = ${num(marginTop, { name: 'marginTop' })};`,
+            `  doc.marginPreferences.bottom = ${num(marginBottom, { name: 'marginBottom' })};`,
+            `  doc.marginPreferences.left = ${num(marginLeft, { name: 'marginLeft' })};`,
+            `  doc.marginPreferences.right = ${num(marginRight, { name: 'marginRight' })};`,
             '',
             '  // Ensure the document is active',
             '  app.activeDocument = doc;',
@@ -175,13 +182,13 @@ export class DocumentHandlers {
                 name: result.match(/Document name: (.+)/)?.[1] || 'New Document',
                 path: 'Unsaved',
                 pages: pages,
-                width: width,
-                height: height
+                width: Number(w),
+                height: Number(h)
             });
 
             sessionManager.setPageDimensions({
-                width: width,
-                height: height
+                width: Number(w),
+                height: Number(h)
             });
         }
 
@@ -195,19 +202,24 @@ export class DocumentHandlers {
      */
     static async openDocument(args) {
         const { filePath } = args;
+        const resolved = validateFilePath(filePath);
+        const jsx = jsxPath(resolved);
 
         const script = [
-            'var file = File("' + filePath + '");',
+            `var file = File(${jsx});`,
             'if (!file.exists) {',
-            `  "File not found: ${filePath}";`,
+            `  "File not found: " + ${jsx};`,
             '} else {',
             '  app.open(file);',
-            `  "Document opened: ${filePath}";`,
+            `  "Document opened: " + ${jsx};`,
             '}'
         ].join('\n');
 
         const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Open Document");
+        const ok = String(result).includes('Document opened:');
+        return ok
+            ? formatResponse(result, "Open Document")
+            : formatErrorResponse(result, "Open Document");
     }
 
     /**
@@ -215,16 +227,18 @@ export class DocumentHandlers {
      */
     static async saveDocument(args) {
         const { filePath } = args;
+        const resolved = validateFilePath(filePath);
+        const jsx = jsxPath(resolved);
 
         const script = [
             'if (app.documents.length === 0) {',
             '  "No document open";',
             '} else {',
             '  var doc = app.activeDocument;',
-            '  var file = File("' + filePath + '");',
+            `  var file = File(${jsx});`,
             '  try {',
             '    doc.save(file);',
-            `    "Document saved: ${filePath}";`,
+            `    "Document saved: " + ${jsx};`,
             '  } catch (error) {',
             '    "Error saving document: " + error.message;',
             '  }',
@@ -232,7 +246,10 @@ export class DocumentHandlers {
         ].join('\n');
 
         const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Save Document");
+        const ok = String(result).includes('Document saved:');
+        return ok
+            ? formatResponse(result, "Save Document")
+            : formatErrorResponse(result, "Save Document");
     }
 
     /**

@@ -6,6 +6,20 @@
 export const utilityToolDefinitions = [
     // =================== UTILITY TOOLS ===================
     {
+        name: 'indesign_status',
+        description: 'Health check: platform, resolved InDesign app name, optional live probe (version, open docs). Call with probe=true to round-trip ExtendScript.',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                probe: {
+                    type: 'boolean',
+                    description: 'If true, run a lightweight InDesign script to report version and open documents',
+                    default: false,
+                },
+            },
+        },
+    },
+    {
         name: 'execute_indesign_code',
         description: 'Execute custom InDesign ExtendScript code',
         inputSchema: {

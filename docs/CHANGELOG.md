@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.2.0
+
+### Added
+- Windows COM execution path and macOS InDesign auto-detect (env / running / newest app)
+- `indesign_status` health tool (optional live probe)
+- `src/utils/jsxSafe.js` helpers for safe ExtendScript interpolation
+- Structured result helpers: `executeInDesignScriptStructured`, `autoCaptureResult`, `parseStructuredResult`
+- Unit test suite (`npm test`) and GitHub Actions CI
+- `examples/basic-flyer.md` and sample MCP config
+- Temp script cleanup on server start
+
+### Changed
+- High-risk path/text tools use `validateFilePath` / `jsxPath` / `str` / `num` (document open/save, place image, text frames, export, place file)
+- README and CONTRIBUTING updated for dual platform, no emoji marketing fluff
+- Package version 1.2.0; server reports the same version over MCP
+
+### Security
+- File operations confined to home + `INDESIGN_ALLOWED_DIRS`
+- Reject path traversal and system directories on macOS and Windows
+
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),

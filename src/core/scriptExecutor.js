@@ -1,6 +1,10 @@
 /**
  * Core script execution for Adobe InDesign.
  * Cross-platform: macOS (AppleScript) and Windows (COM via PowerShell).
+ *
+ * executeInDesignScript(script) returns a plain string (legacy).
+ * executeInDesignScriptStructured(script) wraps the script, captures the
+ * trailing expression, and returns { ok, result|error, raw }.
  */
 import { execSync } from 'child_process';
 import fs from 'fs';
@@ -9,7 +13,6 @@ import path from 'path';
 
 const IS_WINDOWS = process.platform === 'win32';
 
-// Windows COM ProgIDs — newest first, then generic
 const INDESIGN_PROGIDS = [
     'InDesign.Application.2026',
     'InDesign.Application.2025',
@@ -21,6 +24,157 @@ const INDESIGN_PROGIDS = [
 // ScriptLanguage.javascript = 1246973031
 const JS_LANG_ID = 1246973031;
 
+const TEMP_PREFIX = 'indesign_mcp_';
+
+/**
+ * Last code character of a line — strings and comments skipped.
+ * Returns '' for lines without code.
+ */
+function lastCodeChar(line) {
+    let last = '';
+    for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '/' && line[i + 1] === '/') break;
+        if (ch === '"' || ch === "'") {
+            const quote = ch;
+            i++;
+            while (i < line.length) {
+                if (line[i] === '\\') {
+                    i += 2;
+                    continue;
+                }
+                if (line[i] === quote) break;
+                i++;
+            }
+            last = quote;
+            continue;
+        }
+        if (!/\s/.test(ch)) last = ch;
+    }
+    return last;
+}
+
+const NON_EXPRESSION =
+    /^(var|let|const|if|for|while|do|switch|function|try|return|throw|break|continue|with)\b/;
+
+/**
+ * Assign a script's trailing expression to __result__.
+ * Scripts that already set __result__ are left alone.
+ */
+export function autoCaptureResult(script) {
+    if (/\b__result__\b/.test(script)) return script;
+
+    const lines = script.split('\n');
+
+    let end = -1;
+    for (let i = lines.length - 1; i >= 0; i--) {
+        const t = lines[i].trim();
+        if (t && !t.startsWith('//') && !t.startsWith('}')) {
+            end = i;
+            break;
+        }
+    }
+    if (end < 0) return script;
+
+    let start = end;
+    for (;;) {
+        let prev = -1;
+        for (let i = start - 1; i >= 0; i--) {
+            if (lines[i].trim()) {
+                prev = i;
+                break;
+            }
+        }
+        if (prev < 0) break;
+        const ch = lastCodeChar(lines[prev]);
+        if (ch === '' || ch === ';' || ch === '{' || ch === '}') break;
+        start = prev;
+    }
+
+    const head = lines[start].trim();
+    if (NON_EXPRESSION.test(head) || /^[)\]}]/.test(head)) return script;
+
+    lines[start] = lines[start].replace(/^(\s*)/, '$1var __result__ = ');
+    return lines.join('\n');
+}
+
+/**
+ * Wrap a handler script so ExtendScript always yields a JSON string:
+ * {"ok":true,"result":...} or {"ok":false,"error":"..."}.
+ */
+export function wrapScriptForStructuredResult(script) {
+    const captured = autoCaptureResult(script);
+    return [
+        'var __result__;',
+        'try {',
+        captured,
+        '  if (typeof __result__ === "undefined") { __result__ = ""; }',
+        '  function __mcpEscape(s) {',
+        '    s = String(s);',
+        '    var out = "";',
+        '    for (var i = 0; i < s.length; i++) {',
+        '      var c = s.charAt(i);',
+        '      var code = s.charCodeAt(i);',
+        '      if (c === "\\\\") out += "\\\\\\\\";',
+        '      else if (c === "\\"") out += "\\\\\\"";',
+        '      else if (c === "\\n") out += "\\\\n";',
+        '      else if (c === "\\r") out += "\\\\r";',
+        '      else if (c === "\\t") out += "\\\\t";',
+        '      else if (code < 32) out += "\\\\u" + ("0000" + code.toString(16)).slice(-4);',
+        '      else out += c;',
+        '    }',
+        '    return out;',
+        '  }',
+        '  var __payload = "{\\"ok\\":true,\\"result\\":\\"" + __mcpEscape(__result__) + "\\"}";',
+        '  __payload;',
+        '} catch (__mcpErr) {',
+        '  var __msg = (__mcpErr && __mcpErr.message) ? __mcpErr.message : String(__mcpErr);',
+        '  function __mcpEscapeErr(s) {',
+        '    s = String(s);',
+        '    var out = "";',
+        '    for (var i = 0; i < s.length; i++) {',
+        '      var c = s.charAt(i);',
+        '      if (c === "\\\\") out += "\\\\\\\\";',
+        '      else if (c === "\\"") out += "\\\\\\"";',
+        '      else if (c === "\\n") out += "\\\\n";',
+        '      else if (c === "\\r") out += "\\\\r";',
+        '      else out += c;',
+        '    }',
+        '    return out;',
+        '  }',
+        '  "{\\"ok\\":false,\\"error\\":\\"" + __mcpEscapeErr(__msg) + "\\"}";',
+        '}',
+    ].join('\n');
+}
+
+export function parseStructuredResult(raw) {
+    const text = String(raw == null ? '' : raw).trim();
+    if (!text) {
+        return { ok: false, error: 'Empty response from InDesign', raw: text };
+    }
+    try {
+        const parsed = JSON.parse(text);
+        if (parsed && typeof parsed === 'object' && 'ok' in parsed) {
+            return {
+                ok: Boolean(parsed.ok),
+                result: parsed.result,
+                error: parsed.error,
+                raw: text,
+            };
+        }
+        return { ok: true, result: parsed, raw: text };
+    } catch {
+        const isError =
+            /^ERROR:/i.test(text) ||
+            /^Error /i.test(text) ||
+            (/failed/i.test(text) && /error/i.test(text));
+        if (isError) {
+            return { ok: false, error: text, raw: text };
+        }
+        return { ok: true, result: text, raw: text };
+    }
+}
+
 export class ScriptExecutor {
     static _appName = null;
 
@@ -31,7 +185,6 @@ export class ScriptExecutor {
      *   2. An InDesign process that is already running
      *   3. Newest "Adobe InDesign <year>.app" on disk
      *   4. Fallback default
-     * Result is cached for the process lifetime.
      */
     static resolveAppName() {
         if (this._appName) return this._appName;
@@ -46,7 +199,6 @@ export class ScriptExecutor {
             return this._appName;
         }
 
-        // Prefer an already-running instance
         try {
             const running = execSync(
                 `osascript -e 'tell application "System Events" to get name of (processes whose name starts with "Adobe InDesign")'`,
@@ -57,10 +209,9 @@ export class ScriptExecutor {
                 return this._appName;
             }
         } catch {
-            // System Events unavailable or nothing running
+            // nothing running
         }
 
-        // Newest installed InDesign app bundle
         const candidates = [];
         const bases = ['/Applications', path.join(os.homedir(), 'Applications')];
         for (const base of bases) {
@@ -76,7 +227,6 @@ export class ScriptExecutor {
                     candidates.push(entry.replace(/\.app$/, ''));
                     continue;
                 }
-                // Adobe often nests the .app inside a versioned folder
                 try {
                     for (const inner of fs.readdirSync(path.join(base, entry))) {
                         if (/^Adobe InDesign.*\.app$/.test(inner)) {
@@ -84,7 +234,7 @@ export class ScriptExecutor {
                         }
                     }
                 } catch {
-                    // not a directory / unreadable
+                    // ignore
                 }
             }
         }
@@ -100,11 +250,118 @@ export class ScriptExecutor {
         return this._appName;
     }
 
+    /** Clear cached app name (tests / env changes). */
+    static resetAppNameCache() {
+        this._appName = null;
+    }
+
     /**
-     * Execute an AppleScript command (macOS only).
-     * @param {string} script
-     * @returns {Promise<string>}
+     * Host/environment status without requiring a full tool call surface.
+     * probeInDesign=true attempts a lightweight ExtendScript round-trip.
      */
+    static async getStatus({ probeInDesign = false } = {}) {
+        const status = {
+            ok: true,
+            platform: process.platform,
+            arch: process.arch,
+            node: process.version,
+            isWindows: IS_WINDOWS,
+            isMac: process.platform === 'darwin',
+            appName: null,
+            appNameSource: null,
+            envOverride: process.env.INDESIGN_APP_NAME || null,
+            allowedDirs: process.env.INDESIGN_ALLOWED_DIRS || null,
+            tempDir: os.tmpdir(),
+            indesign: {
+                reachable: false,
+                running: false,
+                version: null,
+                documentCount: null,
+                activeDocument: null,
+                error: null,
+            },
+        };
+
+        if (process.env.INDESIGN_APP_NAME) {
+            status.appName = process.env.INDESIGN_APP_NAME;
+            status.appNameSource = 'env';
+        } else if (IS_WINDOWS) {
+            status.appName = 'Adobe InDesign (COM)';
+            status.appNameSource = 'windows-com';
+        } else {
+            status.appName = this.resolveAppName();
+            status.appNameSource = 'resolved';
+        }
+
+        if (!IS_WINDOWS) {
+            try {
+                const running = execSync(
+                    `osascript -e 'tell application "System Events" to (name of processes whose name starts with "Adobe InDesign") is not {}'`,
+                    { encoding: 'utf8', timeout: 5000 }
+                ).trim();
+                status.indesign.running = running === 'true';
+            } catch {
+                status.indesign.running = false;
+            }
+        }
+
+        if (probeInDesign) {
+            try {
+                const script = [
+                    'var __info = {};',
+                    'try { __info.version = String(app.version); } catch (e) { __info.version = null; }',
+                    'try { __info.documentCount = app.documents.length; } catch (e) { __info.documentCount = 0; }',
+                    'try {',
+                    '  if (app.documents.length > 0) {',
+                    '    var d = app.activeDocument;',
+                    '    __info.activeDocument = d ? String(d.name) : null;',
+                    '  } else {',
+                    '    __info.activeDocument = null;',
+                    '  }',
+                    '} catch (e) { __info.activeDocument = null; }',
+                    '"VERSION=" + __info.version + ";DOCS=" + __info.documentCount + ";ACTIVE=" + __info.activeDocument;',
+                ].join('\n');
+                const raw = await this.executeInDesignScript(script);
+                status.indesign.reachable = true;
+                status.indesign.running = true;
+                const versionMatch = String(raw).match(/VERSION=([^;]*)/);
+                const docsMatch = String(raw).match(/DOCS=([^;]*)/);
+                const activeMatch = String(raw).match(/ACTIVE=(.*)$/);
+                status.indesign.version = versionMatch ? versionMatch[1] : null;
+                status.indesign.documentCount = docsMatch ? Number(docsMatch[1]) : null;
+                status.indesign.activeDocument =
+                    activeMatch && activeMatch[1] !== 'null' ? activeMatch[1] : null;
+            } catch (error) {
+                status.ok = false;
+                status.indesign.reachable = false;
+                status.indesign.error = error.message;
+            }
+        }
+
+        return status;
+    }
+
+    /** Remove leftover temp scripts from prior crashes. */
+    static cleanupTempScripts() {
+        const dir = os.tmpdir();
+        let removed = 0;
+        try {
+            for (const name of fs.readdirSync(dir)) {
+                if (!name.startsWith(TEMP_PREFIX)) continue;
+                if (!name.endsWith('.jsx') && !name.endsWith('.txt')) continue;
+                try {
+                    fs.unlinkSync(path.join(dir, name));
+                    removed++;
+                } catch {
+                    // ignore
+                }
+            }
+        } catch {
+            // ignore
+        }
+        return removed;
+    }
+
     static async executeAppleScript(script) {
         if (IS_WINDOWS) {
             throw new Error('AppleScript is unavailable on Windows');
@@ -121,14 +378,11 @@ export class ScriptExecutor {
         }
     }
 
-    /**
-     * Run ExtendScript through InDesign COM on Windows via PowerShell.
-     * New-Object attaches to a running instance or launches InDesign.
-     * @param {string} script
-     * @returns {Promise<string>}
-     */
     static async executeWindowsCOM(script) {
-        const tempScriptPath = path.join(os.tmpdir(), `indesign_${Date.now()}.jsx`);
+        const tempScriptPath = path.join(
+            os.tmpdir(),
+            `${TEMP_PREFIX}${Date.now()}_${process.pid}.jsx`
+        );
         fs.writeFileSync(tempScriptPath, script, 'utf8');
 
         const escapedPath = tempScriptPath.replace(/'/g, "''");
@@ -163,13 +417,13 @@ export class ScriptExecutor {
             try {
                 fs.unlinkSync(tempScriptPath);
             } catch {
-                // ignore cleanup errors
+                // ignore
             }
         }
     }
 
     /**
-     * Execute an ExtendScript against InDesign on the current platform.
+     * Execute an ExtendScript against InDesign (legacy string return).
      * @param {string} script
      * @returns {Promise<string>}
      */
@@ -179,7 +433,10 @@ export class ScriptExecutor {
                 return await this.executeWindowsCOM(script);
             }
 
-            const tempScriptPath = path.join(os.tmpdir(), `indesign_${Date.now()}.jsx`);
+            const tempScriptPath = path.join(
+                os.tmpdir(),
+                `${TEMP_PREFIX}${Date.now()}_${process.pid}.jsx`
+            );
             fs.writeFileSync(tempScriptPath, script, 'utf8');
 
             try {
@@ -196,11 +453,22 @@ export class ScriptExecutor {
                 try {
                     fs.unlinkSync(tempScriptPath);
                 } catch {
-                    // ignore cleanup errors
+                    // ignore
                 }
             }
         } catch (error) {
             throw new Error(`Error executing tool: ${error.message}`);
         }
+    }
+
+    /**
+     * Execute ExtendScript and return a structured { ok, result, error, raw } object.
+     * @param {string} script
+     * @returns {Promise<{ok:boolean, result?:any, error?:string, raw:string}>}
+     */
+    static async executeInDesignScriptStructured(script) {
+        const wrapped = wrapScriptForStructuredResult(script);
+        const raw = await this.executeInDesignScript(wrapped);
+        return parseStructuredResult(raw);
     }
 }

@@ -2,7 +2,7 @@
  * Graphics management handlers
  */
 import { ScriptExecutor } from '../core/scriptExecutor.js';
-import { formatResponse, formatErrorResponse, escapeJsxString } from '../utils/stringUtils.js';
+import { formatResponse, formatErrorResponse, escapeJsxString, str, num, validateFilePath, jsxPath } from '../utils/stringUtils.js';
 import { sessionManager } from '../core/sessionManager.js';
 
 export class GraphicsHandlers {
@@ -276,8 +276,11 @@ export class GraphicsHandlers {
 
         // Use session manager for positioning if coordinates not provided
         const positioning = sessionManager.getCalculatedPositioning({ x, y, width, height });
-        const escapedFilePath = escapeJsxString(filePath);
-        const escapedObjectStyle = escapeJsxString(applyObjectStyle);
+        const resolvedPath = validateFilePath(filePath);
+        const fileLit = jsxPath(resolvedPath);
+        const styleLit = str(applyObjectStyle || '');
+        const scaleN = num(scale, { name: 'scale', min: 1, max: 1000 });
+        const fit = str(fitMode || 'PROPORTIONALLY');
 
         const script = [
             'if (app.documents.length === 0) {',
@@ -289,9 +292,9 @@ export class GraphicsHandlers {
             '  var image;',
             '',
             '  try {',
-            `    imageFile = File("${escapedFilePath}");`,
+            `    imageFile = File(${fileLit});`,
             '    if (!imageFile.exists) {',
-            `      "ERROR: Image file not found: ${escapedFilePath}";`,
+            `      "ERROR: Image file not found: " + ${fileLit};`,
             '    } else {',
             '      // Place image',
             `      image = page.rectangles.add();`,
@@ -304,9 +307,9 @@ export class GraphicsHandlers {
             '        // Note: Linking preferences are set automatically by InDesign',
             '',
             '        // Apply object style if specified',
-            `        if ("${escapedObjectStyle}" !== "") {`,
+            `        if (${styleLit} !== "") {`,
             '          try {',
-            `            var objectStyle = doc.objectStyles.itemByName("${escapedObjectStyle}");`,
+            `            var objectStyle = doc.objectStyles.itemByName(${styleLit});`,
             '            if (objectStyle.isValid) {',
             '              image.appliedObjectStyle = objectStyle;',
             '            }',
@@ -320,17 +323,17 @@ export class GraphicsHandlers {
             '          var graphic = image.graphics[0];',
             '          if (graphic.constructor.name === "Image") {',
             '            // Apply scaling',
-            `            if (${scale} !== 100) {`,
-            `              graphic.horizontalScale = ${scale};`,
-            `              graphic.verticalScale = ${scale};`,
+            `            if (${scaleN} !== 100) {`,
+            `              graphic.horizontalScale = ${scaleN};`,
+            `              graphic.verticalScale = ${scaleN};`,
             '            }',
             '',
             '            // Set image fitting options',
-            `            if ("${fitMode}" === "FILL_FRAME") {`,
+            `            if (${fit} === "FILL_FRAME") {`,
             '              graphic.fit(FittingOptions.FILL_PROPORTIONALLY);',
-            `            } else if ("${fitMode}" === "FIT_CONTENT") {`,
+            `            } else if (${fit} === "FIT_CONTENT") {`,
             '              graphic.fit(FittingOptions.FIT_CONTENT);',
-            `            } else if ("${fitMode}" === "FIT_FRAME") {`,
+            `            } else if (${fit} === "FIT_FRAME") {`,
             '              graphic.fit(FittingOptions.FIT_FRAME);',
             '            } else {',
             '              graphic.fit(FittingOptions.PROPORTIONALLY);',
