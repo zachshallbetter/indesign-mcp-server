@@ -1,7 +1,7 @@
 {
   "name": "indesign-mcp-server",
   "version": "1.1.0",
-  "description": "A comprehensive Model Context Protocol (MCP) server for Adobe InDesign automation with 50+ professional tools including document management, text/graphics creation, style management, and image scaling",
+  "description": "MCP server that turns Adobe InDesign into an AI design automation platform \u2014 135+ tools for layout, styles, export, and publishing workflows",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
@@ -25,7 +25,7 @@
     "document-creation",
     "layout-automation"
   ],
-  "author": "lucdesign",
+  "author": "Zach Shallbetter",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.5.0"
@@ -35,10 +35,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lucdesign/indesign-mcp-server.git"
+    "url": "git+https://github.com/zachshallbetter/indesign-mcp-server.git"
   },
   "bugs": {
-    "url": "https://github.com/lucdesign/indesign-mcp-server/issues"
+    "url": "https://github.com/zachshallbetter/indesign-mcp-server/issues"
   },
-  "homepage": "https://github.com/lucdesign/indesign-mcp-server#readme"
+  "homepage": "https://github.com/zachshallbetter/indesign-mcp-server#readme"
 }
