@@ -1,8 +1,18 @@
 # InDesign MCP Server
 
-**Transform Adobe InDesign into an AI-powered design automation platform with 135+ professional tools for seamless programmatic control over layout and design capabilities.**
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org/)
+[![Platform](https://img.shields.io/badge/platform-macOS-lightgrey.svg)](https://www.apple.com/macos/)
+[![MCP](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-blue.svg)](https://modelcontextprotocol.io/)
+[![GitHub stars](https://img.shields.io/github/stars/zachshallbetter/indesign-mcp-server?style=social)](https://github.com/zachshallbetter/indesign-mcp-server/stargazers)
 
-A comprehensive Model Context Protocol (MCP) server that enables AI assistants and developers to automate Adobe InDesign workflows through natural language commands and programmatic control. Create professional documents, manage complex layouts, and streamline design processes with intelligent automation.
+**Turn Adobe InDesign into an AI design automation platform** — 135+ MCP tools for documents, layout, styles, images, books, and PDF export. Drive InDesign from Claude, Cursor, Warp, or any MCP client using natural language.
+
+> macOS + Adobe InDesign 2025+ required (AppleScript bridge).
+
+## Why this exists
+
+Design ops still means clicking through the same layout chores. This server exposes InDesign as structured tools an agent can call: create pages, place assets, apply brand styles, export PDF — without leaving the chat.
 
 ## 🎯 Perfect For
 
@@ -65,28 +75,33 @@ Implement comprehensive design systems with programmatic style and component man
 
 ### Installation
 
-  1. Clone the repository:
+```bash
+git clone https://github.com/zachshallbetter/indesign-mcp-server.git
+cd indesign-mcp-server
+npm install
+npm start
+```
 
-   ```bash
-   git clone <repository-url>
-   cd indesign-mcp-server
-   ```
+### Claude Desktop / MCP client config
 
-  2. Install dependencies:
+Add to your MCP config (e.g. Claude Desktop `claude_desktop_config.json`):
 
-   ```bash
-   npm install
-   ```
+```json
+{
+  "mcpServers": {
+    "indesign": {
+      "command": "node",
+      "args": ["/ABSOLUTE/PATH/TO/indesign-mcp-server/src/index.js"]
+    }
+  }
+}
+```
 
-  3. Start the server:
-
-   ```bash
-   npm start
-   ```
+Replace the path with your local clone. Restart the client, open InDesign, then try: *"Create an A4 doc and add a centered title."*
 
 ### Basic Usage
 
-The server implements the Model Context Protocol and can be used with any MCP-compatible client. Here are some example operations:
+The server implements the Model Context Protocol and works with any MCP-compatible client. Example operations:
 
 ### Help System
 
