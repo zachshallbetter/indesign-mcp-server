@@ -13,17 +13,25 @@ import os from 'node:os';
 import path from 'node:path';
 
 let passed = 0;
+const queue = [];
 function test(name, fn) {
-    try {
-        fn();
-        passed++;
-        console.log(`ok - ${name}`);
-    } catch (e) {
-        console.error(`not ok - ${name}`);
-        console.error('  ', e.message);
-        process.exitCode = 1;
-    }
+    queue.push({ name, fn });
 }
+async function run() {
+    for (const { name, fn } of queue) {
+        try {
+            await fn();
+            passed++;
+            console.log(`ok - ${name}`);
+        } catch (e) {
+            console.error(`not ok - ${name}`);
+            console.error('  ', e.message);
+            process.exitCode = 1;
+        }
+    }
+    console.log(`\n${passed} unit tests passed`);
+}
+
 
 test('str escapes quotes and control chars', () => {
     assert.equal(str('hello'), '"hello"');
@@ -133,4 +141,42 @@ test('cleanupTempScripts returns a number', () => {
     assert.equal(typeof n, 'number');
 });
 
-console.log(`\n${passed} unit tests passed`);
+
+// --- backend selection ---
+test('getConfiguredBackend defaults to extendscript', () => {
+    const prev = process.env.INDESIGN_BACKEND;
+    delete process.env.INDESIGN_BACKEND;
+    ScriptExecutor.resetBackendCache();
+    assert.equal(ScriptExecutor.getConfiguredBackend(), 'extendscript');
+    if (prev !== undefined) process.env.INDESIGN_BACKEND = prev;
+    else delete process.env.INDESIGN_BACKEND;
+    ScriptExecutor.resetBackendCache();
+});
+
+test('getConfiguredBackend accepts uxp and auto', () => {
+    const prev = process.env.INDESIGN_BACKEND;
+    process.env.INDESIGN_BACKEND = 'uxp';
+    ScriptExecutor.resetBackendCache();
+    assert.equal(ScriptExecutor.getConfiguredBackend(), 'uxp');
+    process.env.INDESIGN_BACKEND = 'auto';
+    ScriptExecutor.resetBackendCache();
+    assert.equal(ScriptExecutor.getConfiguredBackend(), 'auto');
+    process.env.INDESIGN_BACKEND = 'nope';
+    assert.equal(ScriptExecutor.getConfiguredBackend(), 'extendscript');
+    if (prev !== undefined) process.env.INDESIGN_BACKEND = prev;
+    else delete process.env.INDESIGN_BACKEND;
+    ScriptExecutor.resetBackendCache();
+});
+
+test('resolveBackend extendscript ignores uxp', async () => {
+    const prev = process.env.INDESIGN_BACKEND;
+    process.env.INDESIGN_BACKEND = 'extendscript';
+    ScriptExecutor.resetBackendCache();
+    const b = await ScriptExecutor.resolveBackend({ forceRefresh: true });
+    assert.equal(b, 'extendscript');
+    if (prev !== undefined) process.env.INDESIGN_BACKEND = prev;
+    else delete process.env.INDESIGN_BACKEND;
+    ScriptExecutor.resetBackendCache();
+});
+
+run();

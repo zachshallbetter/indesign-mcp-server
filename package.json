@@ -1,7 +1,7 @@
 {
   "name": "indesign-mcp-server",
-  "version": "1.2.1",
-  "description": "MCP server that turns Adobe InDesign into an AI design automation platform \u2014 135+ tools for layout, styles, export, and publishing workflows",
+  "version": "1.3.0",
+  "description": "MCP server that turns Adobe InDesign into an AI design automation platform — 135+ tools for layout, styles, export, and publishing workflows",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
@@ -12,7 +12,10 @@
     "test:unit": "node tests/unit/jsxSafe.test.js",
     "test:integration": "node tests/index.js",
     "test:unified": "node tests/unified-test-runner.js",
-    "check": "node --check src/index.js && node --check src/core/scriptExecutor.js && node --check src/core/InDesignMCPServer.js && node --check src/handlers/documentHandlers.js && node --check src/handlers/exportHandlers.js && node --check src/handlers/graphicsHandlers.js && node --check src/handlers/textHandlers.js && node --check src/handlers/pageHandlers.js && node --check src/handlers/utilityHandlers.js"
+    "check": "node --check src/index.js && node --check src/core/scriptExecutor.js && node --check src/core/InDesignMCPServer.js && node --check src/handlers/documentHandlers.js && node --check src/handlers/exportHandlers.js && node --check src/handlers/graphicsHandlers.js && node --check src/handlers/textHandlers.js && node --check src/handlers/pageHandlers.js && node --check src/handlers/utilityHandlers.js",
+    "uxp:bridge": "node uxp/bridge/server.js",
+    "start:uxp": "INDESIGN_BACKEND=uxp node src/index.js",
+    "start:auto": "INDESIGN_BACKEND=auto node src/index.js"
   },
   "keywords": [
     "mcp",
@@ -36,7 +39,9 @@
   "author": "Zach Shallbetter",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^0.5.0"
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "express": "^4.22.3",
+    "ws": "^8.21.3"
   },
   "engines": {
     "node": ">=18.0.0"

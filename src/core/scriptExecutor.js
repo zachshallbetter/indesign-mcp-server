@@ -1,10 +1,14 @@
 /**
  * Core script execution for Adobe InDesign.
- * Cross-platform: macOS (AppleScript) and Windows (COM via PowerShell).
+ *
+ * Backends (INDESIGN_BACKEND):
+ *   - extendscript (default): macOS AppleScript or Windows COM
+ *   - uxp: HTTP bridge + UXP plugin (see uxp/)
+ *   - auto: use UXP when plugin connected, else ExtendScript
  *
  * executeInDesignScript(script) returns a plain string (legacy).
- * executeInDesignScriptStructured(script) wraps the script, captures the
- * trailing expression, and returns { ok, result|error, raw }.
+ * executeInDesignScriptStructured(script) wraps the script and returns
+ * { ok, result|error, raw }.
  */
 import { execSync } from 'child_process';
 import fs from 'fs';
@@ -25,6 +29,26 @@ const INDESIGN_PROGIDS = [
 const JS_LANG_ID = 1246973031;
 
 const TEMP_PREFIX = 'indesign_mcp_';
+
+/** @typedef {'extendscript' | 'uxp' | 'auto'} BackendMode */
+
+function readBackendMode() {
+    const raw = String(process.env.INDESIGN_BACKEND || 'extendscript').toLowerCase().trim();
+    if (raw === 'uxp' || raw === 'extendscript' || raw === 'auto') return raw;
+    return 'extendscript';
+}
+
+function uxpBridgeUrl() {
+    return (process.env.UXP_BRIDGE_URL || 'http://127.0.0.1:3000').replace(/\/$/, '');
+}
+
+function uxpBridgeHeaders() {
+    const headers = { 'Content-Type': 'application/json' };
+    const token = process.env.BRIDGE_TOKEN;
+    if (token) headers.Authorization = `Bearer ${token}`;
+    return headers;
+}
+
 
 /**
  * Last code character of a line — strings and comments skipped.
@@ -177,6 +201,8 @@ export function parseStructuredResult(raw) {
 
 export class ScriptExecutor {
     static _appName = null;
+    /** @type {string|null} cached resolved backend for this process */
+    static _resolvedBackend = null;
 
     /**
      * Resolve the installed / running InDesign application name (macOS).
@@ -255,11 +281,111 @@ export class ScriptExecutor {
         this._appName = null;
     }
 
+
+    /** Clear cached backend resolution (tests / env changes). */
+    static resetBackendCache() {
+        this._resolvedBackend = null;
+    }
+
+    /**
+     * Configured backend mode from env (extendscript | uxp | auto).
+     * @returns {BackendMode}
+     */
+    static getConfiguredBackend() {
+        return readBackendMode();
+    }
+
+    /**
+     * Whether the UXP bridge reports the plugin as connected.
+     * @returns {Promise<boolean>}
+     */
+    static async isUXPAvailable() {
+        try {
+            const response = await fetch(`${uxpBridgeUrl()}/status`, {
+                headers: uxpBridgeHeaders(),
+                signal: AbortSignal.timeout(1500),
+            });
+            if (!response.ok) return false;
+            const data = await response.json();
+            return data.connected === true;
+        } catch {
+            return false;
+        }
+    }
+
+    /**
+     * Resolve effective backend for this process.
+     * @param {{ forceRefresh?: boolean }} [opts]
+     * @returns {Promise<'extendscript'|'uxp'>}
+     */
+    static async resolveBackend(opts = {}) {
+        if (!opts.forceRefresh && this._resolvedBackend) {
+            return this._resolvedBackend;
+        }
+        const mode = readBackendMode();
+        if (mode === 'extendscript') {
+            this._resolvedBackend = 'extendscript';
+            return this._resolvedBackend;
+        }
+        if (mode === 'uxp') {
+            this._resolvedBackend = 'uxp';
+            return this._resolvedBackend;
+        }
+        // auto
+        const available = await this.isUXPAvailable();
+        this._resolvedBackend = available ? 'uxp' : 'extendscript';
+        return this._resolvedBackend;
+    }
+
+    /**
+     * Execute JS inside InDesign via the UXP HTTP bridge.
+     * @param {string} code
+     * @returns {Promise<any>}
+     */
+    static async executeViaUXP(code) {
+        let response;
+        try {
+            response = await fetch(`${uxpBridgeUrl()}/execute`, {
+                method: 'POST',
+                headers: uxpBridgeHeaders(),
+                body: JSON.stringify({ code }),
+                signal: AbortSignal.timeout(35000),
+            });
+        } catch (err) {
+            if (err.name === 'TimeoutError' || err.name === 'TypeError' || err.code === 'ECONNREFUSED') {
+                throw new Error(
+                    'UXP bridge not reachable. Start it with: npm run uxp:bridge (and load uxp/plugin in InDesign)'
+                );
+            }
+            throw err;
+        }
+
+        let data;
+        try {
+            data = await response.json();
+        } catch {
+            throw new Error(`UXP bridge returned non-JSON (HTTP ${response.status})`);
+        }
+
+        if (!response.ok) {
+            throw new Error(data.error || `UXP bridge error: ${response.status}`);
+        }
+
+        return data.result;
+    }
+
+
     /**
      * Host/environment status without requiring a full tool call surface.
      * probeInDesign=true attempts a lightweight ExtendScript round-trip.
      */
     static async getStatus({ probeInDesign = false } = {}) {
+        const configuredBackend = readBackendMode();
+        const resolvedBackend = await this.resolveBackend({ forceRefresh: true });
+        const uxpConnected = configuredBackend === 'extendscript'
+            ? false
+            : await this.isUXPAvailable();
+
         const status = {
             ok: true,
             platform: process.platform,
@@ -267,6 +393,12 @@ export class ScriptExecutor {
             node: process.version,
             isWindows: IS_WINDOWS,
             isMac: process.platform === 'darwin',
+            backend: {
+                configured: configuredBackend,
+                resolved: resolvedBackend,
+                uxpBridgeUrl: uxpBridgeUrl(),
+                uxpConnected,
+            },
             appName: null,
             appNameSource: null,
             envOverride: process.env.INDESIGN_APP_NAME || null,
@@ -429,6 +561,18 @@ export class ScriptExecutor {
      */
     static async executeInDesignScript(script) {
         try {
+            const backend = await this.resolveBackend();
+            if (backend === 'uxp') {
+                const result = await this.executeViaUXP(script);
+                if (result == null) return '';
+                if (typeof result === 'string') return result;
+                try {
+                    return JSON.stringify(result);
+                } catch {
+                    return String(result);
+                }
+            }
+
             if (IS_WINDOWS) {
                 return await this.executeWindowsCOM(script);
             }
@@ -461,11 +605,7 @@ export class ScriptExecutor {
         }
     }
 
-    /**
-     * Execute ExtendScript and return a structured { ok, result, error, raw } object.
-     * @param {string} script
-     * @returns {Promise<{ok:boolean, result?:any, error?:string, raw:string}>}
-     */
+
     static async executeInDesignScriptStructured(script) {
         const wrapped = wrapScriptForStructuredResult(script);
         const raw = await this.executeInDesignScript(wrapped);

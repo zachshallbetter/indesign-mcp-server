@@ -1,0 +1,4 @@
+UXP bridge and plugin adapted from:
+  https://github.com/theloniuser/indesign-uxp-server
+Original author: theloniuser
+Integrated into indesign-mcp-server as an optional execution backend (INDESIGN_BACKEND=uxp).
