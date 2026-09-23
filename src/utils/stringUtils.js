@@ -1,6 +1,22 @@
 /**
  * Utility functions for string handling and escaping.
+ * Prefer jsxSafe helpers for new ExtendScript interpolation.
  */
+
+export {
+    str,
+    num,
+    index,
+    bool,
+    enumOf,
+    ALLOWED,
+    json,
+    numList,
+    measure,
+    buildAllowedDirs,
+    validateFilePath,
+    jsxPath,
+} from './jsxSafe.js';
 
 /**
  * Escapes backslashes, double quotes, and control characters for JSX/AppleScript.
