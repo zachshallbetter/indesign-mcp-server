@@ -109,3 +109,13 @@ test('an MCP client can list tools and call the ones that need no Illustrator', 
         await client.close();
     }
 });
+
+test('server.json meets the MCP Registry limits and matches package.json', () => {
+    const server = JSON.parse(readFileSync(new URL('../server.json', import.meta.url), 'utf8'));
+    const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+    assert.ok(server.description.length <= 100, `description is ${server.description.length} characters; the registry allows 100`);
+    assert.equal(server.name, pkg.mcpName);
+    assert.equal(server.version, pkg.version);
+    assert.equal(server.packages[0].identifier, pkg.name);
+    assert.equal(server.packages[0].version, pkg.version);
+});
