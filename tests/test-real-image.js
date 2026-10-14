@@ -130,7 +130,6 @@ async function testRealImage() {
         // Step 2: Create document
         log('📄 Creating document...');
         const docResult = await executeTool('create_document', {
-            name: 'Real Image Test',
             width: 210,
             height: 297,
             facingPages: false,
@@ -172,7 +171,7 @@ async function testRealImage() {
             strokeColor: 'Image Frame Blue',
             strokeWeight: 3,
             cornerRadius: 8,
-            transparency: 100
+            opacity: 100
         });
 
         if (styleResult.success) {

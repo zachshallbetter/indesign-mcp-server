@@ -29,8 +29,8 @@ Design ops still means repeating the same layout chores by hand. This server exp
 - **Page management** — add, delete, duplicate, move, guides, navigation
 - **Content** — text frames, tables, find/replace, shapes, images
 - **Styles** — paragraph, character, object styles and color swatches
-- **Layout** — master spreads, groups, page items, grids
-- **Export** — PDF, images, package document
+- **Layout** — spreads, master spreads, layers, groups, page items, guides and grids
+- **Export** — PDF, JPEG/PNG images, EPUB (reflowable or fixed layout), package for print
 - **Books** — multi-document books, sync, repaginate, cross-references
 
 ### Platform
@@ -38,8 +38,8 @@ Design ops still means repeating the same layout chores by hand. This server exp
 - **macOS** — AppleScript (`osascript`) bridge; InDesign version is auto-detected (or set via `INDESIGN_APP_NAME`)
 - **Windows** — COM automation via PowerShell (`New-Object -ComObject`); tries current and recent InDesign ProgIDs
 - **UXP (optional)** — `INDESIGN_BACKEND=uxp|auto` via local bridge + plugin under `uxp/`
-- **Session manager** — tracks page dimensions and helps keep content on-page
-- **Help tool** — discover tools and categories from the client
+- **Session manager** — tracks page dimensions and fills in positions and sizes you leave out
+- **Help tool** — parameters for every tool and category, generated from the same definitions as `tools/list`
 - **Safe JSX helpers** — `src/utils/jsxSafe.js` for validated string/number/path interpolation into ExtendScript
 
 ## Quick start
@@ -169,7 +169,7 @@ await callTool('create_paragraph_style', {
 - Frames: `create_text_frame`, `edit_text_frame`
 - Tables: `create_table`, `populate_table`
 - Other: `find_replace_text`
-- Smart positioning when coordinates are omitted
+- Text frames, shapes and images are placed automatically when you omit their position or size
 
 ### Style (`styleHandlers.js`)
 
@@ -209,10 +209,21 @@ await callTool('create_paragraph_style', {
 - `create_master_spread`, `list_master_spreads`, `delete_master_spread`
 - `create_master_text_frame`, `create_master_rectangle`, `create_master_guides`
 - `apply_master_spread`, `duplicate_master_spread`, `get_master_spread_info`
+- `detach_master_items`, `remove_master_override`
+
+### Spreads (`spreadHandlers.js`)
+
+- `list_spreads`, `get_spread_info`, `get_spread_content_summary`
+- `duplicate_spread`, `move_spread`, `delete_spread`, `set_spread_properties`
+- `create_spread_guides`, `place_file_on_spread`, `place_xml_on_spread`, `select_spread`
+
+### Layers (`layerHandlers.js`)
+
+- `create_layer`, `set_active_layer`, `list_layers`
 
 ### Export (`exportHandlers.js`)
 
-- `export_pdf`, `export_images`, `package_document`
+- `export_pdf`, `export_images`, `export_epub`, `package_document`
 
 ### Utility (`utilityHandlers.js`)
 
@@ -252,6 +263,8 @@ src/
 │   ├── pageItemHandlers.js
 │   ├── groupHandlers.js
 │   ├── masterSpreadHandlers.js
+│   ├── spreadHandlers.js
+│   ├── layerHandlers.js
 │   ├── exportHandlers.js
 │   ├── utilityHandlers.js
 │   ├── helpHandlers.js
@@ -277,7 +290,11 @@ Tool arguments that flow into JSX should go through `src/utils/jsxSafe.js`:
 - `str()`, `num()`, `bool()`, `index()`, `enumOf()`, `measure()`, `json()`, `numList()`
 - `validateFilePath()` / `jsxPath()` for filesystem paths (`INDESIGN_ALLOWED_DIRS`)
 
-Existing handlers also use `escapeJsxString` from `stringUtils.js`. Prefer `jsxSafe` for new code.
+Every handler uses these helpers; raw argument strings never reach a script.
+
+### Errors
+
+Scripts report failures as text ("No document open", "Error …", "… not found"). The server recognizes these (`looksLikeFailure` in `src/utils/stringUtils.js`) and returns them with `success: false` and MCP `isError: true`, so clients can tell a failed call from a successful one.
 
 ## Real-world applications
 
@@ -290,12 +307,15 @@ Existing handlers also use `escapeJsxString` from `stringUtils.js`. Prefer `jsxS
 
 ```bash
 npm run check          # syntax check core modules
-npm test               # unit + MCP protocol tests (no InDesign required)
+npm test               # unit, MCP protocol and script audit (no InDesign required)
+npm run test:audit     # script audit only; pass a regex to audit some tools
 npm run test:integration   # full suite — requires InDesign running
 npm run test:unified       # single-document unified runner
 ```
 
-CI runs `check` + unit tests on every push/PR.
+The script audit (`tests/audit/scripts.audit.js`) calls every tool with arguments built from its schema, captures the ExtendScript it would send, and fails if any advertised tool is not dispatched, if a script is not valid ES5 (ExtendScript has no `let`, arrow functions or `JSON`), or if a script uses a property, method, enum or global that does not exist in the InDesign 2023 scripting DOM ([types-for-adobe](https://www.npmjs.com/package/types-for-adobe)).
+
+CI runs `check` and `npm test` on every push and pull request. The audit checks scripts against Adobe's published DOM; it does not run them, so the integration suite against a live InDesign remains the final check.
 
 ## Related projects
 

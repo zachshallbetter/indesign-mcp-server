@@ -44,7 +44,6 @@ You have access to an InDesign MCP Server that allows you to create, edit, and m
 ```javascript
 // Create document
 await tools.call("create_document", {
-  name: "My Document",
   width: 210,
   height: 297,
   facingPages: false
@@ -69,7 +68,7 @@ await tools.call("save_document", { filePath: "./output.indd" });
 
 ```javascript
 // Create document
-await tools.call("create_document", { name: "Brand Doc", width: 210, height: 297 });
+await tools.call("create_document", { width: 210, height: 297 });
 
 // Create brand color
 await tools.call("create_color_swatch", {
@@ -81,9 +80,9 @@ await tools.call("create_color_swatch", {
 // Create style
 await tools.call("create_paragraph_style", {
   name: "Heading 1",
-  fontName: "Arial\\tBold",
+  fontFamily: "Arial\\tBold",
   fontSize: 32,
-  fillColor: "Brand Blue"
+  textColor: "Brand Blue"
 });
 
 // Apply style

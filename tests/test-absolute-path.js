@@ -125,7 +125,6 @@ async function testAbsolutePath() {
         // Step 2: Create document
         log('📄 Creating document...');
         const docResult = await executeTool('create_document', {
-            name: 'Absolute Path Test',
             width: 210,
             height: 297,
             facingPages: false,

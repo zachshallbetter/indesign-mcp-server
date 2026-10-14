@@ -1,10 +1,194 @@
 /**
  * Comprehensive Document management handlers
  * Merged from documentHandlers.js and documentAdvancedHandlers.js
+ *
+ * Every script is ES3 (ExtendScript): no let/const/arrows/template literals in
+ * the generated JSX and no JSON object. All caller values are interpolated
+ * through the jsxSafe helpers (str, num, index, bool, enumOf, jsxPath).
  */
 import { ScriptExecutor } from '../core/scriptExecutor.js';
-import { formatResponse, formatErrorResponse, escapeJsxString, str, num, bool, enumOf, ALLOWED, validateFilePath, jsxPath } from '../utils/stringUtils.js';
+import {
+    formatResponse, formatErrorResponse, str, num, index, bool, enumOf, ALLOWED, numList, measure,
+    validateFilePath, jsxPath,
+} from '../utils/stringUtils.js';
 import { sessionManager } from '../core/sessionManager.js';
+import {
+    DOCUMENT_PREFERENCE_SPECS, LAYOUT_PREFERENCE_SPECS, UI_COLORS, PAGE_NUMBER_STYLES,
+} from '../types/toolDefinitionsDocument.js';
+
+// ---------------------------------------------------------------------------
+// Script-building helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Wrap a script body that needs the active document. The body assigns the
+ * output string to `result`; `doc` is the active document. With `mm`, the
+ * script's measurement unit is millimetres while the body runs (restored
+ * afterwards), so every measurement read or written as a number is in mm.
+ */
+function docScript(body, { errorPrefix = 'Error', mm = false } = {}) {
+    const lines = ['var result = "";', 'if (app.documents.length === 0) {', '  result = "No document open";', '} else {'];
+    if (mm) {
+        lines.push('  var oldUnits = app.scriptPreferences.measurementUnit;');
+        lines.push('  app.scriptPreferences.measurementUnit = MeasurementUnits.MILLIMETERS;');
+    }
+    lines.push('  try {', '    var doc = app.activeDocument;');
+    for (const l of body) lines.push('    ' + l);
+    lines.push('  } catch (error) {', `    result = ${str(errorPrefix + ': ')} + error.message;`, '  }');
+    if (mm) lines.push('  app.scriptPreferences.measurementUnit = oldUnits;');
+    lines.push('}', 'result;');
+    return lines.join('\n');
+}
+
+/** JSX helper: format a value read from the DOM (arrays joined, numbers rounded). */
+const FMT_FN = [
+    'var fmt = function (v) {',
+    '  if (v instanceof Array) { var parts = []; for (var fi = 0; fi < v.length; fi++) { parts.push(fmt(v[fi])); } return "[" + parts.join(", ") + "]"; }',
+    '  if (typeof v === "number") { return String(Math.round(v * 1000) / 1000); }',
+    '  return String(v);',
+    '};',
+];
+
+/** JSX helper: escape "^" so findWhat/changeTo are matched literally by Text find/change. */
+const TEXT_FIND_RESET = 'app.findTextPreferences = NothingEnum.NOTHING; app.changeTextPreferences = NothingEnum.NOTHING;';
+const GREP_FIND_RESET = 'app.findGrepPreferences = NothingEnum.NOTHING; app.changeGrepPreferences = NothingEnum.NOTHING;';
+
+function escapeTextFind(s) {
+    return String(s).replace(/\^/g, '^^');
+}
+
+function toBool(value, name) {
+    if (value === true || value === 'true') return true;
+    if (value === false || value === 'false') return false;
+    throw new Error(`Invalid value for '${name}': expected true or false, got ${JSON.stringify(value)}`);
+}
+
+/** A measurement: a number of millimetres, or a string with explicit units. */
+function measureLit(value, name) {
+    if (typeof value === 'number' || (typeof value === 'string' && /^\s*-?(\d+\.?\d*|\.\d+)\s*$/.test(value))) {
+        num(value, { name });
+        return measure(Number(value), { unit: 'mm', name });
+    }
+    if (typeof value === 'string') {
+        const m = /^\s*(-?(?:\d+\.?\d*|\.\d+))\s*(mm|cm|in|pt|px|p)\s*$/i.exec(value);
+        if (m) return str(`${Number(m[1])}${m[2].toLowerCase()}`);
+    }
+    throw new Error(`Invalid measurement for '${name}': ${JSON.stringify(value)}. Use a number of millimetres or a string such as "12pt".`);
+}
+
+/** JSX literal for a preference value according to its spec kind. */
+function prefLiteral(key, spec, value) {
+    switch (spec.kind) {
+        case 'bool':
+            return bool(toBool(value, key));
+        case 'int': {
+            // Range limits are enforced by InDesign itself (reported per property).
+            if (!Number.isInteger(Number(value))) throw new Error(`Invalid value for '${key}': expected an integer`);
+            return num(value, { name: key });
+        }
+        case 'number':
+            return num(value, { name: key });
+        case 'measure':
+            return measureLit(value, key);
+        case 'uiColor':
+            if (Array.isArray(value)) {
+                if (value.length !== 3) throw new Error(`Invalid value for '${key}': RGB colour needs 3 numbers`);
+                return `[${numList(value, { name: key, min: 0, max: 255 })}]`;
+            }
+            return `UIColors.${enumOf(String(value).toUpperCase(), UI_COLORS, { name: key })}`;
+        case 'enum':
+            return `${spec.enumName}.${enumOf(value, spec.values, { name: key })}`;
+        default:
+            throw new Error(`Unsupported preference kind for '${key}'`);
+    }
+}
+
+/** JSX lines that collect every page's marginPreferences (document and master pages). */
+const MARGIN_TARGETS = [
+    'var marginTargets = [doc.marginPreferences];',
+    'for (var mp = 0; mp < doc.pages.length; mp++) { marginTargets.push(doc.pages[mp].marginPreferences); }',
+    'for (var ms = 0; ms < doc.masterSpreads.length; ms++) {',
+    '  for (var mq = 0; mq < doc.masterSpreads[ms].pages.length; mq++) { marginTargets.push(doc.masterSpreads[ms].pages[mq].marginPreferences); }',
+    '}',
+];
+
+/**
+ * JSX lines that set the given values on a preference group. Each property is
+ * set in its own try/catch; outcomes go to the `done` / `failed` arrays.
+ */
+function buildPrefSetLines(groupKey, group, values) {
+    if (values === undefined || values === null) return [];
+    if (typeof values !== 'object' || Array.isArray(values)) {
+        throw new Error(`Invalid value for '${groupKey}': expected an object of properties`);
+    }
+    const lines = [];
+    for (const [key, value] of Object.entries(values)) {
+        const spec = Object.prototype.hasOwnProperty.call(group.props, key) ? group.props[key] : null;
+        if (!spec) {
+            throw new Error(`Invalid property '${key}' for '${groupKey}'. Allowed: ${Object.keys(group.props).join(', ')}`);
+        }
+        if (value === undefined || value === null) continue;
+        const lit = prefLiteral(key, spec, value);
+        const label = str(`${groupKey}.${key}`);
+        const assign = groupKey === 'margins'
+            ? `for (var mi = 0; mi < marginTargets.length; mi++) { marginTargets[mi].${key} = ${lit}; }`
+            : `${group.target}.${key} = ${lit};`;
+        lines.push(`try { ${assign} done.push(${label}); } catch (e) { failed.push(${label} + ": " + e.message); }`);
+    }
+    return lines;
+}
+
+/** JSX lines that turn `done` / `failed` into the result string. */
+function prefOutcomeLines(what) {
+    return [
+        'if (failed.length > 0) {',
+        `  result = "Error: could not set " + failed.length + " ${what}(s): " + failed.join("; ") + (done.length > 0 ? ". Set successfully: " + done.join(", ") : "");`,
+        '} else {',
+        `  result = "Updated " + done.length + " ${what}(s): " + done.join(", ");`,
+        '}',
+    ];
+}
+
+/** JSX lines that append every property of a preference group to `result`. */
+function buildPrefGetLines(groupKey, group) {
+    const lines = [`result += ${str(`\n=== ${group.title} ===\n`)};`];
+    for (const key of Object.keys(group.props)) {
+        lines.push(
+            `try { result += ${str(key + ': ')} + fmt(${group.target}.${key}) + "\\n"; } ` +
+            `catch (e) { result += ${str(key + ': (unavailable: ')} + e.message + ")\\n"; }`
+        );
+    }
+    return lines;
+}
+
+/**
+ * JSX function declarations used by validate/cleanup: count text that uses a
+ * paragraph/character style anywhere (masters, hidden/locked layers, footnotes).
+ */
+const STYLE_USAGE_FNS = [
+    'var prepareFind = function () {',
+    '  app.findTextPreferences = NothingEnum.NOTHING;',
+    '  app.findChangeTextOptions.includeMasterPages = true;',
+    '  app.findChangeTextOptions.includeHiddenLayers = true;',
+    '  app.findChangeTextOptions.includeLockedLayersForFind = true;',
+    '  app.findChangeTextOptions.includeLockedStoriesForFind = true;',
+    '  app.findChangeTextOptions.includeFootnotes = true;',
+    '};',
+    'var paraStyleUsed = function (st) {',
+    '  prepareFind(); app.findTextPreferences.appliedParagraphStyle = st;',
+    '  var n = doc.findText().length; app.findTextPreferences = NothingEnum.NOTHING; return n > 0;',
+    '};',
+    'var charStyleUsed = function (st) {',
+    '  prepareFind(); app.findTextPreferences.appliedCharacterStyle = st;',
+    '  var n = doc.findText().length; app.findTextPreferences = NothingEnum.NOTHING; return n > 0;',
+    '};',
+    'var isBuiltIn = function (name) { return String(name).charAt(0) === "["; };',
+];
+
+async function run(script, operation) {
+    const result = await ScriptExecutor.executeInDesignScript(script);
+    return formatResponse(result, operation);
+}
 
 export class DocumentHandlers {
     /**
@@ -12,109 +196,78 @@ export class DocumentHandlers {
      */
     static async ensureActiveDocument() {
         const script = [
-            'try {',
-            '  if (app.documents.length === 0) {',
-            '    "No document open";',
-            '  } else {',
-            '    var doc = app.activeDocument;',
-            '    if (!doc) {',
-            '      // If no active document, try to get the first one',
-            '      if (app.documents.length > 0) {',
-            '        doc = app.documents[0];',
-            '        app.activeDocument = doc;',
-            '        "Document activated: " + doc.name;',
-            '      } else {',
-            '        "No document open";',
-            '      }',
-            '    } else {',
-            '      "Document already active: " + doc.name;',
-            '    }',
+            'var result;',
+            'if (app.documents.length === 0) {',
+            '  result = "No document open";',
+            '} else {',
+            '  try {',
+            '    result = "Document already active: " + app.activeDocument.name;',
+            '  } catch (e) {',
+            '    app.activeDocument = app.documents[0];',
+            '    result = "Document activated: " + app.activeDocument.name;',
             '  }',
-            '} catch (error) {',
-            '  "Error ensuring active document: " + error.message;',
-            '}'
+            '}',
+            'result;',
         ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Ensure Active Document");
+        return run(script, 'Ensure Active Document');
     }
 
     /**
      * Get information about the active document
      */
     static async getDocumentInfo() {
-        const script = [
-            'try {',
-            '  if (app.documents.length === 0) {',
-            '    "No document open";',
-            '  } else {',
-            '    var doc = app.activeDocument;',
-            '    if (!doc) {',
-            '      // If no active document, try to get the first one',
-            '      if (app.documents.length > 0) {',
-            '        doc = app.documents[0];',
-            '        app.activeDocument = doc;',
-            '      } else {',
-            '        "No document open";',
-            '      }',
-            '    }',
-            '    ',
-            '    var info = "=== DOCUMENT INFO ===\\n";',
-            '    info += "Name: " + doc.name + "\\n";',
-            '    try {',
-            '      info += "Path: " + doc.filePath + "\\n";',
-            '    } catch (e) {',
-            '      info += "Path: Unsaved\\n";',
-            '    }',
-            '    info += "Pages: " + doc.pages.length + "\\n";',
-            '    info += "Spreads: " + doc.spreads.length + "\\n";',
-            '    info += "Layers: " + doc.layers.length + "\\n";',
-            '    info += "Master Spreads: " + doc.masterSpreads.length + "\\n";',
-            '    info += "Document Width: " + doc.documentPreferences.pageWidth + "\\n";',
-            '    info += "Document Height: " + doc.documentPreferences.pageHeight + "\\n";',
-            '    info += "Facing Pages: " + doc.documentPreferences.facingPages + "\\n";',
-            '    info += "Page Orientation: " + doc.documentPreferences.pageOrientation + "\\n";',
-            '    info += "Bleed Top: " + doc.documentPreferences.documentBleedTopOffset + "\\n";',
-            '    info += "Bleed Bottom: " + doc.documentPreferences.documentBleedBottomOffset + "\\n";',
-            '    info += "Bleed Inside: " + doc.documentPreferences.documentBleedInsideOrLeftOffset + "\\n";',
-            '    info += "Bleed Outside: " + doc.documentPreferences.documentBleedOutsideOrRightOffset + "\\n";',
-            '    info += "Margin Top: " + doc.marginPreferences.top + "\\n";',
-            '    info += "Margin Bottom: " + doc.marginPreferences.bottom + "\\n";',
-            '    info += "Margin Left: " + doc.marginPreferences.left + "\\n";',
-            '    info += "Margin Right: " + doc.marginPreferences.right + "\\n";',
-            '    info;',
-            '  }',
-            '} catch (error) {',
-            '  "Error getting document info: " + error.message;',
-            '}'
-        ].join('\n');
+        const script = docScript([
+            ...FMT_FN,
+            'var dp = doc.documentPreferences;',
+            'var info = "=== DOCUMENT INFO ===\\n";',
+            'info += "Name: " + doc.name + "\\n";',
+            'var docPath = "Unsaved";',
+            'try { if (doc.saved) { docPath = doc.fullName.fsName; } } catch (e) {}',
+            'info += "Path: " + docPath + "\\n";',
+            'info += "Modified: " + doc.modified + "\\n";',
+            'info += "Pages: " + doc.pages.length + "\\n";',
+            'info += "Spreads: " + doc.spreads.length + "\\n";',
+            'info += "Layers: " + doc.layers.length + "\\n";',
+            'info += "Master Spreads: " + doc.masterSpreads.length + "\\n";',
+            'info += "Units: mm\\n";',
+            'info += "Document Width: " + fmt(dp.pageWidth) + "\\n";',
+            'info += "Document Height: " + fmt(dp.pageHeight) + "\\n";',
+            'info += "Facing Pages: " + dp.facingPages + "\\n";',
+            'info += "Page Orientation: " + dp.pageOrientation + "\\n";',
+            'info += "Bleed Top: " + fmt(dp.documentBleedTopOffset) + "\\n";',
+            'info += "Bleed Bottom: " + fmt(dp.documentBleedBottomOffset) + "\\n";',
+            'info += "Bleed Inside: " + fmt(dp.documentBleedInsideOrLeftOffset) + "\\n";',
+            'info += "Bleed Outside: " + fmt(dp.documentBleedOutsideOrRightOffset) + "\\n";',
+            'info += "Margin Top: " + fmt(doc.marginPreferences.top) + "\\n";',
+            'info += "Margin Bottom: " + fmt(doc.marginPreferences.bottom) + "\\n";',
+            'info += "Margin Left: " + fmt(doc.marginPreferences.left) + "\\n";',
+            'info += "Margin Right: " + fmt(doc.marginPreferences.right) + "\\n";',
+            'try { info += "Cloud Document: " + doc.isCloudDocument + "\\n"; } catch (e) {}',
+            'result = info;',
+        ], { errorPrefix: 'Error getting document info', mm: true });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
 
         // Store document info in session manager
-        if (result.includes("=== DOCUMENT INFO ===")) {
+        if (typeof result === 'string' && result.includes('=== DOCUMENT INFO ===')) {
             const docInfo = {
                 name: result.match(/Name: (.+)/)?.[1] || 'Unknown',
                 path: result.match(/Path: (.+)/)?.[1] || 'Unsaved',
                 pages: parseInt(result.match(/Pages: (\d+)/)?.[1] || '0'),
                 width: parseFloat(result.match(/Document Width: ([\d.]+)/)?.[1] || '0'),
-                height: parseFloat(result.match(/Document Height: ([\d.]+)/)?.[1] || '0')
+                height: parseFloat(result.match(/Document Height: ([\d.]+)/)?.[1] || '0'),
             };
-
             sessionManager.setActiveDocument(docInfo);
-            sessionManager.setPageDimensions({
-                width: docInfo.width,
-                height: docInfo.height
-            });
+            sessionManager.setPageDimensions({ width: docInfo.width, height: docInfo.height });
         }
 
-        return formatResponse(result, "Get Document Info");
+        return formatResponse(result, 'Get Document Info');
     }
 
     /**
      * Create a new document
      */
-    static async createDocument(args) {
+    static async createDocument(args = {}) {
         const {
             width = 210,
             height = 297,
@@ -128,160 +281,136 @@ export class DocumentHandlers {
             marginTop = 20,
             marginBottom = 20,
             marginLeft = 20,
-            marginRight = 20
+            marginRight = 20,
         } = args;
 
-        const w = num(width, { name: 'width', min: 1, max: 1e5 });
-        const h = num(height, { name: 'height', min: 1, max: 1e5 });
-        const orient = enumOf(
-            (pageOrientation === 'PORTRAIT' || pageOrientation === 'LANDSCAPE')
-                ? pageOrientation
-                : 'PORTRAIT',
-            ALLOWED.pageOrientation,
-            { name: 'pageOrientation' }
-        );
+        const orient = enumOf(pageOrientation, ALLOWED.pageOrientation, { name: 'pageOrientation' });
+        let w = Number(num(width, { name: 'width', min: 1, max: 5486 }));
+        let h = Number(num(height, { name: 'height', min: 1, max: 5486 }));
+        // Make the dimensions agree with the requested orientation.
+        if ((orient === 'LANDSCAPE' && w < h) || (orient === 'PORTRAIT' && w > h)) [w, h] = [h, w];
+        const pageCount = Number(index(pages, { name: 'pages', max: 9999 }));
+        if (pageCount < 1) throw new Error("Invalid value for 'pages': must be at least 1");
+        const mm = (v, name) => measure(Number(num(v, { name, min: 0, max: 5486 })), { unit: 'mm', name });
 
         const script = [
+            'var result;',
             'try {',
             '  var doc = app.documents.add();',
-            `  doc.documentPreferences.pageWidth = ${w};`,
-            `  doc.documentPreferences.pageHeight = ${h};`,
-            `  doc.documentPreferences.facingPages = ${bool(facingPages)};`,
-            `  doc.documentPreferences.pageOrientation = PageOrientation.${orient};`,
-            `  doc.documentPreferences.documentBleedTopOffset = ${num(bleedTop, { name: 'bleedTop' })};`,
-            `  doc.documentPreferences.documentBleedBottomOffset = ${num(bleedBottom, { name: 'bleedBottom' })};`,
-            `  doc.documentPreferences.documentBleedInsideOrLeftOffset = ${num(bleedInside, { name: 'bleedInside' })};`,
-            `  doc.documentPreferences.documentBleedOutsideOrRightOffset = ${num(bleedOutside, { name: 'bleedOutside' })};`,
-            `  doc.marginPreferences.top = ${num(marginTop, { name: 'marginTop' })};`,
-            `  doc.marginPreferences.bottom = ${num(marginBottom, { name: 'marginBottom' })};`,
-            `  doc.marginPreferences.left = ${num(marginLeft, { name: 'marginLeft' })};`,
-            `  doc.marginPreferences.right = ${num(marginRight, { name: 'marginRight' })};`,
-            '',
-            '  // Ensure the document is active',
-            '  app.activeDocument = doc;',
-            '',
-            '  // Verify the document is active and return success',
-            '  if (app.activeDocument === doc) {',
-            '    "Document created and activated successfully. Document name: " + doc.name;',
-            '  } else {',
-            '    "Document created but activation failed";',
+            '  var dp = doc.documentPreferences;',
+            `  dp.facingPages = ${bool(facingPages)};`,
+            `  dp.pagesPerDocument = ${pageCount};`,
+            `  dp.pageWidth = ${mm(w, 'width')};`,
+            `  dp.pageHeight = ${mm(h, 'height')};`,
+            `  dp.pageOrientation = PageOrientation.${orient};`,
+            '  dp.documentBleedUniformSize = false;',
+            `  dp.documentBleedTopOffset = ${mm(bleedTop, 'bleedTop')};`,
+            `  dp.documentBleedBottomOffset = ${mm(bleedBottom, 'bleedBottom')};`,
+            `  dp.documentBleedInsideOrLeftOffset = ${mm(bleedInside, 'bleedInside')};`,
+            `  dp.documentBleedOutsideOrRightOffset = ${mm(bleedOutside, 'bleedOutside')};`,
+            // Document margin preferences only affect new pages, so apply to every page too.
+            ...MARGIN_TARGETS.map((l) => '  ' + l),
+            '  for (var mi = 0; mi < marginTargets.length; mi++) {',
+            `    marginTargets[mi].top = ${mm(marginTop, 'marginTop')};`,
+            `    marginTargets[mi].bottom = ${mm(marginBottom, 'marginBottom')};`,
+            `    marginTargets[mi].left = ${mm(marginLeft, 'marginLeft')};`,
+            `    marginTargets[mi].right = ${mm(marginRight, 'marginRight')};`,
             '  }',
+            '  app.activeDocument = doc;',
+            '  result = "Document created and activated successfully. Pages: " + doc.pages.length + ". Document name: " + doc.name;',
             '} catch (error) {',
-            '  "Error creating document: " + error.message;',
-            '}'
+            '  result = "Error creating document: " + error.message;',
+            '}',
+            'result;',
         ].join('\n');
 
         const result = await ScriptExecutor.executeInDesignScript(script);
-
-        // Check if the operation was successful
-        const isSuccess = result.includes("Document created and activated successfully");
+        const isSuccess = typeof result === 'string' && result.includes('Document created and activated successfully');
 
         if (isSuccess) {
-            // Store document info in session manager
             sessionManager.setActiveDocument({
                 name: result.match(/Document name: (.+)/)?.[1] || 'New Document',
                 path: 'Unsaved',
-                pages: pages,
-                width: Number(w),
-                height: Number(h)
+                pages: pageCount,
+                width: w,
+                height: h,
             });
-
-            sessionManager.setPageDimensions({
-                width: Number(w),
-                height: Number(h)
-            });
+            sessionManager.setPageDimensions({ width: w, height: h });
         }
 
-        return isSuccess ?
-            formatResponse(result, "Create Document") :
-            formatErrorResponse(result, "Create Document");
+        return isSuccess ? formatResponse(result, 'Create Document') : formatErrorResponse(result, 'Create Document');
     }
 
     /**
      * Open an existing document
      */
-    static async openDocument(args) {
-        const { filePath } = args;
-        const resolved = validateFilePath(filePath);
+    static async openDocument(args = {}) {
+        const resolved = validateFilePath(args.filePath);
         const jsx = jsxPath(resolved);
 
         const script = [
+            'var result;',
             `var file = File(${jsx});`,
             'if (!file.exists) {',
-            `  "File not found: " + ${jsx};`,
+            `  result = "Error: file not found: " + ${jsx};`,
             '} else {',
-            '  app.open(file);',
-            `  "Document opened: " + ${jsx};`,
-            '}'
+            '  try {',
+            '    app.open(file);',
+            `    result = "Document opened: " + app.activeDocument.name + " (" + ${jsx} + ")";`,
+            '  } catch (error) {',
+            '    result = "Error opening document: " + error.message;',
+            '  }',
+            '}',
+            'result;',
         ].join('\n');
 
         const result = await ScriptExecutor.executeInDesignScript(script);
         const ok = String(result).includes('Document opened:');
-        return ok
-            ? formatResponse(result, "Open Document")
-            : formatErrorResponse(result, "Open Document");
+        return ok ? formatResponse(result, 'Open Document') : formatErrorResponse(result, 'Open Document');
     }
 
     /**
-     * Save the active document
+     * Save the active document (Save As when filePath is given, else in place)
      */
-    static async saveDocument(args) {
+    static async saveDocument(args = {}) {
         const { filePath } = args;
-        const resolved = validateFilePath(filePath);
-        const jsx = jsxPath(resolved);
-
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            `  var file = File(${jsx});`,
-            '  try {',
-            '    doc.save(file);',
-            `    "Document saved: " + ${jsx};`,
-            '  } catch (error) {',
-            '    "Error saving document: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
+        let body;
+        if (filePath) {
+            const jsx = jsxPath(validateFilePath(filePath));
+            body = [
+                `var file = File(${jsx});`,
+                'if (!file.parent.exists) {',
+                '  result = "Error: folder does not exist: " + file.parent.fsName;',
+                '} else {',
+                '  doc = doc.save(file);',
+                '  result = "Document saved: " + file.fsName;',
+                '}',
+            ];
+        } else {
+            body = [
+                'if (!doc.saved) {',
+                '  result = "Error: the document has never been saved; provide filePath";',
+                '} else {',
+                '  doc.save();',
+                '  result = "Document saved: " + doc.fullName.fsName;',
+                '}',
+            ];
+        }
+        const result = await ScriptExecutor.executeInDesignScript(docScript(body, { errorPrefix: 'Error saving document' }));
         const ok = String(result).includes('Document saved:');
-        return ok
-            ? formatResponse(result, "Save Document")
-            : formatErrorResponse(result, "Save Document");
+        return ok ? formatResponse(result, 'Save Document') : formatErrorResponse(result, 'Save Document');
     }
 
     /**
-     * Close the active document
+     * Close the active document without saving
      */
     static async closeDocument() {
-        const script = [
-            'try {',
-            '  if (app.documents.length === 0) {',
-            '    "No document to close";',
-            '  } else {',
-            '    var doc = app.activeDocument;',
-            '    if (!doc) {',
-            '      // If no active document, try to get the first one',
-            '      if (app.documents.length > 0) {',
-            '        doc = app.documents[0];',
-            '      } else {',
-            '        "No document to close";',
-            '      }',
-            '    }',
-            '    ',
-            '    var docName = doc.name;',
-            '    doc.close(SaveOptions.NO);',
-            '    "Document closed successfully: " + docName;',
-            '  }',
-            '} catch (error) {',
-            '  "Error closing document: " + error.message;',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Close Document");
+        const script = docScript([
+            'var docName = doc.name;',
+            'doc.close(SaveOptions.NO);',
+            'result = "Document closed (changes not saved): " + docName;',
+        ], { errorPrefix: 'Error closing document' });
+        return run(script, 'Close Document');
     }
 
     // =================== DOCUMENT ADVANCED TOOLS ===================
@@ -289,1158 +418,777 @@ export class DocumentHandlers {
     /**
      * Run preflight on the document
      */
-    static async preflightDocument(args) {
-        const { profile = 'Basic', includeWarnings = true } = args;
-        const escapedProfile = escapeJsxString(profile);
+    static async preflightDocument(args = {}) {
+        const { profile = '[Basic]', reportPath, maxResults = 50, timeoutSeconds = 60 } = args;
+        const max = index(maxResults, { name: 'maxResults', max: 100000 });
+        const timeout = num(timeoutSeconds, { name: 'timeoutSeconds', min: 1, max: 3600 });
+        const reportJsx = reportPath ? jsxPath(validateFilePath(reportPath)) : null;
+        const name = String(profile);
+        const bare = name.replace(/^\[(.*)\]$/, '$1');
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
+        const script = docScript([
+            'var prof = null;',
+            `var candidates = [${str(name)}, ${str('[' + bare + ']')}, ${str(bare)}];`,
+            'for (var ci = 0; ci < candidates.length && !prof; ci++) {',
+            '  var p1 = doc.preflightProfiles.itemByName(candidates[ci]);',
+            '  if (p1.isValid) { prof = p1; break; }',
+            '  var p2 = app.preflightProfiles.itemByName(candidates[ci]);',
+            '  if (p2.isValid) { prof = p2; break; }',
+            '}',
+            'if (!prof) {',
+            '  var names = [];',
+            '  for (var pi = 0; pi < app.preflightProfiles.length; pi++) { names.push(app.preflightProfiles[pi].name); }',
+            `  result = "Error: preflight profile not found: " + ${str(name)} + ". Available: " + names.join(", ");`,
             '} else {',
-            '  var doc = app.activeDocument;',
-            '  try {',
-            `    doc.preflight("${escapedProfile}", ${includeWarnings});`,
-            '    "Document preflighted successfully";',
-            '  } catch (error) {',
-            '    "Error preflighting document: " + error.message;',
+            '  var proc = app.preflightProcesses.add(doc, prof);',
+            `  var finished = proc.waitForProcess(${timeout});`,
+            '  if (!finished) {',
+            `    result = "Error: preflight did not finish within " + ${timeout} + " seconds";`,
+            '  } else {',
+            '    var agg = proc.aggregatedResults;',
+            '    var problems = (agg && agg.length > 2 && agg[2]) ? agg[2] : [];',
+            '    var out = "Preflight with profile " + prof.name + ": " + problems.length + " problem(s) found";',
+            `    for (var i = 0; i < problems.length && i < ${max}; i++) {`,
+            '      var pr = problems[i];',
+            '      out += "\\n- " + pr[1];',
+            '      if (pr[2]) { out += " (page " + pr[2] + ")"; }',
+            '      if (pr[3]) { out += ": " + pr[3]; }',
+            '    }',
+            `    if (problems.length > ${max}) { out += "\\n... " + (problems.length - ${max}) + " more"; }`,
+            ...(reportJsx ? [
+                `    var reportFile = File(${reportJsx});`,
+                '    proc.saveReport(reportFile);',
+                '    out += "\\nReport saved: " + reportFile.fsName;',
+            ] : []),
+            '    result = out;',
             '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Preflight Document");
+            '  proc.remove();',
+            '}',
+        ], { errorPrefix: 'Error preflighting document' });
+        return run(script, 'Preflight Document');
     }
 
     /**
-     * Zoom to fit page in view
+     * Show a page in the layout window (fit page, or a given zoom percentage)
      */
-    static async zoomToPage(args) {
-        const { pageIndex, zoomLevel = 100 } = args;
+    static async zoomToPage(args = {}) {
+        const { pageIndex, zoomLevel } = args;
+        const idx = index(pageIndex, { name: 'pageIndex' });
+        const zoom = (zoomLevel === undefined || zoomLevel === null) ? null : num(zoomLevel, { name: 'zoomLevel', min: 5, max: 4000 });
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
+        const script = docScript([
+            `if (${idx} >= doc.pages.length) {`,
+            `  result = "Error: page index ${idx} out of range (document has " + doc.pages.length + " pages)";`,
+            '} else if (doc.layoutWindows.length === 0) {',
+            '  result = "Cannot zoom: the document has no open layout window";',
             '} else {',
-            '  var doc = app.activeDocument;',
-            `  if (${pageIndex} >= doc.pages.length) {`,
-            '    "Page index out of range";',
-            '  } else {',
-            '    try {',
-            `      var page = doc.pages[${pageIndex}];`,
-            `      page.zoomToFit(${zoomLevel});`,
-            `      "Zoomed to page ${pageIndex} at ${zoomLevel}%";`,
-            '    } catch (error) {',
-            '      "Error zooming to page: " + error.message;',
-            '    }',
-            '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Zoom to Page");
+            '  var win = doc.layoutWindows[0];',
+            `  var page = doc.pages[${idx}];`,
+            '  win.activePage = page;',
+            zoom === null ? '  win.zoom(ZoomOptions.FIT_PAGE);' : `  win.zoomPercentage = ${zoom};`,
+            '  result = "Showing page " + page.name + " at " + Math.round(win.zoomPercentage) + "%";',
+            '}',
+        ], { errorPrefix: 'Error zooming to page' });
+        return run(script, 'Zoom to Page');
     }
 
     /**
-     * Perform data merge operation
+     * Data merge: select the data source and optionally merge records
      */
-    static async dataMerge(args) {
-        const { dataSource, targetPage = 0, createNewPages = false, removeUnusedPages = false } = args;
-        const escapedDataSource = escapeJsxString(dataSource);
+    static async dataMerge(args = {}) {
+        const {
+            dataSource, mergeRecords = true, recordSelection = 'ALL_RECORDS', recordNumber, recordRange,
+            recordsPerPage = 'SINGLE_RECORD', createNewDocument = true, removeBlankLines = false,
+        } = args;
+        const jsx = jsxPath(validateFilePath(dataSource));
+        const selection = enumOf(recordSelection, ['ALL_RECORDS', 'ONE_RECORD', 'RANGE'], { name: 'recordSelection' });
+        const perPage = enumOf(recordsPerPage, ['SINGLE_RECORD', 'MULTIPLE_RECORD'], { name: 'recordsPerPage' });
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
+        const mergeLines = [
+            'var dmp = dm.dataMergePreferences;',
+            `dmp.recordSelection = RecordSelection.${selection};`,
+        ];
+        if (selection === 'ONE_RECORD') {
+            if (recordNumber === undefined) throw new Error("Invalid arguments: 'recordNumber' is required when recordSelection is ONE_RECORD");
+            const n = Number(index(recordNumber, { name: 'recordNumber' }));
+            if (n < 1) throw new Error("Invalid value for 'recordNumber': must be at least 1");
+            mergeLines.push(`dmp.recordNumber = ${n};`);
+        }
+        if (selection === 'RANGE') {
+            if (typeof recordRange !== 'string' || !/^\s*\d+(\s*-\s*\d+)?(\s*,\s*\d+(\s*-\s*\d+)?)*\s*$/.test(recordRange)) {
+                throw new Error(`Invalid value for 'recordRange': ${JSON.stringify(recordRange)}. Use e.g. "1-5,8"`);
+            }
+            mergeLines.push(`dmp.recordRange = ${str(recordRange.replace(/\s+/g, ''))};`);
+        }
+        mergeLines.push(
+            `dmp.recordsPerPage = RecordsPerPage.${perPage};`,
+            `doc.dataMergeOptions.createNewDocument = ${bool(createNewDocument)};`,
+            `doc.dataMergeOptions.removeBlankLines = ${bool(removeBlankLines)};`,
+            'var docsBefore = app.documents.length;',
+            'dm.mergeRecords();',
+            'result = "Data merge completed using " + fields.length + " field(s): " + fields.join(", ");',
+            'if (app.documents.length > docsBefore) { result += ". Merged document: " + app.activeDocument.name; }',
+        );
+
+        const script = docScript([
+            `var dataFile = File(${jsx});`,
+            'if (!dataFile.exists) {',
+            `  result = "Error: data source file not found: " + ${jsx};`,
             '} else {',
-            '  var doc = app.activeDocument;',
-            `  var dataFile = File("${escapedDataSource}");`,
-            '',
-            '  if (!dataFile.exists) {',
-            `    "Data source file not found: ${escapedDataSource}";`,
-            '  } else {',
-            '    try {',
-            `      var targetPageObj = doc.pages[${targetPage}];`,
-            `      doc.dataMerge(dataFile, targetPageObj, ${createNewPages}, ${removeUnusedPages});`,
-            '      "Data merge completed successfully";',
-            '    } catch (error) {',
-            '      "Error performing data merge: " + error.message;',
-            '    }',
-            '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Data Merge");
+            '  var dm = doc.dataMergeProperties;',
+            '  dm.selectDataSource(dataFile);',
+            '  var fields = [];',
+            '  for (var i = 0; i < dm.dataMergeFields.length; i++) { fields.push(dm.dataMergeFields[i].fieldName); }',
+            ...(toBool(mergeRecords, 'mergeRecords')
+                ? mergeLines.map((l) => '  ' + l)
+                : ['  result = "Data source selected. Fields (" + fields.length + "): " + fields.join(", ");']),
+            '}',
+        ], { errorPrefix: 'Error performing data merge' });
+        return run(script, 'Data Merge');
     }
 
     // =================== DOCUMENT ELEMENTS & STYLES ===================
 
     /**
-     * Get all elements in the document
+     * Count elements in the document
      */
-    static async getDocumentElements(args) {
-        const { elementType = 'all' } = args;
+    static async getDocumentElements(args = {}) {
+        const type = enumOf(args.elementType ?? 'all', ['all', 'text', 'graphics', 'tables'], { name: 'elementType' });
+        const want = (t) => type === 'all' || type === t;
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var result = "Document Elements:\\n";',
-            '',
-            '  if ("' + elementType + '" === "all" || "' + elementType + '" === "text") {',
-            '    result += "Text Frames: " + doc.textFrames.length + "\\n";',
-            '    result += "Stories: " + doc.stories.length + "\\n";',
-            '  }',
-            '',
-            '  if ("' + elementType + '" === "all" || "' + elementType + '" === "graphics") {',
-            '    result += "Rectangles: " + doc.rectangles.length + "\\n";',
-            '    result += "Ovals: " + doc.ovals.length + "\\n";',
-            '    result += "Polygons: " + doc.polygons.length + "\\n";',
-            '    result += "Graphic Lines: " + doc.graphicLines.length + "\\n";',
-            '    result += "All Graphics: " + doc.allGraphics.length + "\\n";',
-            '  }',
-            '',
-            '  if ("' + elementType + '" === "all" || "' + elementType + '" === "tables") {',
-            '    var tableCount = 0;',
-            '    for (var i = 0; i < doc.textFrames.length; i++) {',
-            '      if (doc.textFrames[i].tables.length > 0) {',
-            '        tableCount += doc.textFrames[i].tables.length;',
-            '      }',
-            '    }',
-            '    result += "Tables: " + tableCount + "\\n";',
-            '  }',
-            '',
-            '  if ("' + elementType + '" === "all") {',
-            '    result += "All Page Items: " + doc.allPageItems.length + "\\n";',
-            '    result += "Groups: " + doc.groups.length + "\\n";',
-            '    result += "Layers: " + doc.layers.length + "\\n";',
-            '  }',
-            '',
-            '  result;',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Get Document Elements");
+        const body = [
+            'var items = doc.allPageItems;',
+            'var c = { tf: 0, rect: 0, oval: 0, poly: 0, line: 0, grp: 0 };',
+            'for (var i = 0; i < items.length; i++) {',
+            '  var it = items[i];',
+            '  if (it instanceof TextFrame) { c.tf++; }',
+            '  else if (it instanceof Rectangle) { c.rect++; }',
+            '  else if (it instanceof Oval) { c.oval++; }',
+            '  else if (it instanceof Polygon) { c.poly++; }',
+            '  else if (it instanceof GraphicLine) { c.line++; }',
+            '  else if (it instanceof Group) { c.grp++; }',
+            '}',
+            'var out = "Document Elements:\\n";',
+        ];
+        if (want('text')) {
+            body.push('out += "Text Frames: " + c.tf + "\\n";', 'out += "Stories: " + doc.stories.length + "\\n";');
+        }
+        if (want('graphics')) {
+            body.push(
+                'out += "Rectangles: " + c.rect + "\\n";',
+                'out += "Ovals: " + c.oval + "\\n";',
+                'out += "Polygons: " + c.poly + "\\n";',
+                'out += "Graphic Lines: " + c.line + "\\n";',
+                'out += "Placed Graphics: " + doc.allGraphics.length + "\\n";',
+            );
+        }
+        if (want('tables')) {
+            body.push(
+                'var tableCount = 0;',
+                'for (var s = 0; s < doc.stories.length; s++) { tableCount += doc.stories[s].tables.length; }',
+                'out += "Tables: " + tableCount + "\\n";',
+            );
+        }
+        if (type === 'all') {
+            body.push(
+                'out += "Groups: " + c.grp + "\\n";',
+                'out += "All Page Items: " + items.length + "\\n";',
+                'out += "Layers: " + doc.layers.length + "\\n";',
+            );
+        }
+        body.push('result = out;');
+        return run(docScript(body, { errorPrefix: 'Error getting document elements' }), 'Get Document Elements');
     }
 
     /**
-     * Get all styles in the document
+     * List styles of one type
      */
-    static async getDocumentStyles(args) {
-        const { styleType = 'PARAGRAPH' } = args;
+    static async getDocumentStyles(args = {}) {
+        const type = enumOf(args.styleType ?? 'PARAGRAPH', ['PARAGRAPH', 'CHARACTER', 'OBJECT', 'TABLE', 'CELL'], { name: 'styleType' });
+        const collection = {
+            PARAGRAPH: 'doc.allParagraphStyles',
+            CHARACTER: 'doc.allCharacterStyles',
+            OBJECT: 'doc.allObjectStyles',
+            TABLE: 'doc.allTableStyles',
+            CELL: 'doc.allCellStyles',
+        }[type];
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var result = "Document Styles (' + styleType + '):\\n";',
-            '',
-            '  switch ("' + styleType + '") {',
-            '    case "PARAGRAPH":',
-            '      result += "Count: " + doc.paragraphStyles.length + "\\n";',
-            '      for (var i = 0; i < doc.paragraphStyles.length; i++) {',
-            '        result += "- " + doc.paragraphStyles[i].name + "\\n";',
-            '      }',
-            '      break;',
-            '    case "CHARACTER":',
-            '      result += "Count: " + doc.characterStyles.length + "\\n";',
-            '      for (var i = 0; i < doc.characterStyles.length; i++) {',
-            '        result += "- " + doc.characterStyles[i].name + "\\n";',
-            '      }',
-            '      break;',
-            '    case "OBJECT":',
-            '      result += "Count: " + doc.objectStyles.length + "\\n";',
-            '      for (var i = 0; i < doc.objectStyles.length; i++) {',
-            '        result += "- " + doc.objectStyles[i].name + "\\n";',
-            '      }',
-            '      break;',
-            '    case "TABLE":',
-            '      result += "Count: " + doc.tableStyles.length + "\\n";',
-            '      for (var i = 0; i < doc.tableStyles.length; i++) {',
-            '        result += "- " + doc.tableStyles[i].name + "\\n";',
-            '      }',
-            '      break;',
-            '    case "CELL":',
-            '      result += "Count: " + doc.cellStyles.length + "\\n";',
-            '      for (var i = 0; i < doc.cellStyles.length; i++) {',
-            '        result += "- " + doc.cellStyles[i].name + "\\n";',
-            '      }',
-            '      break;',
-            '  }',
-            '',
-            '  result;',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Get Document Styles");
+        const script = docScript([
+            `var styles = ${collection};`,
+            `var out = ${str(`Document Styles (${type}):\n`)} + "Count: " + styles.length + "\\n";`,
+            'for (var i = 0; i < styles.length; i++) { out += "- " + styles[i].name + "\\n"; }',
+            'result = out;',
+        ], { errorPrefix: 'Error getting document styles' });
+        return run(script, 'Get Document Styles');
     }
 
     /**
-     * Get all colors and swatches in the document
+     * List colors, swatches, gradients and tints
      */
-    static async getDocumentColors(args) {
+    static async getDocumentColors(args = {}) {
         const { includeSwatches = true, includeGradients = true, includeTints = true } = args;
-
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var result = "Document Colors:\\n";',
-            '',
-            '  result += "Colors: " + doc.colors.length + "\\n";',
-            '  for (var i = 0; i < doc.colors.length; i++) {',
-            '    result += "- " + doc.colors[i].name + " (" + doc.colors[i].model + ")\\n";',
-            '  }',
-            '',
-            '  if (' + includeSwatches + ') {',
-            '    result += "\\nSwatches: " + doc.swatches.length + "\\n";',
-            '    for (var i = 0; i < doc.swatches.length; i++) {',
-            '      result += "- " + doc.swatches[i].name + "\\n";',
-            '    }',
-            '  }',
-            '',
-            '  if (' + includeGradients + ') {',
-            '    result += "\\nGradients: " + doc.gradients.length + "\\n";',
-            '    for (var i = 0; i < doc.gradients.length; i++) {',
-            '      result += "- " + doc.gradients[i].name + "\\n";',
-            '    }',
-            '  }',
-            '',
-            '  if (' + includeTints + ') {',
-            '    result += "\\nTints: " + doc.tints.length + "\\n";',
-            '    for (var i = 0; i < doc.tints.length; i++) {',
-            '      result += "- " + doc.tints[i].name + "\\n";',
-            '    }',
-            '  }',
-            '',
-            '  result;',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Get Document Colors");
+        const body = [
+            'var out = "Document Colors:\\n";',
+            'out += "Colors: " + doc.colors.length + "\\n";',
+            'for (var i = 0; i < doc.colors.length; i++) {',
+            '  var col = doc.colors[i];',
+            '  out += "- " + col.name + " (" + col.model + ", " + col.space + ")\\n";',
+            '}',
+        ];
+        if (toBool(includeSwatches, 'includeSwatches')) {
+            body.push(
+                'out += "\\nSwatches: " + doc.swatches.length + "\\n";',
+                'for (var s = 0; s < doc.swatches.length; s++) { out += "- " + doc.swatches[s].name + "\\n"; }',
+            );
+        }
+        if (toBool(includeGradients, 'includeGradients')) {
+            body.push(
+                'out += "\\nGradients: " + doc.gradients.length + "\\n";',
+                'for (var g = 0; g < doc.gradients.length; g++) { out += "- " + doc.gradients[g].name + "\\n"; }',
+            );
+        }
+        if (toBool(includeTints, 'includeTints')) {
+            body.push(
+                'out += "\\nTints: " + doc.tints.length + "\\n";',
+                'for (var t = 0; t < doc.tints.length; t++) { out += "- " + doc.tints[t].name + "\\n"; }',
+            );
+        }
+        body.push('result = out;');
+        return run(docScript(body, { errorPrefix: 'Error getting document colors' }), 'Get Document Colors');
     }
 
     // =================== DOCUMENT PREFERENCES ===================
 
     /**
-     * Get document preferences
+     * Read document preferences (measurements in mm)
      */
-    static async getDocumentPreferences(args) {
-        const { preferenceType = 'GENERAL' } = args;
-
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var result = "Document Preferences (' + preferenceType + '):\\n\\n";',
-            '',
-            '  switch ("' + preferenceType + '") {',
-            '    case "GENERAL":',
-            '      try {',
-            '        result += "Page Width: " + doc.documentPreferences.pageWidth + "\\n";',
-            '      } catch (e) { result += "Page Width: Not available\\n"; }',
-            '      try {',
-            '        result += "Page Height: " + doc.documentPreferences.pageHeight + "\\n";',
-            '      } catch (e) { result += "Page Height: Not available\\n"; }',
-            '      try {',
-            '        result += "Facing Pages: " + doc.documentPreferences.facingPages + "\\n";',
-            '      } catch (e) { result += "Facing Pages: Not available\\n"; }',
-            '      try {',
-            '        result += "Page Orientation: " + doc.documentPreferences.pageOrientation + "\\n";',
-            '      } catch (e) { result += "Page Orientation: Not available\\n"; }',
-            '      try {',
-            '        result += "Pages Per Document: " + doc.documentPreferences.pagesPerDocument + "\\n";',
-            '      } catch (e) { result += "Pages Per Document: Not available\\n"; }',
-            '      try {',
-            '        result += "Start Page Number: " + doc.documentPreferences.startPageNumber + "\\n";',
-            '      } catch (e) { result += "Start Page Number: Not available\\n"; }',
-            '      try {',
-            '        result += "Document Bleed Top Offset: " + doc.documentPreferences.documentBleedTopOffset + "\\n";',
-            '      } catch (e) { result += "Document Bleed Top Offset: Not available\\n"; }',
-            '      try {',
-            '        result += "Document Bleed Bottom Offset: " + doc.documentPreferences.documentBleedBottomOffset + "\\n";',
-            '      } catch (e) { result += "Document Bleed Bottom Offset: Not available\\n"; }',
-            '      try {',
-            '        result += "Document Bleed Inside Or Left Offset: " + doc.documentPreferences.documentBleedInsideOrLeftOffset + "\\n";',
-            '      } catch (e) { result += "Document Bleed Inside Or Left Offset: Not available\\n"; }',
-            '      try {',
-            '        result += "Document Bleed Outside Or Right Offset: " + doc.documentPreferences.documentBleedOutsideOrRightOffset + "\\n";',
-            '      } catch (e) { result += "Document Bleed Outside Or Right Offset: Not available\\n"; }',
-            '      try {',
-            '        result += "Document Slug Top Offset: " + doc.documentPreferences.documentSlugTopOffset + "\\n";',
-            '      } catch (e) { result += "Document Slug Top Offset: Not available\\n"; }',
-            '      try {',
-            '        result += "Document Slug Bottom Offset: " + doc.documentPreferences.documentSlugBottomOffset + "\\n";',
-            '      } catch (e) { result += "Document Slug Bottom Offset: Not available\\n"; }',
-            '      try {',
-            '        result += "Document Slug Inside Or Left Offset: " + doc.documentPreferences.documentSlugInsideOrLeftOffset + "\\n";',
-            '      } catch (e) { result += "Document Slug Inside Or Left Offset: Not available\\n"; }',
-            '      try {',
-            '        result += "Document Slug Outside Or Right Offset: " + doc.documentPreferences.documentSlugOutsideOrRightOffset + "\\n";',
-            '      } catch (e) { result += "Document Slug Outside Or Right Offset: Not available\\n"; }',
-            '      break;',
-            '    case "GRID":',
-            '      try {',
-            '        result += "Document Grid Color: " + doc.gridPreferences.documentGridColor + "\\n";',
-            '      } catch (e) { result += "Document Grid Color: Not available\\n"; }',
-            '      try {',
-            '        result += "Document Grid Increment: " + doc.gridPreferences.documentGridIncrement + "\\n";',
-            '      } catch (e) { result += "Document Grid Increment: Not available\\n"; }',
-            '      try {',
-            '        result += "Document Grid Subdivision: " + doc.gridPreferences.documentGridSubdivision + "\\n";',
-            '      } catch (e) { result += "Document Grid Subdivision: Not available\\n"; }',
-            '      try {',
-            '        result += "Grid View Threshold: " + doc.gridPreferences.gridViewThreshold + "\\n";',
-            '      } catch (e) { result += "Grid View Threshold: Not available\\n"; }',
-            '      try {',
-            '        result += "Baseline Grid Color: " + doc.gridPreferences.baselineGridColor + "\\n";',
-            '      } catch (e) { result += "Baseline Grid Color: Not available\\n"; }',
-            '      try {',
-            '        result += "Baseline Grid Increment: " + doc.gridPreferences.baselineGridIncrement + "\\n";',
-            '      } catch (e) { result += "Baseline Grid Increment: Not available\\n"; }',
-            '      try {',
-            '        result += "Baseline Grid Offset: " + doc.gridPreferences.baselineGridOffset + "\\n";',
-            '      } catch (e) { result += "Baseline Grid Offset: Not available\\n"; }',
-            '      try {',
-            '        result += "Baseline Grid View Threshold: " + doc.gridPreferences.baselineGridViewThreshold + "\\n";',
-            '      } catch (e) { result += "Baseline Grid View Threshold: Not available\\n"; }',
-            '      try {',
-            '        result += "Grid Alignment: " + doc.gridPreferences.gridAlignment + "\\n";',
-            '      } catch (e) { result += "Grid Alignment: Not available\\n"; }',
-            '      break;',
-            '    case "GUIDES":',
-            '      try {',
-            '        result += "Guides Locked: " + doc.guidePreferences.guidesLocked + "\\n";',
-            '      } catch (e) { result += "Guides Locked: Not available\\n"; }',
-            '      try {',
-            '        result += "Guides In Back: " + doc.guidePreferences.guidesInBack + "\\n";',
-            '      } catch (e) { result += "Guides In Back: Not available\\n"; }',
-            '      try {',
-            '        result += "Guides Snap To Zone: " + doc.guidePreferences.guidesSnapToZone + "\\n";',
-            '      } catch (e) { result += "Guides Snap To Zone: Not available\\n"; }',
-            '      try {',
-            '        result += "Guides View Threshold: " + doc.guidePreferences.guidesViewThreshold + "\\n";',
-            '      } catch (e) { result += "Guides View Threshold: Not available\\n"; }',
-            '      break;',
-            '    case "TEXT":',
-            '      try {',
-            '        result += "Typographers Quotes: " + doc.textPreferences.typographersQuotes + "\\n";',
-            '      } catch (e) { result += "Typographers Quotes: Not available\\n"; }',
-            '      try {',
-            '        result += "Use Typographers Quotes: " + doc.textPreferences.useTypographersQuotes + "\\n";',
-            '      } catch (e) { result += "Use Typographers Quotes: Not available\\n"; }',
-            '      try {',
-            '        result += "Highlight Substituted Fonts: " + doc.textPreferences.highlightSubstitutedFonts + "\\n";',
-            '      } catch (e) { result += "Highlight Substituted Fonts: Not available\\n"; }',
-            '      try {',
-            '        result += "Highlight Substituted Glyphs: " + doc.textPreferences.highlightSubstitutedGlyphs + "\\n";',
-            '      } catch (e) { result += "Highlight Substituted Glyphs: Not available\\n"; }',
-            '      try {',
-            '        result += "Highlight Keeps Violations: " + doc.textPreferences.highlightKeepsViolations + "\\n";',
-            '      } catch (e) { result += "Highlight Keeps Violations: Not available\\n"; }',
-            '      try {',
-            '        result += "Highlight H&J Violations: " + doc.textPreferences.highlightHjViolations + "\\n";',
-            '      } catch (e) { result += "Highlight H&J Violations: Not available\\n"; }',
-            '      try {',
-            '        result += "Highlight Custom Spacing: " + doc.textPreferences.highlightCustomSpacing + "\\n";',
-            '      } catch (e) { result += "Highlight Custom Spacing: Not available\\n"; }',
-            '      try {',
-            '        result += "Highlight Substituted Lines: " + doc.textPreferences.highlightSubstitutedLines + "\\n";',
-            '      } catch (e) { result += "Highlight Substituted Lines: Not available\\n"; }',
-            '      break;',
-            '    case "MARGINS":',
-            '      try {',
-            '        result += "Margin Top: " + doc.marginPreferences.top + "\\n";',
-            '      } catch (e) { result += "Margin Top: Not available\\n"; }',
-            '      try {',
-            '        result += "Margin Bottom: " + doc.marginPreferences.bottom + "\\n";',
-            '      } catch (e) { result += "Margin Bottom: Not available\\n"; }',
-            '      try {',
-            '        result += "Margin Left: " + doc.marginPreferences.left + "\\n";',
-            '      } catch (e) { result += "Margin Left: Not available\\n"; }',
-            '      try {',
-            '        result += "Margin Right: " + doc.marginPreferences.right + "\\n";',
-            '      } catch (e) { result += "Margin Right: Not available\\n"; }',
-            '      try {',
-            '        result += "Margin Column Count: " + doc.marginPreferences.columnCount + "\\n";',
-            '      } catch (e) { result += "Margin Column Count: Not available\\n"; }',
-            '      try {',
-            '        result += "Margin Column Gutter: " + doc.marginPreferences.columnGutter + "\\n";',
-            '      } catch (e) { result += "Margin Column Gutter: Not available\\n"; }',
-            '      break;',
-            '    default:',
-            '      result += "Unknown preference type: " + preferenceType + "\\n";',
-            '      result += "Available types: GENERAL, GRID, GUIDES, TEXT, MARGINS\\n";',
-            '  }',
-            '',
-            '  result;',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Get Document Preferences");
+    static async getDocumentPreferences(args = {}) {
+        const type = enumOf(args.preferenceType ?? 'GENERAL', ['GENERAL', 'MARGINS', 'GUIDES', 'TEXT', 'GRID', 'ALL'], { name: 'preferenceType' });
+        const groups = type === 'ALL' ? Object.keys(DOCUMENT_PREFERENCE_SPECS) : [type.toLowerCase()];
+        const body = [...FMT_FN, `result = ${str(`Document Preferences (${type}), measurements in mm:\n`)};`];
+        for (const g of groups) body.push(...buildPrefGetLines(g, DOCUMENT_PREFERENCE_SPECS[g]));
+        return run(docScript(body, { errorPrefix: 'Error getting document preferences', mm: true }), 'Get Document Preferences');
     }
 
     /**
-     * Set document preferences
+     * Set document preferences, grouped by preference object
      */
-    static async setDocumentPreferences(args) {
-        const { preferenceType, preferences } = args;
-
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var updatedCount = 0;',
-            '  try {',
-            '    switch ("' + preferenceType + '") {',
-            '      case "GENERAL":',
-            '        if (preferences.pageWidth !== undefined) {',
-            '          try { doc.documentPreferences.pageWidth = UnitValue(preferences.pageWidth, "mm"); updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.pageHeight !== undefined) {',
-            '          try { doc.documentPreferences.pageHeight = UnitValue(preferences.pageHeight, "mm"); updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.facingPages !== undefined) {',
-            '          try { doc.documentPreferences.facingPages = preferences.facingPages; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.pagesPerDocument !== undefined) {',
-            '          try { doc.documentPreferences.pagesPerDocument = preferences.pagesPerDocument; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.startPageNumber !== undefined) {',
-            '          try { doc.documentPreferences.startPageNumber = preferences.startPageNumber; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.documentBleedTopOffset !== undefined) {',
-            '          try { doc.documentPreferences.documentBleedTopOffset = UnitValue(preferences.documentBleedTopOffset, "mm"); updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.documentBleedBottomOffset !== undefined) {',
-            '          try { doc.documentPreferences.documentBleedBottomOffset = UnitValue(preferences.documentBleedBottomOffset, "mm"); updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.documentBleedInsideOrLeftOffset !== undefined) {',
-            '          try { doc.documentPreferences.documentBleedInsideOrLeftOffset = UnitValue(preferences.documentBleedInsideOrLeftOffset, "mm"); updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.documentBleedOutsideOrRightOffset !== undefined) {',
-            '          try { doc.documentPreferences.documentBleedOutsideOrRightOffset = UnitValue(preferences.documentBleedOutsideOrRightOffset, "mm"); updatedCount++; } catch (e) {}',
-            '        }',
-            '        break;',
-            '      case "GRID":',
-            '        if (preferences.documentGridColor !== undefined) {',
-            '          try { doc.gridPreferences.documentGridColor = preferences.documentGridColor; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.documentGridIncrement !== undefined) {',
-            '          try { doc.gridPreferences.documentGridIncrement = UnitValue(preferences.documentGridIncrement, "mm"); updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.documentGridSubdivision !== undefined) {',
-            '          try { doc.gridPreferences.documentGridSubdivision = preferences.documentGridSubdivision; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.gridViewThreshold !== undefined) {',
-            '          try { doc.gridPreferences.gridViewThreshold = preferences.gridViewThreshold; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.baselineGridColor !== undefined) {',
-            '          try { doc.gridPreferences.baselineGridColor = preferences.baselineGridColor; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.baselineGridIncrement !== undefined) {',
-            '          try { doc.gridPreferences.baselineGridIncrement = UnitValue(preferences.baselineGridIncrement, "mm"); updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.baselineGridOffset !== undefined) {',
-            '          try { doc.gridPreferences.baselineGridOffset = UnitValue(preferences.baselineGridOffset, "mm"); updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.baselineGridViewThreshold !== undefined) {',
-            '          try { doc.gridPreferences.baselineGridViewThreshold = preferences.baselineGridViewThreshold; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.gridAlignment !== undefined) {',
-            '          try { doc.gridPreferences.gridAlignment = preferences.gridAlignment; updatedCount++; } catch (e) {}',
-            '        }',
-            '        break;',
-            '      case "GUIDES":',
-            '        if (preferences.guidesLocked !== undefined) {',
-            '          try { doc.guidePreferences.guidesLocked = preferences.guidesLocked; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.guidesInBack !== undefined) {',
-            '          try { doc.guidePreferences.guidesInBack = preferences.guidesInBack; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.guidesSnapToZone !== undefined) {',
-            '          try { doc.guidePreferences.guidesSnapToZone = preferences.guidesSnapToZone; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.guidesViewThreshold !== undefined) {',
-            '          try { doc.guidePreferences.guidesViewThreshold = preferences.guidesViewThreshold; updatedCount++; } catch (e) {}',
-            '        }',
-            '        break;',
-            '      case "TEXT":',
-            '        if (preferences.typographersQuotes !== undefined) {',
-            '          try { doc.textPreferences.typographersQuotes = preferences.typographersQuotes; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.useTypographersQuotes !== undefined) {',
-            '          try { doc.textPreferences.useTypographersQuotes = preferences.useTypographersQuotes; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.highlightSubstitutedFonts !== undefined) {',
-            '          try { doc.textPreferences.highlightSubstitutedFonts = preferences.highlightSubstitutedFonts; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.highlightSubstitutedGlyphs !== undefined) {',
-            '          try { doc.textPreferences.highlightSubstitutedGlyphs = preferences.highlightSubstitutedGlyphs; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.highlightKeepsViolations !== undefined) {',
-            '          try { doc.textPreferences.highlightKeepsViolations = preferences.highlightKeepsViolations; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.highlightHjViolations !== undefined) {',
-            '          try { doc.textPreferences.highlightHjViolations = preferences.highlightHjViolations; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.highlightCustomSpacing !== undefined) {',
-            '          try { doc.textPreferences.highlightCustomSpacing = preferences.highlightCustomSpacing; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.highlightSubstitutedLines !== undefined) {',
-            '          try { doc.textPreferences.highlightSubstitutedLines = preferences.highlightSubstitutedLines; updatedCount++; } catch (e) {}',
-            '        }',
-            '        break;',
-            '      case "MARGINS":',
-            '        if (preferences.marginTop !== undefined) {',
-            '          try { doc.marginPreferences.top = UnitValue(preferences.marginTop, "mm"); updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.marginBottom !== undefined) {',
-            '          try { doc.marginPreferences.bottom = UnitValue(preferences.marginBottom, "mm"); updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.marginLeft !== undefined) {',
-            '          try { doc.marginPreferences.left = UnitValue(preferences.marginLeft, "mm"); updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.marginRight !== undefined) {',
-            '          try { doc.marginPreferences.right = UnitValue(preferences.marginRight, "mm"); updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.columnCount !== undefined) {',
-            '          try { doc.marginPreferences.columnCount = preferences.columnCount; updatedCount++; } catch (e) {}',
-            '        }',
-            '        if (preferences.columnGutter !== undefined) {',
-            '          try { doc.marginPreferences.columnGutter = UnitValue(preferences.columnGutter, "mm"); updatedCount++; } catch (e) {}',
-            '        }',
-            '        break;',
-            '      default:',
-            '        "Unknown preference type: " + preferenceType + ". Available types: GENERAL, GRID, GUIDES, TEXT, MARGINS";',
-            '        break;',
-            '    }',
-            '    "Document preferences updated successfully. " + updatedCount + " properties updated.";',
-            '  } catch (error) {',
-            '    "Error updating document preferences: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Set Document Preferences");
+    static async setDocumentPreferences(args = {}) {
+        const known = Object.keys(DOCUMENT_PREFERENCE_SPECS);
+        for (const k of Object.keys(args)) {
+            if (!known.includes(k)) throw new Error(`Invalid argument '${k}'. Expected one or more of: ${known.join(', ')}`);
+        }
+        const setLines = [];
+        for (const g of known) setLines.push(...buildPrefSetLines(g, DOCUMENT_PREFERENCE_SPECS[g], args[g]));
+        if (setLines.length === 0) {
+            throw new Error(`Invalid arguments: no preference values given. Pass one or more of: ${known.join(', ')}`);
+        }
+        const body = [
+            'var done = []; var failed = [];',
+            ...(args.margins ? MARGIN_TARGETS : []),
+            ...setLines,
+            ...prefOutcomeLines('document preference'),
+        ];
+        return run(docScript(body, { errorPrefix: 'Error updating document preferences', mm: true }), 'Set Document Preferences');
     }
 
     // =================== DOCUMENT STORIES & TEXT ===================
 
     /**
-     * Get all stories in the document
+     * List stories with overset status
      */
-    static async getDocumentStories(args) {
-        const { includeOverset = true, includeHidden = false } = args;
+    static async getDocumentStories(args = {}) {
+        const oversetOnly = toBool(args.oversetOnly ?? false, 'oversetOnly');
+        const max = index(args.maxStories ?? 100, { name: 'maxStories' });
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var result = "Document Stories:\\n";',
-            '  var storyCount = 0;',
-            '',
-            '  for (var i = 0; i < doc.stories.length; i++) {',
-            '    var story = doc.stories[i];',
-            '    if (' + includeHidden + ' || !story.hidden) {',
-            '      storyCount++;',
-            '      result += "Story " + storyCount + ": " + story.name + "\\n";',
-            '      result += "  Contents: " + story.contents.substring(0, 50) + "...\\n";',
-            '      result += "  Overset: " + story.overset + "\\n";',
-            '      result += "  Hidden: " + story.hidden + "\\n\\n";',
-            '    }',
-            '  }',
-            '',
-            '  result += "Total Stories: " + storyCount;',
-            '  result;',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Get Document Stories");
+        const script = docScript([
+            'var out = "Document Stories:\\n";',
+            'var listed = 0; var matched = 0; var oversetCount = 0;',
+            'for (var i = 0; i < doc.stories.length; i++) {',
+            '  var story = doc.stories[i];',
+            '  var over = story.overflows;',
+            '  if (over) { oversetCount++; }',
+            `  if (${bool(oversetOnly)} && !over) { continue; }`,
+            '  matched++;',
+            `  if (listed >= ${max}) { continue; }`,
+            '  listed++;',
+            '  var text = String(story.contents);',
+            '  var preview = text.substring(0, 60).replace(/[\\r\\n\\t]+/g, " ");',
+            '  out += "Story id " + story.id + ": " + story.length + " chars, " + story.textContainers.length + " frame(s), overset: " + over + "\\n";',
+            '  out += "  Preview: " + preview + (text.length > 60 ? "..." : "") + "\\n";',
+            '}',
+            `if (matched > listed) { out += "... " + (matched - listed) + " more not listed\\n"; }`,
+            'out += "Total Stories: " + doc.stories.length + " (overset: " + oversetCount + ")";',
+            'result = out;',
+        ], { errorPrefix: 'Error getting document stories' });
+        return run(script, 'Get Document Stories');
     }
 
     /**
-     * Find text across the entire document
+     * Find (and optionally replace) text across the document
      */
-    static async findTextInDocument(args) {
+    static async findTextInDocument(args = {}) {
         const { searchText, replaceText, caseSensitive = false, wholeWord = false, useRegex = false } = args;
-        const escapedSearchText = escapeJsxString(searchText);
-        const escapedReplaceText = replaceText ? escapeJsxString(replaceText) : '';
+        if (typeof searchText !== 'string' || searchText === '') throw new Error("Invalid arguments: 'searchText' must be a non-empty string");
+        const replacing = replaceText !== undefined && replaceText !== null;
+        const cs = toBool(caseSensitive, 'caseSensitive');
+        const ww = toBool(wholeWord, 'wholeWord');
+        const regex = toBool(useRegex, 'useRegex');
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var foundCount = 0;',
-            '',
-            '  try {',
-            '    app.findTextPreferences = app.changeTextPreferences = NothingEnum.NOTHING;',
-            '    app.findTextPreferences.findWhat = "' + escapedSearchText + '";',
-            '    app.findTextPreferences.caseSensitive = ' + caseSensitive + ';',
-            '    app.findTextPreferences.wholeWord = ' + wholeWord + ';',
-            '',
-            '    if ("' + escapedReplaceText + '") {',
-            '      app.changeTextPreferences.changeTo = "' + escapedReplaceText + '";',
-            '      var found = doc.changeText();',
-            '      foundCount = found.length;',
-            '      "Found and replaced " + foundCount + " instances of \\"" + "' + escapedSearchText + '" + "\\"";',
-            '    } else {',
-            '      var found = doc.findText();',
-            '      foundCount = found.length;',
-            '      "Found " + foundCount + " instances of \\"" + "' + escapedSearchText + '" + "\\"";',
-            '    }',
-            '  } catch (error) {',
-            '    "Error during find/replace: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Find Text in Document");
+        let body;
+        if (regex) {
+            // GREP has no case/whole-word options: express them in the pattern.
+            let pattern = searchText;
+            if (ww) pattern = `\\b(?:${pattern})\\b`;
+            if (!cs) pattern = `(?i)${pattern}`;
+            body = [
+                GREP_FIND_RESET,
+                `app.findGrepPreferences.findWhat = ${str(pattern)};`,
+                ...(replacing ? [
+                    `app.changeGrepPreferences.changeTo = ${str(String(replaceText))};`,
+                    'var found = doc.changeGrep();',
+                ] : ['var found = doc.findGrep();']),
+                GREP_FIND_RESET,
+            ];
+        } else {
+            body = [
+                TEXT_FIND_RESET,
+                `app.findChangeTextOptions.caseSensitive = ${bool(cs)};`,
+                `app.findChangeTextOptions.wholeWord = ${bool(ww)};`,
+                `app.findTextPreferences.findWhat = ${str(escapeTextFind(searchText))};`,
+                ...(replacing ? [
+                    `app.changeTextPreferences.changeTo = ${str(escapeTextFind(String(replaceText)))};`,
+                    'var found = doc.changeText();',
+                ] : ['var found = doc.findText();']),
+                TEXT_FIND_RESET,
+            ];
+        }
+        body.push(
+            `var out = ${str(replacing ? 'Replaced ' : 'Found ')} + found.length + ${str(` match(es) of "${searchText}"`)};`,
+            'for (var i = 0; i < found.length && i < 20; i++) {',
+            '  var where = "overset";',
+            '  try { var frames = found[i].parentTextFrames; if (frames.length > 0 && frames[0].parentPage) { where = "page " + frames[0].parentPage.name; } } catch (e) {}',
+            '  out += "\\n- " + String(found[i].contents).substring(0, 60) + " (" + where + ")";',
+            '}',
+            'if (found.length > 20) { out += "\\n... " + (found.length - 20) + " more"; }',
+            'result = out;',
+        );
+        return run(docScript(body, { errorPrefix: 'Error during find/replace' }), 'Find Text in Document');
     }
 
     // =================== DOCUMENT LAYERS & ORGANIZATION ===================
 
     /**
-     * Get all layers in the document
+     * List layers
      */
-    static async getDocumentLayers(args) {
-        const { includeHidden = true, includeLocked = true } = args;
+    static async getDocumentLayers(args = {}) {
+        const includeHidden = toBool(args.includeHidden ?? true, 'includeHidden');
+        const includeLocked = toBool(args.includeLocked ?? true, 'includeLocked');
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var result = "Document Layers:\\n";',
-            '  var layerCount = 0;',
-            '',
-            '  for (var i = 0; i < doc.layers.length; i++) {',
-            '    var layer = doc.layers[i];',
-            '    if ((' + includeHidden + ' || !layer.visible) && (' + includeLocked + ' || !layer.locked)) {',
-            '      layerCount++;',
-            '      result += "Layer " + layerCount + ": " + layer.name + "\\n";',
-            '      result += "  Visible: " + layer.visible + "\\n";',
-            '      result += "  Locked: " + layer.locked + "\\n";',
-            '      result += "  Page Items: " + layer.pageItems.length + "\\n\\n";',
-            '    }',
-            '  }',
-            '',
-            '  result += "Total Layers: " + layerCount;',
-            '  result;',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Get Document Layers");
+        const script = docScript([
+            'var out = "Document Layers (top to bottom):\\n";',
+            'var listed = 0;',
+            'for (var i = 0; i < doc.layers.length; i++) {',
+            '  var layer = doc.layers[i];',
+            `  if (!${bool(includeHidden)} && !layer.visible) { continue; }`,
+            `  if (!${bool(includeLocked)} && layer.locked) { continue; }`,
+            '  listed++;',
+            '  out += "Layer " + (i + 1) + ": " + layer.name + "\\n";',
+            '  out += "  Visible: " + layer.visible + ", Locked: " + layer.locked + ", Printable: " + layer.printable + "\\n";',
+            '  out += "  Page Items: " + layer.allPageItems.length + "\\n";',
+            '}',
+            'out += "Listed " + listed + " of " + doc.layers.length + " layer(s)";',
+            'result = out;',
+        ], { errorPrefix: 'Error getting document layers' });
+        return run(script, 'Get Document Layers');
     }
 
     /**
-     * Organize and clean up document layers
+     * Merge duplicate-named layers, delete empty layers, sort layers
      */
-    static async organizeDocumentLayers(args) {
-        const { deleteEmptyLayers = false, mergeSimilarLayers = false, sortLayers = false } = args;
+    static async organizeDocumentLayers(args = {}) {
+        const merge = toBool(args.mergeSimilarLayers ?? false, 'mergeSimilarLayers');
+        const del = toBool(args.deleteEmptyLayers ?? false, 'deleteEmptyLayers');
+        const sort = toBool(args.sortLayers ?? false, 'sortLayers');
+        if (!merge && !del && !sort) {
+            throw new Error('Invalid arguments: enable at least one of mergeSimilarLayers, deleteEmptyLayers, sortLayers');
+        }
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
+        const body = ['var actions = []; var problems = [];'];
+        if (merge) {
+            body.push(
+                'var normName = function (n) { return String(n).toLowerCase().replace(/\\s+copy(\\s+\\d+)?\\s*$/, "").replace(/^\\s+|\\s+$/g, ""); };',
+                'var groups = {}; var order = [];',
+                'for (var i = 0; i < doc.layers.length; i++) {',
+                '  var key = "k_" + normName(doc.layers[i].name);',
+                '  if (!groups[key]) { groups[key] = []; order.push(key); }',
+                '  groups[key].push(doc.layers[i]);',
+                '}',
+                'for (var g = 0; g < order.length; g++) {',
+                '  var grp = groups[order[g]];',
+                '  if (grp.length < 2) { continue; }',
+                '  var names = []; for (var n = 1; n < grp.length; n++) { names.push(grp[n].name); }',
+                '  try { grp[0].merge(grp.slice(1)); actions.push("Merged " + names.join(", ") + " into " + grp[0].name); }',
+                '  catch (e) { problems.push("Could not merge into " + grp[0].name + ": " + e.message); }',
+                '}',
+            );
+        }
+        if (del) {
+            body.push(
+                'for (var d = doc.layers.length - 1; d >= 0; d--) {',
+                '  var lay = doc.layers[d];',
+                '  if (doc.layers.length <= 1) { break; }',
+                '  if (lay.allPageItems.length === 0 && lay.guides.length === 0) {',
+                '    var lname = lay.name;',
+                '    try { lay.remove(); actions.push("Deleted empty layer " + lname); }',
+                '    catch (e) { problems.push("Could not delete " + lname + ": " + e.message); }',
+                '  }',
+                '}',
+            );
+        }
+        if (sort) {
+            body.push(
+                'var sorted = [];',
+                'for (var si = 0; si < doc.layers.length; si++) { sorted.push(doc.layers[si].name); }',
+                'sorted.sort(function (a, b) { var x = a.toLowerCase(); var y = b.toLowerCase(); return x < y ? -1 : (x > y ? 1 : 0); });',
+                'try {',
+                '  var first = doc.layers.itemByName(sorted[0]);',
+                '  if (doc.layers[0].name !== sorted[0]) { first.move(LocationOptions.BEFORE, doc.layers[0]); }',
+                '  for (var sj = 1; sj < sorted.length; sj++) {',
+                '    doc.layers.itemByName(sorted[sj]).move(LocationOptions.AFTER, doc.layers.itemByName(sorted[sj - 1]));',
+                '  }',
+                '  actions.push("Sorted " + sorted.length + " layer(s) alphabetically");',
+                '} catch (e) { problems.push("Could not sort layers: " + e.message); }',
+            );
+        }
+        body.push(
+            'if (problems.length > 0) {',
+            '  result = "Error: some layer operations failed: " + problems.join("; ") + (actions.length > 0 ? ". Completed: " + actions.join("; ") : "");',
             '} else {',
-            '  var doc = app.activeDocument;',
-            '  var actions = [];',
-            '',
-            '  try {',
-            '    if (' + deleteEmptyLayers + ') {',
-            '      for (var i = doc.layers.length - 1; i >= 0; i--) {',
-            '        if (doc.layers[i].pageItems.length === 0) {',
-            '          doc.layers[i].remove();',
-            '          actions.push("Deleted empty layer: " + doc.layers[i].name);',
-            '        }',
-            '      }',
-            '    }',
-            '',
-            '    if (' + sortLayers + ') {',
-            '      // Note: Layer sorting would require more complex logic',
-            '      actions.push("Layer sorting not implemented in this version");',
-            '    }',
-            '',
-            '    "Layer organization completed. Actions: " + actions.join(", ");',
-            '  } catch (error) {',
-            '    "Error organizing layers: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Organize Document Layers");
+            '  result = "Layer organization completed. " + (actions.length > 0 ? actions.join("; ") : "Nothing needed changing.");',
+            '}',
+        );
+        return run(docScript(body, { errorPrefix: 'Error organizing layers' }), 'Organize Document Layers');
     }
 
     // =================== DOCUMENT HYPERLINKS & INTERACTIVITY ===================
 
     /**
-     * Get all hyperlinks in the document
+     * List hyperlinks
      */
-    static async getDocumentHyperlinks(args) {
-        const { includeDestinations = true, includeSources = true } = args;
-
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var result = "Document Hyperlinks:\\n";',
-            '',
-            '  for (var i = 0; i < doc.hyperlinks.length; i++) {',
-            '    var link = doc.hyperlinks[i];',
-            '    result += "Hyperlink " + (i + 1) + ": " + link.name + "\\n";',
-            '    result += "  Source: " + link.source.name + "\\n";',
-            '    result += "  Destination: " + link.destination.name + "\\n\\n";',
-            '  }',
-            '',
-            '  result += "Total Hyperlinks: " + doc.hyperlinks.length;',
-            '  result;',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Get Document Hyperlinks");
+    static async getDocumentHyperlinks(args = {}) {
+        const withDest = toBool(args.includeDestinations ?? true, 'includeDestinations');
+        const withSrc = toBool(args.includeSources ?? true, 'includeSources');
+        const body = [
+            'var out = "Document Hyperlinks:\\n";',
+            'for (var i = 0; i < doc.hyperlinks.length; i++) {',
+            '  var link = doc.hyperlinks[i];',
+            '  out += "Hyperlink " + (i + 1) + ": " + link.name + "\\n";',
+        ];
+        if (withSrc) {
+            body.push(
+                '  try {',
+                '    var src = link.source;',
+                '    if (src instanceof HyperlinkTextSource) { out += "  Source text: " + String(src.sourceText.contents).substring(0, 80) + "\\n"; }',
+                '    else { out += "  Source: " + src.name + "\\n"; }',
+                '  } catch (e) { out += "  Source: (unavailable)\\n"; }',
+            );
+        }
+        if (withDest) {
+            body.push(
+                '  try {',
+                '    var dest = link.destination;',
+                '    if (!dest) { out += "  Destination: (none)\\n"; }',
+                '    else if (dest instanceof HyperlinkURLDestination) { out += "  Destination URL: " + dest.destinationURL + "\\n"; }',
+                '    else if (dest instanceof HyperlinkPageDestination) { out += "  Destination page: " + dest.destinationPage.name + "\\n"; }',
+                '    else if (dest instanceof HyperlinkTextDestination) { out += "  Destination text anchor: " + dest.name + "\\n"; }',
+                '    else { out += "  Destination: " + dest.name + "\\n"; }',
+                '  } catch (e) { out += "  Destination: (unavailable)\\n"; }',
+            );
+        }
+        body.push('}', 'out += "Total Hyperlinks: " + doc.hyperlinks.length;', 'result = out;');
+        return run(docScript(body, { errorPrefix: 'Error getting hyperlinks' }), 'Get Document Hyperlinks');
     }
 
     /**
-     * Create a hyperlink in the document
+     * Create a hyperlink on existing text
      */
-    static async createDocumentHyperlink(args) {
-        const { sourceText, destination, linkType = 'URL', pageIndex } = args;
-        const escapedSourceText = escapeJsxString(sourceText);
-        const escapedDestination = escapeJsxString(destination);
+    static async createDocumentHyperlink(args = {}) {
+        const { sourceText, destination, linkType = 'URL', pageIndex, name } = args;
+        if (typeof sourceText !== 'string' || sourceText === '') throw new Error("Invalid arguments: 'sourceText' must be a non-empty string");
+        const type = enumOf(linkType, ['URL', 'PAGE', 'TEXT'], { name: 'linkType' });
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
+        const findFirst = (varName, text) => [
+            TEXT_FIND_RESET,
+            'app.findChangeTextOptions.caseSensitive = true;',
+            'app.findChangeTextOptions.wholeWord = false;',
+            `app.findTextPreferences.findWhat = ${str(escapeTextFind(text))};`,
+            `var ${varName} = doc.findText();`,
+            TEXT_FIND_RESET,
+        ];
+
+        const destLines = [];
+        if (type === 'URL') {
+            if (typeof destination !== 'string' || destination === '') throw new Error("Invalid arguments: 'destination' (the URL) is required for URL links");
+            destLines.push(`var dest = doc.hyperlinkURLDestinations.add(${str(destination)});`, `var destLabel = ${str(destination)};`);
+        } else if (type === 'PAGE') {
+            if (pageIndex === undefined || pageIndex === null) throw new Error("Invalid arguments: 'pageIndex' is required for PAGE links");
+            const idx = index(pageIndex, { name: 'pageIndex' });
+            destLines.push(
+                `if (${idx} >= doc.pages.length) { throw new Error("page index ${idx} out of range (document has " + doc.pages.length + " pages)"); }`,
+                `var dest = doc.hyperlinkPageDestinations.add(doc.pages[${idx}]);`,
+                `var destLabel = "page " + doc.pages[${idx}].name;`,
+            );
+        } else {
+            if (typeof destination !== 'string' || destination === '') throw new Error("Invalid arguments: 'destination' (text to link to) is required for TEXT links");
+            destLines.push(
+                ...findFirst('destHits', destination),
+                `if (destHits.length === 0) { throw new Error("destination text not found: " + ${str(destination)}); }`,
+                'var dest = doc.hyperlinkTextDestinations.add(destHits[0]);',
+                `var destLabel = "text " + ${str(JSON.stringify(destination))};`,
+            );
+        }
+
+        const script = docScript([
+            ...findFirst('hits', sourceText),
+            'if (hits.length === 0) {',
+            `  result = "Error: source text not found: " + ${str(sourceText)};`,
             '} else {',
-            '  var doc = app.activeDocument;',
-            '  try {',
-            '    var hyperlink = doc.hyperlinks.add({',
-            '      name: "Link to ' + escapedDestination + '",',
-            '      source: "' + escapedSourceText + '",',
-            '      destination: "' + escapedDestination + '"',
-            '    });',
-            '    "Hyperlink created successfully: " + hyperlink.name;',
-            '  } catch (error) {',
-            '    "Error creating hyperlink: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Create Document Hyperlink");
+            ...destLines.map((l) => '  ' + l),
+            // A text range can only be the source of one hyperlink; drop the new destination if this fails.
+            '  var src;',
+            '  try { src = doc.hyperlinkTextSources.add(hits[0]); }',
+            '  catch (srcError) { try { dest.remove(); } catch (e) {} throw srcError; }',
+            '  var link = doc.hyperlinks.add(src, dest);',
+            ...(name ? [`  link.name = ${str(name)};`] : []),
+            '  result = "Hyperlink created: " + link.name + " -> " + destLabel;',
+            '}',
+        ], { errorPrefix: 'Error creating hyperlink' });
+        return run(script, 'Create Document Hyperlink');
     }
 
     // =================== DOCUMENT SECTIONS & NUMBERING ===================
 
     /**
-     * Get all sections in the document
+     * List sections
      */
     static async getDocumentSections() {
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var result = "Document Sections:\\n";',
-            '',
-            '  for (var i = 0; i < doc.sections.length; i++) {',
-            '    var section = doc.sections[i];',
-            '    result += "Section " + (i + 1) + ": " + section.name + "\\n";',
-            '    result += "  Prefix: " + section.sectionPrefix + "\\n\\n";',
-            '  }',
-            '',
-            '  result += "Total Sections: " + doc.sections.length;',
-            '  result;',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Get Document Sections");
+        const script = docScript([
+            'var out = "Document Sections:\\n";',
+            'for (var i = 0; i < doc.sections.length; i++) {',
+            '  var section = doc.sections[i];',
+            '  out += "Section " + (i + 1) + (section.name ? " (" + section.name + ")" : "") + "\\n";',
+            '  out += "  Starts on page: " + section.pageStart.name + " (index " + section.pageStart.documentOffset + ")\\n";',
+            '  out += "  Pages: " + section.length + "\\n";',
+            '  out += "  Numbering: " + section.pageNumberStyle + (section.continueNumbering ? ", continued" : ", starts at " + section.pageNumberStart) + "\\n";',
+            '  out += "  Prefix: " + section.sectionPrefix + " (included: " + section.includeSectionPrefix + ")\\n";',
+            '  out += "  Marker: " + section.marker + "\\n";',
+            '}',
+            'out += "Total Sections: " + doc.sections.length;',
+            'result = out;',
+        ], { errorPrefix: 'Error getting sections' });
+        return run(script, 'Get Document Sections');
     }
 
     /**
-     * Create a new section in the document
+     * Start (or update) a section at a page
      */
-    static async createDocumentSection(args) {
-        const { startPage, sectionPrefix, startNumber = 1, numberingStyle = 'ARABIC' } = args;
-        const escapedSectionPrefix = sectionPrefix ? escapeJsxString(sectionPrefix) : '';
+    static async createDocumentSection(args = {}) {
+        const { startPage, sectionPrefix, includeSectionPrefix, marker, startNumber, numberingStyle = 'ARABIC' } = args;
+        const idx = index(startPage, { name: 'startPage' });
+        // Accept the older alias names as well as the real PageNumberStyle members.
+        const aliases = { ROMAN_UPPER: 'UPPER_ROMAN', ROMAN_LOWER: 'LOWER_ROMAN', LETTER_UPPER: 'UPPER_LETTERS', LETTER_LOWER: 'LOWER_LETTERS' };
+        const style = enumOf(aliases[numberingStyle] || numberingStyle, PAGE_NUMBER_STYLES, { name: 'numberingStyle' });
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
+        const setLines = [`section.pageNumberStyle = PageNumberStyle.${style};`];
+        if (startNumber !== undefined && startNumber !== null) {
+            const n = Number(index(startNumber, { name: 'startNumber', max: 999999 }));
+            if (n < 1) throw new Error("Invalid value for 'startNumber': must be at least 1");
+            setLines.push('section.continueNumbering = false;', `section.pageNumberStart = ${n};`);
+        } else {
+            setLines.push('section.continueNumbering = true;');
+        }
+        if (sectionPrefix !== undefined && sectionPrefix !== null) setLines.push(`section.sectionPrefix = ${str(sectionPrefix)};`);
+        if (includeSectionPrefix !== undefined && includeSectionPrefix !== null) {
+            setLines.push(`section.includeSectionPrefix = ${bool(toBool(includeSectionPrefix, 'includeSectionPrefix'))};`);
+        }
+        if (marker !== undefined && marker !== null) setLines.push(`section.marker = ${str(marker)};`);
+
+        const script = docScript([
+            `if (${idx} >= doc.pages.length) {`,
+            `  result = "Error: page index ${idx} out of range (document has " + doc.pages.length + " pages)";`,
             '} else {',
-            '  var doc = app.activeDocument;',
-            '  try {',
-            `    var page = doc.pages[${startPage}];`,
-            '    var section = doc.sections.add(page);',
-            '    if ("' + escapedSectionPrefix + '") section.sectionPrefix = "' + escapedSectionPrefix + '";',
-            '    section.pageNumberingStyle = "' + numberingStyle + '";',
-            '    "Section created successfully on page " + page.name;',
-            '  } catch (error) {',
-            '    "Error creating section: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Create Document Section");
+            `  var page = doc.pages[${idx}];`,
+            '  var section; var existed = false;',
+            '  if (page.appliedSection.pageStart.id === page.id) { section = page.appliedSection; existed = true; }',
+            '  else { section = doc.sections.add(page); }',
+            ...setLines.map((l) => '  ' + l),
+            '  result = (existed ? "Section updated" : "Section created") + " starting on page index " + page.documentOffset + "; page now numbered " + page.name;',
+            '}',
+        ], { errorPrefix: 'Error creating section' });
+        return run(script, 'Create Document Section');
     }
 
     // =================== DOCUMENT XML & STRUCTURE ===================
 
     /**
-     * Get XML structure of the document
+     * Show XML tags and the element tree
      */
-    static async getDocumentXmlStructure(args) {
-        const { includeTags = true, includeElements = true } = args;
+    static async getDocumentXmlStructure(args = {}) {
+        const withTags = toBool(args.includeTags ?? true, 'includeTags');
+        const withElements = toBool(args.includeElements ?? true, 'includeElements');
+        const maxDepth = Number(index(args.maxDepth ?? 10, { name: 'maxDepth', max: 50 }));
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var result = "Document XML Structure:\\n";',
-            '',
-            '  if (' + includeTags + ') {',
-            '    result += "XML Tags: " + doc.xmlTags.length + "\\n";',
-            '    for (var i = 0; i < doc.xmlTags.length; i++) {',
-            '      result += "- " + doc.xmlTags[i].name + "\\n";',
-            '    }',
-            '    result += "\\n";',
-            '  }',
-            '',
-            '  if (' + includeElements + ') {',
-            '    result += "XML Elements: " + doc.xmlElements.length + "\\n";',
-            '    for (var i = 0; i < doc.xmlElements.length; i++) {',
-            '      result += "- Element " + (i + 1) + "\\n";',
-            '    }',
-            '  }',
-            '',
-            '  result;',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Get Document XML Structure");
+        const body = ['var out = "Document XML Structure:\\n";'];
+        if (withTags) {
+            body.push(
+                'out += "XML Tags: " + doc.xmlTags.length + "\\n";',
+                'for (var i = 0; i < doc.xmlTags.length; i++) { out += "- " + doc.xmlTags[i].name + "\\n"; }',
+                'out += "\\n";',
+            );
+        }
+        if (withElements) {
+            body.push(
+                'var lines = 0; var LIMIT = 500;',
+                'var walkXml = function (el, depth) {',
+                '  if (lines >= LIMIT) { return; }',
+                '  lines++;',
+                '  var pad = ""; for (var p = 0; p < depth; p++) { pad += "  "; }',
+                '  var tagName = el.markupTag.name;',
+                '  var kids = el.xmlElements.length;',
+                '  var line = pad + "<" + tagName + ">";',
+                '  if (el.xmlAttributes.length > 0) { line += " attributes: " + el.xmlAttributes.length; }',
+                '  if (kids > 0) { line += " children: " + kids; }',
+                '  else { var txt = String(el.contents).replace(/[\\r\\n\\t]+/g, " "); if (txt.length > 0) { line += " \\"" + txt.substring(0, 40) + (txt.length > 40 ? "..." : "") + "\\""; } }',
+                '  out += line + "\\n";',
+                `  if (depth + 1 >= ${maxDepth}) { if (kids > 0) { out += pad + "  ...\\n"; } return; }`,
+                '  for (var k = 0; k < kids; k++) { walkXml(el.xmlElements[k], depth + 1); }',
+                '};',
+                'out += "XML Element Tree:\\n";',
+                'for (var r = 0; r < doc.xmlElements.length; r++) { walkXml(doc.xmlElements[r], 0); }',
+                'if (lines >= LIMIT) { out += "... (truncated at " + LIMIT + " elements)\\n"; }',
+            );
+        }
+        body.push('result = out;');
+        return run(docScript(body, { errorPrefix: 'Error getting XML structure' }), 'Get Document XML Structure');
     }
 
     /**
-     * Export document as XML
+     * Export the document's XML structure to a file
      */
-    static async exportDocumentXml(args) {
-        const { filePath, includeImages = true, includeStyles = true } = args;
-        const escapedFilePath = escapeJsxString(filePath);
+    static async exportDocumentXml(args = {}) {
+        const { filePath, includeImages = false } = args;
+        const jsx = jsxPath(validateFilePath(filePath));
+        const images = toBool(includeImages, 'includeImages');
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
+        const script = docScript([
+            `var xmlFile = File(${jsx});`,
+            'if (!xmlFile.parent.exists) {',
+            '  result = "Error: folder does not exist: " + xmlFile.parent.fsName;',
             '} else {',
-            '  var doc = app.activeDocument;',
+            '  var xp = doc.xmlExportPreferences;',
+            '  var oldCopy = xp.copyOriginalImages; var oldSel = xp.exportFromSelected;',
+            `  xp.copyOriginalImages = ${bool(images)};`,
+            '  xp.exportFromSelected = false;',
             '  try {',
-            `    var xmlFile = File("${escapedFilePath}");`,
-            '    doc.exportFile(ExportFormat.XML_TYPE, xmlFile, false);',
-            '    "Document exported as XML successfully";',
-            '  } catch (error) {',
-            '    "Error exporting XML: " + error.message;',
+            '    doc.exportFile(ExportFormat.XML, xmlFile, false);',
+            '    result = "Document XML exported: " + xmlFile.fsName;',
+            '  } finally {',
+            '    xp.copyOriginalImages = oldCopy; xp.exportFromSelected = oldSel;',
             '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Export Document XML");
+            '}',
+        ], { errorPrefix: 'Error exporting XML' });
+        return run(script, 'Export Document XML');
     }
 
     // =================== DOCUMENT CLOUD & COLLABORATION ===================
 
     /**
-     * Save document to Adobe Creative Cloud
+     * Save the document to Adobe Creative Cloud
      */
-    static async saveDocumentToCloud(args) {
-        const { cloudName, includeAssets = true } = args;
-        const escapedCloudName = escapeJsxString(cloudName);
+    static async saveDocumentToCloud(args = {}) {
+        const { cloudName, mode = 'SAVE_A_COPY' } = args;
+        if (typeof cloudName !== 'string' || cloudName.trim() === '') throw new Error("Invalid arguments: 'cloudName' must be a non-empty string");
+        const m = enumOf(mode, ['SAVE_A_COPY', 'SAVE_AS'], { name: 'mode' });
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  try {',
-            '    if (doc.isCloudDocument) {',
-            '      doc.save();',
-            '      "Cloud document saved successfully";',
-            '    } else {',
-            `      doc.saveACopyCloud("${escapedCloudName}");`,
-            '      "Document saved to cloud as: ' + escapedCloudName + '";',
-            '    }',
-            '  } catch (error) {',
-            '    "Error saving to cloud: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Save Document to Cloud");
+        const script = docScript(m === 'SAVE_AS' ? [
+            `var cloudDoc = doc.saveAsCloud(${str(cloudName)});`,
+            'var where = ""; try { where = " (" + cloudDoc.cloudPath + ")"; } catch (e) {}',
+            `result = "Document saved to Creative Cloud as " + ${str(cloudName)} + where;`,
+        ] : [
+            `doc.saveACopyCloud(${str(cloudName)});`,
+            `result = "Copy saved to Creative Cloud as " + ${str(cloudName)};`,
+        ], { errorPrefix: 'Error saving to cloud' });
+        return run(script, 'Save Document to Cloud');
     }
 
     /**
-     * Open a document from Adobe Creative Cloud
+     * Open a Creative Cloud document by asset reference
      */
-    static async openCloudDocument(args) {
+    static async openCloudDocument(args = {}) {
         const { cloudDocumentId } = args;
-        const escapedCloudDocumentId = escapeJsxString(cloudDocumentId);
-
+        if (typeof cloudDocumentId !== 'string' || cloudDocumentId.trim() === '') {
+            throw new Error("Invalid arguments: 'cloudDocumentId' must be a non-empty string");
+        }
         const script = [
+            'var result;',
             'try {',
-            `  app.openCloudDocument("${escapedCloudDocumentId}");`,
-            '  "Cloud document opened successfully";',
+            `  var cdoc = app.openCloudDocument(${str(cloudDocumentId)}, true);`,
+            '  result = "Cloud document opened: " + cdoc.name;',
             '} catch (error) {',
-            '  "Error opening cloud document: " + error.message;',
-            '}'
+            '  result = "Error opening cloud document: " + error.message;',
+            '}',
+            'result;',
         ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Open Cloud Document");
+        return run(script, 'Open Cloud Document');
     }
 
     // =================== DOCUMENT GRID & LAYOUT ===================
 
     /**
-     * Get comprehensive grid settings for the document
+     * Get grid settings (measurements in mm)
      */
     static async getDocumentGridSettings() {
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var result = "Document Grid Settings:\\n\\n";',
-            '',
-            '  result += "=== GRID PREFERENCES ===\\n";',
-            '  try {',
-            '    result += "Document Grid Color: " + doc.gridPreferences.documentGridColor + "\\n";',
-            '  } catch (e) {',
-            '    result += "Document Grid Color: Not available\\n";',
-            '  }',
-            '  try {',
-            '    result += "Document Grid Increment: " + doc.gridPreferences.documentGridIncrement + "\\n";',
-            '  } catch (e) {',
-            '    result += "Document Grid Increment: Not available\\n";',
-            '  }',
-            '  try {',
-            '    result += "Document Grid Subdivision: " + doc.gridPreferences.documentGridSubdivision + "\\n";',
-            '  } catch (e) {',
-            '    result += "Document Grid Subdivision: Not available\\n";',
-            '  }',
-            '  try {',
-            '    result += "Grid View Threshold: " + doc.gridPreferences.gridViewThreshold + "\\n";',
-            '  } catch (e) {',
-            '    result += "Grid View Threshold: Not available\\n";',
-            '  }',
-            '',
-            '  result += "\\n=== BASELINE GRID ===\\n";',
-            '  try {',
-            '    result += "Baseline Grid Color: " + doc.gridPreferences.baselineGridColor + "\\n";',
-            '  } catch (e) {',
-            '    result += "Baseline Grid Color: Not available\\n";',
-            '  }',
-            '  try {',
-            '    result += "Baseline Grid Increment: " + doc.gridPreferences.baselineGridIncrement + "\\n";',
-            '  } catch (e) {',
-            '    result += "Baseline Grid Increment: Not available\\n";',
-            '  }',
-            '  try {',
-            '    result += "Baseline Grid Offset: " + doc.gridPreferences.baselineGridOffset + "\\n";',
-            '  } catch (e) {',
-            '    result += "Baseline Grid Offset: Not available\\n";',
-            '  }',
-            '  try {',
-            '    result += "Baseline Grid View Threshold: " + doc.gridPreferences.baselineGridViewThreshold + "\\n";',
-            '  } catch (e) {',
-            '    result += "Baseline Grid View Threshold: Not available\\n";',
-            '  }',
-            '',
-            '  result += "\\n=== GRID ALIGNMENT ===\\n";',
-            '  try {',
-            '    result += "Grid Alignment: " + doc.gridPreferences.gridAlignment + "\\n";',
-            '  } catch (e) {',
-            '    result += "Grid Alignment: Not available\\n";',
-            '  }',
-            '',
-            '  result;',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Get Document Grid Settings");
+        const body = [...FMT_FN, 'result = "Document Grid Settings (measurements in mm):\\n";', ...buildPrefGetLines('grid', DOCUMENT_PREFERENCE_SPECS.grid)];
+        return run(docScript(body, { errorPrefix: 'Error getting grid settings', mm: true }), 'Get Document Grid Settings');
     }
 
     /**
-     * Set comprehensive grid settings for the document
+     * Set grid settings
      */
-    static async setDocumentGridSettings(args) {
-        const {
-            documentGridColor = null,
-            documentGridIncrement = null,
-            documentGridSubdivision = null,
-            baselineGridColor = null,
-            baselineGridIncrement = null,
-            baselineGridOffset = null,
-            baselineGridViewThreshold = null,
-            gridViewThreshold = null,
-            gridAlignment = null
-        } = args;
-
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  try {',
-            '    // Document Grid Settings',
-            '    if ("' + (documentGridColor || '') + '") doc.gridPreferences.documentGridColor = "' + (documentGridColor || '') + '";',
-            '    if ("' + (documentGridIncrement || '') + '") doc.gridPreferences.documentGridIncrement = "' + (documentGridIncrement || '') + '";',
-            '    if (' + (documentGridSubdivision !== null) + ') doc.gridPreferences.documentGridSubdivision = ' + documentGridSubdivision + ';',
-            '    if (' + (gridViewThreshold !== null) + ') doc.gridPreferences.gridViewThreshold = ' + gridViewThreshold + ';',
-            '',
-            '    // Baseline Grid Settings',
-            '    if ("' + (baselineGridColor || '') + '") doc.gridPreferences.baselineGridColor = "' + (baselineGridColor || '') + '";',
-            '    if ("' + (baselineGridIncrement || '') + '") doc.gridPreferences.baselineGridIncrement = "' + (baselineGridIncrement || '') + '";',
-            '    if ("' + (baselineGridOffset || '') + '") doc.gridPreferences.baselineGridOffset = "' + (baselineGridOffset || '') + '";',
-            '    if (' + (baselineGridViewThreshold !== null) + ') doc.gridPreferences.baselineGridViewThreshold = ' + baselineGridViewThreshold + ';',
-            '',
-            '    // Grid Alignment',
-            '    if ("' + (gridAlignment || '') + '") doc.gridPreferences.gridAlignment = "' + (gridAlignment || '') + '";',
-            '',
-            '    "Document grid settings updated successfully";',
-            '  } catch (error) {',
-            '    "Error updating grid settings: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Set Document Grid Settings");
+    static async setDocumentGridSettings(args = {}) {
+        const setLines = buildPrefSetLines('grid', DOCUMENT_PREFERENCE_SPECS.grid, args);
+        if (setLines.length === 0) {
+            throw new Error(`Invalid arguments: no grid settings given. Allowed: ${Object.keys(DOCUMENT_PREFERENCE_SPECS.grid.props).join(', ')}`);
+        }
+        const body = ['var done = []; var failed = [];', ...setLines, ...prefOutcomeLines('grid setting')];
+        return run(docScript(body, { errorPrefix: 'Error updating grid settings', mm: true }), 'Set Document Grid Settings');
     }
 
     /**
-     * Get layout preferences and settings
+     * Get layout preferences
      */
     static async getDocumentLayoutPreferences() {
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var result = "Document Layout Preferences:\\n\\n";',
-            '',
-            '  result += "=== ADJUST LAYOUT ===\\n";',
-            '  try {',
-            '    result += "Adjust Layout Enabled: " + doc.adjustLayoutPreferences.adjustLayout + "\\n";',
-            '  } catch (e) {',
-            '    result += "Adjust Layout Enabled: Not available\\n";',
-            '  }',
-            '  try {',
-            '    result += "Adjust Layout Margins: " + doc.adjustLayoutPreferences.adjustLayoutMargins + "\\n";',
-            '  } catch (e) {',
-            '    result += "Adjust Layout Margins: Not available\\n";',
-            '  }',
-            '  try {',
-            '    result += "Adjust Layout Page Breaks: " + doc.adjustLayoutPreferences.adjustLayoutPageBreaks + "\\n";',
-            '  } catch (e) {',
-            '    result += "Adjust Layout Page Breaks: Not available\\n";',
-            '  }',
-            '  try {',
-            '    result += "Adjust Layout Rules: " + doc.adjustLayoutPreferences.adjustLayoutRules + "\\n";',
-            '  } catch (e) {',
-            '    result += "Adjust Layout Rules: Not available\\n";',
-            '  }',
-            '',
-            '  result += "\\n=== ALIGN & DISTRIBUTE ===\\n";',
-            '  try {',
-            '    result += "Align Distribute Bounds: " + doc.alignDistributePreferences.alignDistributeBounds + "\\n";',
-            '  } catch (e) {',
-            '    result += "Align Distribute Bounds: Not available\\n";',
-            '  }',
-            '  try {',
-            '    result += "Align Distribute Spacing: " + doc.alignDistributePreferences.alignDistributeSpacing + "\\n";',
-            '  } catch (e) {',
-            '    result += "Align Distribute Spacing: Not available\\n";',
-            '  }',
-            '',
-            '  result += "\\n=== SMART GUIDES ===\\n";',
-            '  try {',
-            '    result += "Smart Guide Preferences: " + doc.smartGuidePreferences.smartGuidePreferences + "\\n";',
-            '  } catch (e) {',
-            '    result += "Smart Guide Preferences: Not available\\n";',
-            '  }',
-            '',
-            '  result;',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Get Document Layout Preferences");
+        const body = [...FMT_FN, 'result = "Layout Preferences (measurements in mm):\\n";'];
+        for (const [g, spec] of Object.entries(LAYOUT_PREFERENCE_SPECS)) body.push(...buildPrefGetLines(g, spec));
+        return run(docScript(body, { errorPrefix: 'Error getting layout preferences', mm: true }), 'Get Document Layout Preferences');
     }
 
     /**
-     * Set layout preferences for the document
+     * Set layout preferences
      */
-    static async setDocumentLayoutPreferences(args) {
-        const {
-            adjustLayout = null,
-            adjustLayoutMargins = null,
-            adjustLayoutPageBreaks = null,
-            adjustLayoutRules = null,
-            alignDistributeBounds = null,
-            alignDistributeSpacing = null,
-            smartGuidePreferences = null
-        } = args;
-
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  try {',
-            '    // Adjust Layout Settings',
-            '    if (' + (adjustLayout !== null) + ') doc.adjustLayoutPreferences.adjustLayout = ' + adjustLayout + ';',
-            '    if (' + (adjustLayoutMargins !== null) + ') doc.adjustLayoutPreferences.adjustLayoutMargins = ' + adjustLayoutMargins + ';',
-            '    if (' + (adjustLayoutPageBreaks !== null) + ') doc.adjustLayoutPreferences.adjustLayoutPageBreaks = ' + adjustLayoutPageBreaks + ';',
-            '    if ("' + (adjustLayoutRules || '') + '") doc.adjustLayoutPreferences.adjustLayoutRules = "' + (adjustLayoutRules || '') + '";',
-            '',
-            '    // Align & Distribute Settings',
-            '    if ("' + (alignDistributeBounds || '') + '") doc.alignDistributePreferences.alignDistributeBounds = "' + (alignDistributeBounds || '') + '";',
-            '    if ("' + (alignDistributeSpacing || '') + '") doc.alignDistributePreferences.alignDistributeSpacing = "' + (alignDistributeSpacing || '') + '";',
-            '',
-            '    // Smart Guide Settings',
-            '    if (' + (smartGuidePreferences !== null) + ') doc.smartGuidePreferences.smartGuidePreferences = ' + smartGuidePreferences + ';',
-            '',
-            '    "Document layout preferences updated successfully";',
-            '  } catch (error) {',
-            '    "Error updating layout preferences: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Set Document Layout Preferences");
+    static async setDocumentLayoutPreferences(args = {}) {
+        const known = Object.keys(LAYOUT_PREFERENCE_SPECS);
+        for (const k of Object.keys(args)) {
+            if (!known.includes(k)) throw new Error(`Invalid argument '${k}'. Expected one or more of: ${known.join(', ')}`);
+        }
+        const setLines = [];
+        for (const g of known) setLines.push(...buildPrefSetLines(g, LAYOUT_PREFERENCE_SPECS[g], args[g]));
+        if (setLines.length === 0) {
+            throw new Error(`Invalid arguments: no layout preference values given. Pass one or more of: ${known.join(', ')}`);
+        }
+        const body = ['var done = []; var failed = [];', ...setLines, ...prefOutcomeLines('layout preference')];
+        return run(docScript(body, { errorPrefix: 'Error updating layout preferences', mm: true }), 'Set Document Layout Preferences');
     }
 
     // =================== DOCUMENT VALIDATION & CLEANUP ===================
@@ -1448,86 +1196,146 @@ export class DocumentHandlers {
     /**
      * Validate document structure and content
      */
-    static async validateDocument(args) {
-        const { checkLinks = true, checkFonts = true, checkImages = true, checkStyles = false } = args;
+    static async validateDocument(args = {}) {
+        const checkLinks = toBool(args.checkLinks ?? true, 'checkLinks');
+        const checkFonts = toBool(args.checkFonts ?? true, 'checkFonts');
+        const checkImages = toBool(args.checkImages ?? true, 'checkImages');
+        const checkOverset = toBool(args.checkOverset ?? true, 'checkOverset');
+        const checkStyles = toBool(args.checkStyles ?? false, 'checkStyles');
+        const minPpi = num(args.minImagePpi ?? 150, { name: 'minImagePpi', min: 1, max: 10000 });
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
+        const body = ['var issues = []; var checks = [];'];
+        if (checkLinks) {
+            body.push(
+                'checks.push("links");',
+                'for (var i = 0; i < doc.links.length; i++) {',
+                '  var lk = doc.links[i];',
+                '  if (lk.status != LinkStatus.NORMAL && lk.status != LinkStatus.LINK_EMBEDDED) { issues.push("Link " + lk.status + ": " + lk.name); }',
+                '}',
+            );
+        }
+        if (checkFonts) {
+            body.push(
+                'checks.push("fonts");',
+                'for (var f = 0; f < doc.fonts.length; f++) {',
+                '  var fnt = doc.fonts[f];',
+                '  if (fnt.status != FontStatus.INSTALLED) { issues.push("Font " + fnt.status + ": " + fnt.name); }',
+                '}',
+            );
+        }
+        if (checkImages) {
+            body.push(
+                'checks.push("images");',
+                'for (var g = 0; g < doc.allGraphics.length; g++) {',
+                '  var gr = doc.allGraphics[g];',
+                '  var where = ""; try { if (gr.parentPage) { where = " on page " + gr.parentPage.name; } } catch (e) {}',
+                '  var glink = gr.itemLink;',
+                '  var gname = glink ? glink.name : "embedded graphic";',
+                '  if (glink && glink.status != LinkStatus.NORMAL && glink.status != LinkStatus.LINK_EMBEDDED) { issues.push("Graphic link " + glink.status + ": " + gname + where); }',
+                '  if (gr instanceof Image) {',
+                '    try {',
+                '      var ppi = gr.effectivePpi;',
+                `      if (ppi && ppi.length > 1 && Math.min(ppi[0], ppi[1]) < ${minPpi}) { issues.push("Low resolution image (" + Math.round(ppi[0]) + "x" + Math.round(ppi[1]) + " ppi): " + gname + where); }`,
+                '    } catch (e) {}',
+                '  }',
+                '}',
+            );
+        }
+        if (checkOverset) {
+            body.push(
+                'checks.push("overset text");',
+                'for (var s = 0; s < doc.stories.length; s++) {',
+                '  var st = doc.stories[s];',
+                '  if (st.overflows) { issues.push("Overset text in story id " + st.id + ": " + String(st.contents).substring(0, 40).replace(/[\\r\\n\\t]+/g, " ")); }',
+                '}',
+            );
+        }
+        if (checkStyles) {
+            body.push(
+                ...STYLE_USAGE_FNS,
+                'checks.push("unused styles");',
+                'var ps = doc.allParagraphStyles;',
+                'for (var p = 0; p < ps.length; p++) { if (!isBuiltIn(ps[p].name) && !paraStyleUsed(ps[p])) { issues.push("Unused paragraph style: " + ps[p].name); } }',
+                'var cs = doc.allCharacterStyles;',
+                'for (var c = 0; c < cs.length; c++) { if (!isBuiltIn(cs[c].name) && !charStyleUsed(cs[c])) { issues.push("Unused character style: " + cs[c].name); } }',
+            );
+        }
+        body.push(
+            'var checked = checks.length > 0 ? checks.join(", ") : "nothing (all checks disabled)";',
+            'if (issues.length === 0) {',
+            '  result = "Validation passed: no issues found. Checked: " + checked;',
             '} else {',
-            '  var doc = app.activeDocument;',
-            '  var validation = {',
-            '    isValid: true,',
-            '    issues: []',
-            '  };',
-            '',
-            '  try {',
-            '    if (' + checkLinks + ') {',
-            '      for (var i = 0; i < doc.links.length; i++) {',
-            '        if (!doc.links[i].isValid) {',
-            '          validation.issues.push("Broken link: " + doc.links[i].name);',
-            '          validation.isValid = false;',
-            '        }',
-            '      }',
-            '    }',
-            '',
-            '    if (' + checkFonts + ') {',
-            '      for (var i = 0; i < doc.fonts.length; i++) {',
-            '        if (!doc.fonts[i].isValid) {',
-            '          validation.issues.push("Missing font: " + doc.fonts[i].name);',
-            '          validation.isValid = false;',
-            '        }',
-            '      }',
-            '    }',
-            '',
-            '    JSON.stringify(validation);',
-            '  } catch (error) {',
-            '    "Error validating document: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Validate Document");
+            '  result = "Validation found " + issues.length + " issue(s). Checked: " + checked + "\\n- " + issues.join("\\n- ");',
+            '}',
+        );
+        return run(docScript(body, { errorPrefix: 'Error validating document' }), 'Validate Document');
     }
 
     /**
-     * Clean up document (remove unused elements)
+     * Remove unused styles/swatches/layers and hidden items
      */
-    static async cleanupDocument(args) {
-        const { removeUnusedStyles = false, removeUnusedColors = false, removeUnusedLayers = false, removeHiddenElements = false } = args;
+    static async cleanupDocument(args = {}) {
+        const styles = toBool(args.removeUnusedStyles ?? false, 'removeUnusedStyles');
+        const colors = toBool(args.removeUnusedColors ?? false, 'removeUnusedColors');
+        const layers = toBool(args.removeUnusedLayers ?? false, 'removeUnusedLayers');
+        const hidden = toBool(args.removeHiddenElements ?? false, 'removeHiddenElements');
+        const dryRun = toBool(args.dryRun ?? false, 'dryRun');
+        if (!styles && !colors && !layers && !hidden) {
+            throw new Error('Invalid arguments: enable at least one of removeUnusedStyles, removeUnusedColors, removeUnusedLayers, removeHiddenElements');
+        }
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var cleanup = {',
-            '    actions: [],',
-            '    removedItems: 0',
-            '  };',
-            '',
-            '  try {',
-            '    if (' + removeUnusedStyles + ') {',
-            '      var unusedStyles = doc.unusedSwatches;',
-            '      cleanup.removedItems += unusedStyles.length;',
-            '      cleanup.actions.push("Found " + unusedStyles.length + " unused styles");',
-            '    }',
-            '',
-            '    if (' + removeUnusedColors + ') {',
-            '      var unusedColors = doc.unusedSwatches;',
-            '      cleanup.removedItems += unusedColors.length;',
-            '      cleanup.actions.push("Found " + unusedColors.length + " unused colors");',
-            '    }',
-            '',
-            '    JSON.stringify(cleanup);',
-            '  } catch (error) {',
-            '    "Error cleaning up document: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-        return formatResponse(result, "Cleanup Document");
+        const body = [
+            'var removed = []; var problems = [];',
+            `var dry = ${bool(dryRun)};`,
+            'var zap = function (obj, label) {',
+            '  if (dry) { removed.push(label); return; }',
+            '  try { obj.remove(); removed.push(label); } catch (e) { problems.push(label + ": " + e.message); }',
+            '};',
+        ];
+        if (hidden) {
+            body.push(
+                'var items = doc.allPageItems;',
+                'for (var h = items.length - 1; h >= 0; h--) {',
+                '  var it = items[h];',
+                '  if (it.isValid && it.visible === false) { zap(it, "Hidden item id " + it.id); }',
+                '}',
+            );
+        }
+        if (styles) {
+            body.push(
+                ...STYLE_USAGE_FNS,
+                'var ps = doc.allParagraphStyles;',
+                'for (var p = ps.length - 1; p >= 0; p--) { if (!isBuiltIn(ps[p].name) && !paraStyleUsed(ps[p])) { zap(ps[p], "Paragraph style " + ps[p].name); } }',
+                'var cs = doc.allCharacterStyles;',
+                'for (var c = cs.length - 1; c >= 0; c--) { if (!isBuiltIn(cs[c].name) && !charStyleUsed(cs[c])) { zap(cs[c], "Character style " + cs[c].name); } }',
+            );
+        }
+        if (colors) {
+            body.push(
+                'var unused = doc.unusedSwatches;',
+                'for (var u = 0; u < unused.length; u++) {',
+                '  var sw = unused[u];',
+                '  if (sw.name === "" || String(sw.name).charAt(0) === "[") { continue; }',
+                '  zap(sw, "Swatch " + sw.name);',
+                '}',
+            );
+        }
+        if (layers) {
+            body.push(
+                'var remaining = doc.layers.length;',
+                'for (var l = doc.layers.length - 1; l >= 0; l--) {',
+                '  var lay = doc.layers[l];',
+                '  if (remaining <= 1) { break; }',
+                '  if (lay.allPageItems.length === 0 && lay.guides.length === 0) { zap(lay, "Layer " + lay.name); remaining--; }',
+                '}',
+            );
+        }
+        body.push(
+            'var verb = dry ? "Dry run: would remove " : "Removed ";',
+            'var out = verb + removed.length + " item(s)" + (removed.length > 0 ? ":\\n- " + removed.join("\\n- ") : "");',
+            'if (problems.length > 0) { result = "Error: could not remove " + problems.length + " item(s): " + problems.join("; ") + "\\n" + out; }',
+            'else { result = "Cleanup complete. " + out; }',
+        );
+        return run(docScript(body, { errorPrefix: 'Error cleaning up document' }), 'Cleanup Document');
     }
-} 
+}

@@ -7,18 +7,18 @@ export const bookToolDefinitions = [
     // =================== BOOK MANAGEMENT ===================
     {
         name: 'create_book',
-        description: 'Create a new InDesign book',
+        description: 'Create a new InDesign book file and leave it open (fails if a file already exists at the path)',
         inputSchema: {
             type: 'object',
             properties: {
-                filePath: { type: 'string', description: 'Path where to save the book file' }
+                filePath: { type: 'string', description: 'Path for the new book file (".indb" is appended if missing)' }
             },
             required: ['filePath']
         }
     },
     {
         name: 'open_book',
-        description: 'Open an existing InDesign book',
+        description: 'Open an existing InDesign book (it stays open)',
         inputSchema: {
             type: 'object',
             properties: {
@@ -34,7 +34,7 @@ export const bookToolDefinitions = [
     },
     {
         name: 'add_document_to_book',
-        description: 'Add a document to a book',
+        description: 'Add an InDesign document to the end of a book and save the book',
         inputSchema: {
             type: 'object',
             properties: {
@@ -46,7 +46,7 @@ export const bookToolDefinitions = [
     },
     {
         name: 'synchronize_book',
-        description: 'Synchronize styles and content across all documents in a book',
+        description: 'Synchronize styles, swatches and other enabled options from the book\'s style source document to all documents, then save the book',
         inputSchema: {
             type: 'object',
             properties: {
@@ -57,7 +57,7 @@ export const bookToolDefinitions = [
     },
     {
         name: 'repaginate_book',
-        description: 'Repaginate all documents in a book',
+        description: 'Repaginate all documents in a book and save it',
         inputSchema: {
             type: 'object',
             properties: {
@@ -101,25 +101,26 @@ export const bookToolDefinitions = [
     },
     {
         name: 'export_book',
-        description: 'Export an entire book to various formats',
+        description: 'Export an entire book to a single file',
         inputSchema: {
             type: 'object',
             properties: {
                 bookPath: { type: 'string', description: 'Path to the book file' },
                 format: {
                     type: 'string',
-                    enum: ['PDF', 'EPUB', 'HTML'],
+                    enum: ['PDF', 'INTERACTIVE_PDF', 'EPUB', 'FIXED_LAYOUT_EPUB', 'HTML'],
                     description: 'Export format',
                     default: 'PDF'
                 },
-                outputPath: { type: 'string', description: 'Path for the exported file' }
+                outputPath: { type: 'string', description: 'Path for the exported file' },
+                pdfPreset: { type: 'string', description: 'PDF export preset name for format PDF (e.g. "[High Quality Print]"); default: current PDF export settings' }
             },
             required: ['bookPath', 'outputPath']
         }
     },
     {
         name: 'package_book',
-        description: 'Package a book for print production',
+        description: 'Package a book for print production into a folder (created if missing)',
         inputSchema: {
             type: 'object',
             properties: {
@@ -133,19 +134,20 @@ export const bookToolDefinitions = [
                 ignorePreflightErrors: { type: 'boolean', description: 'Ignore preflight errors', default: false },
                 creatingReport: { type: 'boolean', description: 'Create package report', default: true },
                 includeIdml: { type: 'boolean', description: 'Include IDML file', default: false },
-                includePdf: { type: 'boolean', description: 'Include PDF file', default: false }
+                includePdf: { type: 'boolean', description: 'Include PDF file', default: false },
+                pdfStyle: { type: 'string', description: 'PDF export preset used when includePdf is true', default: '[High Quality Print]' }
             },
             required: ['bookPath', 'outputPath']
         }
     },
     {
         name: 'preflight_book',
-        description: 'Preflight a book and optionally save the report',
+        description: 'Preflight a book and save the preflight report (PDF, or text if the path ends in .txt). The report path is returned.',
         inputSchema: {
             type: 'object',
             properties: {
                 bookPath: { type: 'string', description: 'Path to the book file' },
-                outputPath: { type: 'string', description: 'Path for the preflight report (optional)' },
+                outputPath: { type: 'string', description: 'Path for the preflight report (default: <book name>-preflight.pdf in the system temp folder)' },
                 autoOpen: { type: 'boolean', description: 'Automatically open the report', default: false }
             },
             required: ['bookPath']
@@ -161,8 +163,7 @@ export const bookToolDefinitions = [
                 printDialog: { type: 'boolean', description: 'Show print dialog', default: true },
                 printerPreset: {
                     type: 'string',
-                    enum: ['DEFAULT_VALUE', 'CUSTOM'],
-                    description: 'Printer preset to use',
+                    description: 'Printer preset name (e.g. "[Default]" or a saved preset), or "DEFAULT_VALUE" for the default preset',
                     default: 'DEFAULT_VALUE'
                 }
             },
@@ -182,7 +183,7 @@ export const bookToolDefinitions = [
     },
     {
         name: 'set_book_properties',
-        description: 'Set various properties for a book',
+        description: 'Set book options (only the ones given) and save the book',
         inputSchema: {
             type: 'object',
             properties: {

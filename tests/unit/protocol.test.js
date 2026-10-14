@@ -52,6 +52,18 @@ test('unknown tool returns an error result instead of crashing', async () => {
     const result = await client.callTool({ name: 'no_such_tool', arguments: {} });
     const text = result.content.map((c) => c.text).join('');
     assert.match(text, /not found/i);
+    assert.equal(result.isError, true);
+});
+
+test('help lists every advertised tool and documents each one', async () => {
+    const { tools } = await client.listTools();
+    const overview = await client.callTool({ name: 'help', arguments: { format: 'detailed' } });
+    const text = overview.content.map((c) => c.text).join('');
+    for (const tool of tools) {
+        assert.ok(text.includes(tool.name), `help overview is missing ${tool.name}`);
+        const one = await client.callTool({ name: 'help', arguments: { tool: tool.name } });
+        assert.notEqual(one.isError, true, `help({ tool: "${tool.name}" }) failed`);
+    }
 });
 
 async function run() {

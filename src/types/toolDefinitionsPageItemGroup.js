@@ -1,5 +1,9 @@
 /**
  * PageItem and Group tool definitions
+ *
+ * Items are addressed by their index in page.allPageItems (the order shown by
+ * list_page_items). Positions and sizes are in millimetres relative to the
+ * page's top-left corner.
  */
 export const pageItemGroupToolDefinitions = [
     // PageItem Management Tools
@@ -47,7 +51,7 @@ export const pageItemGroupToolDefinitions = [
     },
     {
         name: 'move_page_item',
-        description: 'Move a page item to a new position',
+        description: 'Move a page item so its top-left corner (geometric bounds) is at x, y mm on the page',
         inputSchema: {
             type: 'object',
             properties: {
@@ -61,11 +65,11 @@ export const pageItemGroupToolDefinitions = [
                 },
                 x: {
                     type: 'number',
-                    description: 'New X coordinate'
+                    description: 'New X of the item\'s top-left corner, in mm from the page left edge'
                 },
                 y: {
                     type: 'number',
-                    description: 'New Y coordinate'
+                    description: 'New Y of the item\'s top-left corner, in mm from the page top edge'
                 }
             },
             required: ['pageIndex', 'itemIndex', 'x', 'y']
@@ -73,7 +77,7 @@ export const pageItemGroupToolDefinitions = [
     },
     {
         name: 'resize_page_item',
-        description: 'Resize a page item',
+        description: 'Resize a page item to width x height mm around an anchor point',
         inputSchema: {
             type: 'object',
             properties: {
@@ -87,11 +91,11 @@ export const pageItemGroupToolDefinitions = [
                 },
                 width: {
                     type: 'number',
-                    description: 'New width'
+                    description: 'New width in mm'
                 },
                 height: {
                     type: 'number',
-                    description: 'New height'
+                    description: 'New height in mm'
                 },
                 anchorPoint: {
                     type: 'string',
@@ -105,7 +109,7 @@ export const pageItemGroupToolDefinitions = [
     },
     {
         name: 'set_page_item_properties',
-        description: 'Set properties of a page item',
+        description: 'Set fill, stroke, visibility and lock state of a page item (only the properties you pass are changed)',
         inputSchema: {
             type: 'object',
             properties: {
@@ -119,15 +123,15 @@ export const pageItemGroupToolDefinitions = [
                 },
                 fillColor: {
                     type: 'string',
-                    description: 'Fill color name'
+                    description: 'Fill swatch name (e.g. "Black", "None") or "#RRGGBB"'
                 },
                 strokeColor: {
                     type: 'string',
-                    description: 'Stroke color name'
+                    description: 'Stroke swatch name or "#RRGGBB"'
                 },
                 strokeWeight: {
                     type: 'number',
-                    description: 'Stroke weight'
+                    description: 'Stroke weight in points'
                 },
                 visible: {
                     type: 'boolean',
@@ -157,11 +161,11 @@ export const pageItemGroupToolDefinitions = [
                 },
                 x: {
                     type: 'number',
-                    description: 'X coordinate for the duplicate'
+                    description: 'X of the duplicate\'s top-left corner, in mm from the page left edge'
                 },
                 y: {
                     type: 'number',
-                    description: 'Y coordinate for the duplicate'
+                    description: 'Y of the duplicate\'s top-left corner, in mm from the page top edge'
                 }
             },
             required: ['pageIndex', 'itemIndex', 'x', 'y']
@@ -203,7 +207,7 @@ export const pageItemGroupToolDefinitions = [
     // Group Management Tools
     {
         name: 'create_group',
-        description: 'Create a group from currently selected items',
+        description: 'Group the page items currently selected in InDesign (at least 2)',
         inputSchema: {
             type: 'object',
             properties: {
@@ -230,7 +234,7 @@ export const pageItemGroupToolDefinitions = [
                     items: {
                         type: 'integer'
                     },
-                    description: 'Array of item indices to group together',
+                    description: 'Indices (from list_page_items) of top-level items to group together',
                     minItems: 2
                 }
             },
@@ -257,7 +261,7 @@ export const pageItemGroupToolDefinitions = [
     },
     {
         name: 'get_group_info',
-        description: 'Get detailed information about a group',
+        description: 'Get information about a group, including its direct members and their indices',
         inputSchema: {
             type: 'object',
             properties: {
@@ -275,7 +279,7 @@ export const pageItemGroupToolDefinitions = [
     },
     {
         name: 'add_item_to_group',
-        description: 'Add a page item to an existing group',
+        description: 'Add a top-level page item to an existing group (the group is rebuilt: it keeps its name but gets a new ID and index)',
         inputSchema: {
             type: 'object',
             properties: {
@@ -289,7 +293,7 @@ export const pageItemGroupToolDefinitions = [
                 },
                 itemIndex: {
                     type: 'integer',
-                    description: 'Index of the page item to add to the group'
+                    description: 'Index (from list_page_items) of the page item to add to the group'
                 }
             },
             required: ['pageIndex', 'groupIndex', 'itemIndex']
@@ -297,7 +301,7 @@ export const pageItemGroupToolDefinitions = [
     },
     {
         name: 'remove_item_from_group',
-        description: 'Remove a page item from a group',
+        description: 'Remove a member from a group (the group is rebuilt with the remaining members, or dissolved if fewer than 2 remain)',
         inputSchema: {
             type: 'object',
             properties: {
@@ -307,11 +311,11 @@ export const pageItemGroupToolDefinitions = [
                 },
                 groupIndex: {
                     type: 'integer',
-                    description: 'Index of the group to remove the item from'
+                    description: 'Index of the group (from list_groups) to remove the item from'
                 },
                 itemIndex: {
                     type: 'integer',
-                    description: 'Index of the item within the group to remove'
+                    description: 'Index of the member within the group, as listed by get_group_info'
                 }
             },
             required: ['pageIndex', 'groupIndex', 'itemIndex']

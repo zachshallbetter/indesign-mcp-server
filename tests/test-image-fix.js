@@ -122,7 +122,6 @@ async function testImageFix() {
         // Step 2: Create document
         log('📄 Creating document...');
         const docResult = await executeTool('create_document', {
-            name: 'Image Fix Test',
             width: 210,
             height: 297,
             facingPages: false,

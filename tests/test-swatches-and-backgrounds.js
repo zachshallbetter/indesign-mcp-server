@@ -88,7 +88,6 @@ async function testSwatchesAndBackgrounds() {
         // Step 1: Create document
         log('📄 Creating document...');
         const docResult = await executeTool('create_document', {
-            name: 'Swatches and Backgrounds Test',
             width: 210,
             height: 297,
             facingPages: false,

@@ -1,5 +1,40 @@
 # Changelog
 
+## 2.0.0
+
+An audit of every tool against the InDesign 2023 scripting DOM found that 17 of the 136 advertised tools were never implemented, about 40 generated scripts used properties, methods or enums that do not exist in InDesign, and failed calls were reported as successes. This release fixes all of it and adds checks so it cannot drift again. Scripts are verified statically against Adobe's published DOM; run `npm run test:integration` against a live InDesign before relying on a tool in production.
+
+### Added
+- 17 tools that were listed but returned "not implemented": the 11 spread tools (`list_spreads`, `get_spread_info`, `duplicate_spread`, `move_spread`, `delete_spread`, `set_spread_properties`, `create_spread_guides`, `place_file_on_spread`, `place_xml_on_spread`, `select_spread`, `get_spread_content_summary`), `create_layer`, `set_active_layer`, `list_layers`, `export_epub`, `detach_master_items`, `remove_master_override`
+- `apply_character_style` is now advertised (it was implemented but missing from `tools/list`)
+- Script audit (`npm run test:audit`, part of `npm test` and CI): every advertised tool must dispatch, generate valid ES5, and use only names that exist in the InDesign 2023 DOM
+- Optional `pageIndex` on text, shape, image and page-item tools (defaults to the active page)
+- `"#RRGGBB"` colors create an RGB swatch where a color is accepted
+- `dryRun` for `cleanup_document`; GREP search (`useRegex`) for `find_text_in_document`; `oversetOnly` for `get_document_stories`
+
+### Fixed
+- Failed calls reported success: "No document open", "Error …" and "… not found" results now return `success: false` and MCP `isError: true`
+- Nonexistent InDesign APIs replaced with real ones, including grid, guide, text and layout preferences, slug offsets, `FitOptions` in `place_image`, polygon creation, rounded corners, table header rows, `resize()` constraints, layout snapshots, page `adjustLayout`, section numbering style, XML export, zoom, data merge and preflight
+- `validate_document` and `cleanup_document` used `JSON`, which InDesign's ExtendScript does not have
+- Enum and color arguments were spliced into scripts as bare identifiers (`BLUE`, `Black`), which threw at runtime
+- `place_file_on_page` passed arguments to `place()` in the wrong order; `export_images` and `package_document` read an argument the schema never defined; master spread tools read `masterIndex` while their schemas said `name`
+- `cleanup_document` only counted items; it now removes them. `organize_document_layers` deleted a layer before reading its name and never implemented merge or sort
+- Case-sensitive and whole-word options in find tools were set on the wrong object and ignored
+- `create_document` ignored `pages`; sizes and margins are now applied in millimeters regardless of the document's ruler units
+- `view_document` read properties that do not exist; `indesign_status` deleted temp scripts that running calls were still using
+- `help` documented about 30 tools (one of them nonexistent); it is now generated from the tool definitions and covers all 137
+- Shape tools accept omitted position and size again, as documented (automatic placement)
+- Every argument that reaches a script goes through the validated `jsxSafe` helpers
+
+### Changed (breaking)
+- `set_document_preferences` takes grouped settings (`general`, `margins`, `guides`, `text`, `grid`) instead of `preferenceType` + `preferences`
+- Grid and layout preference parameters use InDesign's own property names
+- `adjust_page_layout` takes numbers plus `units`; `resize_page` requires `width` and `height`
+- `create_object_style`: `transparency` is now `opacity` (the old name is still accepted)
+- `export_images` supports JPEG and PNG (InDesign has no TIFF or GIF export); `export_pdf` drops the `DIGITAL` option
+- Removed parameters that no InDesign API could honor (for example `spreadHidden`, `includeImages` on EPUB, several `data_merge` options)
+- `create_color_swatch` stores RGB by default; `colorSpace: "CMYK"` keeps the previous conversion
+
 ## 1.4.0
 
 ### Added

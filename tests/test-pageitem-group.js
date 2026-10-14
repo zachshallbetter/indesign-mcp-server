@@ -131,8 +131,9 @@ class PageItemGroupTest {
 
         // Test 1: Create a document with some content
         await this.testTool('create_document', {
-            preset: 'A4',
-            orientation: 'Portrait',
+            width: 210,
+            height: 297,
+            pageOrientation: 'PORTRAIT',
             pages: 2,
             facingPages: true
         });

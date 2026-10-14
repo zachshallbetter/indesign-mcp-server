@@ -2,84 +2,55 @@
  * Style management handlers
  */
 import { ScriptExecutor } from '../core/scriptExecutor.js';
-import { formatResponse, escapeJsxString } from '../utils/stringUtils.js';
-import { sessionManager } from '../core/sessionManager.js';
+import { formatResponse, str, num, index, enumOf, ALLOWED } from '../utils/stringUtils.js';
+import { jsxProgram, jsxPage, jsxItemAt, jsxSwatch, jsxFont, JSX_HELPERS } from './pageItemHandlers.js';
+
+const has = (v) => v !== undefined && v !== null && v !== '';
+
+/** Accepts real Justification members; "JUSTIFY" is kept as an alias of LEFT_JUSTIFIED. */
+function justificationOf(alignment) {
+    const v = String(alignment).toUpperCase();
+    return enumOf(v === 'JUSTIFY' ? 'LEFT_JUSTIFIED' : v, ALLOWED.alignment, { name: 'alignment' });
+}
+
+const JSX_NAMES = [
+    'function __justName(j) {',
+    '  var names = ["LEFT_ALIGN", "CENTER_ALIGN", "RIGHT_ALIGN", "LEFT_JUSTIFIED", "RIGHT_JUSTIFIED", "CENTER_JUSTIFIED", "FULLY_JUSTIFIED", "TO_BINDING_SIDE", "AWAY_FROM_BINDING_SIDE"];',
+    '  for (var i = 0; i < names.length; i++) { if (j === Justification[names[i]]) { return names[i]; } }',
+    '  return String(j);',
+    '}',
+    'function __fontName(f) {',
+    '  try { if (f === null || f === undefined) { return "[Not set]"; } return (typeof f === "string") ? f : f.name; } catch (__fe) { return "[Not set]"; }',
+    '}',
+];
 
 export class StyleHandlers {
     /**
      * Create a paragraph style
      */
     static async createParagraphStyle(args) {
-        const {
-            name,
-            fontFamily = 'Arial\\tRegular',
-            fontSize = 12,
-            textColor = 'Black',
-            alignment = 'LEFT_ALIGN',
-            leading,
-            spaceBefore,
-            spaceAfter
-        } = args;
+        const { name, fontFamily, fontSize, textColor, alignment, leading, spaceBefore, spaceAfter } = args;
+        if (!has(name)) return formatResponse('Invalid style name: must be a non-empty string', 'Create Paragraph Style');
 
-        const escapedName = escapeJsxString(name);
-        const escapedFontFamily = escapeJsxString(fontFamily);
+        const pre = [];
+        const set = [];
+        if (has(fontFamily)) { pre.push(...jsxFont('__font1', fontFamily)); set.push('style.appliedFont = __font1;'); }
+        if (has(textColor)) { pre.push(...jsxSwatch('__color', textColor, 'text')); set.push('style.fillColor = __color;'); }
+        if (has(fontSize)) set.push(`style.pointSize = ${num(fontSize, { name: 'fontSize', min: 0.1, max: 1296 })};`);
+        if (has(alignment)) set.push(`style.justification = Justification.${justificationOf(alignment)};`);
+        if (has(leading)) set.push(`style.leading = ${num(leading, { name: 'leading', min: 0, max: 5000 })};`);
+        if (has(spaceBefore)) set.push(`style.spaceBefore = ${num(spaceBefore, { name: 'spaceBefore', min: 0, max: 10000 })};`);
+        if (has(spaceAfter)) set.push(`style.spaceAfter = ${num(spaceAfter, { name: 'spaceAfter', min: 0, max: 10000 })};`);
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '',
-            '  try {',
-            `    var style = doc.paragraphStyles.add({name: "${escapedName}"});`,
-            '',
-            '    // Apply font settings',
-            '    try {',
-            `      style.appliedFont = app.fonts.itemByName("${escapedFontFamily}");`,
-            '    } catch (fontError) {',
-            '      // Fallback to default font if specified font not found',
-            '      style.appliedFont = app.fonts.itemByName("Arial\\tRegular");',
-            '    }',
-            `    style.pointSize = ${fontSize};`,
-            '',
-            '    // Apply color',
-            `    if ("${textColor}" !== "Black") {`,
-            '      try {',
-            `        var color = doc.colors.itemByName("${textColor}");`,
-            '        if (color.isValid) {',
-            '          style.fillColor = color;',
-            '        }',
-            '      } catch (colorError) {',
-            '        // Use default color if specified color not found',
-            '      }',
-            '    }',
-            '',
-            '    // Apply alignment',
-            `    if ("${alignment}" === "CENTER_ALIGN") {`,
-            '      style.justification = Justification.CENTER_ALIGN;',
-            `    } else if ("${alignment}" === "RIGHT_ALIGN") {`,
-            '      style.justification = Justification.RIGHT_ALIGN;',
-            `    } else if ("${alignment}" === "JUSTIFY") {`,
-            '      style.justification = Justification.FULLY_JUSTIFIED;',
-            '    } else {',
-            '      style.justification = Justification.LEFT_ALIGN;',
-            '    }',
-            '',
-            ...(leading ? [`    style.leading = ${leading};`] : []),
-            ...(spaceBefore ? [`    style.spaceBefore = ${spaceBefore};`] : []),
-            ...(spaceAfter ? [`    style.spaceAfter = ${spaceAfter};`] : []),
-            '',
-            '    // Verify the style was created correctly',
-            '    var actualFont = style.appliedFont.name;',
-            '    var actualSize = style.pointSize;',
-            '    var actualAlignment = style.justification;',
-            '',
-            `    "Paragraph style '${escapedName}' created successfully with font: " + actualFont + " at " + actualSize + "pt";`,
-            '  } catch (error) {',
-            '    "Error creating paragraph style: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
+        const script = jsxProgram([
+            ...JSX_HELPERS,
+            ...JSX_NAMES,
+            `if (__styleByName(doc.allParagraphStyles, ${str(name)})) { return ${str(`Cannot create paragraph style: '${name}' already exists`)}; }`,
+            ...pre,
+            `var style = doc.paragraphStyles.add({ name: ${str(name)} });`,
+            ...set,
+            `return ${str(`Paragraph style '${name}' created: font `)} + __fontName(style.appliedFont) + ", " + style.pointSize + "pt, " + __justName(style.justification);`,
+        ], { errorPrefix: 'Error creating paragraph style' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
         return formatResponse(result, "Create Paragraph Style");
@@ -89,148 +60,83 @@ export class StyleHandlers {
      * Create a character style
      */
     static async createCharacterStyle(args) {
-        const {
-            name,
-            fontFamily = 'Arial\\tRegular',
-            fontSize = 12,
-            textColor = 'Black',
-            bold = false,
-            italic = false,
-            underline = false
-        } = args;
+        const { name, fontFamily, fontSize, textColor, bold = false, italic = false, underline = false } = args;
+        if (!has(name)) return formatResponse('Invalid style name: must be a non-empty string', 'Create Character Style');
 
-        const escapedName = escapeJsxString(name);
-        const escapedFontFamily = escapeJsxString(fontFamily);
+        const pre = [];
+        const set = [];
+        if (has(fontFamily)) { pre.push(...jsxFont('__font1', fontFamily)); set.push('style.appliedFont = __font1;'); }
+        if (has(textColor)) { pre.push(...jsxSwatch('__color', textColor, 'text')); set.push('style.fillColor = __color;'); }
+        if (has(fontSize)) set.push(`style.pointSize = ${num(fontSize, { name: 'fontSize', min: 0.1, max: 1296 })};`);
+        // Bold/italic select the font style of the applied (or inherited) family.
+        const fontStyle = bold && italic ? 'Bold Italic' : bold ? 'Bold' : italic ? 'Italic' : null;
+        if (fontStyle) set.push(`style.fontStyle = ${str(fontStyle)};`);
+        if (underline) set.push('style.underline = true;');
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '',
-            '  try {',
-            `    var style = doc.characterStyles.add({name: "${escapedName}"});`,
-            '',
-            '    // Apply font settings',
-            '    try {',
-            `      style.appliedFont = app.fonts.itemByName("${escapedFontFamily}");`,
-            '    } catch (fontError) {',
-            '      // Fallback to default font if specified font not found',
-            '      style.appliedFont = app.fonts.itemByName("Arial\\tRegular");',
-            '    }',
-            `    style.pointSize = ${fontSize};`,
-            '',
-            '    // Apply color',
-            `    if ("${textColor}" !== "Black") {`,
-            '      try {',
-            `        var color = doc.colors.itemByName("${textColor}");`,
-            '        if (color.isValid) {',
-            '          style.fillColor = color;',
-            '        }',
-            '      } catch (colorError) {',
-            '        // Use default color if specified color not found',
-            '      }',
-            '    }',
-            '',
-            '    // Apply text attributes',
-            `    style.fontStyle = "${bold ? 'Bold' : 'Normal'}";`,
-            `    style.underline = ${underline};`,
-            `    style.underlineOffset = ${underline ? 1 : 0};`,
-            `    style.underlineWeight = ${underline ? 1 : 0};`,
-            '',
-            '    // Verify the style was created correctly',
-            '    var actualFont = style.appliedFont.name;',
-            '    var actualSize = style.pointSize;',
-            '    var actualStyle = style.fontStyle;',
-            '',
-            `    "Character style '${escapedName}' created successfully with font: " + actualFont + " at " + actualSize + "pt";`,
-            '  } catch (error) {',
-            '    "Error creating character style: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
+        const script = jsxProgram([
+            ...JSX_HELPERS,
+            ...JSX_NAMES,
+            `if (__styleByName(doc.allCharacterStyles, ${str(name)})) { return ${str(`Cannot create character style: '${name}' already exists`)}; }`,
+            ...pre,
+            `var style = doc.characterStyles.add({ name: ${str(name)} });`,
+            ...set,
+            `return ${str(`Character style '${name}' created`)} + ${has(fontFamily) ? '": font " + __fontName(style.appliedFont)' : '""'} + ${fontStyle ? '", style " + style.fontStyle' : '""'};`,
+        ], { errorPrefix: 'Error creating character style' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
         return formatResponse(result, "Create Character Style");
     }
 
     /**
-     * Apply a paragraph style to text
+     * Apply a paragraph style to all paragraphs in a text frame
      */
     static async applyParagraphStyle(args) {
-        const { styleName, frameIndex = 0 } = args;
-        const escapedStyleName = escapeJsxString(styleName);
+        const { styleName, frameIndex = 0, pageIndex } = args;
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var page = doc.pages[0];',
-            '',
-            '  try {',
-            `    if (${frameIndex} >= page.textFrames.length) {`,
-            '      "Text frame index out of range";',
-            '    } else {',
-            `      var textFrame = page.textFrames[${frameIndex}];`,
-            `      var style = doc.paragraphStyles.itemByName("${escapedStyleName}");`,
-            '',
-            '      if (style.isValid) {',
-            '        textFrame.paragraphs[0].appliedParagraphStyle = style;',
-            `        "Paragraph style '${escapedStyleName}' applied successfully";`,
-            '      } else {',
-            `        "Paragraph style '${escapedStyleName}' not found";`,
-            '      }',
-            '    }',
-            '  } catch (error) {',
-            '    "Error applying paragraph style: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
+        const script = jsxProgram([
+            ...JSX_HELPERS,
+            ...jsxPage(pageIndex),
+            ...jsxItemAt('textFrame', 'page.textFrames', frameIndex, 'Text frame index'),
+            `var style = __styleByName(doc.allParagraphStyles, ${str(styleName)});`,
+            `if (!style) { return ${str(`Error: paragraph style '${styleName}' not found`)}; }`,
+            'textFrame.texts[0].appliedParagraphStyle = style;',
+            `return ${str(`Paragraph style '${styleName}' applied to `)} + textFrame.paragraphs.length + " paragraph(s)";`,
+        ], { errorPrefix: 'Error applying paragraph style' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
         return formatResponse(result, "Apply Paragraph Style");
     }
 
     /**
-     * Apply a character style to text
+     * Apply a character style to a text frame's text or a character range
      */
     static async applyCharacterStyle(args) {
-        const { styleName, frameIndex = 0, startIndex = 0, endIndex = -1 } = args;
-        const escapedStyleName = escapeJsxString(styleName);
+        const { styleName, frameIndex = 0, startIndex = 0, endIndex = -1, pageIndex } = args;
+        const whole = Number(endIndex) === -1;
+        const start = index(startIndex, { name: 'startIndex', max: 1e7 });
+        const end = whole ? null : index(endIndex, { name: 'endIndex', max: 1e7 });
+        if (!whole && Number(end) < Number(start)) {
+            return formatResponse('Invalid range: endIndex must be >= startIndex (or -1 for the whole frame)', 'Apply Character Style');
+        }
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var page = doc.pages[0];',
-            '',
-            '  try {',
-            `    if (${frameIndex} >= page.textFrames.length) {`,
-            '      "Text frame index out of range";',
-            '    } else {',
-            `      var textFrame = page.textFrames[${frameIndex}];`,
-            `      var style = doc.characterStyles.itemByName("${escapedStyleName}");`,
-            '',
-            '      if (style.isValid) {',
-            `        if (${endIndex} === -1) {`,
-            '          // Apply to entire text frame',
-            '          textFrame.texts[0].appliedCharacterStyle = style;',
-            `        } else {`,
-            '          // Apply to specific range',
-            `          textFrame.texts[0].characters.itemByRange(${startIndex}, ${endIndex}).appliedCharacterStyle = style;`,
-            '        }',
-            `        "Character style '${escapedStyleName}' applied successfully";`,
-            '      } else {',
-            `        "Character style '${escapedStyleName}' not found";`,
-            '      }',
-            '    }',
-            '  } catch (error) {',
-            '    "Error applying character style: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
+        const target = whole
+            ? ['textFrame.texts[0].appliedCharacterStyle = style;', 'var count = textFrame.texts[0].characters.length;']
+            : [
+                'var chars = textFrame.texts[0].characters;',
+                `if (${end} >= chars.length) { return "Character index ${end} out of range (frame has " + chars.length + " characters)"; }`,
+                `chars.itemByRange(${start}, ${end}).appliedCharacterStyle = style;`,
+                `var count = ${Number(end) - Number(start) + 1};`,
+            ];
+
+        const script = jsxProgram([
+            ...JSX_HELPERS,
+            ...jsxPage(pageIndex),
+            ...jsxItemAt('textFrame', 'page.textFrames', frameIndex, 'Text frame index'),
+            `var style = __styleByName(doc.allCharacterStyles, ${str(styleName)});`,
+            `if (!style) { return ${str(`Error: character style '${styleName}' not found`)}; }`,
+            ...target,
+            `return ${str(`Character style '${styleName}' applied to `)} + count + " character(s)";`,
+        ], { errorPrefix: 'Error applying character style' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
         return formatResponse(result, "Apply Character Style");
@@ -239,132 +145,80 @@ export class StyleHandlers {
     /**
      * List all styles in the document
      */
-    static async listStyles(args) {
+    static async listStyles(args = {}) {
         const { styleType = 'ALL' } = args;
+        const type = enumOf(String(styleType).toUpperCase(), ['PARAGRAPH', 'CHARACTER', 'ALL'], { name: 'styleType' });
+        const para = type !== 'CHARACTER';
+        const chr = type !== 'PARAGRAPH';
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var info = "=== STYLES LIST ===\\n";',
-            '',
-            '  // Helper function to get alignment name',
-            '  function getAlignmentName(alignment) {',
-            '    if (alignment === Justification.LEFT_ALIGN) return "LEFT_ALIGN";',
-            '    if (alignment === Justification.CENTER_ALIGN) return "CENTER_ALIGN";',
-            '    if (alignment === Justification.RIGHT_ALIGN) return "RIGHT_ALIGN";',
-            '    if (alignment === Justification.FULLY_JUSTIFIED) return "FULLY_JUSTIFIED";',
-            '    return "UNKNOWN (" + alignment + ")";',
-            '  }',
-            '',
-            `  if ("${styleType}" === "PARAGRAPH" || "${styleType}" === "ALL") {`,
-            '    info += "\\n=== PARAGRAPH STYLES ===\\n";',
-            '    for (var i = 0; i < doc.paragraphStyles.length; i++) {',
-            '      var style = doc.paragraphStyles[i];',
-            '      if (style.isValid) {',
-            '        info += "Name: " + style.name + "\\n";',
-            '        if (style.appliedFont && style.appliedFont.isValid) {',
-            '          info += "  Font: " + style.appliedFont.name + "\\n";',
-            '        } else {',
-            '          info += "  Font: [Not set]\\n";',
-            '        }',
-            '        info += "  Size: " + style.pointSize + "pt\\n";',
-            '        info += "  Alignment: " + getAlignmentName(style.justification) + "\\n";',
-            '        if (style.fillColor && style.fillColor.isValid) {',
-            '          info += "  Color: " + style.fillColor.name + "\\n";',
-            '        }',
-            '        info += "\\n";',
-            '      }',
-            '    }',
-            '  }',
-            '',
-            `  if ("${styleType}" === "CHARACTER" || "${styleType}" === "ALL") {`,
-            '    info += "\\n=== CHARACTER STYLES ===\\n";',
-            '    for (var i = 0; i < doc.characterStyles.length; i++) {',
-            '      var style = doc.characterStyles[i];',
-            '      if (style.isValid) {',
-            '        info += "Name: " + style.name + "\\n";',
-            '        if (style.appliedFont && style.appliedFont.isValid) {',
-            '          info += "  Font: " + style.appliedFont.name + "\\n";',
-            '        } else {',
-            '          info += "  Font: [Not set]\\n";',
-            '        }',
-            '        info += "  Size: " + style.pointSize + "pt\\n";',
-            '        info += "  Style: " + style.fontStyle + "\\n";',
-            '        if (style.fillColor && style.fillColor.isValid) {',
-            '          info += "  Color: " + style.fillColor.name + "\\n";',
-            '        }',
-            '        info += "\\n";',
-            '      }',
-            '    }',
-            '  }',
-            '',
-            '  info;',
-            '}'
-        ].join('\n');
+        const script = jsxProgram([
+            ...JSX_HELPERS,
+            ...JSX_NAMES,
+            'var info = "=== STYLES LIST ===\\n";',
+            ...(para ? [
+                'var ps = doc.allParagraphStyles;',
+                'info += "\\n=== PARAGRAPH STYLES (" + ps.length + ") ===\\n";',
+                'for (var i = 0; i < ps.length; i++) {',
+                '  var p = ps[i];',
+                '  info += "Name: " + p.name + "\\n";',
+                '  try { info += "  Font: " + __fontName(p.appliedFont) + (p.fontStyle ? " " + p.fontStyle : "") + "\\n"; } catch (__e1) {}',
+                '  try { info += "  Size: " + p.pointSize + "pt\\n"; } catch (__e2) {}',
+                '  try { info += "  Alignment: " + __justName(p.justification) + "\\n"; } catch (__e3) {}',
+                '  try { info += "  Color: " + __name(p.fillColor) + "\\n"; } catch (__e4) {}',
+                '}',
+            ] : []),
+            ...(chr ? [
+                'var cs = doc.allCharacterStyles;',
+                'info += "\\n=== CHARACTER STYLES (" + cs.length + ") ===\\n";',
+                'for (var j = 0; j < cs.length; j++) {',
+                '  var c = cs[j];',
+                '  info += "Name: " + c.name + "\\n";',
+                '  try { info += "  Font: " + __fontName(c.appliedFont) + "\\n"; } catch (__e5) {}',
+                '  try { if (typeof c.fontStyle === "string") { info += "  Style: " + c.fontStyle + "\\n"; } } catch (__e6) {}',
+                '  try { if (typeof c.pointSize === "number") { info += "  Size: " + c.pointSize + "pt\\n"; } } catch (__e7) {}',
+                '  try { info += "  Color: " + __name(c.fillColor) + "\\n"; } catch (__e8) {}',
+                '}',
+            ] : []),
+            'return info;',
+        ], { errorPrefix: 'Error listing styles' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
         return formatResponse(result, "List Styles");
     }
 
     /**
-     * Create a color swatch
+     * Create a color swatch from RGB values (stored as RGB or converted to CMYK)
      */
     static async createColorSwatch(args) {
-        const {
-            name,
-            colorType = 'PROCESS',
-            red,
-            green,
-            blue
-        } = args;
+        const { name, colorType = 'PROCESS', colorSpace = 'RGB', red, green, blue } = args;
+        if (!has(name)) return formatResponse('Invalid swatch name: must be a non-empty string', 'Create Color Swatch');
 
-        const escapedName = escapeJsxString(name);
+        const model = enumOf(String(colorType).toUpperCase(), ['PROCESS', 'SPOT'], { name: 'colorType' });
+        const space = enumOf(String(colorSpace).toUpperCase(), ['RGB', 'CMYK'], { name: 'colorSpace' });
+        const r = Number(num(red, { name: 'red', min: 0, max: 255 }));
+        const g = Number(num(green, { name: 'green', min: 0, max: 255 }));
+        const b = Number(num(blue, { name: 'blue', min: 0, max: 255 }));
 
-        // Convert RGB to CMYK using proper formula
-        const r = red / 255;
-        const g = green / 255;
-        const b = blue / 255;
+        let values;
+        if (space === 'RGB') {
+            values = [r, g, b];
+        } else {
+            // Naive RGB -> CMYK (no colour management).
+            const rr = r / 255, gg = g / 255, bb = b / 255;
+            const max = Math.max(rr, gg, bb);
+            const k = 1 - max;
+            const c = max === 0 ? 0 : (max - rr) / max;
+            const m = max === 0 ? 0 : (max - gg) / max;
+            const y = max === 0 ? 0 : (max - bb) / max;
+            values = [c, m, y, k].map((v) => Math.round(v * 100));
+        }
 
-        // Find the maximum value
-        const max = Math.max(r, g, b);
-
-        // Calculate K (black)
-        const k = 1 - max;
-
-        // Calculate CMY values
-        const c = max === 0 ? 0 : (max - r) / max;
-        const m = max === 0 ? 0 : (max - g) / max;
-        const y = max === 0 ? 0 : (max - b) / max;
-
-        // Convert to percentages and round
-        const cyan = Math.round(c * 100);
-        const magenta = Math.round(m * 100);
-        const yellow = Math.round(y * 100);
-        const black = Math.round(k * 100);
-
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '',
-            '  try {',
-            `    var color = doc.colors.add({name: "${escapedName}"});`,
-            '',
-            '    // Set CMYK values directly (InDesign defaults to process color)',
-            `    color.colorValue = [${cyan}, ${magenta}, ${yellow}, ${black}];`,
-            '',
-            '    // Verify the color was set correctly',
-            '    var actualValues = color.colorValue;',
-            '',
-            `    "Color swatch '${escapedName}' created successfully with CMYK values [" + actualValues[0] + ", " + actualValues[1] + ", " + actualValues[2] + ", " + actualValues[3] + "] (from RGB ${red}, ${green}, ${blue})";`,
-            '  } catch (error) {',
-            '    "Error creating color swatch: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
+        const script = jsxProgram([
+            ...JSX_HELPERS,
+            `if (doc.swatches.itemByName(${str(name)}).isValid) { return ${str(`Cannot create swatch: '${name}' already exists`)}; }`,
+            `var color = doc.colors.add({ name: ${str(name)}, model: ColorModel.${model}, space: ColorSpace.${space}, colorValue: [${values.join(', ')}] });`,
+            `return ${str(`Color swatch '${name}' created (${model} ${space} [`)} + color.colorValue.join(", ") + ${str(`] from RGB ${r}, ${g}, ${b})`)};`,
+        ], { errorPrefix: 'Error creating color swatch' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
         return formatResponse(result, "Create Color Swatch");
@@ -374,94 +228,62 @@ export class StyleHandlers {
      * List all color swatches
      */
     static async listColorSwatches() {
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var info = "=== COLOR SWATCHES ===\\n";',
-            '',
-            '  try {',
-            '    for (var i = 0; i < doc.colors.length; i++) {',
-            '      var color = doc.colors[i];',
-            '      if (color && color.isValid) {',
-            '        info += "Name: " + color.name + "\\n";',
-            '        if (color.colorValue && color.colorValue.length >= 4) {',
-            '          info += "  CMYK: [" + color.colorValue[0] + ", " + color.colorValue[1] + ", " + color.colorValue[2] + ", " + color.colorValue[3] + "]\\n";',
-            '        } else if (color.colorValue && color.colorValue.length >= 3) {',
-            '          info += "  RGB: [" + color.colorValue[0] + ", " + color.colorValue[1] + ", " + color.colorValue[2] + "]\\n";',
-            '        } else {',
-            '          info += "  Values: [No values set]\\n";',
-            '        }',
-            '        info += "\\n";',
-            '      }',
-            '    }',
-            '  } catch (error) {',
-            '    info += "Error listing colors: " + error.message + "\\n";',
+        const script = jsxProgram([
+            'function __enumName(v, e, names) {',
+            '  for (var i = 0; i < names.length; i++) { if (v === e[names[i]]) { return names[i]; } }',
+            '  return String(v);',
+            '}',
+            'var info = "=== COLOR SWATCHES ===\\n";',
+            'var sw = doc.swatches.everyItem().getElements();',
+            'for (var i = 0; i < sw.length; i++) {',
+            '  var s = sw[i];',
+            '  info += "Name: " + s.name + " (" + s.constructor.name + ")\\n";',
+            '  if (s.constructor.name === "Color") {',
+            '    try {',
+            '      info += "  Model: " + __enumName(s.model, ColorModel, ["PROCESS", "SPOT", "REGISTRATION", "MIXEDINKMODEL"]) + "\\n";',
+            '      info += "  Space: " + __enumName(s.space, ColorSpace, ["CMYK", "RGB", "LAB", "HSB", "MIXEDINK"]) + "\\n";',
+            '      info += "  Values: [" + s.colorValue.join(", ") + "]\\n";',
+            '    } catch (__ce) {}',
             '  }',
-            '',
-            '  info;',
-            '}'
-        ].join('\n');
+            '}',
+            'return info;',
+        ], { errorPrefix: 'Error listing swatches' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
         return formatResponse(result, "List Color Swatches");
     }
 
     /**
-     * Apply a color to text or graphics
+     * Apply a swatch as fill or stroke to a page item or to a text frame's text
      */
     static async applyColor(args) {
-        const { colorName, targetType = 'text', frameIndex = 0 } = args;
-        const escapedColorName = escapeJsxString(colorName);
+        const { objectIndex = 0, colorName, colorType = 'FILL', targetType = 'pageItem', pageIndex } = args;
+        if (!has(colorName)) return formatResponse('Invalid colorName: must be a swatch name or #RRGGBB', 'Apply Color');
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var page = doc.pages[0];',
-            '',
-            '  try {',
-            `    var color = doc.colors.itemByName("${escapedColorName}");`,
-            '    if (!color.isValid) {',
-            `      "Color '${escapedColorName}' not found";`,
-            '    } else {',
-            `      if ("${targetType}" === "text") {`,
-            `        if (${frameIndex} >= page.textFrames.length) {`,
-            '          "Text frame index out of range";',
-            '        } else {',
-            `          var textFrame = page.textFrames[${frameIndex}];`,
-            '          textFrame.texts[0].fillColor = color;',
-            `          "Color '${escapedColorName}' applied to text";`,
-            '        }',
-            `      } else if ("${targetType}" === "rectangle") {`,
-            `        if (${frameIndex} >= page.rectangles.length) {`,
-            '          "Rectangle index out of range";',
-            '        } else {',
-            `          var rectangle = page.rectangles[${frameIndex}];`,
-            '          rectangle.fillColor = color;',
-            `          "Color '${escapedColorName}' applied to rectangle";`,
-            '        }',
-            `      } else if ("${targetType}" === "ellipse") {`,
-            `        if (${frameIndex} >= page.ovals.length) {`,
-            '          "Ellipse index out of range";',
-            '        } else {',
-            `          var ellipse = page.ovals[${frameIndex}];`,
-            '          ellipse.fillColor = color;',
-            `          "Color '${escapedColorName}' applied to ellipse";`,
-            '        }',
-            '      } else {',
-            '        "Invalid target type. Use: text, rectangle, or ellipse";',
-            '      }',
-            '    }',
-            '  } catch (error) {',
-            '    "Error applying color: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
+        const prop = enumOf(String(colorType).toUpperCase(), ['FILL', 'STROKE'], { name: 'colorType' }) === 'FILL' ? 'fillColor' : 'strokeColor';
+        const kind = enumOf(targetType, ['pageItem', 'text', 'textFrame', 'rectangle', 'ellipse', 'polygon'], { name: 'targetType' });
+        const collection = {
+            pageItem: '__all',
+            text: 'page.textFrames',
+            textFrame: 'page.textFrames',
+            rectangle: 'page.rectangles',
+            ellipse: 'page.ovals',
+            polygon: 'page.polygons',
+        }[kind];
+
+        const script = jsxProgram([
+            ...JSX_HELPERS,
+            ...jsxPage(pageIndex),
+            ...jsxSwatch('color', colorName),
+            ...(kind === 'pageItem' ? ['var __all = page.allPageItems;'] : []),
+            ...jsxItemAt('obj', collection, objectIndex, `${kind} index`),
+            ...(kind === 'text'
+                ? [`obj.texts[0].${prop} = color;`]
+                : ['if (obj.locked) { return "Cannot apply color: object is locked"; }', `obj.${prop} = color;`]),
+            `return ${str(`Color '${colorName}' applied as ${prop === 'fillColor' ? 'fill' : 'stroke'} to ${kind} `)} + ${index(objectIndex, { name: 'objectIndex' })} + " (" + obj.constructor.name + ")";`,
+        ], { errorPrefix: 'Error applying color' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
         return formatResponse(result, "Apply Color");
     }
-} 
+}

@@ -16,6 +16,8 @@ export { StyleHandlers } from './styleHandlers.js';
 
 // Advanced Layout and Organization
 export { MasterSpreadHandlers } from './masterSpreadHandlers.js';
+export { SpreadHandlers } from './spreadHandlers.js';
+export { LayerHandlers } from './layerHandlers.js';
 export { PageItemHandlers } from './pageItemHandlers.js';
 export { GroupHandlers } from './groupHandlers.js';
 
@@ -51,7 +53,7 @@ export { HelpHandlers } from './helpHandlers.js';
  * 🛠️ System Utilities (1 handler)
  * - UtilityHandlers: Code execution, session management
  * 
- * Total: 13 handler classes covering 135+ tools
+ * Total: 15 handler classes covering 137 tools
  */
 
 /**

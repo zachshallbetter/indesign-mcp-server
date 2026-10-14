@@ -200,7 +200,7 @@ async function testBasicWorkflow() {
             y: 30,
             width: 150,
             height: 40,
-            fontFamily: 'Helvetica Neue',
+            fontName: 'Helvetica Neue',
             fontSize: 12
         });
         await delay(2000);

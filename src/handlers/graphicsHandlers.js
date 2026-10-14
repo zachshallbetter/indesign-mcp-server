@@ -2,446 +2,237 @@
  * Graphics management handlers
  */
 import { ScriptExecutor } from '../core/scriptExecutor.js';
-import { formatResponse, formatErrorResponse, escapeJsxString, str, num, validateFilePath, jsxPath } from '../utils/stringUtils.js';
+import { formatResponse, looksLikeFailure, str, num, index, bool, enumOf, validateFilePath, jsxPath } from '../utils/stringUtils.js';
 import { sessionManager } from '../core/sessionManager.js';
+import {
+    jsxProgram, jsxPage, jsxItemAt, jsxSwatch, jsxBounds, resolveBox, mmToPt, JSX_HELPERS,
+} from './pageItemHandlers.js';
+
+const has = (v) => v !== undefined && v !== null && v !== '';
+
+const FIT_MODES = ['PROPORTIONALLY', 'FILL_PROPORTIONALLY', 'CONTENT_TO_FRAME', 'FRAME_TO_CONTENT', 'CENTER_CONTENT', 'NONE'];
+const FIT_ALIASES = { FILL_FRAME: 'FILL_PROPORTIONALLY', FIT_CONTENT: 'CONTENT_TO_FRAME', FIT_FRAME: 'FRAME_TO_CONTENT' };
+
+/** Fill/stroke lines for a newly created shape `v`. Swatches are resolved before creation. */
+function paintLines(v, { fillColor, strokeColor, strokeWidth }) {
+    const pre = [];
+    const post = [];
+    if (has(fillColor)) {
+        pre.push(...jsxSwatch('__fill', fillColor, 'fill'));
+        post.push(`${v}.fillColor = __fill;`);
+    }
+    if (has(strokeColor)) {
+        pre.push(...jsxSwatch('__stroke', strokeColor, 'stroke'));
+        post.push(`${v}.strokeColor = __stroke;`);
+    }
+    if (has(strokeColor) || has(strokeWidth)) {
+        post.push(`${v}.strokeWeight = ${num(has(strokeWidth) ? strokeWidth : 1, { name: 'strokeWidth', min: 0, max: 1000 })};`);
+    }
+    return { pre, post };
+}
+
+async function createShape(args, { kind, label, create, extra = [] }) {
+    const box = resolveBox(args);
+    const paint = paintLines('shape', args);
+
+    const script = jsxProgram([
+        ...JSX_HELPERS,
+        ...jsxPage(args.pageIndex),
+        ...paint.pre,
+        ...jsxBounds('__bounds', box),
+        ...create,
+        'shape.geometricBounds = __bounds;',
+        ...extra,
+        ...paint.post,
+        `return ${str(`${label} created on page `)} + page.name + " (ID " + shape.id + ")";`,
+    ], { errorPrefix: `Error creating ${kind}` });
+
+    const result = await ScriptExecutor.executeInDesignScript(script);
+    if (!looksLikeFailure(result)) {
+        sessionManager.setLastCreatedItem({
+            type: kind,
+            position: box,
+            fillColor: args.fillColor,
+            strokeColor: args.strokeColor,
+            strokeWidth: args.strokeWidth,
+        });
+    }
+    return formatResponse(result, `Create ${label}`);
+}
 
 export class GraphicsHandlers {
     /**
-     * Create a rectangle on the active page
+     * Create a rectangle on the active page (or pageIndex)
      */
     static async createRectangle(args) {
-        const {
-            x,
-            y,
-            width,
-            height,
-            fillColor,
-            strokeColor,
-            strokeWidth = 1,
-            cornerRadius = 0
-        } = args;
-
-        // Use session manager for positioning if coordinates not provided
-        const positioning = sessionManager.getCalculatedPositioning({ x, y, width, height });
-
-        // Validate positioning before creating content
-        const validation = sessionManager.validatePositioning(positioning.x, positioning.y, positioning.width, positioning.height);
-        if (!validation.valid) {
-            // Apply suggested corrections if available, otherwise use safe defaults
-            if (validation.suggested) {
-                Object.assign(positioning, validation.suggested);
-            } else {
-                // Fallback to safe positioning
-                const safePos = sessionManager.getCalculatedPositioning({});
-                Object.assign(positioning, safePos);
-            }
-        }
-
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var page = doc.pages[0];',
-            '  var rectangle;',
-            '',
-            '  try {',
-            '    // Create rectangle',
-            `    rectangle = page.rectangles.add();`,
-            `    rectangle.geometricBounds = [${positioning.y}, ${positioning.x}, ${positioning.y + positioning.height}, ${positioning.x + positioning.width}];`,
-            '',
-            '    // Apply fill color',
-            `    if ("${fillColor}" !== "") {`,
-            '      try {',
-            `        rectangle.fillColor = doc.colors.itemByName("${fillColor}");`,
-            '      } catch (colorError) {',
-            '        // Use default color if specified color not found',
-            '      }',
-            '    }',
-            '',
-            '    // Apply stroke color',
-            `    if ("${strokeColor}" !== "") {`,
-            '      try {',
-            `        rectangle.strokeColor = doc.colors.itemByName("${strokeColor}");`,
-            `        rectangle.strokeWeight = ${strokeWidth};`,
-            '      } catch (colorError) {',
-            '        // Use default stroke if specified color not found',
-            '      }',
-            '    }',
-            '',
-            '    // Apply corner radius',
-            `    if (${cornerRadius} > 0) {`,
-            `      rectangle.topLeftCornerOption = CornerOptions.ROUNDED_CORNER;`,
-            `      rectangle.topRightCornerOption = CornerOptions.ROUNDED_CORNER;`,
-            `      rectangle.bottomLeftCornerOption = CornerOptions.ROUNDED_CORNER;`,
-            `      rectangle.bottomRightCornerOption = CornerOptions.ROUNDED_CORNER;`,
-            `      rectangle.cornerRadius = ${cornerRadius};`,
-            '    }',
-            '',
-            '    "Rectangle created successfully";',
-            '  } catch (error) {',
-            '    "Error creating rectangle: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-
-        // Store the created item info in session
-        sessionManager.setLastCreatedItem({
-            type: 'rectangle',
-            position: positioning,
-            fillColor: fillColor,
-            strokeColor: strokeColor,
-            strokeWidth: strokeWidth,
-            cornerRadius: cornerRadius
+        const { cornerRadius = 0 } = args;
+        const radius = mmToPt(cornerRadius, { name: 'cornerRadius', min: 0, max: 10000 });
+        const corners = Number(radius) > 0
+            ? ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'].flatMap((c) => [
+                `shape.${c}CornerOption = CornerOptions.ROUNDED_CORNER;`,
+                `shape.${c}CornerRadius = ${radius};`,
+            ])
+            : [];
+        return createShape(args, {
+            kind: 'rectangle',
+            label: 'Rectangle',
+            create: ['var shape = page.rectangles.add();'],
+            extra: corners,
         });
-
-        return formatResponse(result, "Create Rectangle");
     }
 
     /**
-     * Create an ellipse on the active page
+     * Create an ellipse on the active page (or pageIndex)
      */
     static async createEllipse(args) {
-        const {
-            x,
-            y,
-            width,
-            height,
-            fillColor,
-            strokeColor,
-            strokeWidth = 1
-        } = args;
-
-        // Use session manager for positioning if coordinates not provided
-        const positioning = sessionManager.getCalculatedPositioning({ x, y, width, height });
-
-        // Validate positioning before creating content
-        const validation = sessionManager.validatePositioning(positioning.x, positioning.y, positioning.width, positioning.height);
-        if (!validation.valid) {
-            // Apply suggested corrections if available, otherwise use safe defaults
-            if (validation.suggested) {
-                Object.assign(positioning, validation.suggested);
-            } else {
-                // Fallback to safe positioning
-                const safePos = sessionManager.getCalculatedPositioning({});
-                Object.assign(positioning, safePos);
-            }
-        }
-
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var page = doc.pages[0];',
-            '  var ellipse;',
-            '',
-            '  try {',
-            '    // Create ellipse',
-            `    ellipse = page.ovals.add();`,
-            `    ellipse.geometricBounds = [${positioning.y}, ${positioning.x}, ${positioning.y + positioning.height}, ${positioning.x + positioning.width}];`,
-            '',
-            '    // Apply fill color',
-            `    if ("${fillColor}" !== "") {`,
-            '      try {',
-            `        ellipse.fillColor = doc.colors.itemByName("${fillColor}");`,
-            '      } catch (colorError) {',
-            '        // Use default color if specified color not found',
-            '      }',
-            '    }',
-            '',
-            '    // Apply stroke color',
-            `    if ("${strokeColor}" !== "") {`,
-            '      try {',
-            `        ellipse.strokeColor = doc.colors.itemByName("${strokeColor}");`,
-            `        ellipse.strokeWeight = ${strokeWidth};`,
-            '      } catch (colorError) {',
-            '        // Use default stroke if specified color not found',
-            '      }',
-            '    }',
-            '',
-            '    "Ellipse created successfully";',
-            '  } catch (error) {',
-            '    "Error creating ellipse: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-
-        // Store the created item info in session
-        sessionManager.setLastCreatedItem({
-            type: 'ellipse',
-            position: positioning,
-            fillColor: fillColor,
-            strokeColor: strokeColor,
-            strokeWidth: strokeWidth
+        return createShape(args, {
+            kind: 'ellipse',
+            label: 'Ellipse',
+            create: ['var shape = page.ovals.add();'],
         });
-
-        return formatResponse(result, "Create Ellipse");
     }
 
     /**
-     * Create a polygon on the active page
+     * Create a regular polygon on the active page (or pageIndex)
      */
     static async createPolygon(args) {
-        const {
-            x,
-            y,
-            width,
-            height,
-            sides = 6,
-            fillColor,
-            strokeColor,
-            strokeWidth = 1
-        } = args;
-
-        // Use session manager for positioning if coordinates not provided
-        const positioning = sessionManager.getCalculatedPositioning({ x, y, width, height });
-
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var page = doc.pages[0];',
-            '  var polygon;',
-            '',
-            '  try {',
-            '    // Create polygon',
-            `    polygon = page.polygons.add();`,
-            `    polygon.geometricBounds = [${positioning.y}, ${positioning.x}, ${positioning.y + positioning.height}, ${positioning.x + positioning.width}];`,
-            `    polygon.polygonSides = ${sides};`,
-            '',
-            '    // Apply fill color',
-            `    if ("${fillColor}" !== "") {`,
-            '      try {',
-            `        polygon.fillColor = doc.colors.itemByName("${fillColor}");`,
-            '      } catch (colorError) {',
-            '        // Use default color if specified color not found',
-            '      }',
-            '    }',
-            '',
-            '    // Apply stroke color',
-            `    if ("${strokeColor}" !== "") {`,
-            '      try {',
-            `        polygon.strokeColor = doc.colors.itemByName("${strokeColor}");`,
-            `        polygon.strokeWeight = ${strokeWidth};`,
-            '      } catch (colorError) {',
-            '        // Use default stroke if specified color not found',
-            '      }',
-            '    }',
-            '',
-            '    "Polygon created successfully";',
-            '  } catch (error) {',
-            '    "Error creating polygon: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
-
-        const result = await ScriptExecutor.executeInDesignScript(script);
-
-        // Store the created item info in session
-        sessionManager.setLastCreatedItem({
-            type: 'polygon',
-            sides: sides,
-            position: positioning,
-            fillColor: fillColor,
-            strokeColor: strokeColor,
-            strokeWidth: strokeWidth
+        const { sides = 6 } = args;
+        const n = Number(index(sides, { name: 'sides', max: 100 }));
+        if (n < 3) return formatResponse('Invalid sides: must be between 3 and 100', 'Create Polygon');
+        return createShape(args, {
+            kind: 'polygon',
+            label: `Polygon (${n} sides)`,
+            create: [`var shape = page.polygons.add(doc.activeLayer, ${n}, 0);`],
+            extra: [
+                // Older engines ignore numberOfSides; convert explicitly when needed.
+                `if (shape.paths[0].pathPoints.length !== ${n}) {`,
+                `  shape.convertShape(ConvertShapeOptions.CONVERT_TO_POLYGON, ${n}, 0, 0);`,
+                '  shape.geometricBounds = __bounds;',
+                '}',
+            ],
         });
-
-        return formatResponse(result, "Create Polygon");
     }
 
     /**
-     * Place an image on the active page with enhanced options
+     * Place an image on the active page (or pageIndex)
      */
     static async placeImage(args) {
         const {
             filePath,
-            x,
-            y,
             width,
             height,
             linkImage = true,
-            createProxy = false,
-            applyObjectStyle = '',
-            imagePreference = {},
             scale = 100,
-            fitMode = 'PROPORTIONALLY'
+            fitMode = 'PROPORTIONALLY',
         } = args;
+        const objectStyle = args.objectStyle ?? args.applyObjectStyle ?? '';
 
-        // Use session manager for positioning if coordinates not provided
-        const positioning = sessionManager.getCalculatedPositioning({ x, y, width, height });
         const resolvedPath = validateFilePath(filePath);
         const fileLit = jsxPath(resolvedPath);
-        const styleLit = str(applyObjectStyle || '');
+        const autoSize = !has(width) && !has(height);
+        const box = resolveBox(autoSize ? { x: args.x, y: args.y, width: 10, height: 10 } : args);
         const scaleN = num(scale, { name: 'scale', min: 1, max: 1000 });
-        const fit = str(fitMode || 'PROPORTIONALLY');
+        const modeRaw = String(fitMode).toUpperCase();
+        const fit = enumOf(FIT_ALIASES[modeRaw] || modeRaw, FIT_MODES, { name: 'fitMode' });
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var page = doc.pages[0];',
-            '  var imageFile;',
-            '  var image;',
-            '',
-            '  try {',
-            `    imageFile = File(${fileLit});`,
-            '    if (!imageFile.exists) {',
-            `      "ERROR: Image file not found: " + ${fileLit};`,
-            '    } else {',
-            '      // Place image',
-            `      image = page.rectangles.add();`,
-            `      image.geometricBounds = [${positioning.y}, ${positioning.x}, ${positioning.y + positioning.height}, ${positioning.x + positioning.width}];`,
-            '',
-            '      // Place the image in the rectangle',
-            '      try {',
-            `        image.place(imageFile);`,
-            '',
-            '        // Note: Linking preferences are set automatically by InDesign',
-            '',
-            '        // Apply object style if specified',
-            `        if (${styleLit} !== "") {`,
-            '          try {',
-            `            var objectStyle = doc.objectStyles.itemByName(${styleLit});`,
-            '            if (objectStyle.isValid) {',
-            '              image.appliedObjectStyle = objectStyle;',
-            '            }',
-            '          } catch (styleError) {',
-            '            // Object style not found, continue without it',
-            '          }',
-            '        }',
-            '',
-            '        // Apply image scaling and fitting options',
-            '        if (image.graphics.length > 0) {',
-            '          var graphic = image.graphics[0];',
-            '          if (graphic.constructor.name === "Image") {',
-            '            // Apply scaling',
-            `            if (${scaleN} !== 100) {`,
-            `              graphic.horizontalScale = ${scaleN};`,
-            `              graphic.verticalScale = ${scaleN};`,
-            '            }',
-            '',
-            '            // Set image fitting options',
-            `            if (${fit} === "FILL_FRAME") {`,
-            '              graphic.fit(FittingOptions.FILL_PROPORTIONALLY);',
-            `            } else if (${fit} === "FIT_CONTENT") {`,
-            '              graphic.fit(FittingOptions.FIT_CONTENT);',
-            `            } else if (${fit} === "FIT_FRAME") {`,
-            '              graphic.fit(FittingOptions.FIT_FRAME);',
-            '            } else {',
-            '              graphic.fit(FittingOptions.PROPORTIONALLY);',
-            '            }',
-            '',
-            '            // Set alignment',
-            '            graphic.horizontalAlignment = HorizontalAlignment.CENTER_ALIGN;',
-            '            graphic.verticalAlignment = VerticalAlignment.CENTER_ALIGN;',
-            '          }',
-            '        }',
-            '',
-            '        "SUCCESS: Image placed successfully at " + imageFile.fsName;',
-            '      } catch (placeError) {',
-            '        // Remove the rectangle if image placement failed',
-            '        image.remove();',
-            `        "ERROR: Failed to place image: " + placeError.message;`,
-            '      }',
-            '    }',
-            '  } catch (error) {',
-            '    "ERROR: Error placing image: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
+        const fitLines = [];
+        if (autoSize) {
+            fitLines.push('frame.fit(FitOptions.FRAME_TO_CONTENT);');
+        } else if (fit !== 'NONE') {
+            fitLines.push(`frame.fit(FitOptions.${fit});`);
+            if (fit === 'PROPORTIONALLY' || fit === 'FILL_PROPORTIONALLY') fitLines.push('frame.fit(FitOptions.CENTER_CONTENT);');
+        }
+
+        const script = jsxProgram([
+            ...JSX_HELPERS,
+            ...jsxPage(args.pageIndex),
+            `var imageFile = File(${fileLit});`,
+            `if (!imageFile.exists) { return "Error: image file not found: " + ${fileLit}; }`,
+            ...(has(objectStyle)
+                ? [
+                    `var __os = __styleByName(doc.allObjectStyles, ${str(objectStyle)});`,
+                    `if (!__os) { return ${str(`Error: object style '${objectStyle}' not found`)}; }`,
+                ]
+                : []),
+            ...jsxBounds('__bounds', box),
+            'var frame = page.rectangles.add();',
+            'frame.geometricBounds = __bounds;',
+            ...(has(objectStyle) ? ['frame.appliedObjectStyle = __os;'] : []),
+            'try {',
+            '  frame.place(imageFile);',
+            '} catch (placeError) {',
+            '  frame.remove();',
+            '  return "Error: failed to place image: " + placeError.message;',
+            '}',
+            'if (frame.graphics.length === 0) { frame.remove(); return "Error: nothing was placed from " + imageFile.fsName; }',
+            'var graphic = frame.graphics[0];',
+            ...(Number(scaleN) !== 100 && (autoSize || fit === 'NONE')
+                ? [`graphic.horizontalScale = ${scaleN};`, `graphic.verticalScale = ${scaleN};`]
+                : []),
+            ...fitLines,
+            ...(linkImage ? [] : ['if (graphic.itemLink) { graphic.itemLink.unlink(); }']),
+            'var gb = frame.geometricBounds;',
+            `return "Image placed: " + imageFile.fsName + " (frame ID " + frame.id + ", " + __mm(gb[3] - gb[1]) + " x " + __mm(gb[2] - gb[0]) + " mm, scale " + Math.round(graphic.horizontalScale * 100) / 100 + "%${linkImage ? '' : ', embedded'})";`,
+        ], { errorPrefix: 'Error placing image' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
 
-        // Check if the operation was successful
-        const isSuccess = result.includes("SUCCESS:") && !result.includes("ERROR:");
-
-        if (isSuccess) {
-            // Store the created item info in session
+        if (!looksLikeFailure(result)) {
             sessionManager.setLastCreatedItem({
                 type: 'image',
-                filePath: filePath,
-                position: positioning,
-                linkImage: linkImage,
-                objectStyle: applyObjectStyle
+                filePath: resolvedPath,
+                position: box,
+                linkImage,
+                objectStyle,
             });
         }
 
-        return isSuccess ?
-            formatResponse(result, "Place Image") :
-            formatErrorResponse(result, "Place Image");
+        return formatResponse(result, "Place Image");
     }
 
     /**
      * Create an object style
      */
     static async createObjectStyle(args) {
-        const {
-            name,
-            fillColor,
-            strokeColor,
-            strokeWeight = 1,
-            cornerRadius = 0,
-            transparency = 100
-        } = args;
+        const { name, fillColor, strokeColor, strokeWeight, cornerRadius = 0 } = args;
+        const opacity = args.opacity ?? args.transparency;
+        if (!has(name)) return formatResponse('Invalid style name: must be a non-empty string', 'Create Object Style');
 
-        const escapedName = escapeJsxString(name);
+        const pre = [];
+        const set = [];
+        if (has(fillColor)) {
+            pre.push(...jsxSwatch('__fill', fillColor, 'fill'));
+            set.push('style.enableFill = true;', 'style.fillColor = __fill;');
+        }
+        if (has(strokeColor)) {
+            pre.push(...jsxSwatch('__stroke', strokeColor, 'stroke'));
+            set.push('style.enableStroke = true;', 'style.strokeColor = __stroke;');
+        }
+        if (has(strokeColor) || has(strokeWeight)) {
+            set.push('style.enableStroke = true;', `style.strokeWeight = ${num(has(strokeWeight) ? strokeWeight : 1, { name: 'strokeWeight', min: 0, max: 1000 })};`);
+        }
+        const radius = mmToPt(cornerRadius, { name: 'cornerRadius', min: 0, max: 10000 });
+        if (Number(radius) > 0) {
+            set.push('style.enableStrokeAndCornerOptions = true;');
+            for (const c of ['topLeft', 'topRight', 'bottomLeft', 'bottomRight']) {
+                set.push(`style.${c}CornerOption = CornerOptions.ROUNDED_CORNER;`, `style.${c}CornerRadius = ${radius};`);
+            }
+        }
+        if (has(opacity)) {
+            set.push(
+                'style.objectEffectsEnablingSettings.enableTransparency = true;',
+                `style.transparencySettings.blendingSettings.opacity = ${num(opacity, { name: 'opacity', min: 0, max: 100 })};`,
+            );
+        }
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '',
-            '  try {',
-            `    var objectStyle = doc.objectStyles.add({name: "${escapedName}"});`,
-            '',
-            '    // Apply fill color',
-            `    if ("${fillColor}" !== "") {`,
-            '      try {',
-            `        objectStyle.fillColor = doc.colors.itemByName("${fillColor}");`,
-            '      } catch (colorError) {',
-            '        // Use default color if specified color not found',
-            '      }',
-            '    }',
-            '',
-            '    // Apply stroke color',
-            `    if ("${strokeColor}" !== "") {`,
-            '      try {',
-            `        objectStyle.strokeColor = doc.colors.itemByName("${strokeColor}");`,
-            `        objectStyle.strokeWeight = ${strokeWeight};`,
-            '      } catch (colorError) {',
-            '        // Use default stroke if specified color not found',
-            '      }',
-            '    }',
-            '',
-            '    // Apply corner radius',
-            `    if (${cornerRadius} > 0) {`,
-            `      objectStyle.topLeftCornerOption = CornerOptions.ROUNDED_CORNER;`,
-            `      objectStyle.topRightCornerOption = CornerOptions.ROUNDED_CORNER;`,
-            `      objectStyle.bottomLeftCornerOption = CornerOptions.ROUNDED_CORNER;`,
-            `      objectStyle.bottomRightCornerOption = CornerOptions.ROUNDED_CORNER;`,
-            `      objectStyle.cornerRadius = ${cornerRadius};`,
-            '    }',
-            '',
-            '    // Apply transparency',
-            `    if (${transparency} < 100) {`,
-            `      objectStyle.transparencySettings.blendingSettings.opacity = ${transparency};`,
-            '    }',
-            '',
-            `    "Object style '${escapedName}' created successfully";`,
-            '  } catch (error) {',
-            '    "Error creating object style: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
+        const script = jsxProgram([
+            ...JSX_HELPERS,
+            `if (__styleByName(doc.allObjectStyles, ${str(name)})) { return ${str(`Cannot create object style: '${name}' already exists`)}; }`,
+            ...pre,
+            `var style = doc.objectStyles.add({ name: ${str(name)} });`,
+            ...set,
+            `return ${str(`Object style '${name}' created`)};`,
+        ], { errorPrefix: 'Error creating object style' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
         return formatResponse(result, "Create Object Style");
@@ -451,27 +242,20 @@ export class GraphicsHandlers {
      * List all object styles
      */
     static async listObjectStyles() {
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var info = "=== OBJECT STYLES ===\\n";',
-            '',
-            '  for (var i = 0; i < doc.objectStyles.length; i++) {',
-            '    var style = doc.objectStyles[i];',
-            '    if (style.isValid) {',
-            '      info += "Name: " + style.name + "\\n";',
-            '      info += "  Fill Color: " + (style.fillColor ? style.fillColor.name : "None") + "\\n";',
-            '      info += "  Stroke Color: " + (style.strokeColor ? style.strokeColor.name : "None") + "\\n";',
-            '      info += "  Stroke Weight: " + style.strokeWeight + "\\n";',
-            '      info += "  Corner Radius: " + style.cornerRadius + "\\n\\n";',
-            '    }',
-            '  }',
-            '',
-            '  info;',
-            '}'
-        ].join('\n');
+        const script = jsxProgram([
+            ...JSX_HELPERS,
+            'var styles = doc.allObjectStyles;',
+            'var info = "=== OBJECT STYLES (" + styles.length + ") ===\\n";',
+            'for (var i = 0; i < styles.length; i++) {',
+            '  var s = styles[i];',
+            '  info += "Name: " + s.name + "\\n";',
+            '  try { info += "  Fill: " + (s.enableFill ? __name(s.fillColor) : "(not included)") + "\\n"; } catch (__e1) {}',
+            '  try { info += "  Stroke: " + (s.enableStroke ? __name(s.strokeColor) + ", " + s.strokeWeight + "pt" : "(not included)") + "\\n"; } catch (__e2) {}',
+            '  try { if (s.enableStrokeAndCornerOptions && s.topLeftCornerOption !== CornerOptions.NONE) { info += "  Corner Radius: " + __mm(s.topLeftCornerRadius) + "mm\\n"; } } catch (__e3) {}',
+            '  try { if (s.objectEffectsEnablingSettings.enableTransparency) { info += "  Opacity: " + s.transparencySettings.blendingSettings.opacity + "%\\n"; } } catch (__e4) {}',
+            '}',
+            'return info;',
+        ], { errorPrefix: 'Error listing object styles' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
         return formatResponse(result, "List Object Styles");
@@ -481,119 +265,79 @@ export class GraphicsHandlers {
      * Apply object style to a page item
      */
     static async applyObjectStyle(args) {
-        const {
-            styleName,
-            itemType = 'rectangle',
-            itemIndex = 0
-        } = args;
+        const { styleName, itemType = 'rectangle', itemIndex = 0, pageIndex, clearOverrides = false } = args;
+        const kind = enumOf(itemType, ['rectangle', 'ellipse', 'polygon', 'textFrame', 'pageItem'], { name: 'itemType' });
+        const collection = {
+            rectangle: 'page.rectangles',
+            ellipse: 'page.ovals',
+            polygon: 'page.polygons',
+            textFrame: 'page.textFrames',
+            pageItem: '__all',
+        }[kind];
 
-        const escapedStyleName = escapeJsxString(styleName);
-
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var page = doc.pages[0];',
-            '',
-            '  try {',
-            `    var objectStyle = doc.objectStyles.itemByName("${escapedStyleName}");`,
-            '    if (!objectStyle.isValid) {',
-            `      "Object style '${escapedStyleName}' not found";`,
-            '    } else {',
-            `      var item;`,
-            `      if ("${itemType}" === "rectangle") {`,
-            `        if (${itemIndex} >= page.rectangles.length) {`,
-            '          "Rectangle index out of range";',
-            '        } else {',
-            `          item = page.rectangles[${itemIndex}];`,
-            '        }',
-            `      } else if ("${itemType}" === "ellipse") {`,
-            `        if (${itemIndex} >= page.ovals.length) {`,
-            '          "Ellipse index out of range";',
-            '        } else {',
-            `          item = page.ovals[${itemIndex}];`,
-            '        }',
-            `      } else if ("${itemType}" === "polygon") {`,
-            `        if (${itemIndex} >= page.polygons.length) {`,
-            '          "Polygon index out of range";',
-            '        } else {',
-            `          item = page.polygons[${itemIndex}];`,
-            '        }',
-            '      } else {',
-            '        "Invalid item type. Use: rectangle, ellipse, or polygon";',
-            '      }',
-            '',
-            '      if (item) {',
-            '        item.appliedObjectStyle = objectStyle;',
-            `        "Object style '${escapedStyleName}' applied successfully";`,
-            '      }',
-            '    }',
-            '  } catch (error) {',
-            '    "Error applying object style: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
+        const script = jsxProgram([
+            ...JSX_HELPERS,
+            ...jsxPage(pageIndex),
+            `var style = __styleByName(doc.allObjectStyles, ${str(styleName)});`,
+            `if (!style) { return ${str(`Error: object style '${styleName}' not found`)}; }`,
+            ...(kind === 'pageItem' ? ['var __all = page.allPageItems;'] : []),
+            ...jsxItemAt('item', collection, itemIndex, `${kind} index`),
+            'if (item.locked) { return "Cannot apply object style: item is locked"; }',
+            `item.applyObjectStyle(style, ${bool(clearOverrides)});`,
+            `return ${str(`Object style '${styleName}' applied to `)} + item.constructor.name + " (ID " + item.id + ")";`,
+        ], { errorPrefix: 'Error applying object style' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
         return formatResponse(result, "Apply Object Style");
     }
 
     /**
-     * Get image information
+     * Get information about a placed graphic on a page
      */
-    static async getImageInfo(args) {
-        const { itemIndex = 0 } = args;
+    static async getImageInfo(args = {}) {
+        const { itemIndex = 0, pageIndex } = args;
+        const i = index(itemIndex, { name: 'itemIndex' });
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
+        const script = jsxProgram([
+            ...JSX_HELPERS,
+            ...jsxPage(pageIndex),
+            'var graphics = page.allGraphics;',
+            `if (${i} >= graphics.length) { return "Image index ${i} out of range (" + graphics.length + " placed graphics on page " + page.name + ")"; }`,
+            `var graphic = graphics[${i}];`,
+            'function __linkStatus(s) {',
+            '  var names = ["NORMAL", "LINK_MISSING", "LINK_OUT_OF_DATE", "LINK_EMBEDDED", "LINK_INACCESSIBLE"];',
+            '  for (var k = 0; k < names.length; k++) { if (s === LinkStatus[names[k]]) { return names[k]; } }',
+            '  return String(s);',
+            '}',
+            'var pb = page.bounds;',
+            'var info = "=== IMAGE INFORMATION ===\\n";',
+            `info += "Image ${i} of " + graphics.length + " on page " + page.name + "\\n";`,
+            'info += "  Type: " + graphic.constructor.name + "\\n";',
+            'try { info += "  Format: " + graphic.imageTypeName + "\\n"; } catch (__te) {}',
+            'var link = null;',
+            'try { link = graphic.itemLink; } catch (__le) { link = null; }',
+            'if (link) {',
+            '  info += "  File Path: " + link.filePath + "\\n";',
+            '  info += "  File Name: " + link.name + "\\n";',
+            '  info += "  Link Status: " + __linkStatus(link.status) + "\\n";',
             '} else {',
-            '  var doc = app.activeDocument;',
-            '  var page = doc.pages[0];',
-            '  var info = "=== IMAGE INFORMATION ===\\n";',
-            '',
-            '  try {',
-            '    // Find images in rectangles',
-            '    var imageCount = 0;',
-            '    for (var i = 0; i < page.rectangles.length; i++) {',
-            '      var rect = page.rectangles[i];',
-            '      if (rect.graphics.length > 0) {',
-            '        for (var j = 0; j < rect.graphics.length; j++) {',
-            '          var graphic = rect.graphics[j];',
-            '          if (graphic.constructor.name === "Image") {',
-            `            if (imageCount === ${itemIndex}) {`,
-            '              info += "Image " + imageCount + ":\\n";',
-            '              info += "  File Path: " + graphic.itemLink.filePath + "\\n";',
-            '              info += "  File Name: " + graphic.itemLink.name + "\\n";',
-            '              info += "  Link Status: " + graphic.itemLink.status + "\\n";',
-            '              info += "  Image Type: " + graphic.imageTypeName + "\\n";',
-            '              info += "  Actual PPI: " + graphic.actualPpi + "\\n";',
-            '              info += "  Effective PPI: " + graphic.effectivePpi + "\\n";',
-            '              info += "  Geometric Bounds: " + graphic.geometricBounds + "\\n";',
-            '              info += "  Visible Bounds: " + graphic.visibleBounds + "\\n";',
-            '              break;',
-            '            }',
-            '            imageCount++;',
-            '          }',
-            '        }',
-            '      }',
-            '    }',
-            '',
-            `    if (imageCount === 0) {`,
-            '      "No images found on page";',
-            `    } else if (imageCount <= ${itemIndex}) {`,
-            `      "Image index ${itemIndex} not found. Total images: " + imageCount;`,
-            '    } else {',
-            '      info;',
-            '    }',
-            '  } catch (error) {',
-            '    "Error getting image information: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
+            '  info += "  Link: none (pasted or embedded without link)\\n";',
+            '}',
+            'if (graphic.constructor.name === "Image") {',
+            '  info += "  Actual PPI: " + graphic.actualPpi.join(" x ") + "\\n";',
+            '  info += "  Effective PPI: " + graphic.effectivePpi.join(" x ") + "\\n";',
+            '}',
+            'info += "  Scale: " + Math.round(graphic.horizontalScale * 100) / 100 + "% x " + Math.round(graphic.verticalScale * 100) / 100 + "%\\n";',
+            'var gb = graphic.geometricBounds;',
+            'info += "  Image bounds (mm from page top-left): x=" + __mm(gb[1] - pb[1]) + ", y=" + __mm(gb[0] - pb[0]) + ", " + __mm(gb[3] - gb[1]) + " x " + __mm(gb[2] - gb[0]) + "\\n";',
+            'try {',
+            '  var fb = graphic.parent.geometricBounds;',
+            '  info += "  Frame: " + graphic.parent.constructor.name + " (ID " + graphic.parent.id + "), x=" + __mm(fb[1] - pb[1]) + ", y=" + __mm(fb[0] - pb[0]) + ", " + __mm(fb[3] - fb[1]) + " x " + __mm(fb[2] - fb[0]) + " mm\\n";',
+            '} catch (__fe) {}',
+            'return info;',
+        ], { errorPrefix: 'Error getting image information' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
         return formatResponse(result, "Get Image Info");
     }
-} 
+}

@@ -33,15 +33,34 @@ export function escapeJsxString(str) {
         .replace(/\t/g, '\\t');
 }
 
+const FAILURE_START = /^(no document open|no documents? (is )?open|no active document|error\b|failed\b|invalid\b|cannot\b|could not\b|unable to\b)/i;
+const FAILURE_SHORT = /\b(not found|out of range|does not exist|not open)\b/i;
+
 /**
- * Formats a response with a consistent structure.
+ * True when a script's string result reports a failure. Handler scripts report
+ * failures as strings ("No document open", "Error adding page: ..."), so these
+ * patterns are the contract: a failure message starts with one of FAILURE_START,
+ * or is a short single line containing one of FAILURE_SHORT.
+ * @param {any} result
+ * @returns {boolean}
+ */
+export function looksLikeFailure(result) {
+    if (typeof result !== 'string') return false;
+    const text = result.trim();
+    if (FAILURE_START.test(text)) return true;
+    return text.length <= 200 && !text.includes('\n') && FAILURE_SHORT.test(text);
+}
+
+/**
+ * Formats a response with a consistent structure. `success` is false when the
+ * result string reports a failure (see looksLikeFailure).
  * @param {any} result - The result to format.
  * @param {string} [operation="Operation"] - The operation name.
  * @returns {object} Formatted response object.
  */
 export function formatResponse(result, operation = "Operation") {
     return {
-        success: true,
+        success: !looksLikeFailure(result),
         operation,
         result,
         timestamp: new Date().toISOString()

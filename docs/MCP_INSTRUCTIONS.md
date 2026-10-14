@@ -63,7 +63,6 @@ Add to your MCP client configuration:
 
 - `create_text_frame` - Create text frames with content
 - `edit_text_frame` - Modify existing text frames
-- `get_text_info` - Get text frame properties
 - `apply_paragraph_style` - Apply paragraph styles
 - `apply_character_style` - Apply character styles
 

@@ -12,9 +12,11 @@ import {
     GraphicsHandlers,
     GroupHandlers,
     HelpHandlers,
+    LayerHandlers,
     MasterSpreadHandlers,
     PageHandlers,
     PageItemHandlers,
+    SpreadHandlers,
     StyleHandlers,
     TextHandlers,
     UtilityHandlers
@@ -52,8 +54,11 @@ export class InDesignMCPServer {
             const { name, arguments: args } = request.params;
 
             try {
-                const result = await this.handleToolCall(name, args);
-                return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+                const result = await this.handleToolCall(name, args ?? {});
+                return {
+                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+                    isError: result?.success === false,
+                };
             } catch (error) {
                 return {
                     content: [{ type: 'text', text: JSON.stringify({ success: false, error: error.message }, null, 2) }],
@@ -173,6 +178,7 @@ export class InDesignMCPServer {
             // Export Functions
             case 'export_pdf': return await ExportHandlers.exportPDF(args);
             case 'export_images': return await ExportHandlers.exportImages(args);
+            case 'export_epub': return await ExportHandlers.exportEPUB(args);
             case 'package_document': return await ExportHandlers.packageDocument(args);
 
             // Master Spread Management
@@ -185,6 +191,26 @@ export class InDesignMCPServer {
             case 'create_master_rectangle': return await MasterSpreadHandlers.createMasterRectangle(args);
             case 'create_master_guides': return await MasterSpreadHandlers.createMasterGuides(args);
             case 'get_master_spread_info': return await MasterSpreadHandlers.getMasterSpreadInfo(args);
+            case 'detach_master_items': return await MasterSpreadHandlers.detachMasterItems(args);
+            case 'remove_master_override': return await MasterSpreadHandlers.removeMasterOverride(args);
+
+            // Spread Management
+            case 'list_spreads': return await SpreadHandlers.listSpreads(args);
+            case 'get_spread_info': return await SpreadHandlers.getSpreadInfo(args);
+            case 'duplicate_spread': return await SpreadHandlers.duplicateSpread(args);
+            case 'move_spread': return await SpreadHandlers.moveSpread(args);
+            case 'delete_spread': return await SpreadHandlers.deleteSpread(args);
+            case 'set_spread_properties': return await SpreadHandlers.setSpreadProperties(args);
+            case 'create_spread_guides': return await SpreadHandlers.createSpreadGuides(args);
+            case 'place_file_on_spread': return await SpreadHandlers.placeFileOnSpread(args);
+            case 'place_xml_on_spread': return await SpreadHandlers.placeXmlOnSpread(args);
+            case 'select_spread': return await SpreadHandlers.selectSpread(args);
+            case 'get_spread_content_summary': return await SpreadHandlers.getSpreadContentSummary(args);
+
+            // Layer Management
+            case 'create_layer': return await LayerHandlers.createLayer(args);
+            case 'set_active_layer': return await LayerHandlers.setActiveLayer(args);
+            case 'list_layers': return await LayerHandlers.listLayers(args);
 
             // Book Management
             case 'create_book': return await BookHandlers.createBook(args);

@@ -52,7 +52,6 @@ const UNIFIED_TESTS = [
         description: 'Create initial document with proper settings',
         tool: 'create_document',
         args: {
-            name: 'Unified Test Document',
             width: 210,
             height: 297,
             facingPages: false,
@@ -79,7 +78,7 @@ const UNIFIED_TESTS = [
         name: 'Add Multiple Pages',
         description: 'Add several pages to test pagination',
         tool: 'add_page',
-        args: { count: 3 },
+        args: { position: 'AT_END' },
         expected: 'Add Page completed successfully'
     },
     {
@@ -144,8 +143,8 @@ const UNIFIED_TESTS = [
         args: {
             name: 'Test Style',
             fontSize: 14,
-            fontName: 'Times New Roman',
-            alignment: 'LEFT'
+            fontFamily: 'Times New Roman',
+            alignment: 'LEFT_ALIGN'
         },
         expected: 'Paragraph style created successfully'
     },
@@ -156,7 +155,9 @@ const UNIFIED_TESTS = [
         args: {
             name: 'Test Color',
             colorType: 'PROCESS',
-            colorValue: { red: 255, green: 0, blue: 0 }
+            red: 255,
+            green: 0,
+            blue: 0
         },
         expected: 'Color swatch created successfully'
     },

@@ -12,12 +12,12 @@ export class UtilityHandlers {
     /**
      * Host + InDesign health check.
      * probe=true runs a lightweight ExtendScript round-trip (requires InDesign).
+     * Read-only: it does not sweep temp scripts, since that would delete the
+     * script files of tool calls still in flight (startup cleanup handles leftovers).
      */
     static async getIndesignStatus(args = {}) {
         const probe = Boolean(args?.probe);
-        const cleaned = ScriptExecutor.cleanupTempScripts();
         const status = await ScriptExecutor.getStatus({ probeInDesign: probe });
-        status.tempScriptsRemoved = cleaned;
         status.session = sessionManager.getSessionSummary();
         return formatResponse(status, 'InDesign Status');
     }
@@ -58,16 +58,27 @@ export class UtilityHandlers {
             '  var info = "=== DOCUMENT VIEW ===\\n";',
             '  info += "Document: " + doc.name + "\\n";',
             '  info += "Pages: " + doc.pages.length + "\\n";',
-            '  info += "Active Page: " + (doc.activePage ? doc.activePage.name : "None") + "\\n";',
-            '  info += "Zoom: " + app.activeWindow.zoomPercentage + "%\\n";',
-            '  info += "View Mode: " + app.activeWindow.displaySettings.overprintPreview + "\\n";',
+            '  info += "Spreads: " + doc.spreads.length + "\\n";',
+            '  info += "Active Layer: " + doc.activeLayer.name + "\\n";',
+            // View state lives on the document's LayoutWindow, not on Document;
+            // a document can be open without a window.
+            '  if (doc.layoutWindows.length > 0) {',
+            '    var win = doc.layoutWindows[0];',
+            '    info += "Active Page: " + win.activePage.name + "\\n";',
+            '    info += "Zoom: " + win.zoomPercentage + "%\\n";',
+            '    info += "Screen Mode: " + win.screenMode + "\\n";',
+            '    info += "Display Performance: " + win.viewDisplaySetting + "\\n";',
+            '    info += "Overprint Preview: " + win.overprintPreview + "\\n";',
+            '  } else {',
+            '    info += "Window: none (document open without a layout window)\\n";',
+            '  }',
             '',
             '  if (doc.pages.length > 0) {',
             '    var page = doc.pages[0];',
             '    info += "\\n=== FIRST PAGE INFO ===\\n";',
             '    info += "Page Name: " + page.name + "\\n";',
-            '    info += "Page Width: " + (page.bounds[3] - page.bounds[1]) + "\\n";',
-            '    info += "Page Height: " + (page.bounds[2] - page.bounds[0]) + "\\n";',
+            '    info += "Page Width: " + (page.bounds[3] - page.bounds[1]) + " (" + doc.viewPreferences.horizontalMeasurementUnits + ")\\n";',
+            '    info += "Page Height: " + (page.bounds[2] - page.bounds[0]) + " (" + doc.viewPreferences.verticalMeasurementUnits + ")\\n";',
             '    info += "Text Frames: " + page.textFrames.length + "\\n";',
             '    info += "Rectangles: " + page.rectangles.length + "\\n";',
             '    info += "Ovals: " + page.ovals.length + "\\n";',

@@ -2,292 +2,191 @@
  * Text frame handlers
  */
 import { ScriptExecutor } from '../core/scriptExecutor.js';
-import { formatResponse, formatErrorResponse, escapeJsxString, str, num, index } from '../utils/stringUtils.js';
+import { formatResponse, looksLikeFailure, str, num, index, bool, enumOf } from '../utils/stringUtils.js';
 import { sessionManager } from '../core/sessionManager.js';
+import {
+    jsxProgram, jsxPage, jsxItemAt, jsxSwatch, jsxFont, jsxBounds, resolveBox, JSX_HELPERS,
+} from './pageItemHandlers.js';
+
+const has = (v) => v !== undefined && v !== null && v !== '';
+
+/** Tool alignment values -> InDesign Justification members. */
+const ALIGNMENTS = {
+    LEFT: 'LEFT_ALIGN',
+    CENTER: 'CENTER_ALIGN',
+    RIGHT: 'RIGHT_ALIGN',
+    JUSTIFY: 'LEFT_JUSTIFIED',
+};
+
+function justification(alignment) {
+    return ALIGNMENTS[enumOf(String(alignment).toUpperCase(), Object.keys(ALIGNMENTS), { name: 'alignment' })];
+}
+
+/** Direct text formatting lines applied to `target` (a Text object). */
+function formattingLines(target, { fontName, fontSize, textColor, alignment }) {
+    const pre = [];
+    const apply = [];
+    if (has(fontName)) {
+        pre.push(...jsxFont('__font1', fontName));
+        apply.push(`${target}.appliedFont = __font1;`);
+    }
+    if (has(textColor)) {
+        pre.push(...jsxSwatch('__textColor', textColor, 'text'));
+        apply.push(`${target}.fillColor = __textColor;`);
+    }
+    if (has(fontSize)) {
+        apply.push(`${target}.pointSize = ${num(fontSize, { name: 'fontSize', min: 0.1, max: 1296 })};`);
+    }
+    if (has(alignment)) {
+        apply.push(`${target}.justification = Justification.${justification(alignment)};`);
+    }
+    return { pre, apply };
+}
 
 export class TextHandlers {
     /**
-     * Create a text frame on the active page
+     * Create a text frame on the active page (or pageIndex)
      */
     static async createTextFrame(args) {
         const {
             content,
-            x,
-            y,
-            width,
-            height,
-            fontSize = 12,
-            fontName = 'Arial\\tRegular',
-            textColor = 'Black',
-            alignment = 'LEFT',
+            pageIndex,
+            fontSize,
+            fontName,
+            textColor,
+            alignment,
             paragraphStyle = null,
             characterStyle = null
         } = args;
 
-        // Use session manager for positioning if coordinates not provided
-        const positioning = sessionManager.getCalculatedPositioning({ x, y, width, height });
-
-        // Validate positioning before creating content
-        const validation = sessionManager.validatePositioning(positioning.x, positioning.y, positioning.width, positioning.height);
-        if (!validation.valid) {
-            // Apply suggested corrections if available, otherwise use safe defaults
-            if (validation.suggested) {
-                Object.assign(positioning, validation.suggested);
-            } else {
-                // Fallback to safe positioning
-                const safePos = sessionManager.getCalculatedPositioning({});
-                Object.assign(positioning, safePos);
-            }
+        const box = resolveBox(args);
+        const fmt = formattingLines('__text', { fontName, fontSize, textColor, alignment });
+        const pre = [...fmt.pre];
+        const apply = [];
+        if (has(paragraphStyle)) {
+            pre.push(
+                `var __ps = __styleByName(doc.allParagraphStyles, ${str(paragraphStyle)});`,
+                `if (!__ps) { return ${str(`Error: paragraph style '${paragraphStyle}' not found`)}; }`,
+            );
+            apply.push('__text.appliedParagraphStyle = __ps;');
+        }
+        if (has(characterStyle)) {
+            pre.push(
+                `var __cs = __styleByName(doc.allCharacterStyles, ${str(characterStyle)});`,
+                `if (!__cs) { return ${str(`Error: character style '${characterStyle}' not found`)}; }`,
+            );
+            apply.push('__text.appliedCharacterStyle = __cs;');
         }
 
-        const contentLit = str(content ?? '');
-        const fontLit = str(fontName);
-        const paraLit = str(paragraphStyle || '');
-        const charLit = str(characterStyle || '');
-        const sizeN = num(fontSize, { name: 'fontSize', min: 0.1, max: 1000 });
-        const colorLit = str(textColor || 'Black');
-        const alignLit = str(alignment || 'LEFT');
-
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var page = doc.pages[0];',
-            '  var textFrame;',
-            '  var styleMessage = "";',
-            '',
-            '  try {',
-            '    // Create text frame',
-            `    textFrame = page.textFrames.add();`,
-            `    textFrame.geometricBounds = [${positioning.y}, ${positioning.x}, ${positioning.y + positioning.height}, ${positioning.x + positioning.width}];`,
-            `    textFrame.contents = ${contentLit};`,
-            '',
-            '    // Apply paragraph style if specified',
-            `    if (${paraLit} !== "") {`,
-            '      try {',
-            `        var paragraphStyle = doc.paragraphStyles.itemByName(${paraLit});`,
-            '        if (paragraphStyle.isValid) {',
-            '          textFrame.paragraphs[0].appliedParagraphStyle = paragraphStyle;',
-            '          styleMessage += "Paragraph style applied. ";',
-            '        } else {',
-            '          styleMessage += "Paragraph style not found. ";',
-            '        }',
-            '      } catch (styleError) {',
-            `        styleMessage += "Error applying paragraph style: " + styleError.message + ". ";`,
-            '      }',
-            '    }',
-            '',
-            '    // Apply character style if specified',
-            `    if (${charLit} !== "") {`,
-            '      try {',
-            `        var characterStyle = doc.characterStyles.itemByName(${charLit});`,
-            '        if (characterStyle.isValid) {',
-            '          textFrame.texts[0].appliedCharacterStyle = characterStyle;',
-            '          styleMessage += "Character style applied. ";',
-            '        } else {',
-            '          styleMessage += "Character style not found. ";',
-            '        }',
-            '      } catch (styleError) {',
-            `        styleMessage += "Error applying character style: " + styleError.message + ". ";`,
-            '      }',
-            '    }',
-            '',
-            '    // Apply direct formatting only if no styles were applied',
-            `    if (${paraLit} === "" && ${charLit} === "") {`,
-            '      // Apply text formatting',
-            '      try {',
-            `        textFrame.texts[0].appliedFont = app.fonts.itemByName(${fontLit});`,
-            '      } catch (fontError) {',
-            '        // Fallback to a default font if the specified font is not available',
-            '        textFrame.texts[0].appliedFont = app.fonts.itemByName("Arial\\tRegular");',
-            '      }',
-            `      textFrame.texts[0].pointSize = ${sizeN};`,
-            '',
-            '      // Apply color',
-            `      if (${colorLit} !== "Black") {`,
-            '        try {',
-            `          textFrame.texts[0].fillColor = app.colors.itemByName(${colorLit});`,
-            '        } catch (colorError) {',
-            '          // Use default color if specified color not found',
-            '        }',
-            '      }',
-            '',
-            '      // Apply alignment',
-            `      if (${alignLit} === "CENTER") {`,
-            '        textFrame.texts[0].justification = Justification.CENTER_ALIGN;',
-            `      } else if (${alignLit} === "RIGHT") {`,
-            '        textFrame.texts[0].justification = Justification.RIGHT_ALIGN;',
-            `      } else if (${alignLit} === "JUSTIFY") {`,
-            '        textFrame.texts[0].justification = Justification.FULLY_JUSTIFIED;',
-            '      } else {',
-            '        textFrame.texts[0].justification = Justification.LEFT_ALIGN;',
-            '      }',
-            '    }',
-            '',
-            '    "Text frame created successfully. " + styleMessage;',
-            '  } catch (error) {',
-            '    "Error creating text frame: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
+        const script = jsxProgram([
+            ...JSX_HELPERS,
+            ...jsxPage(args.pageIndex),
+            ...pre,
+            ...jsxBounds('__bounds', box),
+            'var textFrame = page.textFrames.add();',
+            'textFrame.geometricBounds = __bounds;',
+            `textFrame.contents = ${str(content ?? '')};`,
+            'var __text = textFrame.texts[0];',
+            // styles first, explicit formatting overrides them
+            ...apply,
+            ...fmt.apply,
+            'return "Text frame created on page " + page.name + " (ID " + textFrame.id + ", " + textFrame.parentStory.characters.length + " characters" + (textFrame.overflows ? ", text overflows" : "") + ")";',
+        ], { errorPrefix: 'Error creating text frame' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
 
-        // Check if the operation was successful
-        const isSuccess = result.includes("Text frame created successfully");
-
-        if (isSuccess) {
-            // Store the created item info in session
+        if (!looksLikeFailure(result)) {
             sessionManager.setLastCreatedItem({
                 type: 'textFrame',
-                content: content,
-                position: positioning,
-                fontSize: fontSize,
-                fontName: fontName,
-                paragraphStyle: paragraphStyle,
-                characterStyle: characterStyle
+                content,
+                position: box,
+                pageIndex,
+                fontSize,
+                fontName,
+                paragraphStyle,
+                characterStyle
             });
         }
 
-        return isSuccess ?
-            formatResponse(result, "Create Text Frame") :
-            formatErrorResponse(result, "Create Text Frame");
+        return formatResponse(result, "Create Text Frame");
     }
 
     /**
      * Edit an existing text frame
      */
     static async editTextFrame(args) {
-        const {
-            frameIndex,
-            content,
-            fontSize,
-            fontName,
-            textColor,
-            alignment
-        } = args;
+        const { frameIndex, pageIndex, content, fontSize, fontName, textColor, alignment } = args;
 
-        const contentLit = content != null && content !== '' ? str(content) : '""';
-        const fontLit = fontName ? str(fontName) : '""';
-        const frameIdx = index(frameIndex, { name: 'frameIndex' });
-        const colorLit = textColor ? str(textColor) : '""';
-        const alignLit = alignment ? str(alignment) : '""';
-        const sizeN = (fontSize != null && fontSize !== '') ? num(fontSize, { name: 'fontSize', min: 0.1, max: 1000 }) : null;
+        const fmt = formattingLines('__text', { fontName, fontSize, textColor, alignment });
+        const changed = [];
+        if (content !== undefined && content !== null) changed.push('content');
+        if (has(fontName)) changed.push('font');
+        if (has(fontSize)) changed.push('size');
+        if (has(textColor)) changed.push('color');
+        if (has(alignment)) changed.push('alignment');
+        if (!changed.length) {
+            return formatResponse('Invalid request: nothing to change', 'Edit Text Frame');
+        }
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var page = doc.pages[0];',
-            '',
-            '  try {',
-            `    if (${frameIdx} >= page.textFrames.length) {`,
-            '      "Text frame index out of range";',
-            '    } else {',
-            `      var textFrame = page.textFrames[${frameIdx}];`,
-            '',
-            `      if (${contentLit} !== "") {`,
-            `        textFrame.contents = ${contentLit};`,
-            '      }',
-            '',
-            `      if (${sizeN} !== null) {`,
-            `        textFrame.texts[0].pointSize = ${sizeN};`,
-            '      }',
-            '',
-            `      if (${fontLit} !== "") {`,
-            `        textFrame.texts[0].appliedFont = app.fonts.itemByName(${fontLit});`,
-            '      }',
-            '',
-            `      if (${colorLit} !== "") {`,
-            '      try {',
-            `        textFrame.texts[0].fillColor = app.colors.itemByName(${colorLit});`,
-            '      } catch (colorError) {',
-            '        // Use default color if specified color not found',
-            '      }',
-            '      }',
-            '',
-            `      if (${alignLit} !== "") {`,
-            `        if (${alignLit} === "CENTER") {`,
-            '          textFrame.texts[0].justification = Justification.CENTER_ALIGN;',
-            `        } else if (${alignLit} === "RIGHT") {`,
-            '          textFrame.texts[0].justification = Justification.RIGHT_ALIGN;',
-            `        } else if (${alignLit} === "JUSTIFY") {`,
-            '          textFrame.texts[0].justification = Justification.FULLY_JUSTIFIED;',
-            '        } else {',
-            '          textFrame.texts[0].justification = Justification.LEFT_ALIGN;',
-            '        }',
-            '      }',
-            '',
-            '      "Text frame updated successfully";',
-            '    }',
-            '  } catch (error) {',
-            '    "Error updating text frame: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
+        const script = jsxProgram([
+            ...JSX_HELPERS,
+            ...jsxPage(pageIndex),
+            ...jsxItemAt('textFrame', 'page.textFrames', frameIndex, 'Text frame index'),
+            ...fmt.pre,
+            ...(content !== undefined && content !== null ? [`textFrame.contents = ${str(content)};`] : []),
+            'var __text = textFrame.texts[0];',
+            ...fmt.apply,
+            `return ${str(`Text frame updated: ${changed.join(', ')}`)};`,
+        ], { errorPrefix: 'Error updating text frame' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
         return formatResponse(result, "Edit Text Frame");
     }
 
     /**
-     * Create a table on the active page
+     * Create a table on the active page (or pageIndex)
      */
     static async createTable(args) {
-        const {
-            rows = 3,
-            columns = 3,
-            x,
-            y,
-            width,
-            height,
-            headerRows = 1,
-            headerColumns = 0
-        } = args;
+        const { rows = 3, columns = 3, headerRows, pageIndex } = args;
 
-        // Use session manager for positioning if coordinates not provided
-        const positioning = sessionManager.getCalculatedPositioning({ x, y, width, height });
+        const rowsN = Number(index(rows, { name: 'rows', max: 10000 }));
+        const colsN = Number(index(columns, { name: 'columns', max: 200 }));
+        if (rowsN < 1 || colsN < 1) {
+            return formatResponse('Invalid table size: rows and columns must be at least 1', 'Create Table');
+        }
+        // Default: one header row when there is room for at least one body row.
+        const headN = has(headerRows)
+            ? Number(index(headerRows, { name: 'headerRows', max: 10000 }))
+            : Math.min(1, rowsN - 1);
+        if (headN >= rowsN) {
+            return formatResponse('Invalid headerRows: must be less than rows (rows includes header rows)', 'Create Table');
+        }
+        const box = resolveBox(args);
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var page = doc.pages[0];',
-            '  var table;',
-            '',
-            '  try {',
-            '    // Create text frame for table',
-            '    var textFrame = page.textFrames.add();',
-            `    textFrame.geometricBounds = [${positioning.y}, ${positioning.x}, ${positioning.y + positioning.height}, ${positioning.x + positioning.width}];`,
-            '',
-            '    // Create table',
-            `    table = textFrame.insertionPoints[0].tables.add({bodyRowCount: ${rows}, bodyColumnCount: ${columns}});`,
-            '',
-            '    // Set header rows and columns',
-            `    table.headerRowCount = ${headerRows};`,
-            `    table.headerColumnCount = ${headerColumns};`,
-            '',
-            '    "Table created successfully";',
-            '  } catch (error) {',
-            '    "Error creating table: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
+        const script = jsxProgram([
+            ...jsxPage(pageIndex),
+            ...jsxBounds('__bounds', box),
+            'var textFrame = page.textFrames.add();',
+            'textFrame.geometricBounds = __bounds;',
+            'var table = textFrame.insertionPoints[0].tables.add();',
+            `table.columnCount = ${colsN};`,
+            `table.bodyRowCount = ${rowsN - headN};`,
+            `table.headerRowCount = ${headN};`,
+            'table.width = __bounds[3] - __bounds[1];',
+            'return "Table created on page " + page.name + ": " + table.rows.length + " rows (" + table.headerRowCount + " header) x " + table.columns.length + " columns";',
+        ], { errorPrefix: 'Error creating table' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
 
-        // Store the created item info in session
-        sessionManager.setLastCreatedItem({
-            type: 'table',
-            rows: rows,
-            columns: columns,
-            position: positioning,
-            headerRows: headerRows,
-            headerColumns: headerColumns
-        });
+        if (!looksLikeFailure(result)) {
+            sessionManager.setLastCreatedItem({
+                type: 'table',
+                rows: rowsN,
+                columns: colsN,
+                position: box,
+                headerRows: headN
+            });
+        }
 
         return formatResponse(result, "Create Table");
     }
@@ -296,122 +195,86 @@ export class TextHandlers {
      * Populate a table with data
      */
     static async populateTable(args) {
-        const {
-            tableIndex = 0,
-            data,
-            startRow = 0,
-            startColumn = 0
-        } = args;
+        const { tableIndex = 0, data, startRow = 0, startColumn = 0, pageIndex } = args;
 
-        if (!data || !Array.isArray(data)) {
-            return formatResponse("Invalid data provided. Expected array of arrays.", "Populate Table");
+        if (!Array.isArray(data) || data.some((row) => !Array.isArray(row))) {
+            return formatResponse('Invalid data: expected an array of rows, each an array of cell values', 'Populate Table');
         }
+        const cellText = (cell) => {
+            if (cell === null || cell === undefined) return '';
+            if (typeof cell === 'string' || typeof cell === 'number' || typeof cell === 'boolean') return String(cell);
+            throw new Error(`Invalid table cell value: ${JSON.stringify(cell)} (use strings or numbers)`);
+        };
+        const rowsLit = data.map((row) => `[${row.map((c) => str(cellText(c))).join(', ')}]`).join(',\n    ');
 
-        const escapedData = data.map(row =>
-            row.map(cell => escapeJsxString(cell.toString()))
-        );
-
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var page = doc.pages[0];',
-            '',
-            '  try {',
-            '    // Find table in text frames',
-            '    var table = null;',
-            '    var tableCount = 0;',
-            '',
-            '    for (var i = 0; i < page.textFrames.length; i++) {',
-            '      var textFrame = page.textFrames[i];',
-            '      if (textFrame.tables.length > 0) {',
-            `        if (tableCount === ${tableIndex}) {`,
-            '          table = textFrame.tables[0];',
-            '          break;',
-            '        }',
-            '        tableCount++;',
-            '      }',
-            '    }',
-            '',
-            '    if (!table) {',
-            `      "Table index ${tableIndex} not found";`,
+        const script = jsxProgram([
+            ...jsxPage(pageIndex),
+            'var tables = [];',
+            'for (var f = 0; f < page.textFrames.length; f++) {',
+            '  var ft = page.textFrames[f].tables;',
+            '  for (var t = 0; t < ft.length; t++) { tables.push(ft[t]); }',
+            '}',
+            ...jsxItemAt('table', 'tables', tableIndex, 'Table index'),
+            `var data = [\n    ${rowsLit}\n  ];`,
+            `var startRow = ${index(startRow, { name: 'startRow' })};`,
+            `var startColumn = ${index(startColumn, { name: 'startColumn' })};`,
+            'var written = 0;',
+            'var skipped = 0;',
+            'for (var r = 0; r < data.length; r++) {',
+            '  for (var c = 0; c < data[r].length; c++) {',
+            '    var rowIdx = startRow + r;',
+            '    var colIdx = startColumn + c;',
+            '    if (rowIdx < table.rows.length && colIdx < table.rows[rowIdx].cells.length) {',
+            '      table.rows[rowIdx].cells[colIdx].contents = data[r][c];',
+            '      written++;',
             '    } else {',
-            '      // Populate table with data',
-            `      var data = ${JSON.stringify(escapedData)};`,
-            `      var startRow = ${startRow};`,
-            `      var startColumn = ${startColumn};`,
-            '',
-            '      for (var row = 0; row < data.length; row++) {',
-            '        for (var col = 0; col < data[row].length; col++) {',
-            '          var cellRow = startRow + row;',
-            '          var cellCol = startColumn + col;',
-            '',
-            '          if (cellRow < table.rows.length && cellCol < table.columns.length) {',
-            '            var cell = table.cells.item(cellRow, cellCol);',
-            '            cell.contents = data[row][col];',
-            '          }',
-            '        }',
-            '      }',
-            '',
-            '      "Table populated successfully";',
+            '      skipped++;',
             '    }',
-            '  } catch (error) {',
-            '    "Error populating table: " + error.message;',
             '  }',
-            '}'
-        ].join('\n');
+            '}',
+            'return "Table populated: " + written + " cells written" + (skipped ? ", " + skipped + " cells outside the table were skipped (table is " + table.rows.length + "x" + table.columns.length + ")" : "");',
+        ], { errorPrefix: 'Error populating table' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
         return formatResponse(result, "Populate Table");
     }
 
     /**
-     * Find and replace text in the document
+     * Find and replace text in the document (literal text search, not GREP)
      */
     static async findReplaceText(args) {
-        const {
-            findText,
-            replaceText,
-            caseSensitive = false,
-            wholeWord = false
-        } = args;
+        const { findText, replaceText, caseSensitive = false, wholeWord = false } = args;
 
-        const escapedFindText = escapeJsxString(findText);
-        const escapedReplaceText = escapeJsxString(replaceText);
+        if (typeof findText !== 'string' || findText === '') {
+            return formatResponse('Invalid findText: must be a non-empty string', 'Find Replace Text');
+        }
+        if (typeof replaceText !== 'string') {
+            return formatResponse('Invalid replaceText: must be a string', 'Find Replace Text');
+        }
 
-        const script = [
-            'if (app.documents.length === 0) {',
-            '  "No document open";',
-            '} else {',
-            '  var doc = app.activeDocument;',
-            '  var findGrepPreferences = app.findGrepPreferences;',
-            '  var changeGrepPreferences = app.changeGrepPreferences;',
-            '',
-            '  try {',
-            '    // Clear previous preferences',
-            '    findGrepPreferences.clear();',
-            '    changeGrepPreferences.clear();',
-            '',
-            '    // Set find preferences',
-            `    findGrepPreferences.findWhat = "${escapedFindText}";`,
-            `    findGrepPreferences.caseSensitive = ${caseSensitive};`,
-            `    findGrepPreferences.wholeWord = ${wholeWord};`,
-            '',
-            '    // Set change preferences',
-            `    changeGrepPreferences.changeTo = "${escapedReplaceText}";`,
-            '',
-            '    // Perform find and replace',
-            '    var foundItems = doc.changeGrep();',
-            '',
-            '    "Find and replace completed. Items changed: " + foundItems.length;',
-            '  } catch (error) {',
-            '    "Error during find and replace: " + error.message;',
-            '  }',
-            '}'
-        ].join('\n');
+        const script = jsxProgram([
+            'var opts = app.findChangeTextOptions;',
+            'var prevCase = opts.caseSensitive;',
+            'var prevWhole = opts.wholeWord;',
+            'app.findTextPreferences = NothingEnum.NOTHING;',
+            'app.changeTextPreferences = NothingEnum.NOTHING;',
+            'var changed;',
+            'try {',
+            `  opts.caseSensitive = ${bool(caseSensitive)};`,
+            `  opts.wholeWord = ${bool(wholeWord)};`,
+            `  app.findTextPreferences.findWhat = ${str(findText)};`,
+            `  app.changeTextPreferences.changeTo = ${str(replaceText)};`,
+            '  changed = doc.changeText(false);',
+            '} finally {',
+            '  app.findTextPreferences = NothingEnum.NOTHING;',
+            '  app.changeTextPreferences = NothingEnum.NOTHING;',
+            '  opts.caseSensitive = prevCase;',
+            '  opts.wholeWord = prevWhole;',
+            '}',
+            'return "Find and replace completed. Occurrences changed: " + changed.length;',
+        ], { errorPrefix: 'Error during find and replace' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
         return formatResponse(result, "Find Replace Text");
     }
-} 
+}

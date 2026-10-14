@@ -1,20 +1,25 @@
 /**
  * Master Spread tool definitions for InDesign MCP Server
- * Master spread template management and functionality
+ * Master spread template management and functionality.
+ * Master spreads are addressed by full name, e.g. "A-Master" (prefix-baseName).
  */
+
+const UI_COLOR_HELP = 'UI color name (e.g. "BLUE", "LIGHT_BLUE", "GRID_GREEN") or "r,g,b" (0-255)';
+const SWATCH_HELP = 'swatch name in the document (e.g. "Black", "Paper", "None") or "#RRGGBB"';
 
 export const masterSpreadToolDefinitions = [
     // =================== MASTER SPREAD MANAGEMENT ===================
     {
         name: 'create_master_spread',
-        description: 'Create a new master spread',
+        description: 'Create a new master spread. Its full name is namePrefix + "-" + baseName (e.g. "B-Chapter").',
         inputSchema: {
             type: 'object',
             properties: {
-                name: { type: 'string', description: 'Master spread name' },
-                baseName: { type: 'string', description: 'Base name for the master spread' },
-                namePrefix: { type: 'string', description: 'Name prefix for the master spread' },
-                pageColor: { type: 'string', description: 'Page color (RGB values as comma-separated string or UI color name)' },
+                name: { type: 'string', description: 'Master name; used as the base name unless baseName is given' },
+                baseName: { type: 'string', description: 'Base name (overrides name)' },
+                namePrefix: { type: 'string', description: 'Prefix shown on pages using this master (e.g. "B"); InDesign assigns one if omitted' },
+                pagesPerSpread: { type: 'integer', minimum: 1, maximum: 10, description: 'Pages in the master spread (default: document setting)' },
+                pageColor: { type: 'string', description: `Pages-panel color: ${UI_COLOR_HELP}, "USE_MASTER_COLOR" or "NOTHING"` },
                 showMasterItems: { type: 'boolean', description: 'Show master items on document pages', default: true },
             },
             required: ['name'],
@@ -27,47 +32,49 @@ export const masterSpreadToolDefinitions = [
     },
     {
         name: 'delete_master_spread',
-        description: 'Delete a master spread',
+        description: 'Delete a master spread (pages that used it are left with no master)',
         inputSchema: {
             type: 'object',
             properties: {
-                name: { type: 'string', description: 'Master spread name to delete' },
+                name: { type: 'string', description: 'Full master spread name to delete (e.g. "B-Master")' },
             },
             required: ['name'],
         },
     },
     {
         name: 'duplicate_master_spread',
-        description: 'Duplicate a master spread',
+        description: 'Duplicate a master spread; the copy gets newName as its base name (InDesign assigns a new prefix)',
         inputSchema: {
             type: 'object',
             properties: {
-                name: { type: 'string', description: 'Master spread name to duplicate' },
-                newName: { type: 'string', description: 'Name for the duplicated master spread' },
+                name: { type: 'string', description: 'Full name of the master spread to duplicate (e.g. "A-Master")' },
+                newName: { type: 'string', description: 'Base name for the duplicated master spread' },
                 position: { type: 'string', enum: ['AT_END', 'AT_BEGINNING', 'BEFORE', 'AFTER'], default: 'AT_END' },
+                referenceMasterName: { type: 'string', description: 'Full name of the reference master spread (required for BEFORE/AFTER)' },
             },
             required: ['name', 'newName'],
         },
     },
     {
         name: 'apply_master_spread',
-        description: 'Apply a master spread to pages',
+        description: 'Apply a master spread to document pages. Use masterName "None" to remove the master.',
         inputSchema: {
             type: 'object',
             properties: {
-                masterName: { type: 'string', description: 'Master spread name to apply' },
-                pageRange: { type: 'string', description: 'Page range (e.g., "1-5", "all")', default: 'all' },
+                masterName: { type: 'string', description: 'Full master spread name (e.g. "A-Master"), or "None"' },
+                pageRange: { type: 'string', description: '1-based page positions in document order: "all", "3", "1-5" or "1,3,7-9"', default: 'all' },
             },
             required: ['masterName'],
         },
     },
     {
         name: 'create_master_text_frame',
-        description: 'Create a text frame on a master spread',
+        description: 'Create a text frame on a page of a master spread. Position and size are in mm from that master page\'s top-left corner.',
         inputSchema: {
             type: 'object',
             properties: {
-                masterName: { type: 'string', description: 'Master spread name' },
+                masterName: { type: 'string', description: 'Full master spread name (e.g. "A-Master")' },
+                masterPageIndex: { type: 'integer', minimum: 0, description: '0-based page within the master spread (0 = left/first page)', default: 0 },
                 content: { type: 'string', description: 'Text content for the frame' },
                 x: { type: 'number', description: 'X position in mm', default: 10 },
                 y: { type: 'number', description: 'Y position in mm', default: 10 },
@@ -75,47 +82,49 @@ export const masterSpreadToolDefinitions = [
                 height: { type: 'number', description: 'Height in mm', default: 50 },
                 fontSize: { type: 'number', description: 'Font size in points', default: 12 },
                 fontFamily: { type: 'string', description: 'Font family name', default: 'Helvetica Neue' },
-                textColor: { type: 'string', description: 'Text color (RGB hex or name)', default: 'Black' },
-                alignment: { type: 'string', enum: ['LEFT_ALIGN', 'CENTER_ALIGN', 'RIGHT_ALIGN', 'JUSTIFY'], default: 'LEFT_ALIGN' },
-                isPrimaryTextFrame: { type: 'boolean', description: 'Set as primary text frame', default: false },
+                fontStyle: { type: 'string', description: 'Font style (e.g. "Regular", "Bold"); default: the font\'s current style' },
+                textColor: { type: 'string', description: `Text color: ${SWATCH_HELP}`, default: 'Black' },
+                alignment: { type: 'string', enum: ['LEFT_ALIGN', 'CENTER_ALIGN', 'RIGHT_ALIGN', 'LEFT_JUSTIFIED', 'RIGHT_JUSTIFIED', 'CENTER_JUSTIFIED', 'FULLY_JUSTIFIED'], default: 'LEFT_ALIGN' },
+                isPrimaryTextFrame: { type: 'boolean', description: 'Make this the master spread\'s primary text frame', default: false },
             },
             required: ['masterName', 'content'],
         },
     },
     {
         name: 'create_master_rectangle',
-        description: 'Create a rectangle on a master spread',
+        description: 'Create a rectangle on a page of a master spread. Position and size are in mm from that master page\'s top-left corner.',
         inputSchema: {
             type: 'object',
             properties: {
-                masterName: { type: 'string', description: 'Master spread name' },
+                masterName: { type: 'string', description: 'Full master spread name (e.g. "A-Master")' },
+                masterPageIndex: { type: 'integer', minimum: 0, description: '0-based page within the master spread', default: 0 },
                 x: { type: 'number', description: 'X position in mm' },
                 y: { type: 'number', description: 'Y position in mm' },
                 width: { type: 'number', description: 'Width in mm' },
                 height: { type: 'number', description: 'Height in mm' },
-                fillColor: { type: 'string', description: 'Fill color (RGB hex or swatch name)' },
-                strokeColor: { type: 'string', description: 'Stroke color' },
-                strokeWidth: { type: 'number', description: 'Stroke width in points', default: 1 },
-                cornerRadius: { type: 'number', description: 'Corner radius in mm', default: 0 },
+                fillColor: { type: 'string', description: `Fill: ${SWATCH_HELP} (default: document default)` },
+                strokeColor: { type: 'string', description: `Stroke: ${SWATCH_HELP} (default: document default)` },
+                strokeWidth: { type: 'number', minimum: 0, description: 'Stroke weight in points', default: 1 },
+                cornerRadius: { type: 'number', minimum: 0, description: 'Rounded-corner radius in mm (0 = square corners)', default: 0 },
             },
             required: ['masterName', 'x', 'y', 'width', 'height'],
         },
     },
     {
         name: 'create_master_guides',
-        description: 'Create guides on a master spread',
+        description: 'Create row/column guides on every page of a master spread (MasterSpread.createGuides)',
         inputSchema: {
             type: 'object',
             properties: {
-                masterName: { type: 'string', description: 'Master spread name' },
-                numberOfRows: { type: 'number', description: 'Number of rows', default: 0 },
-                numberOfColumns: { type: 'number', description: 'Number of columns', default: 0 },
-                rowGutter: { type: 'number', description: 'Row gutter in mm', default: 5 },
-                columnGutter: { type: 'number', description: 'Column gutter in mm', default: 5 },
-                guideColor: { type: 'string', description: 'Guide color (RGB values as comma-separated string or UI color name)', default: 'BLUE' },
-                fitMargins: { type: 'boolean', description: 'Fit guides to margins', default: true },
-                removeExisting: { type: 'boolean', description: 'Remove existing guides', default: false },
-                layerName: { type: 'string', description: 'Layer name to create guides on' },
+                masterName: { type: 'string', description: 'Full master spread name (e.g. "A-Master")' },
+                numberOfRows: { type: 'integer', minimum: 0, description: 'Number of rows per page', default: 0 },
+                numberOfColumns: { type: 'integer', minimum: 0, description: 'Number of columns per page', default: 0 },
+                rowGutter: { type: 'number', minimum: 0, description: 'Row gutter in mm', default: 5 },
+                columnGutter: { type: 'number', minimum: 0, description: 'Column gutter in mm', default: 5 },
+                guideColor: { type: 'string', description: `Guide color: ${UI_COLOR_HELP}`, default: 'BLUE' },
+                fitMargins: { type: 'boolean', description: 'Divide the area inside the margins (true) or the whole page (false)', default: true },
+                removeExisting: { type: 'boolean', description: 'Remove existing guides first', default: false },
+                layerName: { type: 'string', description: 'Layer to create guides on (default: active layer)' },
             },
             required: ['masterName'],
         },
@@ -126,33 +135,33 @@ export const masterSpreadToolDefinitions = [
         inputSchema: {
             type: 'object',
             properties: {
-                name: { type: 'string', description: 'Master spread name' },
+                name: { type: 'string', description: 'Full master spread name (e.g. "A-Master")' },
             },
             required: ['name'],
         },
     },
     {
         name: 'detach_master_items',
-        description: 'Detach master page items from a page',
+        description: 'Detach master page items onto a document page: each master item is overridden onto the page and the copy is detached so it no longer follows the master. Without itemIndex, all master items shown on the page (and items already overridden there) are detached.',
         inputSchema: {
             type: 'object',
             properties: {
-                pageIndex: { type: 'number', description: 'Page index' },
-                itemIndex: { type: 'number', description: 'Master item index to detach (optional, detaches all if not specified)' },
+                pageIndex: { type: 'integer', minimum: 0, description: '0-based document page index' },
+                itemIndex: { type: 'integer', minimum: 0, description: '0-based index into the page\'s master items (Page.masterPageItems); omit to detach all' },
             },
             required: ['pageIndex'],
         },
     },
     {
         name: 'remove_master_override',
-        description: 'Remove override from a master page item',
+        description: 'Remove local overrides from master items on a document page, restoring the master version. Without itemIndex, all overrides on the page are removed.',
         inputSchema: {
             type: 'object',
             properties: {
-                pageIndex: { type: 'number', description: 'Page index' },
-                itemIndex: { type: 'number', description: 'Master item index to remove override from' },
+                pageIndex: { type: 'integer', minimum: 0, description: '0-based document page index' },
+                itemIndex: { type: 'integer', minimum: 0, description: '0-based index among the page\'s overridden master items (top-level page items first, then guides); omit to remove all' },
             },
-            required: ['pageIndex', 'itemIndex'],
+            required: ['pageIndex'],
         },
     },
-]; 
+];
