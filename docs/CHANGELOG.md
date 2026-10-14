@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.3.0
 
 ### Added
 - Tool results carry a `warnings` list when an argument was not used as written: unknown parameters (ignored, with the closest valid name suggested) and deprecated aliases. Results without warnings are unchanged, and a warning never fails a call. Errors thrown before a call runs include the warnings too.
