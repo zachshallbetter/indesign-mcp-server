@@ -151,6 +151,7 @@ Then try a prompt such as: *Create an A4 document and add a centered title.*
 - Check that `node --version` reports 18 or newer.
 - GUI apps on macOS do not inherit your shell `PATH`. If Node comes from nvm, Volta or Homebrew, set `"command"` to the absolute path of `npx`, which `which npx` prints.
 - Restart the client after you edit its config.
+- The first start downloads the package, which can take longer than some clients wait. If the server times out on first use, restart the client, or install it once with `npm install -g indesign-mcp-server` and set `"command"` to `indesign-mcp-server` with no `args`.
 
 **InDesign not found.**
 

@@ -1,0 +1,80 @@
+name: Release
+
+# Publishes to npm and the MCP Registry when a version tag (v1.2.3) is pushed.
+# Both use GitHub OIDC, so no tokens or logins are needed:
+#   - npm: trusted publishing (configured once on npmjs.com for this workflow)
+#   - MCP Registry: mcp-publisher login github-oidc
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  MCP_PUBLISHER_VERSION: v1.8.1
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      # Trusted publishing needs npm 11.5.1 or newer.
+      - name: Update npm
+        run: npm install -g npm@11
+
+      - name: Install
+        run: npm ci
+
+      - name: Check the tag matches package.json and server.json
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          server="$(node -p "require('./server.json').version")"
+          package="$(node -p "require('./server.json').packages[0].version")"
+          if [ "$GITHUB_REF_NAME" != "v$version" ] || [ "$server" != "$version" ] || [ "$package" != "$version" ]; then
+            echo "Tag $GITHUB_REF_NAME, package.json $version, server.json $server / $package must all match" >&2
+            exit 1
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      - name: Test
+        run: npm run check && npm test
+
+      - name: Publish to npm
+        run: |
+          if npm view "indesign-mcp-server@$VERSION" version >/dev/null 2>&1; then
+            echo "indesign-mcp-server@$VERSION is already on npm; skipping"
+          else
+            npm publish
+          fi
+
+      # The registry checks that the npm version exists before accepting it.
+      - name: Wait for npm to serve the version
+        run: |
+          for i in $(seq 1 40); do
+            if npm view "indesign-mcp-server@$VERSION" version >/dev/null 2>&1; then exit 0; fi
+            sleep 15
+          done
+          echo "npm did not serve $VERSION within 10 minutes" >&2
+          exit 1
+
+      - name: Install mcp-publisher
+        run: |
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/download/${MCP_PUBLISHER_VERSION}/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
+          ./mcp-publisher --help >/dev/null
+
+      - name: Publish to the MCP Registry
+        run: |
+          ./mcp-publisher login github-oidc
+          ./mcp-publisher publish

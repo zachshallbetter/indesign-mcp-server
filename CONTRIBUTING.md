@@ -78,6 +78,19 @@ The code map and request flow are in [src/README.md](src/README.md). The executi
   - `SERVER_INSTRUCTIONS` in `src/core/InDesignMCPServer.js`, if agent-facing conventions change
 - Add a line to `docs/CHANGELOG.md` for user-visible changes.
 
+## Releasing
+
+Releases publish from GitHub Actions (`.github/workflows/release.yml`); nothing is published from a local machine.
+
+1. Set the same version in `package.json` (`npm version <x.y.z> --no-git-tag-version`) and in both `version` fields of `server.json`.
+2. Rename `## Unreleased` in `docs/CHANGELOG.md` to the version, and run `npm run docs:tools`.
+3. Commit, push to `main`, and wait for CI.
+4. Tag and push: `git tag -a v<x.y.z> -m "indesign-mcp-server <x.y.z>"` then `git push origin v<x.y.z>`.
+
+The Release workflow checks that the tag matches both files, runs the checks and tests, publishes to npm, waits for npm to serve the version, then publishes to the MCP Registry. Re-running it is safe: a version already on npm is skipped. Then create the GitHub release from the changelog section.
+
+Authentication uses GitHub OIDC, so no tokens are stored: npm trusted publishing (configured once on npmjs.com under the package's settings, for this repository and `release.yml`) and `mcp-publisher login github-oidc` for the registry.
+
 ## Reporting security issues
 
 Do not open a public issue for a vulnerability. Follow [SECURITY.md](SECURITY.md) to report it privately. Examples include a way around the path allow-list, script injection through tool arguments, or problems with the UXP bridge.
