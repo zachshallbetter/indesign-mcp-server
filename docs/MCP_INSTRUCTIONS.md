@@ -130,7 +130,7 @@ The default backend runs ExtendScript and needs no plugin. The optional UXP back
 
 2. Load `uxp/plugin` in InDesign with the UXP Developer Tool, then open its **Bridge Panel**.
 3. Add `"INDESIGN_BACKEND": "uxp"` (or `"auto"`) and the same `"BRIDGE_TOKEN"` to the MCP server's `env`. See [`examples/mcp-config-uxp.json`](../examples/mcp-config-uxp.json).
-4. Run `indesign_status`. `backend.resolved` should be `uxp` and `backend.uxpConnected` should be `true`.
+4. Run `indesign_status`. `backend.resolved` should be `uxp` and `backend.uxpConnected` should be `true`. With `probe: true` it also returns `backend.uxpProbe`; its `problems` list says which UXP differences will make tools misbehave on this InDesign (see [`uxp/README.md`](../uxp/README.md#checking-a-real-indesign)).
 
 The handler scripts are written for ExtendScript; the plugin runs them with ExtendScript semantics (completion value as the result, `File`/`Folder` shims, enums from `require('indesign')`). This is tested against a fake DOM only, not yet against InDesign, so treat the UXP backend as experimental. [architecture-execution.md](./architecture-execution.md) explains the differences, and [`uxp/README.md`](../uxp/README.md) has the bridge details.
 

@@ -5,11 +5,13 @@
 ### Added
 - Tool results carry a `warnings` list when an argument was not used as written: unknown parameters (ignored, with the closest valid name suggested) and deprecated aliases. Results without warnings are unchanged, and a warning never fails a call. Errors thrown before a call runs include the warnings too.
 - `tests/unit/warnings.test.js`, which also checks that handlers read only advertised parameters, so "was ignored" is accurate
+- UXP capability probe: `indesign_status` with `probe: true` on the UXP backend returns `backend.uxpProbe`, which reports whether the completion value comes back, how enums compare, native `[i]`, `constructor.name`, `fs` path forms and Promise-returning methods. It also lists `problems` (tools that will misbehave) and `handled` differences. It is read-only and runs from the plugin (version 1.2.0).
 
 ### Changed
 - `objectIndex` is accepted only by `apply_color`; on other tools it is reported as an unknown parameter
 - Older names that individual handlers read silently are now aliases in `src/handlers/aliases.js`, with deprecation warnings: `folderPath` -> `outputPath` (`export_images`, `package_document`), `pageRange` -> `pages` (`export_images`), `applyObjectStyle` -> `objectStyle` (`place_image`), `transparency` -> `opacity` (`create_object_style`)
 - Server instructions and `docs/LLM_PROMPT.md` describe `warnings`
+- UXP plugin version 1.2.0
 
 ## 2.2.0
 

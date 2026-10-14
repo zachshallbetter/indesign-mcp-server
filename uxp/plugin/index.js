@@ -1,6 +1,6 @@
 // Adapted from theloniuser/indesign-uxp-server — see uxp/NOTICE
 const indesign = require("indesign");
-const { entrypoints } = require("uxp");
+const uxp = require("uxp");
 const { createRuntime } = require("./runtime.js");
 
 const statusEl = document.getElementById("status");
@@ -29,7 +29,14 @@ function sandboxedRequire(moduleName) {
   return require(moduleName);
 }
 
-const runtime = createRuntime({ indesign, require: sandboxedRequire, fs: loadFs(), timeoutMs: 25000 });
+const runtime = createRuntime({
+  indesign,
+  require: sandboxedRequire,
+  fs: loadFs(),
+  uxp,
+  pluginVersion: uxp.versions ? uxp.versions.plugin : null,
+  timeoutMs: 25000,
+});
 
 function savedPort() {
   try {
@@ -101,7 +108,7 @@ formEl.addEventListener("submit", (event) => {
 
 let started = false;
 
-entrypoints.setup({
+uxp.entrypoints.setup({
   panels: {
     mainPanel: {
       show() {

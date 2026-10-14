@@ -410,7 +410,8 @@ export class ScriptExecutor {
 
     /**
      * Host/environment status without requiring a full tool call surface.
-     * probeInDesign=true attempts a lightweight ExtendScript round-trip.
+     * probeInDesign=true attempts a lightweight ExtendScript round-trip and,
+     * on the UXP backend, adds backend.uxpProbe (see probeUXP).
      */
     static async getStatus({ probeInDesign = false } = {}) {
         const configuredBackend = readBackendMode();
@@ -501,9 +502,34 @@ export class ScriptExecutor {
                 status.indesign.reachable = false;
                 status.indesign.error = error.message;
             }
+            if (resolvedBackend === 'uxp') {
+                status.backend.uxpProbe = await this.probeUXP();
+            }
         }
 
         return status;
+    }
+
+    /**
+     * Ask the UXP plugin how this InDesign's DOM differs from ExtendScript
+     * (uxp/plugin/runtime.js probe()): enum equality, collection indexing,
+     * constructor names, fs path forms, Promise-returning methods. The report
+     * lists `problems` (tools will misbehave) and `handled` differences.
+     * @returns {Promise<object>}
+     */
+    static async probeUXP() {
+        try {
+            const report = await this.executeViaUXP('return await uxpRuntime.probe();');
+            if (report && typeof report === 'object') return report;
+            return { error: `Unexpected probe result: ${JSON.stringify(report)}` };
+        } catch (error) {
+            const old = /uxpRuntime is not defined/.test(error.message);
+            return {
+                error: old
+                    ? 'The InDesign Bridge plugin predates the probe (plugin 1.2.0). Reload uxp/plugin from this package.'
+                    : error.message,
+            };
+        }
     }
 
     /** Remove leftover temp scripts from prior crashes. */

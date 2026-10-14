@@ -45,9 +45,29 @@ If `BRIDGE_TOKEN` is set on the bridge, set the same value for the MCP process. 
 
 The MCP server trims a string result and turns other values into strings, as the AppleScript/COM paths do.
 
+## Checking a real InDesign
+
+Call `indesign_status` with `probe: true` while the UXP backend is active. Besides the usual version and document check, the response has `backend.uxpProbe`, a report from the plugin (`probe()` in `runtime.js`, plugin 1.2.0 or later):
+
+| Field | What it checks |
+| --- | --- |
+| `pluginVersion`, `uxpVersion`, `inDesignVersion`, `domVersion` | Versions |
+| `scriptEval` | A script's completion value comes back (`{ ok: true, value: 42 }`); if not, no tool works |
+| `enums` | Type of `MeasurementUnits.POINTS`, whether `==` holds after setting and reading it back, and whether `.equals()` exists and works. The probe restores `app.scriptPreferences.measurementUnit` |
+| `collections` | `app.swatches[0]` natively, `item(0)`, and `[0]` through the compat proxy |
+| `classNames` | `constructor.name`, `constructorName`, the compat proxy's `constructor.name`, `instanceof Swatch` |
+| `fileProperties` | What `app.filePath` returns (ExtendScript returns a `Folder`) |
+| `fs` | Whether the `fs` module loads and whether `lstatSync` takes a plain path and/or a `file:` URL (tested on the plugin folder) |
+| `asyncMethods` | Whether read-only methods (`count()`, `toSpecifier()`, `everyItem().getElements()`) return values or Promises |
+| `problems` | Differences that will make tools misbehave, e.g. enum `==` failing (names the six affected tools) or Promise-returning methods |
+| `handled` | Differences the runtime already covers, e.g. no native `[i]` |
+| `notChecked` | What the probe cannot check without side effects: whether DOM methods accept a path string for a file. Run `export_pdf` to see |
+
+The probe changes nothing in the document. If the plugin is older than 1.2.0, `uxpProbe.error` says to reload it.
+
 ## Known gaps
 
-- **Untested against InDesign.** The fake DOM in the test has UXP's documented shape, but the real DOM may differ in ways it does not model.
+- **Untested against InDesign.** The fake DOM in the test has UXP's documented shape, but the real DOM may differ in ways it does not model. The probe above answers most of the questions below in one call.
 - **Enum comparisons.** Adobe documents that `==` and `===` on DOM objects compare references and recommends `.equals()`. If enum values come back as objects, comparisons such as `link.status != LinkStatus.NORMAL` give the wrong answer. Handler scripts that compare enums: `detach_master_items`, `get_page_info`, `get_master_spread_info`, `list_master_spreads`, `list_object_styles`, `validate_document`.
 - **File arguments.** The shims pass plain path strings to DOM methods such as `exportFile`, `place` and `app.open`. Whether every such method accepts a string in UXP has not been checked.
 - **Async DOM methods.** If a DOM method returns a Promise under UXP, an ExtendScript-style script does not wait for it.
