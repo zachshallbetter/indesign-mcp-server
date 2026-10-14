@@ -25,7 +25,7 @@ body:
     id: version
     attributes:
       label: Package and version
-      placeholder: "indesign-mcp-server 2.3.0, or illustrator-mcp-server 0.1.0"
+      placeholder: "indesign-mcp-server 2.3.0, or adobe-mcp-illustrator 0.1.0"
     validations:
       required: true
   - type: input

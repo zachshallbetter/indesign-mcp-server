@@ -7,7 +7,7 @@ way.
 | Package | What it drives | npm |
 |---|---|---|
 | [indesign-mcp-server](packages/indesign) | Adobe InDesign: documents, pages, text, styles, tables, books, PDF and EPUB export (137 tools) | [`indesign-mcp-server`](https://www.npmjs.com/package/indesign-mcp-server) |
-| [illustrator-mcp-server](packages/illustrator) | Adobe Illustrator: artboards, layers, shapes and paths, text, colour, pathfinder, export (64 tools) | `illustrator-mcp-server` |
+| [adobe-mcp-illustrator](packages/illustrator) | Adobe Illustrator: artboards, layers, shapes and paths, text, colour, pathfinder, export (64 tools) | `adobe-mcp-illustrator` |
 | [adobe-mcp-core](packages/core) | The shared foundation: script escaping, the script runner, the server shell and the static script audit | `adobe-mcp-core` |
 
 Each server runs on the machine where the Adobe application is installed and
@@ -23,7 +23,7 @@ claude mcp add indesign -- npx -y indesign-mcp-server
 ```
 
 ```bash
-claude mcp add illustrator -- npx -y illustrator-mcp-server
+claude mcp add illustrator -- npx -y adobe-mcp-illustrator
 ```
 
 Any client that reads an `mcpServers` block:
@@ -32,7 +32,7 @@ Any client that reads an `mcpServers` block:
 {
   "mcpServers": {
     "indesign": { "command": "npx", "args": ["-y", "indesign-mcp-server"] },
-    "illustrator": { "command": "npx", "args": ["-y", "illustrator-mcp-server"] }
+    "illustrator": { "command": "npx", "args": ["-y", "adobe-mcp-illustrator"] }
   }
 }
 ```
@@ -45,7 +45,7 @@ Each package's README covers its tools, conventions and configuration.
 packages/
   core/          adobe-mcp-core           shared by every server
   indesign/      indesign-mcp-server
-  illustrator/   illustrator-mcp-server
+  illustrator/   adobe-mcp-illustrator
 ```
 
 The servers share their infrastructure through `adobe-mcp-core`, so a fix to

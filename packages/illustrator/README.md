@@ -12,7 +12,7 @@ Requires Illustrator 2023 or later on macOS or Windows, and Node.js 18 or later.
 Claude Code:
 
 ```bash
-claude mcp add illustrator -- npx -y illustrator-mcp-server
+claude mcp add illustrator -- npx -y adobe-mcp-illustrator
 ```
 
 Any client that reads an `mcpServers` block (Claude Desktop, Cursor, Warp, …):
@@ -22,7 +22,7 @@ Any client that reads an `mcpServers` block (Claude Desktop, Cursor, Warp, …):
   "mcpServers": {
     "illustrator": {
       "command": "npx",
-      "args": ["-y", "illustrator-mcp-server"]
+      "args": ["-y", "adobe-mcp-illustrator"]
     }
   }
 }

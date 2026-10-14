@@ -8,6 +8,13 @@ Each package has its own guide for adding tools:
   (`features`); annotate it in `src/server.js`. `npm test -w packages/illustrator`
   checks the definitions, the feature ids and every generated script.
 
+## Adding an application
+
+A new application gets its own package, `packages/<app>`, published as
+`adobe-mcp-<app>` (for example `adobe-mcp-photoshop`), with the core as its only
+runtime dependency. `indesign-mcp-server` keeps the name it was first published
+under.
+
 ## Before a pull request
 
 - `npm run check && npm test` pass at the repository root. CI runs both.
@@ -25,8 +32,8 @@ Packages are released one at a time by tag. For a package:
 3. Commit, then tag and push:
 
    ```bash
-   git tag -a illustrator-mcp-server@0.1.0 -m "illustrator-mcp-server 0.1.0"
-   git push origin illustrator-mcp-server@0.1.0
+   git tag -a adobe-mcp-illustrator@0.1.0 -m "adobe-mcp-illustrator 0.1.0"
+   git push origin adobe-mcp-illustrator@0.1.0
    ```
 
 The release workflow checks that the tag matches the package's versions, runs

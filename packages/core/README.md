@@ -1,7 +1,7 @@
 # adobe-mcp-core
 
 The shared foundation for MCP servers that drive desktop Adobe applications
-through ExtendScript: illustrator-mcp-server, and
+through ExtendScript: adobe-mcp-illustrator, and
 [indesign-mcp-server](https://github.com/zachshallbetter/indesign-mcp-server),
 whose infrastructure it was extracted from.
 
