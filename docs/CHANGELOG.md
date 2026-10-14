@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- UXP capability probe: `indesign_status` with `probe: true` on the UXP backend returns `backend.uxpProbe`, which reports whether the completion value comes back, how enums compare, native `[i]`, `constructor.name`, `fs` path forms and Promise-returning methods. It also lists `problems` (tools that will misbehave) and `handled` differences. It is read-only and runs from the plugin (version 1.2.0).
+
+### Changed
+- UXP plugin version 1.2.0
+
 ## 2.2.0
 
 ### Canonical parameter names

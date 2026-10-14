@@ -7,13 +7,13 @@ export const utilityToolDefinitions = [
     // =================== UTILITY TOOLS ===================
     {
         name: 'indesign_status',
-        description: 'Health check: platform, resolved InDesign app name, optional live probe (version, open docs). Call with probe=true to round-trip ExtendScript.',
+        description: 'Health check: platform, resolved InDesign app name, optional live probe (version, open docs). Call with probe=true to round-trip a script; on the UXP backend it also reports backend.uxpProbe, how this InDesign\'s UXP DOM differs from ExtendScript, with any problems found.',
         inputSchema: {
             type: 'object',
             properties: {
                 probe: {
                     type: 'boolean',
-                    description: 'If true, run a lightweight InDesign script to report version and open documents',
+                    description: 'If true, run a lightweight InDesign script to report version and open documents (and, on the UXP backend, the UXP capability probe)',
                     default: false,
                 },
             },

@@ -28,6 +28,12 @@ function test(name, fn) {
 
 // ---------------------------------------------------------------- fake DOM
 
+const PLUGIN_FOLDER = '/plugins/indesign-bridge';
+const fakeUxp = {
+    versions: { uxp: 'uxp-8.0.0', plugin: '1.2.0' },
+    storage: { localFileSystem: { getPluginFolder: async () => ({ nativePath: PLUGIN_FOLDER }) } },
+};
+
 /** Paths that exist, shared by the fake fs and the fake DOM's file writes. */
 function makeFs(paths = []) {
     const existing = new Set(paths);
@@ -115,6 +121,7 @@ function makeApp({ uxp, fs, Entry, withDocument }) {
                 return items.find((x) => x.name === n) || obj('Nothing', { isValid: false, name: n });
             },
             everyItem() { return { getElements: () => items.slice() }; },
+            count() { return items.length; },
             ...extra,
         };
         if (!uxp) items.forEach((x, i) => { c[i] = x; });
@@ -159,7 +166,9 @@ function makeApp({ uxp, fs, Entry, withDocument }) {
             if (!docs.length) throw new Error('No documents are open.');
             return docs[0];
         },
-        scriptPreferences: { measurementUnit: 'MeasurementUnits.MILLIMETERS', userInteractionLevel: 'UserInteractionLevels.INTERACT_WITH_ALL' },
+        filePath: '/Applications/Adobe InDesign 2024',
+        swatches: collection([obj('Swatch', { name: 'None' }), obj('Swatch', { name: 'Paper' })]),
+        scriptPreferences: { measurementUnit: 'MeasurementUnits.MILLIMETERS', userInteractionLevel: 'UserInteractionLevels.INTERACT_WITH_ALL', version: '18.5' },
         pdfExportPreferences: { pageRange: 'PageRange.ALL_PAGES' },
         pdfExportPresets: collection([obj('PDFExportPreset', { name: 'Sample' })]),
     };
@@ -170,7 +179,7 @@ function makeApp({ uxp, fs, Entry, withDocument }) {
 function makeWorld({ withDocument = false, files = [] } = {}) {
     const enumFor = makeEnums();
     const fsES = makeFs(files);
-    const fsUXP = makeFs(files);
+    const fsUXP = makeFs([...files, PLUGIN_FOLDER]);
     const es = extendScriptFiles(fsES);
     const esDom = makeApp({ uxp: false, fs: fsES, Entry: es.Entry, withDocument });
     const uxpDom = makeApp({ uxp: true, fs: fsUXP, Entry: es.Entry, withDocument });
@@ -223,6 +232,8 @@ class FakePlugin {
         this.runtime = createRuntime({
             indesign: world.indesign,
             fs: world.fsUXP,
+            uxp: fakeUxp,
+            pluginVersion: '1.2.0',
             require: (name) => {
                 if (name === 'indesign') return world.indesign;
                 throw new Error(`require('${name}') is not allowed inside execute calls`);
@@ -484,6 +495,79 @@ test('auto mode re-checks the bridge and falls back only when the script cannot 
         ScriptExecutor.autoRecheckMs = recheck;
         process.env.INDESIGN_BACKEND = 'uxp';
         ScriptExecutor.resetBackendCache();
+    }
+});
+
+test('capability probe over the bridge reports the UXP-shaped DOM and restores units', async () => {
+    const world = makeWorld();
+    plugin.use(world);
+    const r = await ScriptExecutor.probeUXP();
+    assert.equal(r.error, undefined, r.error);
+    assert.equal(r.pluginVersion, '1.2.0');
+    assert.equal(r.uxpVersion, 'uxp-8.0.0');
+    assert.equal(r.inDesignVersion, '18.5');
+    assert.deepEqual(r.scriptEval, { ok: true, value: 42 });
+    assert.equal(r.enums.equalsAfterSet, true);
+    assert.equal(r.collections.nativeIndex, false);
+    assert.equal(r.collections.compatIndex, true);
+    assert.equal(r.classNames.constructorDotName, '');
+    assert.equal(r.classNames.constructorName, 'Swatch');
+    assert.equal(r.classNames.compatConstructorName, 'Swatch');
+    assert.equal(r.fs.testedPath, PLUGIN_FOLDER);
+    assert.equal(r.fs.plainPath, true);
+    assert.equal(r.asyncMethods['swatches.count()'], 'value');
+    assert.deepEqual(r.problems, []);
+    assert.ok(r.handled.some((h) => /item\(i\)/.test(h)));
+    assert.ok(r.handled.some((h) => /constructorName/.test(h)));
+    assert.equal(world.uxpDom.app.scriptPreferences.measurementUnit, 'MeasurementUnits.MILLIMETERS');
+});
+
+test('capability probe names the problems on a hostile DOM', async () => {
+    // Enum values are fresh objects on every read, a method returns a Promise, no fs.
+    const enumValue = (name) => ({ name, equals(o) { return o && o.name === name; }, toString() { return name; } });
+    let unit = 'MILLIMETERS';
+    const sw = { name: 'None', constructorName: 'Swatch', isValid: true };
+    Object.setPrototypeOf(sw, { constructor: Object.defineProperty(function () {}, 'name', { value: '' }) });
+    const app = {
+        version: '19.0',
+        filePath: '/Applications/Adobe InDesign 2025',
+        scriptPreferences: {
+            version: '19.0',
+            get measurementUnit() { return enumValue(unit); },
+            set measurementUnit(v) { unit = v.name; },
+        },
+        swatches: {
+            length: 1,
+            item: () => sw,
+            count: () => Promise.resolve(1),
+            everyItem: () => ({ getElements: () => [sw] }),
+        },
+    };
+    const indesign = { app, MeasurementUnits: { get POINTS() { return enumValue('POINTS'); } } };
+    const runtime = createRuntime({ indesign, fs: null, log: () => {} });
+    const r = await runtime.probe();
+    assert.equal(r.enums.type, 'object');
+    assert.equal(r.enums.equalsAfterSet, false);
+    assert.equal(r.enums.equalsMethodAfterSet, true);
+    assert.equal(r.asyncMethods['swatches.count()'], 'promise');
+    assert.equal(r.fs.available, false);
+    assert.equal(unit, 'MILLIMETERS', 'units restored');
+    const text = r.problems.join('\n');
+    assert.match(text, /Enum values do not compare with ==.*get_page_info/);
+    assert.match(text, /Promises.*swatches\.count\(\)/);
+    assert.match(text, /fs module is unavailable/);
+    assert.ok(!/Scripts cannot be evaluated/.test(text), text);
+});
+
+test('capability probe explains a plugin that predates it', async () => {
+    const original = ScriptExecutor.executeViaUXP;
+    ScriptExecutor.executeViaUXP = async () => {
+        throw new Error('uxpRuntime is not defined');
+    };
+    try {
+        assert.match((await ScriptExecutor.probeUXP()).error, /predates the probe \(plugin 1\.2\.0\)/);
+    } finally {
+        ScriptExecutor.executeViaUXP = original;
     }
 });
 

@@ -1729,13 +1729,13 @@ Package the active (saved) document for printing into an output folder
 
 ### `indesign_status`
 
-Health check: platform, resolved InDesign app name, optional live probe (version, open docs). Call with probe=true to round-trip ExtendScript.
+Health check: platform, resolved InDesign app name, optional live probe (version, open docs). Call with probe=true to round-trip a script; on the UXP backend it also reports backend.uxpProbe, how this InDesign's UXP DOM differs from ExtendScript, with any problems found.
 
 *read-only*
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `probe` | boolean |  | `false` | If true, run a lightweight InDesign script to report version and open documents |
+| `probe` | boolean |  | `false` | If true, run a lightweight InDesign script to report version and open documents (and, on the UXP backend, the UXP capability probe) |
 
 ### `execute_indesign_code`
 
