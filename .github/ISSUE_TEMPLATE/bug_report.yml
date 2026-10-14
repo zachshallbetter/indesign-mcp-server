@@ -1,0 +1,51 @@
+name: Bug report
+description: A tool fails, does the wrong thing, or the server will not start
+labels: [bug]
+body:
+  - type: input
+    id: tool
+    attributes:
+      label: Tool
+      description: The tool name, for example place_image. Leave empty for startup or connection problems.
+  - type: textarea
+    id: call
+    attributes:
+      label: Arguments and result
+      description: The arguments you (or the agent) passed and the full result text. Remove anything private.
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: indesign-mcp-server version
+      placeholder: "2.0.0"
+    validations:
+      required: true
+  - type: input
+    id: indesign
+    attributes:
+      label: InDesign version and OS
+      placeholder: InDesign 2026 (21.0), macOS 15.5
+    validations:
+      required: true
+  - type: dropdown
+    id: backend
+    attributes:
+      label: Backend
+      options:
+        - Default (AppleScript / COM)
+        - UXP
+    validations:
+      required: true
+  - type: input
+    id: client
+    attributes:
+      label: MCP client
+      placeholder: Claude Desktop, Claude Code, Cursor, ...

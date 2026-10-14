@@ -1,0 +1,16 @@
+name: Feature request
+description: A new tool, or a parameter an existing tool should support
+labels: [enhancement]
+body:
+  - type: textarea
+    id: task
+    attributes:
+      label: What do you want to do in InDesign?
+      description: Describe the layout or production task, not just the API.
+    validations:
+      required: true
+  - type: textarea
+    id: api
+    attributes:
+      label: InDesign scripting API (if known)
+      description: Classes, methods or properties from the InDesign scripting DOM that would do it.

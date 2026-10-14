@@ -1,432 +1,186 @@
-# InDesign MCP Server - LLM Instructions
+# Setup and configuration
 
-## Overview
+This page covers installing the InDesign MCP server, connecting it to an MCP client, configuring it, and fixing common problems. To learn how an agent should use the tools, see [LLM_PROMPT.md](./LLM_PROMPT.md). For the full tool list, see [TOOLS.md](./TOOLS.md).
 
-The InDesign MCP Server provides programmatic access to Adobe InDesign through Model Context Protocol (MCP). This allows LLMs to create, edit, and manage InDesign documents, pages, text, graphics, styles, and more.
+## Prerequisites
 
-## Setup Requirements
+- **Adobe InDesign** on macOS or Windows, installed on the same machine as the MCP client. InDesign does not have to be running: the first tool call starts it.
+- **Node.js 18 or newer**, which provides `npx`.
+- An MCP client that runs local stdio servers, such as Claude Desktop, Claude Code, Cursor or VS Code.
 
-### Prerequisites
+The npm package is `indesign-mcp-server` and the MCP Registry name is `io.github.zachshallbetter/indesign-mcp-server`. Clients start it with `npx -y indesign-mcp-server`, so you do not have to clone anything.
 
-- **Adobe InDesign**: 2023 or later recommended
-- **Node.js**: Version 18 or higher
-- **macOS** (AppleScript) or **Windows** (COM via PowerShell)
+> **Before the first npm release** `npx` cannot find the package yet. Until then, clone the repository, run `npm install`, and point your client at `node /ABSOLUTE/PATH/TO/indesign-mcp-server/src/index.js`.
 
-### Installation
+## Client configuration
+
+### Claude Code
 
 ```bash
-# Clone the repository
-git clone https://github.com/zachshallbetter/indesign-mcp-server.git
-cd indesign-mcp-server
-
-# Install dependencies
-npm install
-
-# Start the server
-node src/index.js
+claude mcp add indesign -- npx -y indesign-mcp-server
 ```
 
-### MCP Configuration
+With an environment variable:
 
-Add to your MCP client configuration:
+```bash
+claude mcp add indesign -e INDESIGN_ALLOWED_DIRS=/Volumes/Work -- npx -y indesign-mcp-server
+```
+
+### Claude Desktop
+
+Edit `claude_desktop_config.json`, then restart Claude Desktop. The file is in one of these places:
+
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+
 ```json
 {
   "mcpServers": {
     "indesign": {
-      "command": "node",
-      "args": ["/path/to/indesign-mcp-server/src/index.js"],
-      "env": {}
+      "command": "npx",
+      "args": ["-y", "indesign-mcp-server"]
     }
   }
 }
 ```
 
-## Available Tools
+### Cursor and other `mcpServers` clients
 
-### Document Management
+Cursor reads the same shape from `~/.cursor/mcp.json` for all projects, or from `.cursor/mcp.json` for one project. Most other clients, Windsurf and Warp among them, take the same `mcpServers` block. See [`examples/mcp-config.json`](../examples/mcp-config.json) for a version with environment variables.
 
-- `create_document` - Create new InDesign documents
-- `open_document` - Open existing documents
-- `save_document` - Save documents
-- `close_document` - Close documents
-- `get_document_info` - Get document properties
+### VS Code
 
-### Page Management
+VS Code reads `.vscode/mcp.json` (or the user-level MCP configuration). It uses a `servers` key:
 
-- `add_page` - Add new pages
-- `delete_page` - Remove pages
-- `navigate_to_page` - Switch to specific page
-- `get_page_info` - Get page properties
-- `set_page_background` - Set page background color
-
-### Text Operations
-
-- `create_text_frame` - Create text frames with content
-- `edit_text_frame` - Modify existing text frames
-- `apply_paragraph_style` - Apply paragraph styles
-- `apply_character_style` - Apply character styles
-
-### Graphics & Images
-
-- `create_rectangle` - Create rectangular shapes
-- `create_ellipse` - Create elliptical shapes
-- `create_polygon` - Create polygonal shapes
-- `place_image` - Place images with scaling options
-- `get_image_info` - Get image properties
-
-### Styles & Colors
-
-- `create_color_swatch` - Create custom colors
-- `list_color_swatches` - List available colors
-- `create_paragraph_style` - Create paragraph styles
-- `create_character_style` - Create character styles
-- `create_object_style` - Create object styles
-- `list_styles` - List available styles
-
-### Layout & Positioning
-
-- `create_group` - Group multiple objects
-- `ungroup` - Ungroup objects
-- `create_master_spread` - Create master pages
-- `apply_master_spread` - Apply master to pages
-
-### Export & Utilities
-
-- `export_pdf` - Export to PDF
-- `export_images` - Export pages as images
-- `execute_indesign_code` - Run custom ExtendScript
-
-## Best Practices
-
-### 1. Session Management
-
-- Always create a document before adding content
-- Use `navigate_to_page` to ensure you're on the correct page
-- Save documents regularly with `save_document`
-
-### 2. Positioning & Layout
-
-- Use the session manager for smart positioning
-- Respect page margins and boundaries
-- Use consistent spacing and alignment
-
-### 3. Style Application
-
-- Create styles before applying them to content
-- Use paragraph styles for consistent typography
-- Apply character styles for inline formatting
-
-### 4. Image Handling
-
-- Use absolute file paths for images
-- Consider scaling and fit modes for optimal placement
-- Link images for better file management
-
-### 5. Error Handling
-
-- Check tool responses for success/failure
-- Handle missing fonts or resources gracefully
-- Validate parameters before tool calls
-
-## Common Workflows
-
-### Creating a Simple Document
-
-```javascript
-// 1. Create document
-await tools.call("create_document", {
-  name: "My Document",
-  width: 210,
-  height: 297,
-  facingPages: false
-});
-
-// 2. Add text
-await tools.call("create_text_frame", {
-  content: "Hello World",
-  x: 25,
-  y: 25,
-  width: 160,
-  height: 50,
-  fontSize: 24,
-  fontName: "Arial\\tBold"
-});
-
-// 3. Save document
-await tools.call("save_document", {
-  filePath: "./output.indd"
-});
-```
-
-### Creating a Branded Document
-
-```javascript
-// 1. Create document
-await tools.call("create_document", {
-  name: "Brand Document",
-  width: 210,
-  height: 297
-});
-
-// 2. Create brand colors
-await tools.call("create_color_swatch", {
-  name: "Brand Blue",
-  colorType: "PROCESS",
-  red: 0,
-  green: 114,
-  blue: 198
-});
-
-// 3. Create paragraph styles
-await tools.call("create_paragraph_style", {
-  name: "Heading 1",
-  fontName: "Arial\\tBold",
-  fontSize: 32,
-  fillColor: "Brand Blue"
-});
-
-// 4. Add styled content
-await tools.call("create_text_frame", {
-  content: "Company Name",
-  x: 25,
-  y: 25,
-  width: 160,
-  height: 40,
-  paragraphStyle: "Heading 1"
-});
-```
-
-### Creating a Multi-Page Layout
-
-```javascript
-// 1. Create document
-await tools.call("create_document", {
-  name: "Multi-Page Layout",
-  width: 210,
-  height: 297
-});
-
-// 2. Add pages
-for (let i = 0; i < 4; i++) {
-  await tools.call("add_page", { position: "AT_END" });
-}
-
-// 3. Create content for each page
-for (let pageIndex = 0; pageIndex < 5; pageIndex++) {
-  await tools.call("navigate_to_page", { pageIndex });
-  
-  await tools.call("create_text_frame", {
-    content: `Page ${pageIndex + 1}`,
-    x: 25,
-    y: 25,
-    width: 160,
-    height: 30,
-    fontSize: 18,
-    fontName: "Arial\\tBold"
-  });
+```json
+{
+  "servers": {
+    "indesign": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "indesign-mcp-server"]
+    }
+  }
 }
 ```
 
-### Working with Images
+### Running from a clone
 
-```javascript
-// 1. Place image with scaling
-await tools.call("place_image", {
-  filePath: "/absolute/path/to/image.jpg",
-  x: 25,
-  y: 25,
-  width: 100,
-  height: 75,
-  scale: 150,
-  fitMode: "PROPORTIONALLY"
-});
+For development, or to run unreleased code:
 
-// 2. Create object style for images
-await tools.call("create_object_style", {
-  name: "Image Frame",
-  strokeColor: "Black",
-  strokeWeight: 1
-});
-
-// 3. Apply style to image
-await tools.call("apply_object_style", {
-  objectName: "Image Frame"
-});
+```bash
+git clone https://github.com/zachshallbetter/indesign-mcp-server.git
+cd indesign-mcp-server
+npm install
 ```
 
-## Advanced Features
+Then point the client at the entry file: `"command": "node"`, `"args": ["/ABSOLUTE/PATH/TO/indesign-mcp-server/src/index.js"]`.
 
-### Smart Positioning
+## Environment variables
 
-The server includes a session manager that provides:
-- Automatic bounds checking
-- Smart positioning calculations
-- Page dimension awareness
-- Margin and spacing management
+Set these in the client's `env` block, or with `-e` for Claude Code.
 
-### Style System
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `INDESIGN_APP_NAME` | auto-detected | **macOS only.** The application name for AppleScript, such as `Adobe InDesign 2026`. Without it, the server uses the running InDesign process, then the newest `Adobe InDesign*.app` in `/Applications` or `~/Applications`, then `Adobe InDesign 2025`. Windows ignores it. |
+| `INDESIGN_ALLOWED_DIRS` | none | More directories for file operations: open, save, place, export, data merge and books. Your home folder is always allowed. Separate entries with `:` on macOS and `;` on Windows. |
+| `INDESIGN_BACKEND` | `extendscript` | `extendscript` uses AppleScript (macOS) or COM (Windows). `uxp` uses the UXP bridge. `auto` uses UXP if the bridge reports a connected plugin and ExtendScript otherwise. Any other value means `extendscript`. |
+| `UXP_BRIDGE_URL` | `http://127.0.0.1:3000` | The UXP bridge's HTTP address. Only used with `uxp` or `auto`. |
+| `BRIDGE_TOKEN` | none | A bearer token sent to the UXP bridge. Set the same value on the bridge process. |
 
-- Create comprehensive style libraries
-- Apply consistent typography
-- Maintain brand guidelines
-- Support for paragraph, character, and object styles
+The bridge process also reads `UXP_HTTP_PORT` (default 3000) and `UXP_WS_PORT` (default 3001). The plugin always connects to `ws://127.0.0.1:3001`, so leave `UXP_WS_PORT` at its default unless you also edit `uxp/plugin/index.js`.
 
-### Image Scaling
+### File access rules
 
-- Precise scale control (1% to 1000%)
-- Multiple fit modes (PROPORTIONALLY, FILL_FRAME, FIT_CONTENT, FIT_FRAME)
-- Automatic aspect ratio preservation
-- Frame size optimization
+All file paths must be absolute. A path is accepted only if both of these hold:
 
-### Error Handling
+1. It is inside your home folder or an `INDESIGN_ALLOWED_DIRS` entry.
+2. It is not inside a system directory. These are always refused:
+   - macOS: `/etc`, `/System`, `/usr`, `/bin`, `/sbin`, `/Library`
+   - Windows: `C:\Windows`, `C:\Program Files`, `C:\Program Files (x86)`, `C:\ProgramData`
 
-- Graceful handling of missing resources
-- Detailed error messages
-- Fallback options for fonts and colors
-- Validation of parameters and constraints
+External volumes such as `/Volumes/...`, shared folders and `/tmp` need an `INDESIGN_ALLOWED_DIRS` entry.
+
+## macOS: Automation permission
+
+The server sends Apple events to InDesign and to System Events, which it uses to find the running InDesign process. The first time, macOS asks whether the client app may control them. The client app is whatever started the server: Claude, Terminal, iTerm, Cursor or Code.
+
+Click **OK**. If you denied it earlier, open **System Settings > Privacy & Security > Automation**, find the client app, and turn on **Adobe InDesign** and **System Events**. Then restart the client.
+
+Each call activates InDesign, so InDesign comes to the front while tools run.
+
+## Windows notes
+
+- The server drives InDesign through COM from PowerShell, with `-NoProfile -ExecutionPolicy Bypass`.
+- It tries these ProgIDs in order:
+  - `InDesign.Application.2026`, `.2025`, `.2024`, `.2023`
+  - `InDesign.Application`, which is version-independent
+- Scripts are written to `%TEMP%` as `indesign_mcp_*.jsx`. They are removed after each call and again when the server starts.
+- In JSON, write paths with forward slashes (`C:/Users/me/Documents/file.indd`) or escaped backslashes (`C:\\Users\\me\\...`).
+- Separate `INDESIGN_ALLOWED_DIRS` entries with `;`.
+- If the client cannot start `npx`, use `"command": "cmd"` with `"args": ["/c", "npx", "-y", "indesign-mcp-server"]`.
+
+## Optional UXP backend
+
+The default backend runs ExtendScript and needs no plugin. The optional UXP backend sends scripts to a small local bridge instead. The bridge relays them to a UXP plugin running inside InDesign.
+
+1. Start the bridge. It ships in the package:
+
+   ```bash
+   BRIDGE_TOKEN=change-me npx -p indesign-mcp-server indesign-mcp-uxp-bridge
+   ```
+
+2. Load `uxp/plugin` in InDesign with the UXP Developer Tool, then open its **Bridge Panel**.
+3. Add `"INDESIGN_BACKEND": "uxp"` (or `"auto"`) and the same `"BRIDGE_TOKEN"` to the MCP server's `env`. See [`examples/mcp-config-uxp.json`](../examples/mcp-config-uxp.json).
+4. Run `indesign_status`. `backend.resolved` should be `uxp` and `backend.uxpConnected` should be `true`.
+
+The handler scripts are written for ExtendScript, so not every tool behaves the same under UXP. Treat the UXP backend as experimental. [architecture-execution.md](./architecture-execution.md) explains the differences, and [`uxp/README.md`](../uxp/README.md) has the bridge details.
+
+## Verifying the setup
+
+Ask the agent to call `indesign_status` with `probe: true`. A healthy result shows:
+
+- `indesign.reachable: true`
+- the InDesign version
+- the number of open documents
+
+Then try a prompt such as: *Create an A4 document and add a centered title.*
 
 ## Troubleshooting
 
-### Common Issues
+**The tools do not appear in the client.**
 
-1. **"No document open"** - Create a document first
-2. **"Font not found"** - Use available fonts or provide fallbacks
-3. **"Image file not found"** - Use absolute file paths
-4. **"Page out of bounds"** - Check positioning parameters
+- Check that `node --version` reports 18 or newer.
+- GUI apps on macOS do not inherit your shell `PATH`. If Node comes from nvm, Volta or Homebrew, set `"command"` to the absolute path of `npx`, which `which npx` prints.
+- Restart the client after you edit its config.
 
-### Debug Tips
+**InDesign not found.**
 
-- Use `get_document_info` to check document state
-- Use `list_color_swatches` to see available colors
-- Use `list_styles` to see available styles
-- Check tool responses for detailed error messages
+- On macOS, an error mentioning `Can't get application` or `Application isn't running` means the resolved app name is wrong.
+- `indesign_status` shows `appName` and `appNameSource`.
+- Set `INDESIGN_APP_NAME` to the exact app name without `.app`, for example `Adobe InDesign 2026`.
+- On Windows, `Adobe InDesign not found. Check installation.` means no InDesign COM ProgID could be created. Repair the InDesign installation.
 
-## Integration Examples
+**Permission denied (macOS).** An error such as `Not authorized to send Apple events` (-1743) means Automation access was denied. See [macOS: Automation permission](#macos-automation-permission).
 
-### With Claude/GPT
+**`No document open`.** The tool needs an active document. Ask the agent to call `create_document` or `open_document`.
 
-```javascript
-// Example: Create a professional report
-const reportData = {
-  title: "Q4 Sales Report",
-  sections: ["Overview", "Results", "Analysis", "Recommendations"]
-};
+**Path rejected (`Access denied: '...' is outside the allowed directories`).**
 
-// Create document structure
-await tools.call("create_document", {
-  name: reportData.title,
-  width: 210,
-  height: 297
-});
+- Use an absolute path inside your home folder.
+- Or add the directory to `INDESIGN_ALLOWED_DIRS` and restart the client.
+- Paths in system directories are always refused.
 
-// Add title page
-await tools.call("create_text_frame", {
-  content: reportData.title,
-  x: 25,
-  y: 100,
-  width: 160,
-  height: 50,
-  fontSize: 36,
-  fontName: "Arial\\tBold",
-  alignment: "CENTER"
-});
+**Timeouts.**
 
-// Add sections
-for (let i = 0; i < reportData.sections.length; i++) {
-  await tools.call("add_page", { position: "AT_END" });
-  await tools.call("navigate_to_page", { pageIndex: i + 1 });
-  
-  await tools.call("create_text_frame", {
-    content: reportData.sections[i],
-    x: 25,
-    y: 25,
-    width: 160,
-    height: 30,
-    fontSize: 24,
-    fontName: "Arial\\tBold"
-  });
-}
-```
+- An ExtendScript call times out after 120 seconds, and the error mentions `ETIMEDOUT`.
+- Under UXP, the plugin limit is 25 s, the bridge's 30 s and the server's 35 s.
+- The usual cause is a modal dialog waiting in InDesign: missing fonts or links, import options, or the print dialog. Close it and retry.
+- InDesign may still finish the operation after the server has given up, so check the document before you repeat a call.
 
-### With Custom Applications
+**`UXP bridge not reachable`.**
 
-```javascript
-// Example: Batch document creation
-const documents = [
-  { name: "Document 1", content: "Content for doc 1" },
-  { name: "Document 2", content: "Content for doc 2" },
-  { name: "Document 3", content: "Content for doc 3" }
-];
-
-for (const doc of documents) {
-  await tools.call("create_document", {
-    name: doc.name,
-    width: 210,
-    height: 297
-  });
-  
-  await tools.call("create_text_frame", {
-    content: doc.content,
-    x: 25,
-    y: 25,
-    width: 160,
-    height: 247
-  });
-  
-  await tools.call("save_document", {
-    filePath: `./${doc.name}.indd`
-  });
-  
-  await tools.call("close_document");
-}
-```
-
-## Performance Considerations
-
-### Optimization Tips
-
-- Batch operations when possible
-- Reuse styles and colors
-- Minimize page navigation
-- Use appropriate image formats and sizes
-
-### Memory Management
-
-- Close documents when done
-- Clear session data if needed
-- Monitor file sizes for large documents
-- Use linking for large images
-
-## Security Notes
-
-### File Access
-
-- Use absolute paths for file operations
-- Validate file paths before use
-- Handle file permissions appropriately
-- Consider sandboxing for untrusted content
-
-### Resource Management
-
-- Limit concurrent operations
-- Monitor system resources
-- Handle timeouts gracefully
-- Clean up temporary files
-
-## Support & Resources
-
-### Documentation
-
-- InDesign ExtendScript API: https://www.indesignjs.de/extendscriptAPI/
-- MCP Protocol: https://modelcontextprotocol.io/
-- Node.js Documentation: https://nodejs.org/docs/
-
-### Community
-
-- GitHub Issues for bug reports
-- Feature requests and contributions welcome
-- Examples and use cases encouraged
-
----
-
-**Note**: This MCP server is designed for macOS with Adobe InDesign. Ensure all prerequisites are met before use. For production environments, consider implementing additional error handling and validation. 
+- Start the bridge.
+- Check that `UXP_BRIDGE_URL` matches its address.
+- Check that the Bridge Panel is open in InDesign.
+- An `Unauthorized: missing or invalid BRIDGE_TOKEN` error means `BRIDGE_TOKEN` differs between the bridge and the MCP server.

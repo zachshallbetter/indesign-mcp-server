@@ -49,7 +49,7 @@ export const masterSpreadToolDefinitions = [
             properties: {
                 name: { type: 'string', description: 'Full name of the master spread to duplicate (e.g. "A-Master")' },
                 newName: { type: 'string', description: 'Base name for the duplicated master spread' },
-                position: { type: 'string', enum: ['AT_END', 'AT_BEGINNING', 'BEFORE', 'AFTER'], default: 'AT_END' },
+                position: { description: 'Where to put the copy among the masters: AT_END, AT_BEGINNING, or BEFORE/AFTER the reference master', type: 'string', enum: ['AT_END', 'AT_BEGINNING', 'BEFORE', 'AFTER'], default: 'AT_END' },
                 referenceMasterName: { type: 'string', description: 'Full name of the reference master spread (required for BEFORE/AFTER)' },
             },
             required: ['name', 'newName'],
@@ -84,7 +84,7 @@ export const masterSpreadToolDefinitions = [
                 fontFamily: { type: 'string', description: 'Font family name', default: 'Helvetica Neue' },
                 fontStyle: { type: 'string', description: 'Font style (e.g. "Regular", "Bold"); default: the font\'s current style' },
                 textColor: { type: 'string', description: `Text color: ${SWATCH_HELP}`, default: 'Black' },
-                alignment: { type: 'string', enum: ['LEFT_ALIGN', 'CENTER_ALIGN', 'RIGHT_ALIGN', 'LEFT_JUSTIFIED', 'RIGHT_JUSTIFIED', 'CENTER_JUSTIFIED', 'FULLY_JUSTIFIED'], default: 'LEFT_ALIGN' },
+                alignment: { description: 'Paragraph justification for the frame text (InDesign Justification values)', type: 'string', enum: ['LEFT_ALIGN', 'CENTER_ALIGN', 'RIGHT_ALIGN', 'LEFT_JUSTIFIED', 'RIGHT_JUSTIFIED', 'CENTER_JUSTIFIED', 'FULLY_JUSTIFIED'], default: 'LEFT_ALIGN' },
                 isPrimaryTextFrame: { type: 'boolean', description: 'Make this the master spread\'s primary text frame', default: false },
             },
             required: ['masterName', 'content'],

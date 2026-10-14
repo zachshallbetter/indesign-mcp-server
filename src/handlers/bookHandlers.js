@@ -328,7 +328,7 @@ export class BookHandlers {
      * Print a book
      */
     static async printBook(args) {
-        const { printDialog = true, printerPreset = 'DEFAULT_VALUE' } = args;
+        const { printDialog = false, printerPreset = 'DEFAULT_VALUE' } = args;
         const body = printerPreset === 'DEFAULT_VALUE'
             ? [`book.print(${bool(printDialog)}, PrinterPresetTypes.DEFAULT_VALUE);`]
             : [

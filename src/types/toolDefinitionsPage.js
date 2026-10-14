@@ -7,11 +7,11 @@ export const pageToolDefinitions = [
     // =================== BASIC PAGE MANAGEMENT ===================
     {
         name: 'add_page',
-        description: 'Add a new page to the document',
+        description: 'Add a page to the active document at the end, the beginning, or before/after a given page; returns the new page count',
         inputSchema: {
             type: 'object',
             properties: {
-                position: { type: 'string', enum: ['AT_END', 'AT_BEGINNING', 'BEFORE', 'AFTER'], default: 'AT_END' },
+                position: { description: 'Where to add the page: AT_END, AT_BEGINNING, or BEFORE/AFTER referencePage', type: 'string', enum: ['AT_END', 'AT_BEGINNING', 'BEFORE', 'AFTER'], default: 'AT_END' },
                 referencePage: { type: 'integer', minimum: 0, description: '0-based reference page index (required for BEFORE/AFTER)' },
             },
         },
@@ -69,7 +69,7 @@ export const pageToolDefinitions = [
             type: 'object',
             properties: {
                 pageIndex: { type: 'integer', minimum: 0, description: '0-based index of the page to move' },
-                position: { type: 'string', enum: ['AT_END', 'AT_BEGINNING', 'BEFORE', 'AFTER'], default: 'AT_END' },
+                position: { description: 'Where to move the page: AT_END, AT_BEGINNING, or BEFORE/AFTER referencePage', type: 'string', enum: ['AT_END', 'AT_BEGINNING', 'BEFORE', 'AFTER'], default: 'AT_END' },
                 referencePageIndex: { type: 'integer', minimum: 0, description: '0-based reference page index (required for BEFORE/AFTER; must differ from pageIndex)' },
                 binding: { type: 'string', enum: ['DEFAULT_VALUE', 'LEFT_ALIGN', 'RIGHT_ALIGN'], default: 'DEFAULT_VALUE', description: 'Location of the binding spine in the spread (BindingOptions)' },
             },
@@ -126,9 +126,9 @@ export const pageToolDefinitions = [
                 pageIndex: { type: 'integer', minimum: 0, description: '0-based page index' },
                 width: { type: 'number', description: 'Width value (mm, factor or ratio part depending on resizeMethod)' },
                 height: { type: 'number', description: 'Height value (mm, factor or ratio part depending on resizeMethod)' },
-                resizeMethod: { type: 'string', enum: ['REPLACING_CURRENT_DIMENSIONS_WITH', 'MULTIPLYING_CURRENT_DIMENSIONS_BY', 'ADDING_CURRENT_DIMENSIONS_TO', 'RESHAPING_AREA_TO_RATIO', 'RESHAPING_BORDER_TO_RATIO'], default: 'REPLACING_CURRENT_DIMENSIONS_WITH' },
-                anchorPoint: { type: 'string', enum: ['TOP_LEFT_ANCHOR', 'TOP_CENTER_ANCHOR', 'TOP_RIGHT_ANCHOR', 'LEFT_CENTER_ANCHOR', 'CENTER_ANCHOR', 'RIGHT_CENTER_ANCHOR', 'BOTTOM_LEFT_ANCHOR', 'BOTTOM_CENTER_ANCHOR', 'BOTTOM_RIGHT_ANCHOR'], default: 'CENTER_ANCHOR' },
-                coordinateSpace: { type: 'string', enum: ['PAGE_COORDINATES', 'SPREAD_COORDINATES', 'PASTEBOARD_COORDINATES', 'INNER_COORDINATES', 'PARENT_COORDINATES'], default: 'PAGE_COORDINATES' },
+                resizeMethod: { description: 'How width and height are applied: replace the size (default), multiply it, add to it, or reshape to a ratio', type: 'string', enum: ['REPLACING_CURRENT_DIMENSIONS_WITH', 'MULTIPLYING_CURRENT_DIMENSIONS_BY', 'ADDING_CURRENT_DIMENSIONS_TO', 'RESHAPING_AREA_TO_RATIO', 'RESHAPING_BORDER_TO_RATIO'], default: 'REPLACING_CURRENT_DIMENSIONS_WITH' },
+                anchorPoint: { description: 'Point of the page that stays fixed while it resizes', type: 'string', enum: ['TOP_LEFT_ANCHOR', 'TOP_CENTER_ANCHOR', 'TOP_RIGHT_ANCHOR', 'LEFT_CENTER_ANCHOR', 'CENTER_ANCHOR', 'RIGHT_CENTER_ANCHOR', 'BOTTOM_LEFT_ANCHOR', 'BOTTOM_CENTER_ANCHOR', 'BOTTOM_RIGHT_ANCHOR'], default: 'CENTER_ANCHOR' },
+                coordinateSpace: { description: 'Coordinate space the size is measured in; PAGE_COORDINATES unless you need another', type: 'string', enum: ['PAGE_COORDINATES', 'SPREAD_COORDINATES', 'PASTEBOARD_COORDINATES', 'INNER_COORDINATES', 'PARENT_COORDINATES'], default: 'PAGE_COORDINATES' },
             },
             required: ['pageIndex', 'width', 'height'],
         },
@@ -209,7 +209,7 @@ export const pageToolDefinitions = [
                 y1: { type: 'number', description: 'Top-left Y coordinate in mm' },
                 x2: { type: 'number', description: 'Bottom-right X coordinate in mm' },
                 y2: { type: 'number', description: 'Bottom-right Y coordinate in mm' },
-                coordinateSpace: { type: 'string', enum: ['PAGE_COORDINATES', 'SPREAD_COORDINATES', 'PASTEBOARD_COORDINATES', 'INNER_COORDINATES', 'PARENT_COORDINATES'], default: 'PAGE_COORDINATES' },
+                coordinateSpace: { description: 'Coordinate space of the corner coordinates; PAGE_COORDINATES unless you need another', type: 'string', enum: ['PAGE_COORDINATES', 'SPREAD_COORDINATES', 'PASTEBOARD_COORDINATES', 'INNER_COORDINATES', 'PARENT_COORDINATES'], default: 'PAGE_COORDINATES' },
             },
             required: ['pageIndex', 'x1', 'y1', 'x2', 'y2'],
         },
@@ -235,19 +235,19 @@ export const pageToolDefinitions = [
     },
     {
         name: 'select_page',
-        description: 'Select a page',
+        description: 'Select a page in the active document (for example before running a command that acts on the selection)',
         inputSchema: {
             type: 'object',
             properties: {
                 pageIndex: { type: 'integer', minimum: 0, description: '0-based page index' },
-                selectionMode: { type: 'string', enum: ['REPLACE_WITH', 'ADD_TO', 'REMOVE_FROM', 'SET_KEY'], default: 'REPLACE_WITH' },
+                selectionMode: { description: 'REPLACE_WITH replaces the selection; ADD_TO / REMOVE_FROM change it; SET_KEY makes the page the key object', type: 'string', enum: ['REPLACE_WITH', 'ADD_TO', 'REMOVE_FROM', 'SET_KEY'], default: 'REPLACE_WITH' },
             },
             required: ['pageIndex'],
         },
     },
     {
         name: 'get_page_content_summary',
-        description: 'Get a summary of content on a page',
+        description: 'Summarize what is on a page: counts of text frames, rectangles, ovals, polygons, lines, groups, placed graphics, guides and master items',
         inputSchema: {
             type: 'object',
             properties: {
@@ -262,7 +262,7 @@ export const pageToolDefinitions = [
         inputSchema: {
             type: 'object',
             properties: {
-                pageIndex: { type: 'integer', minimum: 0, description: '0-based page index', default: 0 },
+                pageIndex: { type: 'integer', minimum: 0, description: '0-based page index (default 0, the first page)', default: 0 },
                 backgroundColor: { type: 'string', description: 'Swatch name in the document (e.g. "Paper", "Black", a custom swatch); "White" falls back to "Paper"', default: 'Paper' },
                 opacity: { type: 'number', minimum: 0, maximum: 100, description: 'Background opacity percentage (0-100)', default: 100 },
             },

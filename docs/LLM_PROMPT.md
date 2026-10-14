@@ -1,139 +1,143 @@
-# InDesign MCP Server - LLM Prompt
+# Agent guide: InDesign MCP Server
 
-You have access to an InDesign MCP Server that allows you to create, edit, and manage Adobe InDesign documents programmatically. Here's how to use it effectively:
+A compact guide for an AI agent (or a system prompt) using this server. It expands on the instructions the server sends at initialize; the two agree. For every parameter of every tool, call `help` or read [TOOLS.md](./TOOLS.md).
 
-## Core Capabilities
+## What the tools do
 
-**Document Management**: Create, open, save, and close InDesign documents
-**Page Operations**: Add pages, navigate between pages, set backgrounds
-**Text & Typography**: Create text frames, apply styles, manage fonts
-**Graphics & Images**: Place images with scaling, create shapes, apply object styles
-**Styles & Colors**: Create color swatches, paragraph styles, character styles
-**Layout Tools**: Group objects, create master spreads, manage positioning
+The server has 137 tools that drive a running Adobe InDesign on the user's computer (macOS or Windows). Each call runs a script inside InDesign. Most tools act on the **active document**, so the first step is always `create_document` or `open_document`.
 
-## Key Tools Available
+If you are unsure InDesign is reachable, call `indesign_status` with `probe: true`. It reports the platform, the resolved app name, the backend, the InDesign version and the open documents.
 
-### Essential Operations
+## Conventions
 
-- `create_document` - Start with document creation
-- `create_text_frame` - Add text content with positioning
-- `place_image` - Insert images with scaling (1-1000%) and fit modes
-- `create_color_swatch` - Define custom colors (RGB values)
-- `create_paragraph_style` - Create reusable text styles
-- `save_document` - Save your work
+- **Units.** Positions and sizes are millimeters, measured from the top-left corner of the target page. Stroke weights, font sizes, leading and paragraph spacing are points. A few tools take their own units: `adjust_page_layout` has `units`, `resize_page` takes factors or ratios for some `resizeMethod` values, and `place_file_on_spread` / `place_xml_on_spread` measure x/y from the spread's ruler origin.
+- **Indexes are 0-based.** That covers `pageIndex`, `spreadIndex`, `itemIndex`, `frameIndex`, `groupIndex` and table rows and columns. There are two exceptions. Page *ranges* in `export_pdf.pages`, `export_images.pages` and `apply_master_spread.pageRange` are 1-based page numbers such as `"1-3,5"`. Master spreads are addressed by full name, such as `"A-Master"`.
+- **Optional `pageIndex`** defaults to the page active in the layout window.
+- **Item indexes depend on the tool:**
+  - `list_page_items` numbers `page.allPageItems`. That list includes nested items, such as the image inside a frame and the members of a group. The `itemIndex` parameters of the page-item tools (`move_page_item`, `delete_page_item` and the like) and `apply_color` with `targetType: "pageItem"` use this numbering.
+  - Text tools (`edit_text_frame`, `apply_paragraph_style`, `apply_character_style`) take `frameIndex` in `page.textFrames` order. So does `apply_color` with `targetType: "text"` or `"textFrame"`.
+  - `apply_object_style` counts within its `itemType` collection.
+  - Groups use the indexes that `list_groups` returns.
+- **Colors** are swatch names that exist in the document (`list_color_swatches`), such as `"Black"`, `"Paper"`, `"None"` or a custom swatch. You can also pass `"#RRGGBB"`, which creates an RGB swatch with that name when it does not exist yet. `create_color_swatch` makes named swatches from 0-255 RGB values.
+- **Fonts** are `"Family\tStyle"` with a real tab between family and style, for example `"Arial\tBold"`, or a family name alone. A font that is not installed returns an error. `create_master_text_frame` is the exception: it takes `fontFamily` and `fontStyle` separately.
+- **Alignment enums differ by tool:**
+  - `create_text_frame` and `edit_text_frame` take `LEFT`, `CENTER`, `RIGHT` or `JUSTIFY`.
+  - `create_paragraph_style` and `create_master_text_frame` take InDesign `Justification` names such as `LEFT_ALIGN`, `CENTER_ALIGN` or `FULLY_JUSTIFIED`.
+- **File paths** must be absolute and inside the user's home folder or a directory listed in `INDESIGN_ALLOWED_DIRS`. System folders are always refused. Other paths are rejected with `Access denied: ...`.
+- **Omitted geometry.** If you leave out `x`, `y`, `width` or `height` on a create tool, the server picks values that fit the page. Pass explicit values when the layout matters.
 
-### Advanced Features
+## Reading results and errors
 
-- `set_page_background` - Set page background colors
-- `create_object_style` - Style frames and shapes
-- `add_page` - Add multiple pages
-- `navigate_to_page` - Switch between pages
+Every result is a JSON text block. A success looks like this:
 
-## Best Practices
-
-1. **Always start with document creation** before adding content
-2. **Use absolute file paths** for images
-3. **Create styles first**, then apply them to content
-4. **Check tool responses** for success/failure
-5. **Save regularly** with `save_document`
-
-## Common Patterns
-
-### Basic Document Creation
-
-```javascript
-// Create document
-await tools.call("create_document", {
-  width: 210,
-  height: 297,
-  facingPages: false
-});
-
-// Add text
-await tools.call("create_text_frame", {
-  content: "Hello World",
-  x: 25,
-  y: 25,
-  width: 160,
-  height: 50,
-  fontSize: 24,
-  fontName: "Arial\\tBold"
-});
-
-// Save
-await tools.call("save_document", { filePath: "./output.indd" });
+```json
+{ "success": true, "operation": "Create Text Frame", "result": "Text frame created on page 1 (ID 231, 17 characters)", "timestamp": "..." }
 ```
 
-### Branded Document with Styles
+A failure sets MCP `isError: true` and `success: false`. The message is in `result` when InDesign reported the problem, or in `error` when the server rejected the call before running it. Typical messages and what to do about them:
+
+| Message | Meaning / fix |
+| --- | --- |
+| `No document open` | Call `create_document` or `open_document` first. |
+| `Page index 3 out of range (document has 2 pages)` | Check `get_document_info` or `list_page_items` and use a valid 0-based index. |
+| `Error: color swatch 'Brand Blue' not found in document` | Create it with `create_color_swatch`, or pass `"#RRGGBB"`. |
+| `Error: font '...' is not installed` | Use an installed font: `"Family\tStyle"` or a family name. |
+| `Error: paragraph style 'Body' not found` | Create the style first, or check `list_styles`. |
+| `Access denied: '...' is outside the allowed directories` | Use an absolute path inside home or `INDESIGN_ALLOWED_DIRS`. |
+| `Invalid number for 'x'`, `Invalid value for 'alignment'` | Fix the argument type or the enum value. |
+| `Error executing tool: AppleScript execution failed: ...` / `COM execution failed: ...` | InDesign could not be reached. Run `indesign_status` with `probe: true` and tell the user. |
+
+Read the message and change the arguments. Do not retry a call unchanged. If text overflows its frame, the result says `text overflows`: enlarge the frame or shorten the text.
+
+## Destructive tools
+
+Tool annotations mark these as destructive. Check with the user before you use them on work that is not saved.
+
+- **Delete content:** `delete_page`, `delete_spread`, `delete_page_item`, `delete_master_spread`, `delete_page_layout_snapshot`, `delete_all_page_layout_snapshots`, `cleanup_document`, `organize_document_layers`, `ungroup`, `remove_item_from_group`, `detach_master_items`, `remove_master_override`
+- **Rewrite text:** `edit_text_frame` (replaces content), `find_replace_text`, `find_text_in_document` (when `replaceText` is given), `populate_table`
+- **Discard work:** `close_document` (closes **without saving**)
+- **Overwrite files on disk:** `save_document`, `export_pdf`, `export_images`, `export_epub`, `export_document_xml`, `package_document`, `export_book`, `package_book`, `preflight_book`
+- **Change all pages:** `set_document_preferences` (margin changes apply to every page and master)
+- **Run arbitrary code:** `execute_indesign_code` (runs any ExtendScript). Prefer a dedicated tool.
+
+`cleanup_document` has a `dryRun` option. Run it first.
+
+## Workflow: new document, styles, content, export
 
 ```javascript
-// Create document
-await tools.call("create_document", { width: 210, height: 297 });
+await tools.call("create_document", { width: 210, height: 297, pages: 2, marginTop: 15, marginBottom: 15, marginLeft: 15, marginRight: 15 });
 
-// Create brand color
-await tools.call("create_color_swatch", {
-  name: "Brand Blue",
-  colorType: "PROCESS",
-  red: 0, green: 114, blue: 198
-});
+// Define colors and styles before content
+await tools.call("create_color_swatch", { name: "Brand Blue", red: 0, green: 82, blue: 155 });
+await tools.call("create_paragraph_style", { name: "Heading", fontFamily: "Arial\tBold", fontSize: 28, leading: 32, textColor: "Brand Blue", spaceAfter: 6 });
+await tools.call("create_paragraph_style", { name: "Body", fontFamily: "Arial\tRegular", fontSize: 10, leading: 14, alignment: "LEFT_ALIGN" });
 
-// Create style
-await tools.call("create_paragraph_style", {
-  name: "Heading 1",
-  fontFamily: "Arial\\tBold",
-  fontSize: 32,
-  textColor: "Brand Blue"
-});
+// Content on page 0
+await tools.call("create_text_frame", { pageIndex: 0, content: "Annual Report", x: 15, y: 15, width: 180, height: 20, paragraphStyle: "Heading" });
+await tools.call("create_text_frame", { pageIndex: 0, content: "Body copy...", x: 15, y: 40, width: 180, height: 120, paragraphStyle: "Body" });
+await tools.call("place_image", { pageIndex: 0, filePath: "/Users/me/Pictures/cover.jpg", x: 15, y: 170, width: 180, height: 100, fitMode: "FILL_PROPORTIONALLY" });
 
-// Apply style
-await tools.call("create_text_frame", {
-  content: "Company Name",
-  x: 25, y: 25, width: 160, height: 40,
-  paragraphStyle: "Heading 1"
-});
+// Check, save, export
+await tools.call("validate_document", { minImagePpi: 200 });
+await tools.call("save_document", { filePath: "/Users/me/Documents/report.indd" });
+await tools.call("export_pdf", { filePath: "/Users/me/Documents/report.pdf", quality: "PRESS", includeBleed: true });
 ```
 
-### Image Placement with Scaling
+For repeated page furniture, set up masters with `create_master_spread`, `create_master_text_frame` and `create_master_rectangle`, then call `apply_master_spread`. Add a table with `create_table`, then `populate_table` with a 2-D array.
+
+## Workflow: editing an existing document
+
+Inspect before you change anything:
 
 ```javascript
-await tools.call("place_image", {
-  filePath: "/absolute/path/to/image.jpg",
-  x: 25, y: 25, width: 100, height: 75,
-  scale: 150,  // 150% scale
-  fitMode: "PROPORTIONALLY"
-});
+await tools.call("open_document", { filePath: "/Users/me/Documents/brochure.indd" });
+await tools.call("get_document_info");
+await tools.call("list_page_items", { pageIndex: 1 });
+await tools.call("get_document_stories", { oversetOnly: true });
+await tools.call("list_styles", { styleType: "PARAGRAPH" });
 ```
 
-## Important Notes
+Then make targeted edits with indexes from those listings:
 
-- **Font Names**: Use format "FontName\\tStyle" (e.g., "Arial\\tBold")
-- **Colors**: RGB values (0-255) for color swatches
-- **Positioning**: x, y coordinates in millimeters
-- **Scaling**: 1-1000% for images
-- **Fit Modes**: PROPORTIONALLY, FILL_FRAME, FIT_CONTENT, FIT_FRAME
+```javascript
+await tools.call("edit_text_frame", { pageIndex: 1, frameIndex: 0, content: "Updated headline" });
+await tools.call("apply_paragraph_style", { pageIndex: 1, frameIndex: 0, styleName: "Heading" });
+await tools.call("move_page_item", { pageIndex: 1, itemIndex: 2, x: 20, y: 60 });
+await tools.call("find_text_in_document", { searchText: "2025" });
+await tools.call("find_replace_text", { findText: "2025", replaceText: "2026", wholeWord: true });
+await tools.call("save_document");
+```
 
-## Error Handling
+`save_document` with no `filePath` saves in place. That only works if the document has been saved before.
 
-- Check if tools return `success: true`
-- Handle "No document open" by creating a document first
-- Use fallback fonts if specific fonts aren't available
-- Validate file paths for images
+## Workflow: books
 
-## Session Management
+```javascript
+await tools.call("create_book", { filePath: "/Users/me/Books/manual.indb" });
+await tools.call("add_document_to_book", { bookPath: "/Users/me/Books/manual.indb", documentPath: "/Users/me/Books/ch1.indd" });
+await tools.call("add_document_to_book", { bookPath: "/Users/me/Books/manual.indb", documentPath: "/Users/me/Books/ch2.indd" });
+await tools.call("synchronize_book", { bookPath: "/Users/me/Books/manual.indb" });
+await tools.call("update_all_numbers", { bookPath: "/Users/me/Books/manual.indb" });
+await tools.call("export_book", { bookPath: "/Users/me/Books/manual.indb", outputPath: "/Users/me/Books/manual.pdf", format: "PDF" });
+```
 
-The server maintains session state, so:
+A tool that gets a `bookPath` for a book that is not open opens it, does the work and closes it again.
 
-- Document stays open between operations
-- Page navigation persists
-- Styles and colors remain available
-- Use `navigate_to_page` to switch pages
+## Things that block InDesign
 
-When working with users, always:
+Modal dialogs stop scripts until someone closes them in InDesign, and the call times out (about 120 s) in the meantime. Avoid them:
 
-1. Confirm their requirements
-2. Create a structured plan
-3. Execute operations step by step
-4. Provide feedback on progress
-5. Save the final document
+- `print_book` shows the print dialog unless you pass `printDialog: false`.
+- `place_file_on_page` and `place_file_on_spread` show import options when `showingOptions: true`.
+- Opening documents with missing fonts or links can raise InDesign alerts.
 
-Remember: This is a powerful tool for creating professional InDesign documents programmatically. Use it to automate document creation, maintain consistency, and produce high-quality layouts.
+If a call times out, ask the user to check InDesign for an open dialog.
+
+## Finding the right tool
+
+```javascript
+await tools.call("help", { category: "styles" });
+await tools.call("help", { tool: "place_image", format: "detailed" });
+```
+
+The categories are `document`, `page`, `text`, `graphics`, `styles`, `layout`, `export` and `all`.

@@ -27,7 +27,7 @@ export const pageItemGroupToolDefinitions = [
     },
     {
         name: 'select_page_item',
-        description: 'Select a specific page item',
+        description: 'Select a page item (by index from list_page_items) in the document window',
         inputSchema: {
             type: 'object',
             properties: {
@@ -147,7 +147,7 @@ export const pageItemGroupToolDefinitions = [
     },
     {
         name: 'duplicate_page_item',
-        description: 'Duplicate a page item',
+        description: 'Duplicate a page item on the same page, optionally placing the copy at x/y; returns the copy ID',
         inputSchema: {
             type: 'object',
             properties: {
@@ -173,7 +173,7 @@ export const pageItemGroupToolDefinitions = [
     },
     {
         name: 'delete_page_item',
-        description: 'Delete a page item',
+        description: 'Delete a page item (by index from list_page_items) from a page',
         inputSchema: {
             type: 'object',
             properties: {
@@ -323,7 +323,7 @@ export const pageItemGroupToolDefinitions = [
     },
     {
         name: 'list_groups',
-        description: 'List all groups on a specific page',
+        description: 'List the groups on a page with their index, name, item count and bounds',
         inputSchema: {
             type: 'object',
             properties: {
@@ -337,7 +337,7 @@ export const pageItemGroupToolDefinitions = [
     },
     {
         name: 'set_group_properties',
-        description: 'Set properties of a group',
+        description: 'Set a group\'s name, visibility and locked state',
         inputSchema: {
             type: 'object',
             properties: {

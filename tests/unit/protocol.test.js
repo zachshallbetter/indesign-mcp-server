@@ -32,6 +32,21 @@ test('handshake reports the package name and version', async () => {
     assert.equal(info.version, pkg.version);
 });
 
+test('server sends usage instructions at initialize', async () => {
+    const instructions = client.getInstructions();
+    assert.ok(instructions && instructions.includes('millimeters'), 'instructions missing');
+});
+
+test('tools/list carries titles and annotations', async () => {
+    const { tools } = await client.listTools();
+    for (const tool of tools) {
+        assert.ok(tool.title, `${tool.name} has no title`);
+        assert.equal(typeof tool.annotations?.readOnlyHint, 'boolean', `${tool.name} annotations`);
+    }
+    assert.equal(tools.find((t) => t.name === 'delete_page').annotations.destructiveHint, true);
+    assert.equal(tools.find((t) => t.name === 'list_layers').annotations.readOnlyHint, true);
+});
+
 test('tools/list returns every tool definition', async () => {
     const { tools } = await client.listTools();
     assert.equal(tools.length, allToolDefinitions.length);

@@ -1,14 +1,12 @@
 {
   "mcpServers": {
     "indesign": {
-      "command": "node",
-      "args": [
-        "/ABSOLUTE/PATH/TO/indesign-mcp-server/src/index.js"
-      ],
+      "command": "npx",
+      "args": ["-y", "indesign-mcp-server"],
       "env": {
         "INDESIGN_BACKEND": "uxp",
         "UXP_BRIDGE_URL": "http://127.0.0.1:3000",
-        "BRIDGE_TOKEN": ""
+        "BRIDGE_TOKEN": "replace-with-the-token-the-bridge-was-started-with"
       }
     }
   }

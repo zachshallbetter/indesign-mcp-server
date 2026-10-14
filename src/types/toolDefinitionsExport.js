@@ -39,7 +39,7 @@ export const exportToolDefinitions = [
             type: 'object',
             properties: {
                 outputPath: { type: 'string', description: 'Output folder path (created if missing)' },
-                format: { type: 'string', enum: ['JPEG', 'PNG'], default: 'JPEG' },
+                format: { description: 'Image format; InDesign exports JPEG and PNG', type: 'string', enum: ['JPEG', 'PNG'], default: 'JPEG' },
                 resolution: { type: 'number', description: 'Resolution in PPI (1-2400)', default: 300 },
                 pages: PAGES,
                 quality: { type: 'number', description: 'Quality 1-100, mapped to LOW (<=25), MEDIUM (<=50), HIGH (<=80) or MAXIMUM', default: 80 },
@@ -54,7 +54,7 @@ export const exportToolDefinitions = [
             type: 'object',
             properties: {
                 filePath: { type: 'string', description: 'Output EPUB file path' },
-                layout: { type: 'string', enum: ['REFLOWABLE', 'FIXED_LAYOUT'], default: 'REFLOWABLE' },
+                layout: { description: 'REFLOWABLE text that adapts to the reader, or FIXED_LAYOUT that keeps each page as designed', type: 'string', enum: ['REFLOWABLE', 'FIXED_LAYOUT'], default: 'REFLOWABLE' },
                 includeStyles: { type: 'boolean', description: 'Reflowable only: generate CSS and include style class names in the HTML', default: true },
                 embedFonts: { type: 'boolean', description: 'Reflowable only: embed fonts', default: true },
                 title: { type: 'string', description: 'EPUB title metadata (defaults to the document setting)' },

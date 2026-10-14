@@ -27,6 +27,22 @@ import { readFileSync } from 'node:fs';
 
 const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
 
+// Sent to clients at initialize; MCP clients give these to the model.
+export const SERVER_INSTRUCTIONS = `Tools drive a running Adobe InDesign (macOS or Windows) on the user's machine.
+
+Start with indesign_status if you are unsure InDesign is reachable. Most tools act on the active document: create_document or open_document first, and check get_document_info when you need page size or count.
+
+Conventions:
+- Positions and sizes are millimeters from the top-left corner of the target page unless a parameter says otherwise (strokes and font sizes are points).
+- Indexes are 0-based. Page items are addressed by the indexes list_page_items returns; pageIndex defaults to the active page where it is optional. Page ranges in export_pdf, export_images and apply_master_spread are 1-based page numbers ("1-3,5").
+- Colors are swatch names that exist in the document (see list_color_swatches), or "#RRGGBB", which creates an RGB swatch.
+- Fonts are "Family\\tStyle" (for example "Arial\\tBold") or a family name.
+- File paths must be absolute and inside the user's home folder or INDESIGN_ALLOWED_DIRS.
+
+A call that fails returns isError with a message such as "No document open" or "Error ...": read it and fix the arguments rather than retrying unchanged. Tool annotations mark destructive tools (delete_*, cleanup_document, close_document discards unsaved changes, execute_indesign_code); confirm with the user before using them on work that is not saved.
+
+help({ tool }) describes any tool's parameters; help({ category }) lists tools by area.`;
+
 export class InDesignMCPServer {
     constructor() {
         this.server = new Server(
@@ -38,6 +54,7 @@ export class InDesignMCPServer {
                 capabilities: {
                     tools: {},
                 },
+                instructions: SERVER_INSTRUCTIONS,
             }
         );
 

@@ -29,7 +29,7 @@ export const bookToolDefinitions = [
     },
     {
         name: 'list_books',
-        description: 'List all open books in InDesign',
+        description: 'List the books currently open in InDesign with their file paths and document counts',
         inputSchema: { type: 'object', properties: {} }
     },
     {
@@ -155,12 +155,12 @@ export const bookToolDefinitions = [
     },
     {
         name: 'print_book',
-        description: 'Print a book',
+        description: 'Print every document in a book with a printer preset, optionally showing the print dialog first',
         inputSchema: {
             type: 'object',
             properties: {
                 bookPath: { type: 'string', description: 'Path to the book file' },
-                printDialog: { type: 'boolean', description: 'Show print dialog', default: true },
+                printDialog: { type: 'boolean', description: 'Show the print dialog and wait for the user (leave false for unattended use)', default: false },
                 printerPreset: {
                     type: 'string',
                     description: 'Printer preset name (e.g. "[Default]" or a saved preset), or "DEFAULT_VALUE" for the default preset',

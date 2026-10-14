@@ -21,10 +21,10 @@ export const contentToolDefinitions = [
             properties: {
                 content: { type: 'string', description: 'Text content for the frame' },
                 pageIndex: PAGE_INDEX,
-                x: { type: 'number', description: 'X position in mm from the page left edge', default: 10 },
-                y: { type: 'number', description: 'Y position in mm from the page top edge', default: 10 },
-                width: { type: 'number', description: 'Width in mm', default: 100 },
-                height: { type: 'number', description: 'Height in mm', default: 50 },
+                x: { type: 'number', description: 'X position in mm from the page left edge; omit position or size to have the frame placed automatically' },
+                y: { type: 'number', description: 'Y position in mm from the page top edge' },
+                width: { type: 'number', description: 'Width in mm' },
+                height: { type: 'number', description: 'Height in mm' },
                 fontSize: { type: 'number', description: 'Font size in points (default: style/document default)' },
                 fontName: { type: 'string', description: 'Font as "Family\\tStyle" (e.g. "Arial\\tRegular") or a family name (default: style/document default)' },
                 textColor: COLOR('Text color (default: style/document default)'),
@@ -47,7 +47,7 @@ export const contentToolDefinitions = [
                 fontSize: { type: 'number', description: 'Font size in points' },
                 fontName: { type: 'string', description: 'Font as "Family\\tStyle" or a family name' },
                 textColor: COLOR('Text color'),
-                alignment: { type: 'string', enum: ['LEFT', 'CENTER', 'RIGHT', 'JUSTIFY'] },
+                alignment: { description: 'Paragraph alignment for the whole frame (JUSTIFY = justified, last line left)', type: 'string', enum: ['LEFT', 'CENTER', 'RIGHT', 'JUSTIFY'] },
             },
             required: ['frameIndex'],
         },
@@ -75,8 +75,8 @@ export const contentToolDefinitions = [
                 rows: { type: 'integer', minimum: 1, description: 'Total number of rows, including header rows', default: 3 },
                 columns: { type: 'integer', minimum: 1, description: 'Number of columns', default: 3 },
                 pageIndex: PAGE_INDEX,
-                x: { type: 'number', description: 'X position in mm' },
-                y: { type: 'number', description: 'Y position in mm' },
+                x: { type: 'number', description: 'X position in mm from the page left edge; omitted values are placed automatically' },
+                y: { type: 'number', description: 'Y position in mm from the page top edge' },
                 width: { type: 'number', description: 'Frame and table width in mm' },
                 height: { type: 'number', description: 'Text frame height in mm' },
                 headerRows: { type: 'integer', minimum: 0, description: 'Number of header rows (must be less than rows; default 1 when rows > 1)' },
@@ -113,8 +113,8 @@ export const contentToolDefinitions = [
             properties: {
                 filePath: { type: 'string', description: 'Path to the image file' },
                 pageIndex: PAGE_INDEX,
-                x: { type: 'number', description: 'X position in mm', default: 10 },
-                y: { type: 'number', description: 'Y position in mm', default: 10 },
+                x: { type: 'number', description: 'X position in mm' },
+                y: { type: 'number', description: 'Y position in mm' },
                 width: { type: 'number', description: 'Frame width in mm' },
                 height: { type: 'number', description: 'Frame height in mm' },
                 linkImage: { type: 'boolean', description: 'Keep the image linked (false embeds it)', default: true },
@@ -274,7 +274,7 @@ export const contentToolDefinitions = [
                 fontFamily: { type: 'string', description: 'Font as "Family\\tStyle" (e.g. "Arial\\tRegular") or a family name' },
                 fontSize: { type: 'number', description: 'Font size in points' },
                 textColor: COLOR('Text color'),
-                alignment: {
+                alignment: { description: 'Paragraph justification (InDesign Justification values)',
                     type: 'string',
                     enum: ['LEFT_ALIGN', 'CENTER_ALIGN', 'RIGHT_ALIGN', 'LEFT_JUSTIFIED', 'RIGHT_JUSTIFIED', 'CENTER_JUSTIFIED', 'FULLY_JUSTIFIED'],
                 },
@@ -336,7 +336,7 @@ export const contentToolDefinitions = [
         inputSchema: {
             type: 'object',
             properties: {
-                styleType: { type: 'string', enum: ['PARAGRAPH', 'CHARACTER', 'ALL'], default: 'ALL' },
+                styleType: { description: 'Which styles to list', type: 'string', enum: ['PARAGRAPH', 'CHARACTER', 'ALL'], default: 'ALL' },
             },
         },
     },
@@ -349,7 +349,7 @@ export const contentToolDefinitions = [
             type: 'object',
             properties: {
                 name: { type: 'string', description: 'Swatch name' },
-                colorType: { type: 'string', enum: ['PROCESS', 'SPOT'], default: 'PROCESS' },
+                colorType: { description: 'PROCESS for CMYK/RGB process color, SPOT for a spot (ink) color', type: 'string', enum: ['PROCESS', 'SPOT'], default: 'PROCESS' },
                 colorSpace: { type: 'string', enum: ['RGB', 'CMYK'], description: 'Color space of the swatch (CMYK uses a simple, non-color-managed conversion)', default: 'RGB' },
                 red: { type: 'number', minimum: 0, maximum: 255, description: 'Red value (0-255)' },
                 green: { type: 'number', minimum: 0, maximum: 255, description: 'Green value (0-255)' },
@@ -371,7 +371,7 @@ export const contentToolDefinitions = [
             properties: {
                 objectIndex: { type: 'integer', minimum: 0, description: 'Index within targetType on the page' },
                 colorName: COLOR('Color'),
-                colorType: { type: 'string', enum: ['FILL', 'STROKE'], default: 'FILL' },
+                colorType: { description: 'Apply the swatch to the fill or the stroke', type: 'string', enum: ['FILL', 'STROKE'], default: 'FILL' },
                 targetType: {
                     type: 'string',
                     enum: ['pageItem', 'text', 'textFrame', 'rectangle', 'ellipse', 'polygon'],

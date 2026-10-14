@@ -354,12 +354,16 @@ export class DocumentHandlers {
             'if (!file.exists) {',
             `  result = "Error: file not found: " + ${jsx};`,
             '} else {',
+            // Missing fonts/links would otherwise raise modal alerts and block the call.
+            '  var uil = app.scriptPreferences.userInteractionLevel;',
+            '  app.scriptPreferences.userInteractionLevel = UserInteractionLevels.NEVER_INTERACT;',
             '  try {',
             '    app.open(file);',
             `    result = "Document opened: " + app.activeDocument.name + " (" + ${jsx} + ")";`,
             '  } catch (error) {',
             '    result = "Error opening document: " + error.message;',
             '  }',
+            '  app.scriptPreferences.userInteractionLevel = uil;',
             '}',
             'result;',
         ].join('\n');

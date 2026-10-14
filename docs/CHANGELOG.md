@@ -1,5 +1,24 @@
 # Changelog
 
+## 2.1.0
+
+Ready for public and agent use: agents get instructions, tool annotations and a full reference; docs are rewritten against the code.
+
+### Added
+- Server instructions sent at `initialize` (units, indexes, colors, fonts, paths, errors, destructive tools)
+- MCP tool annotations and a title on all 137 tools (`readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint`), defined in `src/types/annotations.js`
+- `docs/TOOLS.md`: generated reference for every tool and parameter (`npm run docs:tools`; `npm test` fails when it is stale)
+- Tests: tool definition quality (descriptions, types, titles, annotations) and path confinement for all 30 file/folder parameters
+- `SECURITY.md`, issue and pull request templates
+
+### Changed
+- `print_book` no longer opens the print dialog by default (it blocked unattended calls)
+- `open_document` suppresses InDesign alerts while opening, so missing fonts or links cannot block the call
+- `create_text_frame` and `place_image` no longer advertise fixed `x`/`y`/size defaults; omitted values are placed automatically, as the server does
+- `npm run check` syntax-checks every JavaScript file (it skipped most handlers)
+- Descriptions for 10 terse tools and 16 undocumented parameters
+- Docs rewritten against the code: setup and troubleshooting (`docs/MCP_INSTRUCTIONS.md`), agent guide (`docs/LLM_PROMPT.md`), architecture, examples, contributor guides. The UXP backend is documented as experimental.
+
 ## 2.0.0
 
 An audit of every tool against the InDesign 2023 scripting DOM found that 17 of the 136 advertised tools were never implemented, about 40 generated scripts used properties, methods or enums that do not exist in InDesign, and failed calls were reported as successes. This release fixes all of it and adds checks so it cannot drift again. Scripts are verified statically against Adobe's published DOM; run `npm run test:integration` against a live InDesign before relying on a tool in production.

@@ -67,7 +67,9 @@ Uses COM automation through PowerShell. No extra install steps. InDesign should 
 
 ### Installation
 
-Nothing to clone. MCP clients start the server with `npx`, which downloads it from npm on first run. It is also listed in the [official MCP Registry](https://registry.modelcontextprotocol.io/) as `io.github.zachshallbetter/indesign-mcp-server`.
+> **Not on npm yet.** Until the first npm release, clone this repository, run `npm install`, and use `"command": "node"` with `"args": ["/ABSOLUTE/PATH/TO/indesign-mcp-server/src/index.js"]` in your client config.
+
+Nothing to clone once it is published: MCP clients start the server with `npx`, which downloads it from npm on first run. Its [MCP Registry](https://registry.modelcontextprotocol.io/) name is `io.github.zachshallbetter/indesign-mcp-server`.
 
 Claude Code:
 
@@ -145,91 +147,27 @@ await callTool('create_paragraph_style', {
 });
 ```
 
-## Handler categories
+## Tools
 
-### Document (`documentHandlers.js`)
+137 tools in seven areas. The full reference, with every parameter, is [docs/TOOLS.md](docs/TOOLS.md) (generated from the same definitions the server advertises).
 
-- Basic: `create_document`, `open_document`, `save_document`, `close_document`
-- Info: `get_document_info`, `get_document_preferences`, `set_document_preferences`
-- Advanced: `preflight_document`, `data_merge`, `validate_document`
-- Grid: `get_document_grid_settings`, `set_document_grid_settings`
-- XML: `get_document_xml_structure`, `export_document_xml`
-- Cloud: `save_document_to_cloud`, `open_cloud_document`
+| Area | Tools | Examples |
+| --- | --- | --- |
+| Documents & books | 46 | `create_document`, `open_document`, `save_document`, `preflight_document`, `data_merge`, `validate_document`, `create_book`, `export_book` |
+| Pages & spreads | 30 | `add_page`, `resize_page`, `create_page_guides`, `place_file_on_page`, `list_spreads`, `duplicate_spread` |
+| Text & tables | 5 | `create_text_frame`, `edit_text_frame`, `create_table`, `populate_table`, `find_replace_text` |
+| Graphics & images | 8 | `place_image`, `create_rectangle`, `create_polygon`, `create_object_style` |
+| Styles & colors | 8 | `create_paragraph_style`, `create_character_style`, `create_color_swatch`, `apply_color` |
+| Layout, masters & layers | 30 | `move_page_item`, `create_group`, `create_master_spread`, `detach_master_items`, `create_layer` |
+| Export & utilities | 10 | `export_pdf`, `export_images`, `export_epub`, `package_document`, `indesign_status`, `execute_indesign_code` |
 
-### Page (`pageHandlers.js`)
+## For AI agents
 
-- Operations: `add_page`, `delete_page`, `duplicate_page`, `move_page`
-- Properties: `get_page_info`, `set_page_properties`, `adjust_page_layout`
-- Content: `place_file_on_page`, `place_xml_on_page`, `get_page_content_summary`
-- Layout: `create_page_guides`, `snapshot_page_layout`, `reframe_page`
-- Navigation: `navigate_to_page`, `select_page`
-
-### Text (`textHandlers.js`)
-
-- Frames: `create_text_frame`, `edit_text_frame`
-- Tables: `create_table`, `populate_table`
-- Other: `find_replace_text`
-- Text frames, shapes and images are placed automatically when you omit their position or size
-
-### Style (`styleHandlers.js`)
-
-- Create: `create_paragraph_style`, `create_character_style`
-- Apply: `apply_paragraph_style`, `apply_character_style`
-- Color: `create_color_swatch`, `list_color_swatches`, `apply_color`
-- List: `list_styles`
-
-### Graphics (`graphicsHandlers.js`)
-
-- Shapes: `create_rectangle`, `create_ellipse`, `create_polygon`
-- Images: `place_image`, `get_image_info` (scale 1–1000%, fit modes)
-- Object styles: `create_object_style`, `list_object_styles`, `apply_object_style`
-
-### Book (`bookHandlers.js`)
-
-- `create_book`, `open_book`, `list_books`
-- `add_document_to_book`, `synchronize_book`
-- `repaginate_book`, `update_all_cross_references`
-- `export_book`, `package_book`, `print_book`
-- `update_all_numbers`, `update_chapter_and_paragraph_numbers`
-
-### Page items (`pageItemHandlers.js`)
-
-- `get_page_item_info`, `select_page_item`, `move_page_item`
-- `resize_page_item`, `set_page_item_properties`
-- `duplicate_page_item`, `delete_page_item`, `list_page_items`
-
-### Groups (`groupHandlers.js`)
-
-- `create_group`, `create_group_from_items`, `ungroup`
-- `get_group_info`, `add_item_to_group`, `remove_item_from_group`
-- `list_groups`, `set_group_properties`
-
-### Master spreads (`masterSpreadHandlers.js`)
-
-- `create_master_spread`, `list_master_spreads`, `delete_master_spread`
-- `create_master_text_frame`, `create_master_rectangle`, `create_master_guides`
-- `apply_master_spread`, `duplicate_master_spread`, `get_master_spread_info`
-- `detach_master_items`, `remove_master_override`
-
-### Spreads (`spreadHandlers.js`)
-
-- `list_spreads`, `get_spread_info`, `get_spread_content_summary`
-- `duplicate_spread`, `move_spread`, `delete_spread`, `set_spread_properties`
-- `create_spread_guides`, `place_file_on_spread`, `place_xml_on_spread`, `select_spread`
-
-### Layers (`layerHandlers.js`)
-
-- `create_layer`, `set_active_layer`, `list_layers`
-
-### Export (`exportHandlers.js`)
-
-- `export_pdf`, `export_images`, `export_epub`, `package_document`
-
-### Utility (`utilityHandlers.js`)
-
-- `indesign_status` — host/app health (`probe: true` for live round-trip)
-- `execute_indesign_code` — custom ExtendScript
-- `view_document`, `get_session_info`, `clear_session`
+- **Instructions at connect.** The server sends usage instructions in its `initialize` response (units, indexes, colors, fonts, paths, errors), which MCP clients pass to the model.
+- **Annotations on every tool.** `readOnlyHint`, `destructiveHint`, `idempotentHint` and `openWorldHint` let clients ask before destructive calls such as `delete_page`, `cleanup_document` or `close_document` (which discards unsaved changes).
+- **Real errors.** A failed call returns `isError: true` with a message such as "No document open" or "Error: color swatch 'Brand' not found".
+- **Self-describing.** `help({ tool })` returns any tool's parameters; `help({ category })` lists tools by area.
+- **Conventions.** Millimeters from the target page's top-left corner, 0-based indexes, swatch names or `"#RRGGBB"`, fonts as `"Family\tStyle"`. See [docs/LLM_PROMPT.md](docs/LLM_PROMPT.md) for workflows.
 
 ## Session management
 
@@ -307,11 +245,20 @@ Scripts report failures as text ("No document open", "Error …", "… not found
 
 ```bash
 npm run check          # syntax check core modules
-npm test               # unit, MCP protocol and script audit (no InDesign required)
+npm test               # everything below that needs no InDesign
 npm run test:audit     # script audit only; pass a regex to audit some tools
 npm run test:integration   # full suite — requires InDesign running
 npm run test:unified       # single-document unified runner
 ```
+
+`npm test` covers:
+
+- **Tool definitions:** every tool has a description, title, annotations and a typed, described parameter list
+- **Path confinement:** every file or folder parameter rejects paths outside your home folder and `INDESIGN_ALLOWED_DIRS`
+- **MCP protocol:** the server starts over stdio, sends instructions, lists all tools and answers `help` for each
+- **Error detection:** failure messages become `isError` results
+- **Tool reference:** `docs/TOOLS.md` matches the definitions
+- **Script audit:** see below
 
 The script audit (`tests/audit/scripts.audit.js`) calls every tool with arguments built from its schema, captures the ExtendScript it would send, and fails if any advertised tool is not dispatched, if a script is not valid ES5 (ExtendScript has no `let`, arrow functions or `JSON`), or if a script uses a property, method, enum or global that does not exist in the InDesign 2023 scripting DOM ([types-for-adobe](https://www.npmjs.com/package/types-for-adobe)).
 
@@ -336,20 +283,18 @@ See `examples/basic-flyer.md` and `examples/mcp-config.json` for a first-run wor
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes with clear commits
-4. Add or update tests where practical
-5. Open a pull request
-
-Bug reports and feature requests are welcome via GitHub Issues.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## License
 
 MIT — see [LICENSE](./LICENSE).
 
-## Support
+## Documentation
 
-- Issues: https://github.com/zachshallbetter/indesign-mcp-server/issues
-- Discussions / PRs welcome
-- Docs: `docs/MCP_INSTRUCTIONS.md`, `docs/LLM_PROMPT.md`, `docs/CHANGELOG.md`
+- [docs/MCP_INSTRUCTIONS.md](docs/MCP_INSTRUCTIONS.md): setup for each client, environment variables, troubleshooting
+- [docs/TOOLS.md](docs/TOOLS.md): every tool and parameter
+- [docs/LLM_PROMPT.md](docs/LLM_PROMPT.md): conventions and workflows for agents
+- [docs/architecture-execution.md](docs/architecture-execution.md): how scripts reach InDesign
+- [docs/CHANGELOG.md](docs/CHANGELOG.md)
+
+Issues: https://github.com/zachshallbetter/indesign-mcp-server/issues
