@@ -23,6 +23,7 @@ import {
 } from '../handlers/index.js';
 import { formatResponse, formatErrorResponse } from '../utils/stringUtils.js';
 import { ScriptExecutor } from './scriptExecutor.js';
+import { normalizeArgs } from '../handlers/aliases.js';
 import { readFileSync } from 'node:fs';
 
 const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
@@ -34,9 +35,10 @@ Start with indesign_status if you are unsure InDesign is reachable. Most tools a
 
 Conventions:
 - Positions and sizes are millimeters from the top-left corner of the target page unless a parameter says otherwise (strokes and font sizes are points).
-- Indexes are 0-based. Page items are addressed by the indexes list_page_items returns; pageIndex defaults to the active page where it is optional. Page ranges in export_pdf, export_images and apply_master_spread are 1-based page numbers ("1-3,5").
+- Indexes are 0-based integers; pageIndex defaults to the active page where it is optional. Page ranges in export_pdf, export_images and apply_master_spread are 1-based page numbers ("1-3,5").
+- The page-item and group tools take itemIndex/groupIndex in page.allPageItems, the numbering list_page_items and list_groups return (nested items included). frameIndex counts page.textFrames only. apply_color, apply_object_style and get_image_info count the collection their description names.
 - Colors are swatch names that exist in the document (see list_color_swatches), or "#RRGGBB", which creates an RGB swatch.
-- Fonts are "Family\\tStyle" (for example "Arial\\tBold") or a family name.
+- Fonts are fontName: "Family\\tStyle" (for example "Arial\\tBold") or a family name. Stroke weight is strokeWeight, in points. alignment takes InDesign Justification names: LEFT_ALIGN, CENTER_ALIGN, RIGHT_ALIGN, LEFT_JUSTIFIED, RIGHT_JUSTIFIED, CENTER_JUSTIFIED, FULLY_JUSTIFIED.
 - File paths must be absolute and inside the user's home folder or INDESIGN_ALLOWED_DIRS.
 
 A call that fails returns isError with a message such as "No document open" or "Error ...": read it and fix the arguments rather than retrying unchanged. Tool annotations mark destructive tools (delete_*, cleanup_document, close_document discards unsaved changes, execute_indesign_code); confirm with the user before using them on work that is not saved.
@@ -86,6 +88,8 @@ export class InDesignMCPServer {
     }
 
     async handleToolCall(name, args) {
+        // Older parameter names and values are accepted as aliases (src/handlers/aliases.js)
+        args = normalizeArgs(name, args);
         // Document Management
         switch (name) {
             case 'get_document_info': return await DocumentHandlers.getDocumentInfo();

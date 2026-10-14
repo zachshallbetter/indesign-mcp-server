@@ -2,25 +2,14 @@
  * Text frame handlers
  */
 import { ScriptExecutor } from '../core/scriptExecutor.js';
-import { formatResponse, looksLikeFailure, str, num, index, bool, enumOf } from '../utils/stringUtils.js';
+import { formatResponse, looksLikeFailure, str, num, index, bool } from '../utils/stringUtils.js';
 import { sessionManager } from '../core/sessionManager.js';
 import {
     jsxProgram, jsxPage, jsxItemAt, jsxSwatch, jsxFont, jsxBounds, resolveBox, JSX_HELPERS,
 } from './pageItemHandlers.js';
+import { justificationOf } from './aliases.js';
 
 const has = (v) => v !== undefined && v !== null && v !== '';
-
-/** Tool alignment values -> InDesign Justification members. */
-const ALIGNMENTS = {
-    LEFT: 'LEFT_ALIGN',
-    CENTER: 'CENTER_ALIGN',
-    RIGHT: 'RIGHT_ALIGN',
-    JUSTIFY: 'LEFT_JUSTIFIED',
-};
-
-function justification(alignment) {
-    return ALIGNMENTS[enumOf(String(alignment).toUpperCase(), Object.keys(ALIGNMENTS), { name: 'alignment' })];
-}
 
 /** Direct text formatting lines applied to `target` (a Text object). */
 function formattingLines(target, { fontName, fontSize, textColor, alignment }) {
@@ -38,7 +27,7 @@ function formattingLines(target, { fontName, fontSize, textColor, alignment }) {
         apply.push(`${target}.pointSize = ${num(fontSize, { name: 'fontSize', min: 0.1, max: 1296 })};`);
     }
     if (has(alignment)) {
-        apply.push(`${target}.justification = Justification.${justification(alignment)};`);
+        apply.push(`${target}.justification = Justification.${justificationOf(alignment)};`);
     }
     return { pre, apply };
 }

@@ -35,11 +35,11 @@ await tools.call("create_color_swatch", { name: "Flyer Navy", red: 20, green: 33
 await tools.call("create_color_swatch", { name: "Flyer Gold", red: 242, green: 169, blue: 0 });
 
 await tools.call("create_paragraph_style", {
-  name: "Flyer Title", fontFamily: "Arial\tBold", fontSize: 34, leading: 38,
+  name: "Flyer Title", fontName: "Arial\tBold", fontSize: 34, leading: 38,
   textColor: "Paper", alignment: "CENTER_ALIGN", spaceAfter: 4
 });
 await tools.call("create_paragraph_style", {
-  name: "Flyer Body", fontFamily: "Arial\tRegular", fontSize: 11, leading: 15,
+  name: "Flyer Body", fontName: "Arial\tRegular", fontSize: 11, leading: 15,
   textColor: "Paper", alignment: "CENTER_ALIGN"
 });
 ```

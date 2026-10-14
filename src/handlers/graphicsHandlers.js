@@ -14,7 +14,7 @@ const FIT_MODES = ['PROPORTIONALLY', 'FILL_PROPORTIONALLY', 'CONTENT_TO_FRAME', 
 const FIT_ALIASES = { FILL_FRAME: 'FILL_PROPORTIONALLY', FIT_CONTENT: 'CONTENT_TO_FRAME', FIT_FRAME: 'FRAME_TO_CONTENT' };
 
 /** Fill/stroke lines for a newly created shape `v`. Swatches are resolved before creation. */
-function paintLines(v, { fillColor, strokeColor, strokeWidth }) {
+function paintLines(v, { fillColor, strokeColor, strokeWeight }) {
     const pre = [];
     const post = [];
     if (has(fillColor)) {
@@ -25,8 +25,8 @@ function paintLines(v, { fillColor, strokeColor, strokeWidth }) {
         pre.push(...jsxSwatch('__stroke', strokeColor, 'stroke'));
         post.push(`${v}.strokeColor = __stroke;`);
     }
-    if (has(strokeColor) || has(strokeWidth)) {
-        post.push(`${v}.strokeWeight = ${num(has(strokeWidth) ? strokeWidth : 1, { name: 'strokeWidth', min: 0, max: 1000 })};`);
+    if (has(strokeColor) || has(strokeWeight)) {
+        post.push(`${v}.strokeWeight = ${num(has(strokeWeight) ? strokeWeight : 1, { name: 'strokeWeight', min: 0, max: 1000 })};`);
     }
     return { pre, post };
 }
@@ -54,7 +54,7 @@ async function createShape(args, { kind, label, create, extra = [] }) {
             position: box,
             fillColor: args.fillColor,
             strokeColor: args.strokeColor,
-            strokeWidth: args.strokeWidth,
+            strokeWeight: args.strokeWeight,
         });
     }
     return formatResponse(result, `Create ${label}`);

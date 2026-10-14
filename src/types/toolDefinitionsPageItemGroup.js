@@ -15,11 +15,13 @@ export const pageItemGroupToolDefinitions = [
             properties: {
                 pageIndex: {
                     type: 'integer',
-                    description: 'Index of the page containing the item'
+                    minimum: 0,
+                    description: 'Index of the page containing the item (0-based)'
                 },
                 itemIndex: {
                     type: 'integer',
-                    description: 'Index of the page item to get info for'
+                    minimum: 0,
+                    description: 'Index of the page item to get info for, in page.allPageItems as numbered by list_page_items (nested items included)'
                 }
             },
             required: ['pageIndex', 'itemIndex']
@@ -33,11 +35,13 @@ export const pageItemGroupToolDefinitions = [
             properties: {
                 pageIndex: {
                     type: 'integer',
-                    description: 'Index of the page containing the item'
+                    minimum: 0,
+                    description: 'Index of the page containing the item (0-based)'
                 },
                 itemIndex: {
                     type: 'integer',
-                    description: 'Index of the page item to select'
+                    minimum: 0,
+                    description: 'Index of the page item to select, in page.allPageItems as numbered by list_page_items (nested items included)'
                 },
                 existingSelection: {
                     type: 'string',
@@ -57,11 +61,13 @@ export const pageItemGroupToolDefinitions = [
             properties: {
                 pageIndex: {
                     type: 'integer',
-                    description: 'Index of the page containing the item'
+                    minimum: 0,
+                    description: 'Index of the page containing the item (0-based)'
                 },
                 itemIndex: {
                     type: 'integer',
-                    description: 'Index of the page item to move'
+                    minimum: 0,
+                    description: 'Index of the page item to move, in page.allPageItems as numbered by list_page_items (nested items included)'
                 },
                 x: {
                     type: 'number',
@@ -83,11 +89,13 @@ export const pageItemGroupToolDefinitions = [
             properties: {
                 pageIndex: {
                     type: 'integer',
-                    description: 'Index of the page containing the item'
+                    minimum: 0,
+                    description: 'Index of the page containing the item (0-based)'
                 },
                 itemIndex: {
                     type: 'integer',
-                    description: 'Index of the page item to resize'
+                    minimum: 0,
+                    description: 'Index of the page item to resize, in page.allPageItems as numbered by list_page_items (nested items included)'
                 },
                 width: {
                     type: 'number',
@@ -115,11 +123,13 @@ export const pageItemGroupToolDefinitions = [
             properties: {
                 pageIndex: {
                     type: 'integer',
-                    description: 'Index of the page containing the item'
+                    minimum: 0,
+                    description: 'Index of the page containing the item (0-based)'
                 },
                 itemIndex: {
                     type: 'integer',
-                    description: 'Index of the page item to modify'
+                    minimum: 0,
+                    description: 'Index of the page item to modify, in page.allPageItems as numbered by list_page_items (nested items included)'
                 },
                 fillColor: {
                     type: 'string',
@@ -153,11 +163,13 @@ export const pageItemGroupToolDefinitions = [
             properties: {
                 pageIndex: {
                     type: 'integer',
-                    description: 'Index of the page containing the item'
+                    minimum: 0,
+                    description: 'Index of the page containing the item (0-based)'
                 },
                 itemIndex: {
                     type: 'integer',
-                    description: 'Index of the page item to duplicate'
+                    minimum: 0,
+                    description: 'Index of the page item to duplicate, in page.allPageItems as numbered by list_page_items (nested items included)'
                 },
                 x: {
                     type: 'number',
@@ -179,11 +191,13 @@ export const pageItemGroupToolDefinitions = [
             properties: {
                 pageIndex: {
                     type: 'integer',
-                    description: 'Index of the page containing the item'
+                    minimum: 0,
+                    description: 'Index of the page containing the item (0-based)'
                 },
                 itemIndex: {
                     type: 'integer',
-                    description: 'Index of the page item to delete'
+                    minimum: 0,
+                    description: 'Index of the page item to delete, in page.allPageItems as numbered by list_page_items (nested items included)'
                 }
             },
             required: ['pageIndex', 'itemIndex']
@@ -191,13 +205,14 @@ export const pageItemGroupToolDefinitions = [
     },
     {
         name: 'list_page_items',
-        description: 'List all page items on a specific page',
+        description: 'List the page items on a page with their index in page.allPageItems (nested items included, such as the image inside a frame and group members). itemIndex and groupIndex in the page-item and group tools use this numbering.',
         inputSchema: {
             type: 'object',
             properties: {
                 pageIndex: {
                     type: 'integer',
-                    description: 'Index of the page to list items from'
+                    minimum: 0,
+                    description: 'Index of the page to list items from (0-based)'
                 }
             },
             required: ['pageIndex']
@@ -213,7 +228,8 @@ export const pageItemGroupToolDefinitions = [
             properties: {
                 pageIndex: {
                     type: 'integer',
-                    description: 'Index of the page where the group will be created'
+                    minimum: 0,
+                    description: 'Index of the page where the group will be created (0-based)'
                 }
             },
             required: ['pageIndex']
@@ -227,7 +243,8 @@ export const pageItemGroupToolDefinitions = [
             properties: {
                 pageIndex: {
                     type: 'integer',
-                    description: 'Index of the page containing the items'
+                    minimum: 0,
+                    description: 'Index of the page containing the items (0-based)'
                 },
                 itemIndices: {
                     type: 'array',
@@ -249,11 +266,13 @@ export const pageItemGroupToolDefinitions = [
             properties: {
                 pageIndex: {
                     type: 'integer',
-                    description: 'Index of the page containing the group'
+                    minimum: 0,
+                    description: 'Index of the page containing the group (0-based)'
                 },
                 groupIndex: {
                     type: 'integer',
-                    description: 'Index of the group to ungroup'
+                    minimum: 0,
+                    description: 'Index of the group to ungroup, as numbered by list_groups (its index in page.allPageItems)'
                 }
             },
             required: ['pageIndex', 'groupIndex']
@@ -267,11 +286,13 @@ export const pageItemGroupToolDefinitions = [
             properties: {
                 pageIndex: {
                     type: 'integer',
-                    description: 'Index of the page containing the group'
+                    minimum: 0,
+                    description: 'Index of the page containing the group (0-based)'
                 },
                 groupIndex: {
                     type: 'integer',
-                    description: 'Index of the group to get info for'
+                    minimum: 0,
+                    description: 'Index of the group to get info for, as numbered by list_groups (its index in page.allPageItems)'
                 }
             },
             required: ['pageIndex', 'groupIndex']
@@ -285,15 +306,18 @@ export const pageItemGroupToolDefinitions = [
             properties: {
                 pageIndex: {
                     type: 'integer',
-                    description: 'Index of the page containing the group and item'
+                    minimum: 0,
+                    description: 'Index of the page containing the group and item (0-based)'
                 },
                 groupIndex: {
                     type: 'integer',
-                    description: 'Index of the group to add the item to'
+                    minimum: 0,
+                    description: 'Index of the group to add the item to, as numbered by list_groups (its index in page.allPageItems)'
                 },
                 itemIndex: {
                     type: 'integer',
-                    description: 'Index (from list_page_items) of the page item to add to the group'
+                    minimum: 0,
+                    description: 'Index of the page item to add to the group, in page.allPageItems as numbered by list_page_items (nested items included)'
                 }
             },
             required: ['pageIndex', 'groupIndex', 'itemIndex']
@@ -307,15 +331,18 @@ export const pageItemGroupToolDefinitions = [
             properties: {
                 pageIndex: {
                     type: 'integer',
-                    description: 'Index of the page containing the group'
+                    minimum: 0,
+                    description: 'Index of the page containing the group (0-based)'
                 },
                 groupIndex: {
                     type: 'integer',
-                    description: 'Index of the group (from list_groups) to remove the item from'
+                    minimum: 0,
+                    description: 'Index of the group to remove the item from, as numbered by list_groups (its index in page.allPageItems)'
                 },
                 itemIndex: {
                     type: 'integer',
-                    description: 'Index of the member within the group, as listed by get_group_info'
+                    minimum: 0,
+                    description: 'Index of the member within the group (group.pageItems), as listed by get_group_info; not the list_page_items numbering'
                 }
             },
             required: ['pageIndex', 'groupIndex', 'itemIndex']
@@ -329,7 +356,8 @@ export const pageItemGroupToolDefinitions = [
             properties: {
                 pageIndex: {
                     type: 'integer',
-                    description: 'Index of the page to list groups from'
+                    minimum: 0,
+                    description: 'Index of the page to list groups from (0-based)'
                 }
             },
             required: ['pageIndex']
@@ -343,11 +371,13 @@ export const pageItemGroupToolDefinitions = [
             properties: {
                 pageIndex: {
                     type: 'integer',
-                    description: 'Index of the page containing the group'
+                    minimum: 0,
+                    description: 'Index of the page containing the group (0-based)'
                 },
                 groupIndex: {
                     type: 'integer',
-                    description: 'Index of the group to modify'
+                    minimum: 0,
+                    description: 'Index of the group to modify, as numbered by list_groups (its index in page.allPageItems)'
                 },
                 visible: {
                     type: 'boolean',

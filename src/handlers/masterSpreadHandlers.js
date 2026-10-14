@@ -5,8 +5,10 @@
  * (namePrefix + "-" + baseName). Scripts end with `out;`.
  */
 import { ScriptExecutor } from '../core/scriptExecutor.js';
-import { formatResponse, str, num, index, bool, enumOf, ALLOWED } from '../utils/stringUtils.js';
+import { formatResponse, str, num, index, bool, enumOf } from '../utils/stringUtils.js';
 import { docScript, indent, jsxUIColor, jsxSwatch, jsxWithMillimeters } from './pageHandlers.js';
+import { normalizeFontName } from './pageItemHandlers.js';
+import { justificationOf } from './aliases.js';
 
 const LOCATIONS = ['AT_END', 'AT_BEGINNING', 'BEFORE', 'AFTER'];
 
@@ -227,15 +229,15 @@ export class MasterSpreadHandlers {
             width = 100,
             height = 50,
             fontSize = 12,
-            fontFamily = 'Helvetica Neue',
-            fontStyle,
+            fontName = 'Helvetica Neue',
             textColor = 'Black',
             isPrimaryTextFrame = false,
             masterPageIndex = 0,
         } = args;
         const masterName = requireName(args.masterName, 'masterName');
-        const rawAlign = args.alignment ?? 'LEFT_ALIGN';
-        const alignment = enumOf(rawAlign === 'JUSTIFY' ? 'LEFT_JUSTIFIED' : rawAlign, ALLOWED.alignment, { name: 'alignment' });
+        const alignment = justificationOf(args.alignment ?? 'LEFT_ALIGN');
+        // "Family\tStyle" or a family name; applied as family + fontStyle
+        const [fontFamily, fontStyle] = normalizeFontName(fontName).split('\t');
         const xN = num(x, { name: 'x' });
         const yN = num(y, { name: 'y' });
         const wN = num(width, { name: 'width', min: 0.001 });
@@ -275,12 +277,12 @@ export class MasterSpreadHandlers {
     static async createMasterRectangle(args) {
         const { x, y, width, height, fillColor, strokeColor, cornerRadius = 0, masterPageIndex = 0 } = args;
         const masterName = requireName(args.masterName, 'masterName');
-        const strokeWidth = args.strokeWidth ?? args.strokeWeight ?? 1;
+        const strokeWeight = args.strokeWeight ?? 1;
         const xN = num(x, { name: 'x' });
         const yN = num(y, { name: 'y' });
         const wN = num(width, { name: 'width', min: 0.001 });
         const hN = num(height, { name: 'height', min: 0.001 });
-        const sw = num(strokeWidth, { name: 'strokeWidth', min: 0, max: 1000 });
+        const sw = num(strokeWeight, { name: 'strokeWeight', min: 0, max: 1000 });
         const radius = num(cornerRadius, { name: 'cornerRadius', min: 0, max: 10000 });
 
         const corners = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'];

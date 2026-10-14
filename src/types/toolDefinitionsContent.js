@@ -10,6 +10,14 @@
 
 const PAGE_INDEX = { type: 'integer', minimum: 0, description: 'Page index (0-based); defaults to the active page' };
 const COLOR = (what) => ({ type: 'string', description: `${what}: swatch name (e.g. "Black", "Paper") or "#RRGGBB"` });
+const FONT = (dflt = '') => ({ type: 'string', description: `Font as "Family\\tStyle" (e.g. "Arial\\tRegular", InDesign's Font.name) or a family name${dflt}` });
+const ALIGNMENT = (what) => ({
+    type: 'string',
+    enum: ['LEFT_ALIGN', 'CENTER_ALIGN', 'RIGHT_ALIGN', 'LEFT_JUSTIFIED', 'RIGHT_JUSTIFIED', 'CENTER_JUSTIFIED', 'FULLY_JUSTIFIED'],
+    description: `${what} (InDesign Justification; LEFT_JUSTIFIED = justified, last line left)`,
+});
+const STROKE_WEIGHT = { type: 'number', minimum: 0, description: 'Stroke weight in points (default 1 when strokeColor is given)' };
+const FRAME_INDEX = 'Index in page.textFrames (top-level text frames only; not the list_page_items numbering)';
 
 export const contentToolDefinitions = [
     // =================== TEXT MANAGEMENT ===================
@@ -26,9 +34,9 @@ export const contentToolDefinitions = [
                 width: { type: 'number', description: 'Width in mm' },
                 height: { type: 'number', description: 'Height in mm' },
                 fontSize: { type: 'number', description: 'Font size in points (default: style/document default)' },
-                fontName: { type: 'string', description: 'Font as "Family\\tStyle" (e.g. "Arial\\tRegular") or a family name (default: style/document default)' },
+                fontName: FONT(' (default: style/document default)'),
                 textColor: COLOR('Text color (default: style/document default)'),
-                alignment: { type: 'string', enum: ['LEFT', 'CENTER', 'RIGHT', 'JUSTIFY'], description: 'JUSTIFY = justified, last line left' },
+                alignment: ALIGNMENT('Paragraph alignment'),
                 paragraphStyle: { type: 'string', description: 'Paragraph style name to apply' },
                 characterStyle: { type: 'string', description: 'Character style name to apply' },
             },
@@ -41,13 +49,13 @@ export const contentToolDefinitions = [
         inputSchema: {
             type: 'object',
             properties: {
-                frameIndex: { type: 'integer', minimum: 0, description: 'Index of the text frame on the page (page.textFrames order)' },
+                frameIndex: { type: 'integer', minimum: 0, description: FRAME_INDEX },
                 pageIndex: PAGE_INDEX,
                 content: { type: 'string', description: 'New text content (replaces existing text)' },
                 fontSize: { type: 'number', description: 'Font size in points' },
-                fontName: { type: 'string', description: 'Font as "Family\\tStyle" or a family name' },
+                fontName: FONT(),
                 textColor: COLOR('Text color'),
-                alignment: { description: 'Paragraph alignment for the whole frame (JUSTIFY = justified, last line left)', type: 'string', enum: ['LEFT', 'CENTER', 'RIGHT', 'JUSTIFY'] },
+                alignment: ALIGNMENT('Paragraph alignment for the whole frame'),
             },
             required: ['frameIndex'],
         },
@@ -90,7 +98,7 @@ export const contentToolDefinitions = [
         inputSchema: {
             type: 'object',
             properties: {
-                tableIndex: { type: 'integer', minimum: 0, description: 'Table index on the page', default: 0 },
+                tableIndex: { type: 'integer', minimum: 0, description: 'Index among the tables in page.textFrames, counted frame by frame', default: 0 },
                 pageIndex: PAGE_INDEX,
                 data: {
                     type: 'array',
@@ -170,7 +178,7 @@ export const contentToolDefinitions = [
                 height: { type: 'number', description: 'Height in mm' },
                 fillColor: COLOR('Fill color'),
                 strokeColor: COLOR('Stroke color'),
-                strokeWidth: { type: 'number', description: 'Stroke weight in points (default 1 when strokeColor is given)' },
+                strokeWeight: STROKE_WEIGHT,
                 cornerRadius: { type: 'number', description: 'Rounded corner radius in mm (0 = square corners)', default: 0 },
             },
         },
@@ -188,7 +196,7 @@ export const contentToolDefinitions = [
                 height: { type: 'number', description: 'Height in mm' },
                 fillColor: COLOR('Fill color'),
                 strokeColor: COLOR('Stroke color'),
-                strokeWidth: { type: 'number', description: 'Stroke weight in points (default 1 when strokeColor is given)' },
+                strokeWeight: STROKE_WEIGHT,
             },
         },
     },
@@ -206,7 +214,7 @@ export const contentToolDefinitions = [
                 sides: { type: 'integer', minimum: 3, maximum: 100, description: 'Number of sides', default: 6 },
                 fillColor: COLOR('Fill color'),
                 strokeColor: COLOR('Stroke color'),
-                strokeWidth: { type: 'number', description: 'Stroke weight in points (default 1 when strokeColor is given)' },
+                strokeWeight: STROKE_WEIGHT,
             },
         },
     },
@@ -219,7 +227,7 @@ export const contentToolDefinitions = [
                 name: { type: 'string', description: 'Object style name' },
                 fillColor: COLOR('Fill color'),
                 strokeColor: COLOR('Stroke color'),
-                strokeWeight: { type: 'number', description: 'Stroke weight in points (default 1 when strokeColor is given)' },
+                strokeWeight: STROKE_WEIGHT,
                 cornerRadius: { type: 'number', description: 'Rounded corner radius in mm (0 = not included)', default: 0 },
                 opacity: { type: 'number', minimum: 0, maximum: 100, description: 'Opacity percentage (100 = fully opaque)' },
             },
@@ -241,10 +249,10 @@ export const contentToolDefinitions = [
                 itemType: {
                     type: 'string',
                     enum: ['rectangle', 'ellipse', 'polygon', 'textFrame', 'pageItem'],
-                    description: 'Collection itemIndex refers to; pageItem = index from list_page_items',
+                    description: 'Collection itemIndex counts in: page.rectangles, page.ovals, page.polygons, page.textFrames, or pageItem = page.allPageItems (the list_page_items numbering)',
                     default: 'rectangle',
                 },
-                itemIndex: { type: 'integer', minimum: 0, description: 'Item index within itemType on the page', default: 0 },
+                itemIndex: { type: 'integer', minimum: 0, description: 'Index within the itemType collection on the page', default: 0 },
                 pageIndex: PAGE_INDEX,
                 clearOverrides: { type: 'boolean', description: 'Clear local formatting overrides', default: false },
             },
@@ -257,7 +265,7 @@ export const contentToolDefinitions = [
         inputSchema: {
             type: 'object',
             properties: {
-                itemIndex: { type: 'integer', minimum: 0, description: 'Index among the placed graphics on the page', default: 0 },
+                itemIndex: { type: 'integer', minimum: 0, description: 'Index in page.allGraphics (placed graphics, not their frames; not the list_page_items numbering)', default: 0 },
                 pageIndex: PAGE_INDEX,
             },
         },
@@ -271,13 +279,10 @@ export const contentToolDefinitions = [
             type: 'object',
             properties: {
                 name: { type: 'string', description: 'Style name' },
-                fontFamily: { type: 'string', description: 'Font as "Family\\tStyle" (e.g. "Arial\\tRegular") or a family name' },
+                fontName: FONT(),
                 fontSize: { type: 'number', description: 'Font size in points' },
                 textColor: COLOR('Text color'),
-                alignment: { description: 'Paragraph justification (InDesign Justification values)',
-                    type: 'string',
-                    enum: ['LEFT_ALIGN', 'CENTER_ALIGN', 'RIGHT_ALIGN', 'LEFT_JUSTIFIED', 'RIGHT_JUSTIFIED', 'CENTER_JUSTIFIED', 'FULLY_JUSTIFIED'],
-                },
+                alignment: ALIGNMENT('Paragraph alignment'),
                 leading: { type: 'number', description: 'Leading in points' },
                 spaceBefore: { type: 'number', description: 'Space before paragraph in points' },
                 spaceAfter: { type: 'number', description: 'Space after paragraph in points' },
@@ -292,7 +297,7 @@ export const contentToolDefinitions = [
             type: 'object',
             properties: {
                 name: { type: 'string', description: 'Style name' },
-                fontFamily: { type: 'string', description: 'Font as "Family\\tStyle" or a family name' },
+                fontName: FONT(),
                 fontSize: { type: 'number', description: 'Font size in points' },
                 textColor: COLOR('Text color'),
                 bold: { type: 'boolean', description: 'Set font style "Bold" ("Bold Italic" with italic)', default: false },
@@ -309,7 +314,7 @@ export const contentToolDefinitions = [
             type: 'object',
             properties: {
                 styleName: { type: 'string', description: 'Paragraph style name' },
-                frameIndex: { type: 'integer', minimum: 0, description: 'Text frame index on the page' },
+                frameIndex: { type: 'integer', minimum: 0, description: FRAME_INDEX },
                 pageIndex: PAGE_INDEX,
             },
             required: ['styleName', 'frameIndex'],
@@ -322,7 +327,7 @@ export const contentToolDefinitions = [
             type: 'object',
             properties: {
                 styleName: { type: 'string', description: 'Character style name' },
-                frameIndex: { type: 'integer', minimum: 0, description: 'Text frame index on the page', default: 0 },
+                frameIndex: { type: 'integer', minimum: 0, description: FRAME_INDEX, default: 0 },
                 pageIndex: PAGE_INDEX,
                 startIndex: { type: 'integer', minimum: 0, description: 'First character index (with endIndex)', default: 0 },
                 endIndex: { type: 'integer', minimum: -1, description: 'Last character index (inclusive); -1 applies to the whole frame', default: -1 },
@@ -369,18 +374,18 @@ export const contentToolDefinitions = [
         inputSchema: {
             type: 'object',
             properties: {
-                objectIndex: { type: 'integer', minimum: 0, description: 'Index within targetType on the page' },
+                itemIndex: { type: 'integer', minimum: 0, description: 'Index within the targetType collection on the page (see targetType)' },
                 colorName: COLOR('Color'),
                 colorType: { description: 'Apply the swatch to the fill or the stroke', type: 'string', enum: ['FILL', 'STROKE'], default: 'FILL' },
                 targetType: {
                     type: 'string',
                     enum: ['pageItem', 'text', 'textFrame', 'rectangle', 'ellipse', 'polygon'],
-                    description: 'pageItem = index from list_page_items; text = the text inside page.textFrames[objectIndex]',
+                    description: 'Collection itemIndex counts in: pageItem = page.allPageItems (the list_page_items numbering); text and textFrame = page.textFrames (text = the text inside the frame); rectangle, ellipse, polygon = page.rectangles, page.ovals, page.polygons',
                     default: 'pageItem',
                 },
                 pageIndex: PAGE_INDEX,
             },
-            required: ['objectIndex', 'colorName'],
+            required: ['itemIndex', 'colorName'],
         },
     },
 ];
