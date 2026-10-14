@@ -1,4 +1,4 @@
-illustrator-mcp-server
+adobe-mcp-illustrator
 Copyright (c) 2026 Zach Shallbetter. MIT licence: see LICENSE.
 
 src/data/menu-commands.json lists Illustrator executeMenuCommand names and

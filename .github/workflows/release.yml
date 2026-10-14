@@ -1,7 +1,7 @@
 name: Release
 
 # Publishes one package when its tag is pushed: <package name>@<version>, e.g.
-#   indesign-mcp-server@2.4.0   illustrator-mcp-server@0.1.0   adobe-mcp-core@0.1.0
+#   indesign-mcp-server@2.4.0   adobe-mcp-illustrator@0.1.0   adobe-mcp-core@0.1.0
 # to npm and, for packages with a server.json, to the MCP Registry.
 # Both use GitHub OIDC, so no tokens or logins are needed:
 #   - npm: trusted publishing, configured on npmjs.com for each package
