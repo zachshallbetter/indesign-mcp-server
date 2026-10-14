@@ -1,5 +1,28 @@
 # Changelog
 
+## Unreleased
+
+### UXP backend returns tool results
+
+Under `INDESIGN_BACKEND=uxp`, most tools returned an empty result: the plugin only passed back an explicit `return`, while the handler scripts end with a bare expression, and the scripts used ExtendScript globals that UXP does not have. The plugin now runs them with ExtendScript semantics. This is tested against a fake InDesign DOM only; the backend stays experimental until it has been run against InDesign.
+
+#### Changed
+- The UXP plugin (`uxp/plugin/runtime.js`, plugin version 1.1.0) evaluates each script with `eval` and returns its completion value, as `do script` / `DoScript` do. Code with a top-level `return` or `await` still runs as an async function body.
+- Enums and classes a script names come from `require('indesign')`; `File`, `Folder` and `$` are shims. `File.exists` and `Folder.create()` use UXP's `fs` module, so the plugin manifest now requests `localFileSystem: fullAccess`.
+- `app` is wrapped so `collection[i]` falls back to `item(i)` and `constructor.name` to `constructorName` (UXP DOM differences documented by Adobe); `File` shims reach DOM methods as path strings.
+- UXP string results are trimmed, as the AppleScript/COM paths trim stdout.
+- The plugin's WebSocket port is set in the Bridge Panel (default 3001, remembered), so `UXP_WS_PORT` on the bridge no longer breaks the connection. The bridge prints the port to enter when it is not 3001.
+- `auto` re-checks the bridge every 5 s instead of once per process, and falls back to ExtendScript for a call only when the bridge is unreachable or the plugin is not connected (the script cannot have run).
+- With `BRIDGE_TOKEN` set, the bridge requires it on `/status` as well as `/execute`.
+- A UXP bridge timeout is reported as a timeout, not as "bridge not reachable".
+
+#### Added
+- `tests/unit/uxp.test.js` (`npm run test:uxp`, part of `npm test`): the real bridge with a fake plugin running `runtime.js` in a Node `vm` against a UXP-shaped fake DOM. Every handler script must return over UXP what it returns when evaluated ExtendScript-style. It also covers the token, `auto` re-check and fallback, and the shims.
+- `tests/audit/collectScripts.js`: the script capture shared by the audit and the UXP test.
+
+#### Known gaps
+- Enum comparisons with `==` may fail if UXP enum values are objects (six handler scripts compare enums). Whether every DOM method that takes a file accepts a path string is unverified. Details in `uxp/README.md`.
+
 ## 2.1.0
 
 Ready for public and agent use: agents get instructions, tool annotations and a full reference; docs are rewritten against the code.

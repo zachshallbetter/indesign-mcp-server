@@ -88,7 +88,7 @@ Set these in the client's `env` block, or with `-e` for Claude Code.
 | `UXP_BRIDGE_URL` | `http://127.0.0.1:3000` | The UXP bridge's HTTP address. Only used with `uxp` or `auto`. |
 | `BRIDGE_TOKEN` | none | A bearer token sent to the UXP bridge. Set the same value on the bridge process. |
 
-The bridge process also reads `UXP_HTTP_PORT` (default 3000) and `UXP_WS_PORT` (default 3001). The plugin always connects to `ws://127.0.0.1:3001`, so leave `UXP_WS_PORT` at its default unless you also edit `uxp/plugin/index.js`.
+The bridge process also reads `UXP_HTTP_PORT` (default 3000) and `UXP_WS_PORT` (default 3001). If you change `UXP_WS_PORT`, enter the same port in the plugin's Bridge Panel.
 
 ### File access rules
 
@@ -134,7 +134,7 @@ The default backend runs ExtendScript and needs no plugin. The optional UXP back
 3. Add `"INDESIGN_BACKEND": "uxp"` (or `"auto"`) and the same `"BRIDGE_TOKEN"` to the MCP server's `env`. See [`examples/mcp-config-uxp.json`](../examples/mcp-config-uxp.json).
 4. Run `indesign_status`. `backend.resolved` should be `uxp` and `backend.uxpConnected` should be `true`.
 
-The handler scripts are written for ExtendScript, so not every tool behaves the same under UXP. Treat the UXP backend as experimental. [architecture-execution.md](./architecture-execution.md) explains the differences, and [`uxp/README.md`](../uxp/README.md) has the bridge details.
+The handler scripts are written for ExtendScript; the plugin runs them with ExtendScript semantics (completion value as the result, `File`/`Folder` shims, enums from `require('indesign')`). This is tested against a fake DOM only, not yet against InDesign, so treat the UXP backend as experimental. [architecture-execution.md](./architecture-execution.md) explains the differences, and [`uxp/README.md`](../uxp/README.md) has the bridge details.
 
 ## Verifying the setup
 

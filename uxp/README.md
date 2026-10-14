@@ -1,6 +1,8 @@
 # Optional UXP backend
 
-Run InDesign scripts through a UXP plugin instead of AppleScript/COM.
+Run InDesign scripts through a UXP plugin instead of AppleScript/COM. The tools generate the same ExtendScript either way; the plugin runs it with ExtendScript semantics, so a tool's result string should match what the AppleScript/COM path returns.
+
+**Status: experimental, not yet tested against a real InDesign.** The plugin's evaluation, shims and DOM compatibility layer are tested only against a fake InDesign DOM (`npm run test:uxp`). Use the default `extendscript` backend for normal work until it has been run against InDesign. See [Known gaps](#known-gaps).
 
 ## Quick start
 
@@ -19,20 +21,38 @@ BRIDGE_TOKEN=secret npx -p indesign-mcp-server indesign-mcp-uxp-bridge
 
 2. Get the plugin folder: `uxp/plugin` in a clone, or `node_modules/indesign-mcp-server/uxp/plugin` after `npm install indesign-mcp-server`.
 
-3. Load the plugin in InDesign (UXP Developer Tool → add the plugin folder → load/watch). Open the Bridge panel so it connects to `ws://127.0.0.1:3001`.
+3. Load the plugin in InDesign (UXP Developer Tool → add the plugin folder → load/watch). Open the **Bridge Panel**. It connects to the bridge's WebSocket port, 3001 by default. If you started the bridge with another `UXP_WS_PORT`, type that port in the panel and click **Connect**; the panel remembers it.
 
 4. Start the MCP server with the UXP backend by setting `INDESIGN_BACKEND` in your MCP client config (`"env": { "INDESIGN_BACKEND": "uxp" }`, or `"auto"` to prefer UXP whenever the plugin is connected). From a clone: `INDESIGN_BACKEND=uxp npm start`.
 
-If `BRIDGE_TOKEN` is set on the bridge, set the same value for the MCP process.
+If `BRIDGE_TOKEN` is set on the bridge, set the same value for the MCP process. The bridge then requires it on both `/execute` and `/status`.
 
 ## Ports
 
-| Service | Default | Env override |
+| Service | Default | Override |
 | --- | --- | --- |
-| HTTP execute/status | `http://127.0.0.1:3000` | `UXP_BRIDGE_URL` |
-| WebSocket (plugin) | `ws://127.0.0.1:3001` | set in bridge + plugin |
+| HTTP execute/status | `http://127.0.0.1:3000` | `UXP_HTTP_PORT` on the bridge, `UXP_BRIDGE_URL` on the MCP server |
+| WebSocket (plugin) | `ws://127.0.0.1:3001` | `UXP_WS_PORT` on the bridge, the port field in the Bridge Panel |
 
-## Notes
+## How scripts run in the plugin
 
-- Handler scripts still target the InDesign DOM via `app`. Many ExtendScript-oriented handlers work; some ES3-only patterns or CEP-only APIs may need adjustment under UXP.
-- Default backend remains `extendscript` (AppleScript/COM) when `INDESIGN_BACKEND` is unset.
+`uxp/plugin/runtime.js` runs each script:
+
+- **Completion value.** The script is evaluated with `eval`, so its result is the value of its last statement, as with `do script` / `DoScript`. Variables stay local to the call.
+- **Globals.** Enums and classes the script names (`MeasurementUnits`, `ExportFormat`, `TextFrame`, ...) are taken from `require('indesign')`. `File` and `Folder` are shims with the members the handlers use (`fsName`, `fullName`, `name`, `path`, `parent`, `exists`, `create()`, `remove()`); `exists` and `create()` use UXP's `fs` module, which is why the manifest asks for `localFileSystem: fullAccess`. `$.writeln` logs to the plugin console.
+- **DOM differences.** `app` is wrapped so that `collection[i]` falls back to `collection.item(i)` and `constructor.name` falls back to `constructorName` when the native value is missing; Adobe documents both as UXP differences. File shims are passed to DOM methods as path strings, and a `fullName` that comes back as a string is turned into a `File`.
+- **UXP-style code.** Code that is not a valid classic script (a top-level `return` or `await`) runs as before: as the body of an async function, with only its `return` value coming back.
+
+The MCP server trims a string result and turns other values into strings, as the AppleScript/COM paths do.
+
+## Known gaps
+
+- **Untested against InDesign.** The fake DOM in the test has UXP's documented shape, but the real DOM may differ in ways it does not model.
+- **Enum comparisons.** Adobe documents that `==` and `===` on DOM objects compare references and recommends `.equals()`. If enum values come back as objects, comparisons such as `link.status != LinkStatus.NORMAL` give the wrong answer. Handler scripts that compare enums: `detach_master_items`, `get_page_info`, `get_master_spread_info`, `list_master_spreads`, `list_object_styles`, `validate_document`.
+- **File arguments.** The shims pass plain path strings to DOM methods such as `exportFile`, `place` and `app.open`. Whether every such method accepts a string in UXP has not been checked.
+- **Async DOM methods.** If a DOM method returns a Promise under UXP, an ExtendScript-style script does not wait for it.
+- **`fullName`.** The shim returns the plain path; ExtendScript returns a URI-style path (`~/Documents/...`). `fsName` is the same in both.
+- **Timeouts.** 25 s in the plugin, 30 s in the bridge and 35 s in the server, against 120 s for AppleScript/COM.
+- **WebSocket auth.** `BRIDGE_TOKEN` protects the HTTP side only. Any local process can connect to the WebSocket port as the plugin.
+
+Default backend remains `extendscript` (AppleScript/COM) when `INDESIGN_BACKEND` is unset.

@@ -3,6 +3,11 @@
 <head><title>Bridge</title></head>
 <body>
   <p id="status">Initializing...</p>
+  <form id="portForm">
+    <label for="port">Bridge WebSocket port</label>
+    <input id="port" type="number" min="1" max="65535" value="3001">
+    <button id="connect" type="submit">Connect</button>
+  </form>
   <script src="index.js"></script>
 </body>
 </html>

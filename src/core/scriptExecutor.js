@@ -203,6 +203,10 @@ export class ScriptExecutor {
     static _appName = null;
     /** @type {string|null} cached resolved backend for this process */
     static _resolvedBackend = null;
+    /** @type {number} when _resolvedBackend was set (ms since epoch) */
+    static _resolvedAt = 0;
+    /** In auto mode, re-check the bridge when the cached choice is older than this. */
+    static autoRecheckMs = 5000;
 
     /**
      * Resolve the installed / running InDesign application name (macOS).
@@ -285,6 +289,7 @@ export class ScriptExecutor {
     /** Clear cached backend resolution (tests / env changes). */
     static resetBackendCache() {
         this._resolvedBackend = null;
+        this._resolvedAt = 0;
     }
 
     /**
@@ -319,30 +324,35 @@ export class ScriptExecutor {
      * @returns {Promise<'extendscript'|'uxp'>}
      */
     static async resolveBackend(opts = {}) {
-        if (!opts.forceRefresh && this._resolvedBackend) {
+        const mode = readBackendMode();
+        const stale = mode === 'auto' && Date.now() - this._resolvedAt >= this.autoRecheckMs;
+        if (!opts.forceRefresh && this._resolvedBackend && !stale) {
             return this._resolvedBackend;
         }
-        const mode = readBackendMode();
         if (mode === 'extendscript') {
             this._resolvedBackend = 'extendscript';
-            return this._resolvedBackend;
-        }
-        if (mode === 'uxp') {
+        } else if (mode === 'uxp') {
             this._resolvedBackend = 'uxp';
-            return this._resolvedBackend;
+        } else {
+            // auto: re-checked every autoRecheckMs, so starting or stopping the
+            // bridge or plugin takes effect without restarting the server.
+            const available = await this.isUXPAvailable();
+            this._resolvedBackend = available ? 'uxp' : 'extendscript';
         }
-        // auto
-        const available = await this.isUXPAvailable();
-        this._resolvedBackend = available ? 'uxp' : 'extendscript';
+        this._resolvedAt = Date.now();
         return this._resolvedBackend;
     }
 
     /**
      * Execute JS inside InDesign via the UXP HTTP bridge.
+     * The plugin evaluates the script like ExtendScript and returns its
+     * completion value. Errors that guarantee the script did not run (bridge
+     * unreachable, plugin not connected) carry code 'UXP_UNAVAILABLE'.
      * @param {string} code
      * @returns {Promise<any>}
      */
     static async executeViaUXP(code) {
+        const unavailable = (message) => Object.assign(new Error(message), { code: 'UXP_UNAVAILABLE' });
         let response;
         try {
             response = await fetch(`${uxpBridgeUrl()}/execute`, {
@@ -352,8 +362,11 @@ export class ScriptExecutor {
                 signal: AbortSignal.timeout(35000),
             });
         } catch (err) {
-            if (err.name === 'TimeoutError' || err.name === 'TypeError' || err.code === 'ECONNREFUSED') {
-                throw new Error(
+            if (err.name === 'TimeoutError') {
+                throw new Error('UXP bridge did not answer within 35s');
+            }
+            if (err.name === 'TypeError' || err.code === 'ECONNREFUSED') {
+                throw unavailable(
                     'UXP bridge not reachable. Start it with: npm run uxp:bridge (and load uxp/plugin in InDesign)'
                 );
             }
@@ -367,11 +380,31 @@ export class ScriptExecutor {
             throw new Error(`UXP bridge returned non-JSON (HTTP ${response.status})`);
         }
 
+        if (response.status === 503) {
+            throw unavailable(data.error || 'UXP plugin not connected');
+        }
         if (!response.ok) {
             throw new Error(data.error || `UXP bridge error: ${response.status}`);
         }
 
         return data.result;
+    }
+
+    /**
+     * Run a script over the UXP bridge and return the result as the
+     * ExtendScript transports do: a string, trimmed like their stdout.
+     * @param {string} script
+     * @returns {Promise<string>}
+     */
+    static async executeUXPScript(script) {
+        const result = await this.executeViaUXP(script);
+        if (result == null) return '';
+        if (typeof result === 'string') return result.trim();
+        try {
+            return JSON.stringify(result);
+        } catch {
+            return String(result);
+        }
     }
 
 
@@ -563,45 +596,53 @@ export class ScriptExecutor {
         try {
             const backend = await this.resolveBackend();
             if (backend === 'uxp') {
-                const result = await this.executeViaUXP(script);
-                if (result == null) return '';
-                if (typeof result === 'string') return result;
                 try {
-                    return JSON.stringify(result);
-                } catch {
-                    return String(result);
+                    return await this.executeUXPScript(script);
+                } catch (error) {
+                    // In auto mode, fall back only when the script cannot have run.
+                    if (error.code !== 'UXP_UNAVAILABLE' || readBackendMode() !== 'auto') throw error;
+                    this._resolvedBackend = 'extendscript';
+                    this._resolvedAt = Date.now();
                 }
             }
+            return await this.executeViaExtendScript(script);
+        } catch (error) {
+            throw new Error(`Error executing tool: ${error.message}`);
+        }
+    }
 
-            if (IS_WINDOWS) {
-                return await this.executeWindowsCOM(script);
-            }
+    /**
+     * Run a script through AppleScript (macOS) or COM (Windows).
+     * @param {string} script
+     * @returns {Promise<string>}
+     */
+    static async executeViaExtendScript(script) {
+        if (IS_WINDOWS) {
+            return await this.executeWindowsCOM(script);
+        }
 
-            const tempScriptPath = path.join(
-                os.tmpdir(),
-                `${TEMP_PREFIX}${Date.now()}_${process.pid}.jsx`
-            );
-            fs.writeFileSync(tempScriptPath, script, 'utf8');
+        const tempScriptPath = path.join(
+            os.tmpdir(),
+            `${TEMP_PREFIX}${Date.now()}_${process.pid}.jsx`
+        );
+        fs.writeFileSync(tempScriptPath, script, 'utf8');
 
-            try {
-                const appName = this.resolveAppName();
-                const posixPath = tempScriptPath.replace(/\\/g, '/');
-                const appleScript = `
+        try {
+            const appName = this.resolveAppName();
+            const posixPath = tempScriptPath.replace(/\\/g, '/');
+            const appleScript = `
         tell application "${appName}"
           activate
           do script POSIX file "${posixPath}" language javascript
         end tell
       `;
-                return await this.executeAppleScript(appleScript);
-            } finally {
-                try {
-                    fs.unlinkSync(tempScriptPath);
-                } catch {
-                    // ignore
-                }
+            return await this.executeAppleScript(appleScript);
+        } finally {
+            try {
+                fs.unlinkSync(tempScriptPath);
+            } catch {
+                // ignore
             }
-        } catch (error) {
-            throw new Error(`Error executing tool: ${error.message}`);
         }
     }
 
