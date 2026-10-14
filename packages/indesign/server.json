@@ -4,8 +4,9 @@
   "title": "InDesign MCP Server",
   "description": "Drive Adobe InDesign from any MCP client: 135+ tools for layout, styles, books and PDF export.",
   "repository": {
-    "url": "https://github.com/zachshallbetter/indesign-mcp-server",
-    "source": "github"
+    "url": "https://github.com/zachshallbetter/adobe-mcp",
+    "source": "github",
+    "subfolder": "packages/indesign"
   },
   "version": "2.3.0",
   "packages": [

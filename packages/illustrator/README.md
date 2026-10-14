@@ -1,0 +1,113 @@
+# Illustrator MCP Server
+
+An MCP server that drives Adobe Illustrator: documents, artboards, layers,
+shapes and paths, text, colour, pathfinder operations and export. It runs on
+the machine where Illustrator is installed and talks to it through
+ExtendScript, the scripting interface Illustrator ships with.
+
+Requires Illustrator 2023 or later on macOS or Windows, and Node.js 18 or later.
+
+## Install
+
+Claude Code:
+
+```bash
+claude mcp add illustrator -- npx -y illustrator-mcp-server
+```
+
+Any client that reads an `mcpServers` block (Claude Desktop, Cursor, Warp, …):
+
+```json
+{
+  "mcpServers": {
+    "illustrator": {
+      "command": "npx",
+      "args": ["-y", "illustrator-mcp-server"]
+    }
+  }
+}
+```
+
+On macOS the first call asks for permission to control Illustrator (System
+Settings > Privacy & Security > Automation).
+
+## Conventions
+
+- **Positions and sizes are points** (72 pt = 1 in), measured from the top-left
+  corner of an artboard (`artboardIndex`, default 0), with y increasing
+  downward. Illustrator's own document coordinates run upward; the server
+  converts both ways and accounts for large-canvas documents.
+- **Items** are chosen with `target`: `{ ids: [...] }`, `{ names: [...] }` or
+  `{ selection: true }`. Ids are Illustrator's own item ids (`PageItem.uuid`);
+  they come from `list_items` and from every tool that creates artwork.
+- **Colours** are a swatch name, `"#RRGGBB"`, `"rgb(r,g,b)"`,
+  `"cmyk(c,m,y,k)"`, `"gray(g)"` or `"none"`. A document's colour mode is fixed
+  when it is created, so `create_document` asks for it.
+- **Fonts** are PostScript names; `list_fonts` finds them.
+- **Files** must be inside your home folder or a directory in
+  `ILLUSTRATOR_ALLOWED_DIRS`.
+
+## Tools
+
+| Area | Tools |
+|---|---|
+| Documents | `get_document_info`, `list_documents`, `create_document`, `open_document`, `save_document`, `close_document` |
+| Artboards | `list_artboards`, `add_artboard`, `set_artboard`, `delete_artboard`, `set_active_artboard`, `fit_artboard_to_artwork`, `rearrange_artboards` |
+| Layers | `list_layers`, `create_layer`, `set_layer_properties`, `set_active_layer`, `delete_layer`, `move_items_to_layer` |
+| Shapes and paths | `create_rectangle`, `create_ellipse`, `create_polygon`, `create_star`, `create_line`, `create_path` |
+| Text | `create_text`, `set_text_style`, `set_text_contents`, `convert_text_to_outlines`, `list_fonts` |
+| Appearance and colour | `set_fill`, `set_stroke`, `set_opacity`, `get_appearance`, `list_swatches`, `create_swatch`, `create_gradient` |
+| Selecting and arranging | `list_items`, `get_selection`, `select_items`, `deselect_all`, `delete_items`, `duplicate_items`, `move_items`, `scale_items`, `rotate_items`, `reflect_items`, `align_items`, `arrange_items`, `group_items`, `ungroup_items` |
+| Combining | `make_clipping_mask`, `make_compound_path`, `pathfinder` |
+| Placing and export | `place_image`, `export_png`, `export_svg`, `export_for_screens`, `export_pdf` |
+| Utility | `illustrator_status`, `execute_menu_command`, `find_menu_commands`, `execute_illustrator_code`, `help` |
+
+`help({ tool })` describes any tool's parameters.
+
+## How it stays out of your way
+
+- **No dialogs.** Every script switches Illustrator's alerts off while it runs
+  and restores your setting afterwards, even when the script fails, so a
+  warning cannot leave a call waiting.
+- **Your settings come back.** The coordinate system a script uses is set for
+  that script and restored afterwards.
+- **Timeouts say why.** If Illustrator does not answer within
+  `ILLUSTRATOR_SCRIPT_TIMEOUT_MS` (default 120 s), the error says a dialog is
+  probably open in Illustrator.
+- **Menu commands are checked.** Illustrator ignores a menu command name it does
+  not know and reports nothing for one it does. `execute_menu_command` accepts
+  only the 859 known names (unless you pass `allowUnknown`) and returns the
+  selection and document state after the command, so you can see what it did.
+- **No raw input in scripts.** Every value a caller passes is validated and
+  written into the script as a literal.
+
+## Configuration
+
+| Variable | Purpose |
+|---|---|
+| `ILLUSTRATOR_APP_NAME` | macOS: address a specific copy, e.g. `Adobe Illustrator 2025`. By default the server addresses Illustrator by its bundle id. |
+| `ILLUSTRATOR_ALLOWED_DIRS` | Extra directories for opening, placing and exporting files (`:`-separated on macOS, `;` on Windows). |
+| `ILLUSTRATOR_SCRIPT_TIMEOUT_MS` | How long to wait for Illustrator. Default 120000. |
+
+## Development
+
+```bash
+npm test         # definitions, argument parsing, protocol, and the static script audit
+npm run audit    # the audit alone, with findings listed
+npm run check    # syntax check
+```
+
+The static audit runs every tool with sample arguments against a stubbed
+Illustrator and checks that each generated script parses as ES5 and uses only
+names in Illustrator's scripting object model (2022 to 2025). It does not run
+anything in Illustrator: a tool that passes it has not necessarily been run
+against the application.
+
+Shared infrastructure (script escaping, the executor, the server shell, the
+audit) comes from [adobe-mcp-core](https://github.com/zachshallbetter/adobe-mcp-core),
+the foundation shared with
+[indesign-mcp-server](https://github.com/zachshallbetter/indesign-mcp-server).
+
+## Licence
+
+MIT. See [LICENSE](LICENSE) and [NOTICE](NOTICE) for the menu command data.

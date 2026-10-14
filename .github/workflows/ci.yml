@@ -6,17 +6,24 @@ on:
   pull_request:
 
 jobs:
-  unit:
-    runs-on: ubuntu-latest
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, node: '20' }
+          - { os: ubuntu-latest, node: '22' }
+          - { os: macos-latest, node: '22' }
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ matrix.node }}
           cache: npm
       - name: Install
-        run: npm ci || npm install
+        run: npm ci
       - name: Syntax check
         run: npm run check
-      - name: Unit tests
+      - name: Tests
         run: npm test

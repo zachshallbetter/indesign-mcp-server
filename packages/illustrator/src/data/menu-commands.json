@@ -1,0 +1,9154 @@
+{
+ "note": "executeMenuCommand strings with their menu location. From AiCommandPalette and AiMenuObject (both MIT; see NOTICE). documented: false marks strings seen only in community scripts.",
+ "commands": [
+  {
+   "id": "_Art Style Library Menu Item 0",
+   "name": "3D Effects",
+   "menu": [
+    "Window",
+    "Graphic Style Libraries",
+    "3D Effects"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Art Style Library Menu Item 1",
+   "name": "Additive for Blob Brush",
+   "menu": [
+    "Window",
+    "Graphic Style Libraries",
+    "Additive for Blob Brush"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Art Style Library Menu Item 10",
+   "name": "Type Effects",
+   "menu": [
+    "Window",
+    "Graphic Style Libraries",
+    "Type Effects"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Art Style Library Menu Item 11",
+   "name": "Vonster Pattern Styles",
+   "menu": [
+    "Window",
+    "Graphic Style Libraries",
+    "Vonster Pattern Styles"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Art Style Library Menu Item 2",
+   "name": "Additive",
+   "menu": [
+    "Window",
+    "Graphic Style Libraries",
+    "Additive"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Art Style Library Menu Item 3",
+   "name": "Artistic Effects",
+   "menu": [
+    "Window",
+    "Graphic Style Libraries",
+    "Artistic Effects"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Art Style Library Menu Item 4",
+   "name": "Buttons and Rollovers",
+   "menu": [
+    "Window",
+    "Graphic Style Libraries",
+    "Buttons and Rollovers"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Art Style Library Menu Item 5",
+   "name": "Illuminate Styles",
+   "menu": [
+    "Window",
+    "Graphic Style Libraries",
+    "Illuminate Styles"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Art Style Library Menu Item 6",
+   "name": "Image Effects",
+   "menu": [
+    "Window",
+    "Graphic Style Libraries",
+    "Image Effects"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Art Style Library Menu Item 7",
+   "name": "Neon Effects",
+   "menu": [
+    "Window",
+    "Graphic Style Libraries",
+    "Neon Effects"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Art Style Library Menu Item 8",
+   "name": "Scribble Effects",
+   "menu": [
+    "Window",
+    "Graphic Style Libraries",
+    "Scribble Effects"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Art Style Library Menu Item 9",
+   "name": "Textures",
+   "menu": [
+    "Window",
+    "Graphic Style Libraries",
+    "Textures"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 0",
+   "name": "3D Symbols",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "3D Symbols"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 1",
+   "name": "Arrows",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Arrows"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 10",
+   "name": "Grime Vector Pack",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Grime Vector Pack"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 11",
+   "name": "Hair and Fur",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Hair and Fur"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 12",
+   "name": "Heirloom",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Heirloom"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 13",
+   "name": "Illuminate Flow Charts",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Illuminate Flow Charts"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 14",
+   "name": "Illuminate Org Charts",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Illuminate Org Charts"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 15",
+   "name": "Illuminate Ribbons",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Illuminate Ribbons"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 16",
+   "name": "Indigenous",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Indigenous"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 17",
+   "name": "Logo Elements",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Logo Elements"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 18",
+   "name": "Mad Science",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Mad Science"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 19",
+   "name": "Maps",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Maps"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 2",
+   "name": "Artistic Textures",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Artistic Textures"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 20",
+   "name": "Mobile",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Mobile"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 21",
+   "name": "Nature",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Nature"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 22",
+   "name": "Regal Vector Pack",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Regal Vector Pack"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 23",
+   "name": "Retro",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Retro"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 24",
+   "name": "Sushi",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Sushi"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 25",
+   "name": "Tiki",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Tiki"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 26",
+   "name": "Web Buttons and Bars",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Web Buttons and Bars"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 27",
+   "name": "Web Icons",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Web Icons"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 3",
+   "name": "Celebration",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Celebration"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 4",
+   "name": "Charts",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Charts"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 5",
+   "name": "Communication",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Communication"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 6",
+   "name": "Dot Pattern Vector Pack",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Dot Pattern Vector Pack"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 7",
+   "name": "Fashion",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Fashion"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 8",
+   "name": "Florid Vector Pack",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Florid Vector Pack"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Base Library Menu Item 9",
+   "name": "Flowers",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Flowers"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 1",
+   "name": "Arrows_Special",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Arrows",
+    "Arrows_Special"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 10",
+   "name": "Artistic_Watercolor",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Artistic",
+    "Artistic_Watercolor"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 12",
+   "name": "Borders_Dashed",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Borders",
+    "Borders_Dashed"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 13",
+   "name": "Borders_Decorative",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Borders",
+    "Borders_Decorative"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 14",
+   "name": "Borders_Frames",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Borders",
+    "Borders_Frames"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 15",
+   "name": "Borders_Geometric",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Borders",
+    "Borders_Geometric"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 16",
+   "name": "Borders_Indigenous",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Borders",
+    "Borders_Indigenous"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 17",
+   "name": "Borders_Lines",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Borders",
+    "Borders_Lines"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 18",
+   "name": "Borders_Novelty",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Borders",
+    "Borders_Novelty"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 2",
+   "name": "Arrows_Standard",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Arrows",
+    "Arrows_Standard"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 20",
+   "name": "Bristle Brush Library",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Bristle Brush",
+    "Bristle Brush Library"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 22",
+   "name": "Decorative_Banners and Seals",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Decorative",
+    "Decorative_Banners and Seals"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 23",
+   "name": "Decorative_Scatter",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Decorative",
+    "Decorative_Scatter"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 24",
+   "name": "Decorative_Text Dividers",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Decorative",
+    "Decorative_Text Dividers"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 25",
+   "name": "Elegant Curl & Floral Brush Set",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Decorative",
+    "Elegant Curl & Floral Brush Set"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 27",
+   "name": "Image Brush Library",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Image Brush",
+    "Image Brush Library"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 29",
+   "name": "Grunge brushes vector pack",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Vector Packs",
+    "Grunge brushes vector pack"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 3",
+   "name": "Pattern Arrows",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Arrows",
+    "Pattern Arrows"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 30",
+   "name": "Hand Drawn brushes vector pack",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Vector Packs",
+    "Hand Drawn brushes vector pack"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 32",
+   "name": "6d Art Pen Brushes",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Wacom 6D Brushes",
+    "6d Art Pen Brushes"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 5",
+   "name": "Artistic_Calligraphic",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Artistic",
+    "Artistic_Calligraphic"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 6",
+   "name": "Artistic_ChalkCharcoalPencil",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Artistic",
+    "Artistic_ChalkCharcoalPencil"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 7",
+   "name": "Artistic_Ink",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Artistic",
+    "Artistic_Ink"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 8",
+   "name": "Artistic_Paintbrush",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Artistic",
+    "Artistic_Paintbrush"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Brush Library Menu Item 9",
+   "name": "Artistic_ScrollPen",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Artistic",
+    "Artistic_ScrollPen"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_GenericPluginMenuItem 1",
+   "name": "Manage My Account...",
+   "menu": [
+    "Help",
+    "Manage My Account..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_GenericPluginMenuItem 2",
+   "name": "Manage My Account...",
+   "menu": [
+    "Help",
+    "Manage My Account..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_GenericPluginMenuItem 25",
+   "name": "Contextual Task Bar",
+   "menu": [
+    "Window",
+    "Contextual Task Bar"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_GenericPluginMenuItem 3",
+   "name": "Sign In... / Sign Out...",
+   "menu": [
+    "Help",
+    "Sign In... / Sign Out..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_GenericPluginMenuItem 4",
+   "name": "Updates...",
+   "menu": [
+    "Help",
+    "Updates..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_GenericPluginMenuItem 51",
+   "name": "Show Generative Menu",
+   "menu": [
+    "Window",
+    "Show Generative Menu"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_GenericPluginMenuItem 53",
+   "name": "Help Bar",
+   "menu": [
+    "Window",
+    "Help Bar"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_GenericPluginMenuItem 62",
+   "name": "Color library...",
+   "menu": [
+    "Edit",
+    "Edit Colors",
+    "Recolor with Preset",
+    "Color library..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "_GenericPluginMenuItem 63",
+   "name": "Single Color",
+   "menu": [
+    "Edit",
+    "Edit Colors",
+    "Recolor with Preset",
+    "Single Color"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "_GenericPluginMenuItem 64",
+   "name": "Two Color",
+   "menu": [
+    "Edit",
+    "Edit Colors",
+    "Recolor with Preset",
+    "Two Color"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "_GenericPluginMenuItem 65",
+   "name": "Three Color",
+   "menu": [
+    "Edit",
+    "Edit Colors",
+    "Recolor with Preset",
+    "Three Color"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "_GenericPluginMenuItem 66",
+   "name": "Color Harmony",
+   "menu": [
+    "Edit",
+    "Edit Colors",
+    "Recolor with Preset",
+    "Color Harmony"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "_GenericPluginMenuItem 68",
+   "name": "Generative Al User Guidelines",
+   "menu": [
+    "Help",
+    "Generative Al User Guidelines"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_GenericPluginMenuItem 69",
+   "name": "About Generative Credits",
+   "menu": [
+    "Help",
+    "About Generative Credits"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 1",
+   "name": "Ancient",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Art History",
+    "Ancient"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 100",
+   "name": "Nature_Foliage",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Patterns",
+    "Nature",
+    "Nature_Foliage"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 102",
+   "name": "Analogous",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Scientific",
+    "Analogous"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 103",
+   "name": "Complementary",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Scientific",
+    "Complementary"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 104",
+   "name": "Split Complementary",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Scientific",
+    "Split Complementary"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 105",
+   "name": "Tetrad",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Scientific",
+    "Tetrad"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 106",
+   "name": "Triad",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Scientific",
+    "Triad"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 107",
+   "name": "Skintones",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Skintones"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 108",
+   "name": "System (Macintosh)",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "System (Macintosh)"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 109",
+   "name": "System (Windows)",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "System (Windows)"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 11",
+   "name": "ANPA Color",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "ANPA Color"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 110",
+   "name": "Textiles",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Textiles"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 111",
+   "name": "VisiBone2",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "VisiBone2"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 112",
+   "name": "Web",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Web"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 12",
+   "name": "DIC Color Guide",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "DIC Color Guide"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 13",
+   "name": "FOCOLTONE",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "FOCOLTONE"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 14",
+   "name": "HKS E Process",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "HKS E Process"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 15",
+   "name": "HKS E",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "HKS E"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 16",
+   "name": "HKS K Process",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "HKS K Process"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 17",
+   "name": "HKS K",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "HKS K"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 18",
+   "name": "HKS N Process",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "HKS N Process"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 19",
+   "name": "HKS N",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "HKS N"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 2",
+   "name": "Baroque",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Art History",
+    "Baroque"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 20",
+   "name": "HKS Z Process",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "HKS Z Process"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 21",
+   "name": "HKS Z",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "HKS Z"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 22",
+   "name": "PANTONE+ CMYK Coated",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "PANTONE+ CMYK Coated"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 23",
+   "name": "PANTONE+ CMYK Uncoated",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "PANTONE+ CMYK Uncoated"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 24",
+   "name": "PANTONE+ Color Bridge Coated",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "PANTONE+ Color Bridge Coated"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 25",
+   "name": "PANTONE+ Color Bridge Uncoated",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "PANTONE+ Color Bridge Uncoated"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 26",
+   "name": "PANTONE+ Metallic Coated",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "PANTONE+ Metallic Coated"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 27",
+   "name": "PANTONE+ Pastels & Neons Coated",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "PANTONE+ Pastels & Neons Coated"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 28",
+   "name": "PANTONE+ Pastels & Neons Uncoated",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "PANTONE+ Pastels & Neons Uncoated"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 29",
+   "name": "PANTONE+ Premium Metallics Coated",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "PANTONE+ Premium Metallics Coated"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 3",
+   "name": "Impressionism",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Art History",
+    "Impressionism"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 30",
+   "name": "PANTONE+ Solid Coated",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "PANTONE+ Solid Coated"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 31",
+   "name": "PANTONE+ Solid Uncoated",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "PANTONE+ Solid Uncoated"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 32",
+   "name": "TOYO 94 COLOR FINDER",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "TOYO 94 COLOR FINDER"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 33",
+   "name": "TOYO COLOR FINDER",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "TOYO COLOR FINDER"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 34",
+   "name": "TRUMATCH",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Books",
+    "TRUMATCH"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 36",
+   "name": "Bright",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Properties",
+    "Bright"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 37",
+   "name": "Cool",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Properties",
+    "Cool"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 38",
+   "name": "Dark",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Properties",
+    "Dark"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 39",
+   "name": "Desaturated",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Properties",
+    "Desaturated"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 4",
+   "name": "Middle Ages",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Art History",
+    "Middle Ages"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 40",
+   "name": "Light",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Properties",
+    "Light"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 41",
+   "name": "Saturated",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Properties",
+    "Saturated"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 42",
+   "name": "Soft",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Properties",
+    "Soft"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 43",
+   "name": "Warm",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Color Properties",
+    "Warm"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 44",
+   "name": "Corporate",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Corporate"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 46",
+   "name": "Art & Illustration",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Default Swatches",
+    "Art & Illustration"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 47",
+   "name": "Mobile",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Default Swatches",
+    "Mobile"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 48",
+   "name": "Print",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Default Swatches",
+    "Print"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 49",
+   "name": "Video and Film",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Default Swatches",
+    "Video and Film"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 5",
+   "name": "Pop Art",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Art History",
+    "Pop Art"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 50",
+   "name": "Web",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Default Swatches",
+    "Web"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 51",
+   "name": "Earthtone",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Earthtone"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 53",
+   "name": "Beverages",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Foods",
+    "Beverages"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 54",
+   "name": "Fruit",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Foods",
+    "Fruit"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 55",
+   "name": "Ice Cream",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Foods",
+    "Ice Cream"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 56",
+   "name": "Sweets",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Foods",
+    "Sweets"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 57",
+   "name": "Vegetables",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Foods",
+    "Vegetables"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 59",
+   "name": "Brights",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Brights"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 6",
+   "name": "Prehistoric",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Art History",
+    "Prehistoric"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 60",
+   "name": "Color Combinations",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Color Combinations"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 61",
+   "name": "Color Harmonies",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Color Harmonies"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 62",
+   "name": "Earthtones",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Earthtones"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 63",
+   "name": "Fades",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Fades"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 64",
+   "name": "Foliage",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Foliage"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 65",
+   "name": "Fruits and Vegetables",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Fruits and Vegetables"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 66",
+   "name": "Gems and Jewels",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Gems and Jewels"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 67",
+   "name": "Metals",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Metals"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 68",
+   "name": "Neutrals",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Neutrals"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 69",
+   "name": "Pastels",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Pastels"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 7",
+   "name": "Renaissance",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Art History",
+    "Renaissance"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 70",
+   "name": "Seasons",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Seasons"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 71",
+   "name": "Simple Radial",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Simple Radial"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 72",
+   "name": "Skintones",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Skintones"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 73",
+   "name": "Sky",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Sky"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 74",
+   "name": "Spectrums",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Spectrums"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 75",
+   "name": "Stone and Brick",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Stone and Brick"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 76",
+   "name": "Tints and Shades",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Tints and Shades"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 77",
+   "name": "Vignettes",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Vignettes"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 78",
+   "name": "Water",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Water"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 79",
+   "name": "Wood",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Gradients",
+    "Wood"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 8",
+   "name": "Russian Poster Art",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Art History",
+    "Russian Poster Art"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 80",
+   "name": "Kids Stuff",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Kids Stuff"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 81",
+   "name": "Metal",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Metal"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 83",
+   "name": "Beach",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Nature",
+    "Beach"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 84",
+   "name": "Flowers",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Nature",
+    "Flowers"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 85",
+   "name": "Foliage",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Nature",
+    "Foliage"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 86",
+   "name": "Landscape",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Nature",
+    "Landscape"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 87",
+   "name": "Seasons",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Nature",
+    "Seasons"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 88",
+   "name": "Stone and Brick",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Nature",
+    "Stone and Brick"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 89",
+   "name": "Neutral",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Neutral"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 9",
+   "name": "Celebration",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Celebration"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 92",
+   "name": "Basic Graphics_Dots",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Patterns",
+    "Basic Graphics",
+    "Basic Graphics_Dots"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 93",
+   "name": "Basic Graphics_Lines",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Patterns",
+    "Basic Graphics",
+    "Basic Graphics_Lines"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 94",
+   "name": "Basic Graphics_Textures",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Patterns",
+    "Basic Graphics",
+    "Basic Graphics_Textures"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 96",
+   "name": "Decorative Legacy",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Patterns",
+    "Decorative",
+    "Decorative Legacy"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 97",
+   "name": "Vonster Patterns",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Patterns",
+    "Decorative",
+    "Vonster Patterns"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "_Swatch Library Menu Item 99",
+   "name": "Nature_Animal Skins",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Patterns",
+    "Nature",
+    "Nature_Animal Skins"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "~bullet",
+   "name": "Bullet",
+   "menu": [
+    "Type",
+    "Insert Special Character",
+    "Symbols",
+    "Bullet"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "~copyright",
+   "name": "Copyright Symbol",
+   "menu": [
+    "Type",
+    "Insert Special Character",
+    "Symbols",
+    "Copyright Symbol"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~discretionaryHyphen",
+   "name": "Discretionary Hyphen",
+   "menu": [
+    "Type",
+    "Insert Special Character",
+    "Hyphens And Dashes",
+    "Discretionary Hyphen"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~doubleLeftQuote",
+   "name": "Double Left Quotation Marks",
+   "menu": [
+    "Type",
+    "Insert Special Character",
+    "Quotation Marks",
+    "Double Left Quotation Marks"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~doubleRightQuote",
+   "name": "Double Right Quotation Marks",
+   "menu": [
+    "Type",
+    "Insert Special Character",
+    "Quotation Marks",
+    "Double Right Quotation Marks"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~ellipsis",
+   "name": "Ellipsis",
+   "menu": [
+    "Type",
+    "Insert Special Character",
+    "Symbols",
+    "Ellipsis"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~emDash",
+   "name": "Em Dash",
+   "menu": [
+    "Type",
+    "Insert Special Character",
+    "Hyphens And Dashes",
+    "Em Dash"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~emSpace",
+   "name": "Em Space",
+   "menu": [
+    "Type",
+    "Insert WhiteSpace Character",
+    "Em Space"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~enDash",
+   "name": "En Dash",
+   "menu": [
+    "Type",
+    "Insert Special Character",
+    "Hyphens And Dashes",
+    "En Dash"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~enSpace",
+   "name": "En Space",
+   "menu": [
+    "Type",
+    "Insert WhiteSpace Character",
+    "En Space"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~forcedLineBreak",
+   "name": "Forced Line Break",
+   "menu": [
+    "Type",
+    "Insert Break Character",
+    "Forced Line Break"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~hairSpace",
+   "name": "Hair Space",
+   "menu": [
+    "Type",
+    "Insert WhiteSpace Character",
+    "Hair Space"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~kernCloser",
+   "name": "Kern Tighter",
+   "menu": [],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "~kernFurther",
+   "name": "Kern Looser",
+   "menu": [],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "~paragraphSymbol",
+   "name": "Paragraph Symbol",
+   "menu": [
+    "Type",
+    "Insert Special Character",
+    "Symbols",
+    "Paragraph Symbol"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~registeredTrademark",
+   "name": "Registered Trademark Symbol",
+   "menu": [
+    "Type",
+    "Insert Special Character",
+    "Symbols",
+    "Registered Trademark Symbol"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~sectionSymbol",
+   "name": "Section Symbol",
+   "menu": [
+    "Type",
+    "Insert Special Character",
+    "Symbols",
+    "Section Symbol"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~singleLeftQuote",
+   "name": "Single Left Quotation Marks",
+   "menu": [
+    "Type",
+    "Insert Special Character",
+    "Quotation Marks",
+    "Single Left Quotation Marks"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~singleRightQuote",
+   "name": "Single Right Quotation Marks",
+   "menu": [
+    "Type",
+    "Insert Special Character",
+    "Quotation Marks",
+    "Single Right Quotation Marks"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~subscript",
+   "name": "Subscript",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~subscript2",
+   "name": "Subscript (Secondary)",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~superScript",
+   "name": "Superscript",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~superScript2",
+   "name": "Superscript (Secondary)",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~textBold",
+   "name": "Bold",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~textItalic",
+   "name": "Italic",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~textUnderline",
+   "name": "Underline",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~thinSpace",
+   "name": "Thin Space",
+   "menu": [
+    "Type",
+    "Insert WhiteSpace Character",
+    "Thin Space"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "~trademarkSymbol",
+   "name": "Trademark Symbol",
+   "menu": [
+    "Type",
+    "Insert Special Character",
+    "Symbols",
+    "Trademark Symbol"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "3D ribbon",
+   "name": "3D Ribbon",
+   "menu": [
+    "Type",
+    "Type on a Path",
+    "3D Ribbon"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "about",
+   "name": "About Illustrator...",
+   "menu": [],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "actualsize",
+   "name": "Actual Size",
+   "menu": [
+    "View",
+    "Actual Size"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Add Anchor Points2",
+   "name": "Add Anchor Points",
+   "menu": [
+    "Object",
+    "Path",
+    "Add Anchor Points"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Adjust3",
+   "name": "Adjust Color Balance...",
+   "menu": [
+    "Edit",
+    "Edit Colors",
+    "Adjust Color Balance..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Adobe 3D Panel",
+   "name": "3D and Materials",
+   "menu": [
+    "Window",
+    "3D and Materials"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Action Palette",
+   "name": "Actions",
+   "menu": [
+    "Window",
+    "Actions"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Actions Batch",
+   "name": "Batch...",
+   "menu": [
+    "Actions panel menu",
+    "Batch..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Advanced Toolbar Menu",
+   "name": "Advanced",
+   "menu": [
+    "Window",
+    "Toolbars",
+    "Advanced"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe AI Save For Web",
+   "name": "Save for Web (Legacy)...",
+   "menu": [
+    "File",
+    "Export",
+    "Save for Web (Legacy)..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe AI Save Selected Slices",
+   "name": "Save Selected Slices...",
+   "menu": [
+    "File",
+    "Save Selected Slices..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Adobe Apply Last Effect",
+   "name": "Apply Last Effect",
+   "menu": [
+    "Effect",
+    "Apply Last Effect"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Art Style Plugin Other libraries menu item",
+   "name": "Other Library...",
+   "menu": [
+    "Window",
+    "Graphic Style Libraries",
+    "Other Library..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Artboard Palette",
+   "name": "Artboards",
+   "menu": [
+    "Window",
+    "Artboards"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Basic Toolbar Menu",
+   "name": "Basic",
+   "menu": [
+    "Window",
+    "Toolbars",
+    "Basic"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Bridge Browse",
+   "name": "Browse in Bridge...",
+   "menu": [
+    "File",
+    "Browse in Bridge..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe BrushManager Menu Item",
+   "name": "Brushes",
+   "menu": [
+    "Window",
+    "Brushes"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Color Palette",
+   "name": "Color",
+   "menu": [
+    "Window",
+    "Color"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Color Palette Secondary",
+   "name": "Color (secondary shortcut)",
+   "menu": [
+    "Window",
+    "Color (secondary shortcut)"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Commenting Palette",
+   "name": "Comments",
+   "menu": [
+    "Window",
+    "Comments"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe CSXS Extension com.adobe.DesignLibraries.angularLibraries",
+   "name": "Libraries",
+   "menu": [
+    "Window",
+    "Libraries"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Edit Pattern",
+   "name": "Edit Pattern",
+   "menu": [
+    "Object",
+    "Pattern",
+    "Edit Pattern"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Adobe Flattening Preview",
+   "name": "Flattener Preview",
+   "menu": [
+    "Window",
+    "Flattener Preview"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Generative Patterns Panel",
+   "name": "Generation History",
+   "menu": [
+    "Window",
+    "Generation History"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Gradient Palette",
+   "name": "Gradient",
+   "menu": [
+    "Window",
+    "Gradient"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Harmony Palette",
+   "name": "Color Guide",
+   "menu": [
+    "Window",
+    "Color Guide"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe History Panel Menu Item",
+   "name": "History",
+   "menu": [
+    "Window",
+    "History"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe HistoryPanel Menu Item",
+   "name": "History",
+   "menu": [
+    "Window",
+    "History"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Illustrator Find Font Menu Item",
+   "name": "Find/Replace Font...",
+   "menu": [
+    "Type",
+    "Find/Replace Font..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Illustrator Kuler Panel",
+   "name": "Color Themes",
+   "menu": [
+    "Window",
+    "Color Themes"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Illustrator Smart Punctuation Menu Item",
+   "name": "Smart Punctuation...",
+   "menu": [
+    "Type",
+    "Smart Punctuation..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe IllustratorUI Resolve Missing Font",
+   "name": "Resolve Missing Fonts...",
+   "menu": [
+    "Type",
+    "Resolve Missing Fonts..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe internal composite font plugin",
+   "name": "Composite Fonts...",
+   "menu": [
+    "Type",
+    "Composite Fonts..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Kinsoku Settings",
+   "name": "Kinsoku Shori Settings...",
+   "menu": [
+    "Type",
+    "Kinsoku Shori Settings..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Last Effect",
+   "name": "Last Effect",
+   "menu": [
+    "Effect",
+    "Last Effect"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Learn Panel Menu Item",
+   "name": "Learn",
+   "menu": [
+    "Window",
+    "Learn"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe LinkPalette Menu Item",
+   "name": "Links",
+   "menu": [
+    "Window",
+    "Links"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Make Pattern",
+   "name": "Make",
+   "menu": [
+    "Object",
+    "Pattern",
+    "Make"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Manage Workspace",
+   "name": "Manage Workspaces...",
+   "menu": [
+    "Window",
+    "Workspace",
+    "Manage Workspaces..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe MojiKumi Settings",
+   "name": "Mojikumi Settings...",
+   "menu": [
+    "Type",
+    "Mojikumi Settings..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe New Fill Shortcut",
+   "name": "Add New Fill",
+   "menu": [
+    "Appearance panel menu",
+    "Add New Fill"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe New Stroke Shortcut",
+   "name": "Add New Stroke",
+   "menu": [
+    "Appearance panel menu",
+    "Add New Stroke"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe New Style Shortcut",
+   "name": "New Graphic Style...",
+   "menu": [
+    "Graphic Styles panel menu",
+    "New Graphic Style..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe New Swatch Shortcut Menu",
+   "name": "New Swatch...",
+   "menu": [
+    "Swatches panel menu",
+    "New Swatch..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe New Symbol Shortcut",
+   "name": "New Symbol...",
+   "menu": [
+    "Symbols panel menu",
+    "New Symbol..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe New Workspace",
+   "name": "New Workspace...",
+   "menu": [
+    "Window",
+    "Workspace",
+    "New Workspace..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Optical Alignment Item",
+   "name": "Optical Margin Alignment",
+   "menu": [
+    "Type",
+    "Optical Margin Alignment"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Adobe Paragraph Styles Palette",
+   "name": "Paragraph Styles",
+   "menu": [
+    "Window",
+    "Type",
+    "Paragraph Styles"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe PathfinderUI",
+   "name": "Pathfinder",
+   "menu": [
+    "Window",
+    "Pathfinder"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Pattern Panel Toggle",
+   "name": "Pattern Options",
+   "menu": [
+    "Window",
+    "Pattern Options"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Pattern Tile Color",
+   "name": "Tile Edge Color...",
+   "menu": [
+    "Object",
+    "Pattern",
+    "Tile Edge Color..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Property Palette",
+   "name": "Properties",
+   "menu": [
+    "Window",
+    "Properties"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Quick Toolbar Menu",
+   "name": "Getting Started",
+   "menu": [
+    "Window",
+    "Toolbars",
+    "Getting Started"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Reset Workspace",
+   "name": "Reset Workspace",
+   "menu": [
+    "Window",
+    "Reset Workspace"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Save Workspace",
+   "name": "Save Workspace...",
+   "menu": [
+    "Window",
+    "Workspace",
+    "Save Workspace..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Separation Preview Panel",
+   "name": "Separations Preview",
+   "menu": [
+    "Window",
+    "Separations Preview"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe SmartExport Panel Menu Item",
+   "name": "Asset Export",
+   "menu": [
+    "Window",
+    "Asset Export"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Stroke Palette",
+   "name": "Stroke",
+   "menu": [
+    "Window",
+    "Stroke"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Style Palette",
+   "name": "Graphic Styles",
+   "menu": [
+    "Window",
+    "Graphic Styles"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe SVG Interactivity Palette",
+   "name": "SVG Interactivity",
+   "menu": [
+    "Window",
+    "SVG Interactivity"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Swatches Menu Item",
+   "name": "Swatches",
+   "menu": [
+    "Window",
+    "Swatches"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Symbol Palette",
+   "name": "Symbols",
+   "menu": [
+    "Window",
+    "Symbols"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Symbol Palette Plugin Other libraries menu item",
+   "name": "Other Library...",
+   "menu": [
+    "Window",
+    "Symbol Libraries",
+    "Other Library..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Transparency Palette Menu Item",
+   "name": "Transparency",
+   "menu": [
+    "Window",
+    "Transparency"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Update Link Shortcut",
+   "name": "Update Link",
+   "menu": [
+    "Links panel menu",
+    "Update Link"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Variables Palette Menu Item",
+   "name": "Variables",
+   "menu": [
+    "Window",
+    "Variables"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Vector Edge Panel",
+   "name": "Mockup",
+   "menu": [
+    "Window",
+    "Mockup"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Vectorize Panel",
+   "name": "Image Trace",
+   "menu": [
+    "Window",
+    "Image Trace"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Adobe Version History File Menu Item",
+   "name": "Version History",
+   "menu": [
+    "Window",
+    "Version History"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AdobeAlignObjects2",
+   "name": "Align",
+   "menu": [
+    "Window",
+    "Align"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AdobeBrushMgrUI Other libraries menu item",
+   "name": "Other Library...",
+   "menu": [
+    "Window",
+    "Brush Libraries",
+    "Other Library..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AdobeBuiltInToolbox1",
+   "name": "Tools",
+   "menu": [
+    "Window",
+    "Tools"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AdobeLayerPalette1",
+   "name": "Layers",
+   "menu": [
+    "Window",
+    "Layers"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AdobeLayerPalette2",
+   "name": "New Layer",
+   "menu": [
+    "Layers panel menu",
+    "New Layer"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AdobeLayerPalette3",
+   "name": "New Layer with Dialog...",
+   "menu": [
+    "Layers panel menu",
+    "New Layer with Dialog..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AdobeNavigator",
+   "name": "Navigator",
+   "menu": [
+    "Window",
+    "Navigator"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AdobeNavigator2",
+   "name": "Navigator options",
+   "menu": [
+    "Window",
+    "Navigator options"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AdobeSwatch_ Other libraries menu item",
+   "name": "Other Library...",
+   "menu": [
+    "Window",
+    "Swatch Libraries",
+    "Other Library..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AdobeTransformObjects1",
+   "name": "Transform",
+   "menu": [
+    "Window",
+    "Transform"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AI Bounding Box Toggle",
+   "name": "Show / Hide Bounding Box",
+   "menu": [
+    "View",
+    "Show / Hide Bounding Box"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AI Magic Wand",
+   "name": "Magic Wand",
+   "menu": [
+    "Window",
+    "Magic Wand"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AI Object Mosaic Plug-in4",
+   "name": "Create Object Mosaic...",
+   "menu": [
+    "Object",
+    "Create Object Mosaic..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI Place",
+   "name": "Place...",
+   "menu": [
+    "File",
+    "Place..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AI Reset Bounding Box",
+   "name": "Reset Bounding Box",
+   "menu": [
+    "Object",
+    "Transform",
+    "Reset Bounding Box"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI_Alpha_1",
+   "name": "AI_Alpha_1",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_Alpha_1"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI_Alpha_4",
+   "name": "AI_Alpha_4",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_Alpha_4"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI_BevelShadow_1",
+   "name": "AI_BevelShadow_1",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_BevelShadow_1"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "ai_browse_for_script",
+   "name": "Other Script...",
+   "menu": [
+    "File",
+    "Scripts",
+    "Other Script..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AI_CoolBreeze",
+   "name": "AI_CoolBreeze",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_CoolBreeze"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI_Dilate_3",
+   "name": "AI_Dilate_3",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_Dilate_3"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI_Dilate_6",
+   "name": "AI_Dilate_6",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_Dilate_6"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI_Erode_3",
+   "name": "AI_Erode_3",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_Erode_3"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI_Erode_6",
+   "name": "AI_Erode_6",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_Erode_6"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI_GaussianBlur_4",
+   "name": "AI_GaussianBlur_4",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_GaussianBlur_4"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI_GaussianBlur_7",
+   "name": "AI_GaussianBlur_7",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_GaussianBlur_7"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI_PixelPlay_1",
+   "name": "AI_PixelPlay_1",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_PixelPlay_1"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI_PixelPlay_2",
+   "name": "AI_PixelPlay_2",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_PixelPlay_2"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI_Shadow_1",
+   "name": "AI_Shadow_1",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_Shadow_1"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI_Shadow_2",
+   "name": "AI_Shadow_2",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_Shadow_2"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI_Static",
+   "name": "AI_Static",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_Static"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI_Turbulence_3",
+   "name": "AI_Turbulence_3",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_Turbulence_3"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI_Turbulence_5",
+   "name": "AI_Turbulence_5",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_Turbulence_5"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AI_Woodgrain",
+   "name": "AI_Woodgrain",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "AI_Woodgrain"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AISlice Clip to Artboard",
+   "name": "Clip to Artboard",
+   "menu": [
+    "Object",
+    "Slice",
+    "Clip to Artboard"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AISlice Combine",
+   "name": "Combine Slices",
+   "menu": [
+    "Object",
+    "Slice",
+    "Combine Slices"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AISlice Create from Guides",
+   "name": "Create from Guides",
+   "menu": [
+    "Object",
+    "Slice",
+    "Create from Guides"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AISlice Create from Selection",
+   "name": "Create from Selection",
+   "menu": [
+    "Object",
+    "Slice",
+    "Create from Selection"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AISlice Delete All Slices",
+   "name": "Delete All",
+   "menu": [
+    "Object",
+    "Slice",
+    "Delete All"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AISlice Divide",
+   "name": "Divide Slices...",
+   "menu": [
+    "Object",
+    "Slice",
+    "Divide Slices..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AISlice Duplicate",
+   "name": "Duplicate Slice",
+   "menu": [
+    "Object",
+    "Slice",
+    "Duplicate Slice"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AISlice Feedback Menu",
+   "name": "Show / Hide Slices",
+   "menu": [
+    "View",
+    "Show / Hide Slices"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AISlice Lock Menu",
+   "name": "Lock Slices",
+   "menu": [
+    "View",
+    "Lock Slices"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "AISlice Make Slice",
+   "name": "Make",
+   "menu": [
+    "Object",
+    "Slice",
+    "Make"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AISlice Release Slice",
+   "name": "Release",
+   "menu": [
+    "Object",
+    "Slice",
+    "Release"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "AISlice Slice Options",
+   "name": "Slice Options...",
+   "menu": [
+    "Object",
+    "Slice",
+    "Slice Options..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Align To Artboard",
+   "name": "Align To Artboard",
+   "menu": [
+    "Object",
+    "Align",
+    "Align To Artboard"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Align To Key Object",
+   "name": "Align To Key Object",
+   "menu": [
+    "Object",
+    "Align",
+    "Align To Key Object"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Align To Selection",
+   "name": "Align To Selection",
+   "menu": [
+    "Object",
+    "Align",
+    "Align To Selection"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "alternate glyph palette plugin",
+   "name": "Glyphs",
+   "menu": [
+    "Type",
+    "Glyphs"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "alternate glyph palette plugin 2",
+   "name": "Glyphs",
+   "menu": [
+    "Window",
+    "Type",
+    "Glyphs"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Area Text Objects menu item",
+   "name": "Area Type Objects",
+   "menu": [
+    "Select",
+    "Object",
+    "Area Type Objects"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "area-type-options",
+   "name": "Area Type Options...",
+   "menu": [
+    "Type",
+    "Area Type Options..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "artboard",
+   "name": "Show / Hide Artboards",
+   "menu": [
+    "View",
+    "Show / Hide Artboards"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "assignprofile",
+   "name": "Assign Profile...",
+   "menu": [
+    "Edit",
+    "Assign Profile..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Attach Objects on Path",
+   "name": "Attach...",
+   "menu": [
+    "Object",
+    "Objects on Path",
+    "Attach..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Attach to Active Plane",
+   "name": "Attach to Active Plane",
+   "menu": [
+    "Object",
+    "Perspective",
+    "Attach to Active Plane"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Auto Spell Check",
+   "name": "Auto Spell Check",
+   "menu": [
+    "Edit",
+    "Spelling",
+    "Auto Spell Check"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "average",
+   "name": "Average...",
+   "menu": [
+    "Object",
+    "Path",
+    "Average..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "avgAndJoin",
+   "name": "Average & Join",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "BlackPref",
+   "name": "Appearance of Black...",
+   "menu": [
+    "Edit",
+    "Preferences",
+    "Appearance of Black..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "blend",
+   "name": "blend",
+   "menu": [],
+   "selection": null,
+   "documented": false
+  },
+  {
+   "id": "Blend Make",
+   "name": "Blend Make",
+   "menu": [],
+   "selection": null,
+   "documented": false
+  },
+  {
+   "id": "Bristle Brush Strokes menu item",
+   "name": "Bristle Brush Strokes",
+   "menu": [
+    "Select",
+    "Object",
+    "Bristle Brush Strokes"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Browse Add-Ons Menu",
+   "name": "Find Extensions on Exchange...",
+   "menu": [
+    "Window",
+    "Find Extensions on Exchange..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Browse Typekit Fonts Menu IllustratorUI",
+   "name": "More from Adobe Fonts...",
+   "menu": [
+    "Type",
+    "More from Adobe Fonts..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Brush Strokes menu item",
+   "name": "Brush Strokes",
+   "menu": [
+    "Select",
+    "Object",
+    "Brush Strokes"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "cascade",
+   "name": "Cascade",
+   "menu": [
+    "Window",
+    "Arrange",
+    "Cascade"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "centerAlign",
+   "name": "Center Text",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Character Styles",
+   "name": "Character Styles",
+   "menu": [
+    "Window",
+    "Type",
+    "Character Styles"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Check Spelling",
+   "name": "Check Spelling...",
+   "menu": [
+    "Edit",
+    "Spelling",
+    "Check Spelling..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "cleanup menu item",
+   "name": "Clean Up...",
+   "menu": [
+    "Object",
+    "Path",
+    "Clean Up..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "clear",
+   "name": "Clear",
+   "menu": [
+    "Edit",
+    "Clear"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "clearguide",
+   "name": "Clear Guides",
+   "menu": [
+    "View",
+    "Guides",
+    "Clear Guides"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "clearTrack",
+   "name": "Clear Tracking",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "clearTypeScale",
+   "name": "Uniform Type",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "ClipboardPref",
+   "name": "Clipboard Handling",
+   "menu": [
+    "Edit",
+    "Preferences",
+    "Clipboard Handling"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Clipping Masks menu item",
+   "name": "Clipping Masks",
+   "menu": [
+    "Select",
+    "Object",
+    "Clipping Masks"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "close",
+   "name": "Close",
+   "menu": [
+    "File",
+    "Close"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "closeAll",
+   "name": "Close All",
+   "menu": [
+    "File",
+    "Close All"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "color",
+   "name": "Color Settings...",
+   "menu": [
+    "Edit",
+    "Color Settings..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Colors3",
+   "name": "Blend Front to Back",
+   "menu": [
+    "Edit",
+    "Edit Colors",
+    "Blend Front to Back"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Colors4",
+   "name": "Blend Horizontally",
+   "menu": [
+    "Edit",
+    "Edit Colors",
+    "Blend Horizontally"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Colors5",
+   "name": "Blend Vertically",
+   "menu": [
+    "Edit",
+    "Edit Colors",
+    "Blend Vertically"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Colors6",
+   "name": "Invert Colors",
+   "menu": [
+    "Edit",
+    "Edit Colors",
+    "Invert Colors"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Colors7",
+   "name": "Convert to Grayscale",
+   "menu": [
+    "Edit",
+    "Edit Colors",
+    "Convert to Grayscale"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Colors8",
+   "name": "Convert to CMYK",
+   "menu": [
+    "Edit",
+    "Edit Colors",
+    "Convert to CMYK"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Colors9",
+   "name": "Convert to RGB",
+   "menu": [
+    "Edit",
+    "Edit Colors",
+    "Convert to RGB"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "compoundPath",
+   "name": "Make",
+   "menu": [
+    "Object",
+    "Compound Path",
+    "Make"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "consolidateAllWindows",
+   "name": "Consolidate All Windows",
+   "menu": [
+    "Window",
+    "Arrange",
+    "Consolidate All Windows"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "convert list style to text",
+   "name": "Convert to text",
+   "menu": [
+    "Type",
+    "Bullets and Numbering",
+    "Convert to text"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Convert to Shape",
+   "name": "Convert to Shape",
+   "menu": [
+    "Object",
+    "Shape",
+    "Convert to Shape"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "ConvertToAreaText",
+   "name": "ConvertToAreaText",
+   "menu": [],
+   "selection": null,
+   "documented": false
+  },
+  {
+   "id": "ConvertToAreaType",
+   "name": "ConvertToAreaType",
+   "menu": [],
+   "selection": null,
+   "documented": false
+  },
+  {
+   "id": "copy",
+   "name": "Copy",
+   "menu": [
+    "Edit",
+    "Copy"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "copy2",
+   "name": "Copy (Secondary)",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Create Envelope Grid",
+   "name": "Make with Mesh...",
+   "menu": [
+    "Object",
+    "Envelope Distort",
+    "Make with Mesh..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "createOutlines",
+   "name": "createOutlines",
+   "menu": [],
+   "selection": null,
+   "documented": false
+  },
+  {
+   "id": "Crop Image",
+   "name": "Crop Image",
+   "menu": [
+    "Object",
+    "Crop Image"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "CSS Menu Item",
+   "name": "CSS Properties (Deprecated)",
+   "menu": [
+    "Window",
+    "CSS Properties (Deprecated)"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "cut",
+   "name": "Cut",
+   "menu": [
+    "Edit",
+    "Cut"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "cut2",
+   "name": "Cut (Secondary)",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Debug Panel",
+   "name": "Debug Panel",
+   "menu": [],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Define Perspective Grid",
+   "name": "Define Grid...",
+   "menu": [
+    "View",
+    "Perspective Grid",
+    "Define Grid..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "deselectall",
+   "name": "Deselect",
+   "menu": [
+    "Select",
+    "Deselect"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "DevicesPref",
+   "name": "Devices",
+   "menu": [
+    "Edit",
+    "Preferences",
+    "Devices"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "doc-color-cmyk",
+   "name": "CMYK Color",
+   "menu": [
+    "File",
+    "Document Color Mode",
+    "CMYK Color"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "doc-color-rgb",
+   "name": "RGB Color",
+   "menu": [
+    "File",
+    "Document Color Mode",
+    "RGB Color"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "DocInfo1",
+   "name": "Document Info",
+   "menu": [
+    "Window",
+    "Document Info"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "document",
+   "name": "Document Setup...",
+   "menu": [
+    "File",
+    "Document Setup..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "drover control palette plugin",
+   "name": "Control",
+   "menu": [
+    "Window",
+    "Control"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Dynamic Text",
+   "name": "Flash Dynamic Text",
+   "menu": [
+    "Select",
+    "Object",
+    "Flash Dynamic Text"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "edge",
+   "name": "Show / Hide Edges",
+   "menu": [
+    "View",
+    "Show / Hide Edges"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Edit Custom Dictionary...",
+   "name": "Edit Custom Dictionary...",
+   "menu": [
+    "Edit",
+    "Edit Custom Dictionary..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Edit Envelope Contents",
+   "name": "Edit Contents",
+   "menu": [
+    "Object",
+    "Envelope Distort",
+    "Edit Contents"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Edit Original Object",
+   "name": "Edit Text",
+   "menu": [
+    "Object",
+    "Perspective",
+    "Edit Text"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Edit Vector Edge",
+   "name": "Edit",
+   "menu": [
+    "Object",
+    "Mockup",
+    "Edit"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "EditGeneratedObjectEditMenu",
+   "name": "Prompt to edit",
+   "menu": [
+    "Edit",
+    "Prompt to edit"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "editGraphData",
+   "name": "Data...",
+   "menu": [
+    "Object",
+    "Graph",
+    "Data..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "editMask",
+   "name": "Edit Mask",
+   "menu": [
+    "Object",
+    "Clipping Mask",
+    "Edit Mask"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "EditOriginal Menu Item",
+   "name": "Edit Original",
+   "menu": [
+    "Edit",
+    "Edit Original"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "editview",
+   "name": "Edit Views...",
+   "menu": [
+    "View",
+    "Edit Views..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "enterFocus",
+   "name": "Isolate Selected Object",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Envelope Options",
+   "name": "Envelope Options...",
+   "menu": [
+    "Object",
+    "Envelope Distort",
+    "Envelope Options..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "exitFocus",
+   "name": "Exit Isolation Mode",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Expand Envelope",
+   "name": "Expand",
+   "menu": [
+    "Object",
+    "Envelope Distort",
+    "Expand"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Expand Image Tracing",
+   "name": "Expand",
+   "menu": [
+    "Object",
+    "Image Trace",
+    "Expand"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Expand Objects on Path",
+   "name": "Expand",
+   "menu": [
+    "Object",
+    "Objects on Path",
+    "Expand"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Expand Planet X",
+   "name": "Expand",
+   "menu": [
+    "Object",
+    "Live Paint",
+    "Expand"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Expand Shape",
+   "name": "Expand Shape",
+   "menu": [
+    "Object",
+    "Shape",
+    "Expand Shape"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Expand3",
+   "name": "Expand...",
+   "menu": [
+    "Object",
+    "Expand..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "expandStyle",
+   "name": "Expand Appearance",
+   "menu": [
+    "Object",
+    "Expand Appearance"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "export",
+   "name": "Export As...",
+   "menu": [
+    "File",
+    "Export",
+    "Export As..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "exportForScreens",
+   "name": "Export for Screens...",
+   "menu": [
+    "File",
+    "Export",
+    "Export for Screens..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "exportSelection",
+   "name": "Export Selection...",
+   "menu": [
+    "File",
+    "Export Selection..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "faceSizeDown",
+   "name": "Point Size Down",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "faceSizeUp",
+   "name": "Point Size Up",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "File Info",
+   "name": "File Info...",
+   "menu": [
+    "File",
+    "File Info..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "FileClipboardPref",
+   "name": "File Handling & Clipboard...",
+   "menu": [
+    "Edit",
+    "Preferences",
+    "File Handling & Clipboard..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "FilePref",
+   "name": "File Handling...",
+   "menu": [
+    "Edit",
+    "Preferences",
+    "File Handling..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Find and Replace",
+   "name": "Find and Replace...",
+   "menu": [
+    "Edit",
+    "Find and Replace..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Find Appearance Attributes menu item",
+   "name": "Appearance Attribute",
+   "menu": [
+    "Select",
+    "Same",
+    "Appearance Attribute"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Find Appearance menu item",
+   "name": "Appearance",
+   "menu": [
+    "Select",
+    "Same",
+    "Appearance"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Find Blending Mode menu item",
+   "name": "Blending Mode",
+   "menu": [
+    "Select",
+    "Same",
+    "Blending Mode"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Find Fill & Stroke menu item",
+   "name": "Fill & Stroke",
+   "menu": [
+    "Select",
+    "Same",
+    "Fill & Stroke"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Find Fill Color menu item",
+   "name": "Fill Color",
+   "menu": [
+    "Select",
+    "Same",
+    "Fill Color"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Find Link Block Series menu item",
+   "name": "Link Block Series",
+   "menu": [
+    "Select",
+    "Same",
+    "Link Block Series"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Find Live Shape menu item",
+   "name": "Shape",
+   "menu": [
+    "Select",
+    "Same",
+    "Shape"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Find Next",
+   "name": "Find Next",
+   "menu": [
+    "Edit",
+    "Find Next"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Find Opacity menu item",
+   "name": "Opacity",
+   "menu": [
+    "Select",
+    "Same",
+    "Opacity"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Find Reselect menu item",
+   "name": "Reselect",
+   "menu": [
+    "Select",
+    "Reselect"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Find Stroke Color menu item",
+   "name": "Stroke Color",
+   "menu": [
+    "Select",
+    "Same",
+    "Stroke Color"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Find Stroke Weight menu item",
+   "name": "Stroke Weight",
+   "menu": [
+    "Select",
+    "Same",
+    "Stroke Weight"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Find Style menu item",
+   "name": "Graphic Style",
+   "menu": [
+    "Select",
+    "Same",
+    "Graphic Style"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Find Symbol Instance menu item",
+   "name": "Symbol Instance",
+   "menu": [
+    "Select",
+    "Same",
+    "Symbol Instance"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Find Text Fill Color menu item",
+   "name": "Text Fill Color",
+   "menu": [
+    "Select",
+    "Same",
+    "Text Fill Color"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Find Text Fill Stroke Color menu item",
+   "name": "Text Fill & Stroke Color",
+   "menu": [
+    "Select",
+    "Same",
+    "Text Fill & Stroke Color"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Find Text Font Family menu item",
+   "name": "Font Family",
+   "menu": [
+    "Select",
+    "Same",
+    "Font Family"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Find Text Font Family Style menu item",
+   "name": "Font Family & Style",
+   "menu": [
+    "Select",
+    "Same",
+    "Font Family & Style"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Find Text Font Family Style Size menu item",
+   "name": "Font Family, Style & Size",
+   "menu": [
+    "Select",
+    "Same",
+    "Font Family, Style & Size"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Find Text Font Size menu item",
+   "name": "Font Size",
+   "menu": [
+    "Select",
+    "Same",
+    "Font Size"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Find Text Stroke Color menu item",
+   "name": "Text Stroke Color",
+   "menu": [
+    "Select",
+    "Same",
+    "Text Stroke Color"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Fit Artboard to artwork bounds",
+   "name": "Fit to Artwork Bounds",
+   "menu": [
+    "Object",
+    "Artboards",
+    "Fit to Artwork Bounds"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Fit Artboard to selected Art",
+   "name": "Fit to Selected Art",
+   "menu": [
+    "Object",
+    "Artboards",
+    "Fit to Selected Art"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "fitall",
+   "name": "Fit All in Window",
+   "menu": [
+    "View",
+    "Fit All in Window"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "fitHeadline",
+   "name": "Fit Headline",
+   "menu": [
+    "Type",
+    "Fit Headline"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "fitin",
+   "name": "Fit Artboard in Window",
+   "menu": [
+    "View",
+    "Fit Artboard in Window"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "fitinwindow",
+   "name": "fitinwindow",
+   "menu": [],
+   "selection": null,
+   "documented": false
+  },
+  {
+   "id": "Flatten Transparency",
+   "name": "Flatten Transparency...",
+   "menu": [
+    "Object",
+    "Flatten Transparency..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "floatAllInWindows",
+   "name": "Float All in Windows",
+   "menu": [
+    "Window",
+    "Arrange",
+    "Float All in Windows"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "floatInWindow",
+   "name": "Float in Window",
+   "menu": [
+    "Window",
+    "Arrange",
+    "Float in Window"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Gen Bleed Object Menu",
+   "name": "Print Bleed...",
+   "menu": [
+    "Object",
+    "Print Bleed..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Gen Expand Object Combine",
+   "name": "Combine",
+   "menu": [
+    "Object",
+    "Generative",
+    "Generative Expand",
+    "Combine"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Gen Expand Object Make",
+   "name": "Make",
+   "menu": [
+    "Object",
+    "Generative",
+    "Generative Expand",
+    "Make"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "GenAIConsolidatedBleed",
+   "name": "Print Bleed",
+   "menu": [
+    "Object",
+    "Generative",
+    "Print Bleed"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "GenAIConsolidatedGenerateTextGenerate",
+   "name": "Generate Text...",
+   "menu": [
+    "Object",
+    "Generative",
+    "Rewrite",
+    "Generate Text..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "GenAIConsolidatedGenerateTextProofread",
+   "name": "Proofread",
+   "menu": [
+    "Object",
+    "Generative",
+    "Rewrite",
+    "Proofread"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "GenAIConsolidatedGenerateTextRephraseToFit",
+   "name": "Fit text",
+   "menu": [
+    "Object",
+    "Generative",
+    "Rewrite",
+    "Fit text"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "GenAIConsolidatedGenerateTextTranslate",
+   "name": "Translate...",
+   "menu": [
+    "Object",
+    "Generative",
+    "Rewrite",
+    "Translate..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "GenAIConsolidatedGenerateVectors",
+   "name": "Generate Vectors...",
+   "menu": [
+    "Object",
+    "Generative",
+    "Generate Vectors..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "GenAIConsolidatedPatterns",
+   "name": "Generate Patterns",
+   "menu": [
+    "Object",
+    "Generative",
+    "Generate Patterns"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "GenAIConsolidatedRecolor",
+   "name": "Generative Recolor",
+   "menu": [
+    "Object",
+    "Generative",
+    "Generative Recolor"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "GenAIConsolidatedShapeFill",
+   "name": "Generative Shape Fill...",
+   "menu": [
+    "Object",
+    "Generative",
+    "Generative Shape Fill..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "GenAIConsolidatedTurntable",
+   "name": "Turntable",
+   "menu": [
+    "Object",
+    "Generative",
+    "Turntable"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "GenAIConsolidatedVariations",
+   "name": "Generation History",
+   "menu": [
+    "Object",
+    "Generative",
+    "Generation History"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Generate",
+   "name": "Generated Variations",
+   "menu": [
+    "Window",
+    "Generated Variations"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Generate Modal File Menu ",
+   "name": "Generate Vectors...",
+   "menu": [
+    "File",
+    "Generate Vectors..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "GenerateTextTypeMenu",
+   "name": "Rewrite...",
+   "menu": [
+    "Type",
+    "Rewrite..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Generative Recolor Art Dialog",
+   "name": "Generative Recolor",
+   "menu": [
+    "Edit",
+    "Edit Colors",
+    "Generative Recolor"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "GPU Preview",
+   "name": "View using GPU / CPU",
+   "menu": [],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "GPUPerformancePref",
+   "name": "Performance",
+   "menu": [
+    "Edit",
+    "Preferences",
+    "Performance"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Gradient Feedback",
+   "name": "Show / Hide Gradient Annotator",
+   "menu": [
+    "View",
+    "Show / Hide Gradient Annotator"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "graphDesigns",
+   "name": "Design...",
+   "menu": [
+    "Object",
+    "Graph",
+    "Design..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Gravity",
+   "name": "Gravity",
+   "menu": [
+    "Type",
+    "Type on a Path",
+    "Gravity"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "group",
+   "name": "Group",
+   "menu": [
+    "Object",
+    "Group"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "guidegridPref",
+   "name": "Guides & Grid...",
+   "menu": [
+    "Edit",
+    "Preferences",
+    "Guides & Grid..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Help Menu Beta log file",
+   "name": "Beta log file",
+   "menu": [
+    "Help",
+    "Beta log file"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "helpcontent",
+   "name": "Illustrator Help...",
+   "menu": [
+    "Help",
+    "Illustrator Help..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "helpcontent2",
+   "name": "Help (Secondary)",
+   "menu": [],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "hide",
+   "name": "Selection",
+   "menu": [
+    "Object",
+    "Hide",
+    "Selection"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "hide2",
+   "name": "Hide Others",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "hideGuides",
+   "name": "hideGuides",
+   "menu": [],
+   "selection": null,
+   "documented": false
+  },
+  {
+   "id": "highlightFont",
+   "name": "Highlight Font",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "highlightFont2",
+   "name": "Highlight Font (Secondary)",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Horizontal && Vertical Align Center",
+   "name": "Horizontal & Vertical Align Center",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Horizontal Align Center",
+   "name": "Horizontal Align Center",
+   "menu": [
+    "Object",
+    "Align",
+    "Horizontal Align Center"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Horizontal Align Left",
+   "name": "Horizontal Align Left",
+   "menu": [
+    "Object",
+    "Align",
+    "Horizontal Align Left"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Horizontal Align Right",
+   "name": "Horizontal Align Right",
+   "menu": [
+    "Object",
+    "Align",
+    "Horizontal Align Right"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Horizontal Distribute Center",
+   "name": "Horizontal Distribute Center",
+   "menu": [
+    "Object",
+    "Distribute",
+    "Horizontal Distribute Center"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Horizontal Distribute Left",
+   "name": "Horizontal Distribute Left",
+   "menu": [
+    "Object",
+    "Distribute",
+    "Horizontal Distribute Left"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Horizontal Distribute Right",
+   "name": "Horizontal Distribute Right",
+   "menu": [
+    "Object",
+    "Distribute",
+    "Horizontal Distribute Right"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Horizontal Distribute Space",
+   "name": "Horizontal Distribute Space",
+   "menu": [
+    "Object",
+    "Distribute",
+    "Horizontal Distribute Space"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "hyphenPref",
+   "name": "Hyphenation...",
+   "menu": [
+    "Edit",
+    "Preferences",
+    "Hyphenation..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "ink",
+   "name": "Overprint Preview",
+   "menu": [
+    "View",
+    "Overprint Preview"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Input Text",
+   "name": "Flash Input Text",
+   "menu": [
+    "Select",
+    "Object",
+    "Flash Input Text"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "internal palettes posing as plug-in menus-attributes",
+   "name": "Attributes",
+   "menu": [
+    "Window",
+    "Attributes"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "internal palettes posing as plug-in menus-character",
+   "name": "Character",
+   "menu": [
+    "Window",
+    "Type",
+    "Character"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "internal palettes posing as plug-in menus-info",
+   "name": "Info",
+   "menu": [
+    "Window",
+    "Info"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "internal palettes posing as plug-in menus-opentype",
+   "name": "OpenType",
+   "menu": [
+    "Window",
+    "Type",
+    "OpenType"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "internal palettes posing as plug-in menus-paragraph",
+   "name": "Paragraph",
+   "menu": [
+    "Window",
+    "Type",
+    "Paragraph"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "internal palettes posing as plug-in menus-tab",
+   "name": "Tabs",
+   "menu": [
+    "Window",
+    "Type",
+    "Tabs"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Inverse menu item",
+   "name": "Inverse",
+   "menu": [
+    "Select",
+    "Inverse"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Invite People",
+   "name": "Invite to Edit...",
+   "menu": [
+    "File",
+    "Invite to Edit..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "join",
+   "name": "Join",
+   "menu": [
+    "Object",
+    "Path",
+    "Join"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "justify",
+   "name": "Justify Text Left",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "justifyAll",
+   "name": "Justify All Lines",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "justifyCenter",
+   "name": "Justify Text Center",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "justifyRight",
+   "name": "Justify Text Right",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "KBSC Menu Item",
+   "name": "Keyboard Shortcuts...",
+   "menu": [
+    "Edit",
+    "Keyboard Shortcuts..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "keyboardPref",
+   "name": "Type...",
+   "menu": [
+    "Edit",
+    "Preferences",
+    "Type..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Knife Tool2",
+   "name": "Divide Objects Below",
+   "menu": [
+    "Object",
+    "Path",
+    "Divide Objects Below"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "leftAlign",
+   "name": "Left Align Text",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Live 3DExtrude",
+   "name": "Extrude & Bevel (Classic)...",
+   "menu": [
+    "Effect",
+    "3D and Materials",
+    "3D (Classic)",
+    "Extrude & Bevel (Classic)..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live 3DRevolve",
+   "name": "Revolve (Classic)...",
+   "menu": [
+    "Effect",
+    "3D and Materials",
+    "3D (Classic)",
+    "Revolve (Classic)..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live 3DRotate",
+   "name": "Rotate (Classic)...",
+   "menu": [
+    "Effect",
+    "3D and Materials",
+    "3D (Classic)",
+    "Rotate (Classic)..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Adobe Drop Shadow",
+   "name": "Drop Shadow...",
+   "menu": [
+    "Effect",
+    "Stylize",
+    "Drop Shadow..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Adobe Geometry3D Extrude",
+   "name": "Extrude & Bevel...",
+   "menu": [
+    "Effect",
+    "3D and Materials",
+    "Extrude & Bevel..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Adobe Geometry3D Inflate",
+   "name": "Inflate...",
+   "menu": [
+    "Effect",
+    "3D and Materials",
+    "Inflate..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Adobe Geometry3D Materials",
+   "name": "Materials...",
+   "menu": [
+    "Effect",
+    "3D and Materials",
+    "Materials..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Adobe Geometry3D Revolve",
+   "name": "Revolve...",
+   "menu": [
+    "Effect",
+    "3D and Materials",
+    "Revolve..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Adobe Geometry3D Rotate",
+   "name": "Rotate...",
+   "menu": [
+    "Effect",
+    "3D and Materials",
+    "Rotate..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Adobe PSL Gaussian Blur",
+   "name": "Gaussian Blur...",
+   "menu": [
+    "Effect",
+    "Blur",
+    "Gaussian Blur..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Adobe Round Corners",
+   "name": "Round Corners...",
+   "menu": [
+    "Effect",
+    "Stylize",
+    "Round Corners..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Corner Annotator",
+   "name": "Show / Hide Corner Widget",
+   "menu": [
+    "View",
+    "Show / Hide Corner Widget"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Deform Arc",
+   "name": "Arc...",
+   "menu": [
+    "Effect",
+    "Warp",
+    "Arc..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Deform Arc Lower",
+   "name": "Arc Lower...",
+   "menu": [
+    "Effect",
+    "Warp",
+    "Arc Lower..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Deform Arc Upper",
+   "name": "Arc Upper...",
+   "menu": [
+    "Effect",
+    "Warp",
+    "Arc Upper..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Deform Arch",
+   "name": "Arch...",
+   "menu": [
+    "Effect",
+    "Warp",
+    "Arch..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Deform Bulge",
+   "name": "Bulge...",
+   "menu": [
+    "Effect",
+    "Warp",
+    "Bulge..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Deform Fish",
+   "name": "Fish...",
+   "menu": [
+    "Effect",
+    "Warp",
+    "Fish..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Deform Fisheye",
+   "name": "Fisheye...",
+   "menu": [
+    "Effect",
+    "Warp",
+    "Fisheye..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Deform Flag",
+   "name": "Flag...",
+   "menu": [
+    "Effect",
+    "Warp",
+    "Flag..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Deform Inflate",
+   "name": "Inflate...",
+   "menu": [
+    "Effect",
+    "Warp",
+    "Inflate..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Deform Rise",
+   "name": "Rise...",
+   "menu": [
+    "Effect",
+    "Warp",
+    "Rise..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Deform Shell Lower",
+   "name": "Shell Lower...",
+   "menu": [
+    "Effect",
+    "Warp",
+    "Shell Lower..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Deform Shell Upper",
+   "name": "Shell Upper...",
+   "menu": [
+    "Effect",
+    "Warp",
+    "Shell Upper..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Deform Squeeze",
+   "name": "Squeeze...",
+   "menu": [
+    "Effect",
+    "Warp",
+    "Squeeze..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Deform Twist",
+   "name": "Twist...",
+   "menu": [
+    "Effect",
+    "Warp",
+    "Twist..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Deform Wave",
+   "name": "Wave...",
+   "menu": [
+    "Effect",
+    "Warp",
+    "Wave..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Ellipse",
+   "name": "Ellipse...",
+   "menu": [
+    "Effect",
+    "Convert to Shape",
+    "Ellipse..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Feather",
+   "name": "Feather...",
+   "menu": [
+    "Effect",
+    "Stylize",
+    "Feather..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Free Distort",
+   "name": "Free Distort...",
+   "menu": [
+    "Effect",
+    "Distort & Transform",
+    "Free Distort..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Inner Glow",
+   "name": "Inner Glow...",
+   "menu": [
+    "Effect",
+    "Stylize",
+    "Inner Glow..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Offset Path",
+   "name": "Offset Path...",
+   "menu": [
+    "Effect",
+    "Path",
+    "Offset Path..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Outer Glow",
+   "name": "Outer Glow...",
+   "menu": [
+    "Effect",
+    "Stylize",
+    "Outer Glow..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Outline Object",
+   "name": "Outline Object",
+   "menu": [
+    "Effect",
+    "Path",
+    "Outline Object"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Outline Stroke",
+   "name": "Outline Stroke",
+   "menu": [
+    "Effect",
+    "Path",
+    "Outline Stroke"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Pathfinder Add",
+   "name": "Add",
+   "menu": [
+    "Effect",
+    "Pathfinder",
+    "Add"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Pathfinder Crop",
+   "name": "Crop",
+   "menu": [
+    "Effect",
+    "Pathfinder",
+    "Crop"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Pathfinder Divide",
+   "name": "Divide",
+   "menu": [
+    "Effect",
+    "Pathfinder",
+    "Divide"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Pathfinder Exclude",
+   "name": "Exclude",
+   "menu": [
+    "Effect",
+    "Pathfinder",
+    "Exclude"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Pathfinder Hard Mix",
+   "name": "Hard Mix",
+   "menu": [
+    "Effect",
+    "Pathfinder",
+    "Hard Mix"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Pathfinder Intersect",
+   "name": "Intersect",
+   "menu": [
+    "Effect",
+    "Pathfinder",
+    "Intersect"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Pathfinder Merge",
+   "name": "Merge",
+   "menu": [
+    "Effect",
+    "Pathfinder",
+    "Merge"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Pathfinder Minus Back",
+   "name": "Minus Back",
+   "menu": [
+    "Effect",
+    "Pathfinder",
+    "Minus Back"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Pathfinder Outline",
+   "name": "Outline",
+   "menu": [
+    "Effect",
+    "Pathfinder",
+    "Outline"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Pathfinder Soft Mix",
+   "name": "Soft Mix...",
+   "menu": [
+    "Effect",
+    "Pathfinder",
+    "Soft Mix..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Pathfinder Subtract",
+   "name": "Subtract",
+   "menu": [
+    "Effect",
+    "Pathfinder",
+    "Subtract"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Pathfinder Trap",
+   "name": "Trap...",
+   "menu": [
+    "Effect",
+    "Pathfinder",
+    "Trap..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Pathfinder Trim",
+   "name": "Trim",
+   "menu": [
+    "Effect",
+    "Pathfinder",
+    "Trim"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_AccE",
+   "name": "Accented Edges...",
+   "menu": [
+    "Effect",
+    "Brush Strokes",
+    "Accented Edges..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_AngS",
+   "name": "Angled Strokes...",
+   "menu": [
+    "Effect",
+    "Brush Strokes",
+    "Angled Strokes..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_BsRl",
+   "name": "Bas Relief...",
+   "menu": [
+    "Effect",
+    "Sketch",
+    "Bas Relief..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_ChlC",
+   "name": "Chalk & Charcoal...",
+   "menu": [
+    "Effect",
+    "Sketch",
+    "Chalk & Charcoal..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Chrc",
+   "name": "Charcoal...",
+   "menu": [
+    "Effect",
+    "Sketch",
+    "Charcoal..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Chrm",
+   "name": "Chrome...",
+   "menu": [
+    "Effect",
+    "Sketch",
+    "Chrome..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_ClrH",
+   "name": "Color Halftone...",
+   "menu": [
+    "Effect",
+    "Pixelate",
+    "Color Halftone..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_ClrP",
+   "name": "Colored Pencil...",
+   "menu": [
+    "Effect",
+    "Artistic",
+    "Colored Pencil..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_CntC",
+   "name": "Conté Crayon...",
+   "menu": [
+    "Effect",
+    "Sketch",
+    "Conté Crayon..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Crql",
+   "name": "Craquelure...",
+   "menu": [
+    "Effect",
+    "Texture",
+    "Craquelure..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Crsh",
+   "name": "Crosshatch...",
+   "menu": [
+    "Effect",
+    "Brush Strokes",
+    "Crosshatch..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Crst",
+   "name": "Crystallize...",
+   "menu": [
+    "Effect",
+    "Pixelate",
+    "Crystallize..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Ct",
+   "name": "Cutout...",
+   "menu": [
+    "Effect",
+    "Artistic",
+    "Cutout..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_DfsG",
+   "name": "Diffuse Glow...",
+   "menu": [
+    "Effect",
+    "Distort",
+    "Diffuse Glow..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Dntr",
+   "name": "De-Interlace...",
+   "menu": [
+    "Effect",
+    "Video",
+    "De-Interlace..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_DrkS",
+   "name": "Dark Strokes...",
+   "menu": [
+    "Effect",
+    "Brush Strokes",
+    "Dark Strokes..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_DryB",
+   "name": "Dry Brush...",
+   "menu": [
+    "Effect",
+    "Artistic",
+    "Dry Brush..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_FlmG",
+   "name": "Film Grain...",
+   "menu": [
+    "Effect",
+    "Artistic",
+    "Film Grain..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Frsc",
+   "name": "Fresco...",
+   "menu": [
+    "Effect",
+    "Artistic",
+    "Fresco..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_GblR",
+   "name": "Gaussian Blur...",
+   "menu": [
+    "Effect",
+    "Blur",
+    "Gaussian Blur..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_GEfc",
+   "name": "Effect Gallery...",
+   "menu": [
+    "Effect",
+    "Effect Gallery..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Gls",
+   "name": "Glass...",
+   "menu": [
+    "Effect",
+    "Distort",
+    "Glass..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_GlwE",
+   "name": "Glowing Edges...",
+   "menu": [
+    "Effect",
+    "Stylize",
+    "Glowing Edges..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_GraP",
+   "name": "Graphic Pen...",
+   "menu": [
+    "Effect",
+    "Sketch",
+    "Graphic Pen..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Grn",
+   "name": "Grain...",
+   "menu": [
+    "Effect",
+    "Texture",
+    "Grain..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_HlfS",
+   "name": "Halftone Pattern...",
+   "menu": [
+    "Effect",
+    "Sketch",
+    "Halftone Pattern..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_InkO",
+   "name": "Ink Outlines...",
+   "menu": [
+    "Effect",
+    "Brush Strokes",
+    "Ink Outlines..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_MscT",
+   "name": "Mosaic Tiles...",
+   "menu": [
+    "Effect",
+    "Texture",
+    "Mosaic Tiles..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Mztn",
+   "name": "Mezzotint...",
+   "menu": [
+    "Effect",
+    "Pixelate",
+    "Mezzotint..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_NGlw",
+   "name": "Neon Glow...",
+   "menu": [
+    "Effect",
+    "Artistic",
+    "Neon Glow..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_NtPr",
+   "name": "Note Paper...",
+   "menu": [
+    "Effect",
+    "Sketch",
+    "Note Paper..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_NTSC",
+   "name": "NTSC Colors",
+   "menu": [
+    "Effect",
+    "Video",
+    "NTSC Colors"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_OcnR",
+   "name": "Ocean Ripple...",
+   "menu": [
+    "Effect",
+    "Distort",
+    "Ocean Ripple..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Phtc",
+   "name": "Photocopy...",
+   "menu": [
+    "Effect",
+    "Sketch",
+    "Photocopy..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Plst",
+   "name": "Plaster...",
+   "menu": [
+    "Effect",
+    "Sketch",
+    "Plaster..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_PlsW",
+   "name": "Plastic Wrap...",
+   "menu": [
+    "Effect",
+    "Artistic",
+    "Plastic Wrap..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_PltK",
+   "name": "Palette Knife...",
+   "menu": [
+    "Effect",
+    "Artistic",
+    "Palette Knife..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_PntD",
+   "name": "Paint Daubs...",
+   "menu": [
+    "Effect",
+    "Artistic",
+    "Paint Daubs..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Pntl",
+   "name": "Pointillize...",
+   "menu": [
+    "Effect",
+    "Pixelate",
+    "Pointillize..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_PstE",
+   "name": "Poster Edges...",
+   "menu": [
+    "Effect",
+    "Artistic",
+    "Poster Edges..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Ptch",
+   "name": "Patchwork...",
+   "menu": [
+    "Effect",
+    "Texture",
+    "Patchwork..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_RdlB",
+   "name": "Radial Blur...",
+   "menu": [
+    "Effect",
+    "Blur",
+    "Radial Blur..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_RghP",
+   "name": "Rough Pastels...",
+   "menu": [
+    "Effect",
+    "Artistic",
+    "Rough Pastels..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Rtcl",
+   "name": "Reticulation...",
+   "menu": [
+    "Effect",
+    "Sketch",
+    "Reticulation..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_SmdS",
+   "name": "Smudge Stick...",
+   "menu": [
+    "Effect",
+    "Artistic",
+    "Smudge Stick..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Smie",
+   "name": "Sumi-e...",
+   "menu": [
+    "Effect",
+    "Brush Strokes",
+    "Sumi-e..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_SmrB",
+   "name": "Smart Blur...",
+   "menu": [
+    "Effect",
+    "Blur",
+    "Smart Blur..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Spng",
+   "name": "Sponge...",
+   "menu": [
+    "Effect",
+    "Artistic",
+    "Sponge..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_SprS",
+   "name": "Sprayed Strokes...",
+   "menu": [
+    "Effect",
+    "Brush Strokes",
+    "Sprayed Strokes..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Spt",
+   "name": "Spatter...",
+   "menu": [
+    "Effect",
+    "Brush Strokes",
+    "Spatter..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Stmp",
+   "name": "Stamp...",
+   "menu": [
+    "Effect",
+    "Sketch",
+    "Stamp..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_StnG",
+   "name": "Stained Glass...",
+   "menu": [
+    "Effect",
+    "Texture",
+    "Stained Glass..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_TrnE",
+   "name": "Torn Edges...",
+   "menu": [
+    "Effect",
+    "Sketch",
+    "Torn Edges..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Txtz",
+   "name": "Texturizer...",
+   "menu": [
+    "Effect",
+    "Texture",
+    "Texturizer..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Undr",
+   "name": "Underpainting...",
+   "menu": [
+    "Effect",
+    "Artistic",
+    "Underpainting..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_USMk",
+   "name": "Unsharp Mask...",
+   "menu": [
+    "Effect",
+    "Sharpen",
+    "Unsharp Mask..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_Wtrc",
+   "name": "Watercolor...",
+   "menu": [
+    "Effect",
+    "Artistic",
+    "Watercolor..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live PSAdapter_plugin_WtrP",
+   "name": "Water Paper...",
+   "menu": [
+    "Effect",
+    "Sketch",
+    "Water Paper..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Pucker & Bloat",
+   "name": "Pucker & Bloat...",
+   "menu": [
+    "Effect",
+    "Distort & Transform",
+    "Pucker & Bloat..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Rasterize",
+   "name": "Rasterize...",
+   "menu": [
+    "Effect",
+    "Rasterize..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Rasterize Effect Setting",
+   "name": "Document Raster Effects Settings...",
+   "menu": [
+    "Effect",
+    "Document Raster Effects Settings..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Rectangle",
+   "name": "Rectangle...",
+   "menu": [
+    "Effect",
+    "Convert to Shape",
+    "Rectangle..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Roughen",
+   "name": "Roughen...",
+   "menu": [
+    "Effect",
+    "Distort & Transform",
+    "Roughen..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Rounded Rectangle",
+   "name": "Rounded Rectangle...",
+   "menu": [
+    "Effect",
+    "Convert to Shape",
+    "Rounded Rectangle..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Scribble and Tweak",
+   "name": "Tweak...",
+   "menu": [
+    "Effect",
+    "Distort & Transform",
+    "Tweak..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Scribble Fill",
+   "name": "Scribble...",
+   "menu": [
+    "Effect",
+    "Stylize",
+    "Scribble..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live SVG Filters",
+   "name": "Apply SVG Filter...",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "Apply SVG Filter..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Transform",
+   "name": "Transform...",
+   "menu": [
+    "Effect",
+    "Distort & Transform",
+    "Transform..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Trim Marks",
+   "name": "Crop Marks",
+   "menu": [
+    "Effect",
+    "Crop Marks"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Twist",
+   "name": "Twist...",
+   "menu": [
+    "Effect",
+    "Distort & Transform",
+    "Twist..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Live Zig Zag",
+   "name": "Zig Zag...",
+   "menu": [
+    "Effect",
+    "Distort & Transform",
+    "Zig Zag..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "lock",
+   "name": "Selection",
+   "menu": [
+    "Object",
+    "Lock",
+    "Selection"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Lock Perspective Grid",
+   "name": "Lock Grid",
+   "menu": [
+    "View",
+    "Perspective Grid",
+    "Lock Grid"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Lock Station Point",
+   "name": "Lock Station Point",
+   "menu": [
+    "View",
+    "Perspective Grid",
+    "Lock Station Point"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "lock2",
+   "name": "Lock Others",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "lockguide",
+   "name": "Lock / Unlock Guides",
+   "menu": [
+    "View",
+    "Guides",
+    "Lock / Unlock Guides"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "lockGuides",
+   "name": "lockGuides",
+   "menu": [],
+   "selection": null,
+   "documented": false
+  },
+  {
+   "id": "LowerCase Change Case Item",
+   "name": "lowercase",
+   "menu": [
+    "Type",
+    "Change Case",
+    "lowercase"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Make and Expand Image Tracing",
+   "name": "Make and Expand",
+   "menu": [
+    "Object",
+    "Image Trace",
+    "Make and Expand"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Make Blend",
+   "name": "Make Blend",
+   "menu": [],
+   "selection": null,
+   "documented": false
+  },
+  {
+   "id": "Make Envelope",
+   "name": "Make with Top Object",
+   "menu": [
+    "Object",
+    "Envelope Distort",
+    "Make with Top Object"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Make Grid Repeat",
+   "name": "Grid",
+   "menu": [
+    "Object",
+    "Repeat",
+    "Grid"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Make Image Tracing",
+   "name": "Make",
+   "menu": [
+    "Object",
+    "Image Trace",
+    "Make"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "make mesh",
+   "name": "Create Gradient Mesh...",
+   "menu": [
+    "Object",
+    "Create Gradient Mesh..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Make Pixel Perfect",
+   "name": "Make Pixel Perfect",
+   "menu": [
+    "Object",
+    "Make Pixel Perfect"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Make Planet X",
+   "name": "Make",
+   "menu": [
+    "Object",
+    "Live Paint",
+    "Make"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Make Radial Repeat",
+   "name": "Radial",
+   "menu": [
+    "Object",
+    "Repeat",
+    "Radial"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Make Symmetry Repeat",
+   "name": "Mirror",
+   "menu": [
+    "Object",
+    "Repeat",
+    "Mirror"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Make Text Wrap",
+   "name": "Make",
+   "menu": [
+    "Object",
+    "Text Wrap",
+    "Make"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Make Vector Edge",
+   "name": "Make / Preview",
+   "menu": [
+    "Object",
+    "Mockup",
+    "Make / Preview"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Make Warp",
+   "name": "Make with Warp...",
+   "menu": [
+    "Object",
+    "Envelope Distort",
+    "Make with Warp..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "makeguide",
+   "name": "Make Guides",
+   "menu": [
+    "View",
+    "Guides",
+    "Make Guides"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "makeMask",
+   "name": "Make",
+   "menu": [
+    "Object",
+    "Clipping Mask",
+    "Make"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Manage Tools Panel",
+   "name": "Manage Toolbars...",
+   "menu": [
+    "Window",
+    "Toolbars",
+    "Manage Toolbars..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Marge Planet X",
+   "name": "Merge",
+   "menu": [
+    "Object",
+    "Live Paint",
+    "Merge"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "navigateToNextDocument",
+   "name": "Navigate to Next Document",
+   "menu": [],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "navigateToNextDocumentGroup",
+   "name": "Navigate to Next Document Group",
+   "menu": [],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "navigateToPreviousDocument",
+   "name": "Navigate to Previous Document",
+   "menu": [],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "navigateToPreviousDocumentGroup",
+   "name": "Navigate to Previous Document Group",
+   "menu": [],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "new",
+   "name": "New...",
+   "menu": [
+    "File",
+    "New..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "New",
+   "name": "New...",
+   "menu": [
+    "File",
+    "New..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "New Tools Panel",
+   "name": "New Toolbar...",
+   "menu": [
+    "Window",
+    "Toolbars",
+    "New Toolbar..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "new2",
+   "name": "New File (No Dialog)",
+   "menu": [],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "newFromTemplate",
+   "name": "New from Template...",
+   "menu": [
+    "File",
+    "New from Template..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "newview",
+   "name": "New View...",
+   "menu": [
+    "View",
+    "New View..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "newwindow",
+   "name": "New Window",
+   "menu": [
+    "Window",
+    "New Window"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "noCompoundPath",
+   "name": "Release",
+   "menu": [
+    "Object",
+    "Compound Path",
+    "Release"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "OffsetPath v22",
+   "name": "Outline Stroke",
+   "menu": [
+    "Object",
+    "Path",
+    "Outline Stroke"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "OffsetPath v23",
+   "name": "Offset Path...",
+   "menu": [
+    "Object",
+    "Path",
+    "Offset Path..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "open",
+   "name": "Open...",
+   "menu": [
+    "File",
+    "Open..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Options Objects on Path",
+   "name": "Options...",
+   "menu": [
+    "Object",
+    "Objects on Path",
+    "Options..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "outline",
+   "name": "Create Outlines",
+   "menu": [
+    "Type",
+    "Create Outlines"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Overprint2",
+   "name": "Overprint Black...",
+   "menu": [
+    "Edit",
+    "Edit Colors",
+    "Overprint Black..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Package Menu Item",
+   "name": "Package...",
+   "menu": [
+    "File",
+    "Package..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "pagetiling",
+   "name": "Show / Hide Print Tiling",
+   "menu": [
+    "View",
+    "Show / Hide Print Tiling"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Partial Rearrange Edit",
+   "name": "Edit",
+   "menu": [
+    "Object",
+    "Intertwine",
+    "Edit"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Partial Rearrange Make",
+   "name": "Make",
+   "menu": [
+    "Object",
+    "Intertwine",
+    "Make"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Partial Rearrange Release",
+   "name": "Release",
+   "menu": [
+    "Object",
+    "Intertwine",
+    "Release"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "paste",
+   "name": "Paste",
+   "menu": [
+    "Edit",
+    "Paste"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "paste2",
+   "name": "Paste (Secondary)",
+   "menu": [],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "pasteBack",
+   "name": "Paste in Back",
+   "menu": [
+    "Edit",
+    "Paste in Back"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "pasteFront",
+   "name": "Paste in Front",
+   "menu": [
+    "Edit",
+    "Paste in Front"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "pasteInAllArtboard",
+   "name": "Paste on All Artboards",
+   "menu": [
+    "Edit",
+    "Paste on All Artboards"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "pasteInPlace",
+   "name": "Paste in Place",
+   "menu": [
+    "Edit",
+    "Paste in Place"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "pasteWithoutFormatting",
+   "name": "Paste without Formatting",
+   "menu": [
+    "Edit",
+    "Paste without Formatting"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Path Blend Expand",
+   "name": "Expand",
+   "menu": [
+    "Object",
+    "Blend",
+    "Expand"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Path Blend Make",
+   "name": "Make",
+   "menu": [
+    "Object",
+    "Blend",
+    "Make"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Path Blend Options",
+   "name": "Blend Options...",
+   "menu": [
+    "Object",
+    "Blend",
+    "Blend Options..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Path Blend Release",
+   "name": "Release",
+   "menu": [
+    "Object",
+    "Blend",
+    "Release"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Path Blend Replace Spine",
+   "name": "Replace Spine",
+   "menu": [
+    "Object",
+    "Blend",
+    "Replace Spine"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Path Blend Reverse Spine",
+   "name": "Reverse Spine",
+   "menu": [
+    "Object",
+    "Blend",
+    "Reverse Spine"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Path Blend Reverse Stack",
+   "name": "Reverse Front to Back",
+   "menu": [
+    "Object",
+    "Blend",
+    "Reverse Front to Back"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "PDF Presets",
+   "name": "Adobe PDF Presets...",
+   "menu": [
+    "Edit",
+    "Adobe PDF Presets..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "PerspectiveGridPresets",
+   "name": "Perspective Grid Presets...",
+   "menu": [
+    "Edit",
+    "Perspective Grid Presets..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Planet X Options",
+   "name": "Gap Options...",
+   "menu": [
+    "Object",
+    "Live Paint",
+    "Gap Options..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "pluginPref",
+   "name": "Plug-ins & Scratch Disks...",
+   "menu": [
+    "Edit",
+    "Preferences",
+    "Plug-ins & Scratch Disks..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Point Text Objects menu item",
+   "name": "Point Type Objects",
+   "menu": [
+    "Select",
+    "Object",
+    "Point Type Objects"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "point-area",
+   "name": "Convert to Area Type / Point Type",
+   "menu": [
+    "Type",
+    "Convert to Area Type / Point Type"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "preference",
+   "name": "General...",
+   "menu": [
+    "Edit",
+    "Preferences",
+    "General..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "preview",
+   "name": "Outline / Preview",
+   "menu": [
+    "View",
+    "Outline / Preview"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Print",
+   "name": "Print...",
+   "menu": [
+    "File",
+    "Print..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Print Presets",
+   "name": "Print Presets...",
+   "menu": [
+    "Edit",
+    "Print Presets..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "proof-colorblindd",
+   "name": "Color blindness - Deuteranopia-type",
+   "menu": [
+    "View",
+    "Proof Setup",
+    "Color blindness - Deuteranopia-type"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "proof-colorblindp",
+   "name": "Color blindness - Protanopia-type",
+   "menu": [
+    "View",
+    "Proof Setup",
+    "Color blindness - Protanopia-type"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "proof-custom",
+   "name": "Customize...",
+   "menu": [
+    "View",
+    "Proof Setup",
+    "Customize..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "proof-document",
+   "name": "Working CMYK",
+   "menu": [
+    "View",
+    "Proof Setup",
+    "Working CMYK"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "proof-mac-rgb",
+   "name": "Legacy Macintosh RGB (Gamma 1.8)",
+   "menu": [
+    "View",
+    "Proof Setup",
+    "Legacy Macintosh RGB (Gamma 1.8)"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "proof-monitor-rgb",
+   "name": "Monitor RGB",
+   "menu": [
+    "View",
+    "Proof Setup",
+    "Monitor RGB"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "proof-win-rgb",
+   "name": "Internet Standard RGB (sRGB)",
+   "menu": [
+    "View",
+    "Proof Setup",
+    "Internet Standard RGB (sRGB)"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "proofColors",
+   "name": "Proof Colors",
+   "menu": [
+    "View",
+    "Proof Colors"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "quit",
+   "name": "Exit",
+   "menu": [
+    "File",
+    "Exit"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Rainbow",
+   "name": "Rainbow",
+   "menu": [
+    "Type",
+    "Type on a Path",
+    "Rainbow"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "raster",
+   "name": "Pixel Preview",
+   "menu": [
+    "View",
+    "Pixel Preview"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Rasterize 8 menu item",
+   "name": "Rasterize...",
+   "menu": [
+    "Object",
+    "Rasterize..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "ReArrange Artboards",
+   "name": "Rearrange Artboards",
+   "menu": [
+    "Object",
+    "Artboards",
+    "Rearrange Artboards"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Recolor Art Dialog",
+   "name": "Recolor Artwork...",
+   "menu": [
+    "Edit",
+    "Edit Colors",
+    "Recolor Artwork..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "redo",
+   "name": "Redo",
+   "menu": [
+    "Edit",
+    "Redo"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "ReflowWindowMenu",
+   "name": "Reflow Viewer",
+   "menu": [
+    "Window",
+    "Type",
+    "Reflow Viewer"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Release Envelope",
+   "name": "Release",
+   "menu": [
+    "Object",
+    "Envelope Distort",
+    "Release"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Release Image Tracing",
+   "name": "Release",
+   "menu": [
+    "Object",
+    "Image Trace",
+    "Release"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Release Planet X",
+   "name": "Release",
+   "menu": [
+    "Object",
+    "Live Paint",
+    "Release"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Release Repeat Art",
+   "name": "Release",
+   "menu": [
+    "Object",
+    "Repeat",
+    "Release"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Release Text Wrap",
+   "name": "Release",
+   "menu": [
+    "Object",
+    "Text Wrap",
+    "Release"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Release Vector Edge",
+   "name": "Release",
+   "menu": [
+    "Object",
+    "Mockup",
+    "Release"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Release with Perspective",
+   "name": "Release with Perspective",
+   "menu": [
+    "Object",
+    "Perspective",
+    "Release with Perspective"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "releaseguide",
+   "name": "Release Guides",
+   "menu": [
+    "View",
+    "Guides",
+    "Release Guides"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "releaseMask",
+   "name": "Release",
+   "menu": [
+    "Object",
+    "Clipping Mask",
+    "Release"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "releaseThreadedTextSelection",
+   "name": "Release Selection",
+   "menu": [
+    "Type",
+    "Threaded Text",
+    "Release Selection"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Remove Anchor Points menu",
+   "name": "Remove Anchor Points",
+   "menu": [
+    "Object",
+    "Path",
+    "Remove Anchor Points"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Remove Background Object Menu",
+   "name": "Remove Background",
+   "menu": [
+    "Object",
+    "Remove Background"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "removeThreading",
+   "name": "Remove Threading",
+   "menu": [
+    "Type",
+    "Threaded Text",
+    "Remove Threading"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Repeat Art Options",
+   "name": "Options...",
+   "menu": [
+    "Object",
+    "Repeat",
+    "Options..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "repeatPathfinder",
+   "name": "Repeat Pathfinder",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "ReTypeTypeMenu",
+   "name": "Retype",
+   "menu": [
+    "Type",
+    "Retype"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "ReTypeWindowMenu",
+   "name": "Retype",
+   "menu": [
+    "Window",
+    "Retype"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Reverse Path Direction",
+   "name": "Reverse Path Direction",
+   "menu": [
+    "Object",
+    "Path",
+    "Reverse Path Direction"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "revert",
+   "name": "Revert",
+   "menu": [
+    "File",
+    "Revert"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "rightAlign",
+   "name": "Right Align Text",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Rows and Columns....",
+   "name": "Split Into Grid...",
+   "menu": [
+    "Object",
+    "Path",
+    "Split Into Grid..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Rows and Columns….",
+   "name": "Split Into Grid...",
+   "menu": [
+    "Object",
+    "Path",
+    "Split Into Grid..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "ruler",
+   "name": "Show / Hide Rulers",
+   "menu": [
+    "View",
+    "Rulers",
+    "Show / Hide Rulers"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "rulerCoordinateSystem",
+   "name": "Change to Global Rulers",
+   "menu": [
+    "View",
+    "Rulers",
+    "Change to Global Rulers"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Saturate3",
+   "name": "Saturate...",
+   "menu": [
+    "Edit",
+    "Edit Colors",
+    "Saturate..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "save",
+   "name": "Save",
+   "menu": [
+    "File",
+    "Save"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Save Perspective Grid as Preset",
+   "name": "Save Grid as Preset...",
+   "menu": [
+    "View",
+    "Perspective Grid",
+    "Save Grid as Preset..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "saveacopy",
+   "name": "Save a Copy...",
+   "menu": [
+    "File",
+    "Save a Copy..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "saveas",
+   "name": "Save As...",
+   "menu": [
+    "File",
+    "Save As..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "saveastemplate",
+   "name": "Save as Template...",
+   "menu": [
+    "File",
+    "Save as Template..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Search Adobe Stock",
+   "name": "Search Adobe Stock...",
+   "menu": [
+    "File",
+    "Search Adobe Stock..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "selectall",
+   "name": "All",
+   "menu": [
+    "Select",
+    "All"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "selectallinartboard",
+   "name": "All on Active Artboard",
+   "menu": [
+    "Select",
+    "All on Active Artboard"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Selection Hat 1",
+   "name": "Direction Handles",
+   "menu": [
+    "Select",
+    "Object",
+    "Direction Handles"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Selection Hat 10",
+   "name": "Save Selection...",
+   "menu": [
+    "Select",
+    "Save Selection..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Selection Hat 11",
+   "name": "Edit Selection...",
+   "menu": [
+    "Select",
+    "Edit Selection..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Selection Hat 12",
+   "name": "Not Aligned to Pixel Grid",
+   "menu": [
+    "Select",
+    "Object",
+    "Not Aligned to Pixel Grid"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Selection Hat 14",
+   "name": "Update Selection",
+   "menu": [
+    "Select",
+    "Update Selection"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Selection Hat 2",
+   "name": "Send to Current Layer",
+   "menu": [
+    "Object",
+    "Arrange",
+    "Send to Current Layer"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Selection Hat 3",
+   "name": "All on Same Layers",
+   "menu": [
+    "Select",
+    "Object",
+    "All on Same Layers"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Selection Hat 4",
+   "name": "All Artwork Above",
+   "menu": [
+    "Object",
+    "Hide",
+    "All Artwork Above"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Selection Hat 5",
+   "name": "All Artwork Above",
+   "menu": [
+    "Object",
+    "Lock",
+    "All Artwork Above"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Selection Hat 6",
+   "name": "Other Layers",
+   "menu": [
+    "Object",
+    "Hide",
+    "Other Layers"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Selection Hat 7",
+   "name": "Other Layers",
+   "menu": [
+    "Object",
+    "Lock",
+    "Other Layers"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Selection Hat 8",
+   "name": "Next Object Above",
+   "menu": [
+    "Select",
+    "Next Object Above"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Selection Hat 9",
+   "name": "Next Object Below",
+   "menu": [
+    "Select",
+    "Next Object Below"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "selectPref",
+   "name": "Selection & Anchor Display...",
+   "menu": [
+    "Edit",
+    "Preferences",
+    "Selection & Anchor Display..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "sendBackward",
+   "name": "Send Backward",
+   "menu": [
+    "Object",
+    "Arrange",
+    "Send Backward"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "sendForward",
+   "name": "Bring Forward",
+   "menu": [
+    "Object",
+    "Arrange",
+    "Bring Forward"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "sendToBack",
+   "name": "Send to Back",
+   "menu": [
+    "Object",
+    "Arrange",
+    "Send to Back"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "sendToFront",
+   "name": "Bring to Front",
+   "menu": [
+    "Object",
+    "Arrange",
+    "Bring to Front"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Sentence case Change Case Item",
+   "name": "Sentence case",
+   "menu": [
+    "Type",
+    "Change Case",
+    "Sentence case"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "setBarDesign",
+   "name": "Column...",
+   "menu": [
+    "Object",
+    "Graph",
+    "Column..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "setCropMarks",
+   "name": "Convert to Artboards",
+   "menu": [
+    "Object",
+    "Artboards",
+    "Convert to Artboards"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "setGraphStyle",
+   "name": "Type...",
+   "menu": [
+    "Object",
+    "Graph",
+    "Type..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "setIconDesign",
+   "name": "Marker...",
+   "menu": [
+    "Object",
+    "Graph",
+    "Marker..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Shape Fill Object Menu",
+   "name": "Gen Shape Fill...",
+   "menu": [
+    "Object",
+    "Gen Shape Fill..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Share For Review",
+   "name": "Share for Review...",
+   "menu": [
+    "File",
+    "Share for Review..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Show Gaps Planet X",
+   "name": "Show / Hide Live Paint Gaps",
+   "menu": [
+    "View",
+    "Show / Hide Live Paint Gaps"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Show Object Grid Plane",
+   "name": "Move Plane to Match Object",
+   "menu": [
+    "Object",
+    "Perspective",
+    "Move Plane to Match Object"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Show Perspective Grid",
+   "name": "Show / Hide Grid",
+   "menu": [
+    "View",
+    "Perspective Grid",
+    "Show / Hide Grid"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Show Ruler",
+   "name": "Show / Hide Rulers",
+   "menu": [
+    "View",
+    "Perspective Grid",
+    "Show / Hide Rulers"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "showAll",
+   "name": "Show All",
+   "menu": [
+    "Object",
+    "Show All"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "showgrid",
+   "name": "Show / Hide Grid",
+   "menu": [
+    "View",
+    "Show / Hide Grid"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "showguide",
+   "name": "Show / Hide Guides",
+   "menu": [
+    "View",
+    "Guides",
+    "Show / Hide Guides"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "showGuides",
+   "name": "showGuides",
+   "menu": [],
+   "selection": null,
+   "documented": false
+  },
+  {
+   "id": "showHiddenChar",
+   "name": "Show Hidden Characters",
+   "menu": [
+    "Type",
+    "Show Hidden Characters"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "showtemplate",
+   "name": "Show / Hide Template",
+   "menu": [
+    "View",
+    "Show / Hide Template"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "simplify menu item",
+   "name": "Simplify...",
+   "menu": [
+    "Object",
+    "Path",
+    "Simplify..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "sizeStepDown",
+   "name": "Font Size Step Down",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "sizeStepUp",
+   "name": "Font Size Step Up",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "SketchToVectorUnified",
+   "name": "Concept to Vector",
+   "menu": [
+    "Object",
+    "Generative",
+    "Concept to Vector"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Skew",
+   "name": "Skew",
+   "menu": [
+    "Type",
+    "Type on a Path",
+    "Skew"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "slicePref",
+   "name": "Slices...",
+   "menu": [
+    "Edit",
+    "Preferences",
+    "Slices..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "SmartEdit Menu Item",
+   "name": "Start/Stop Global Edit",
+   "menu": [
+    "Select",
+    "Start/Stop Global Edit"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "smooth menu item",
+   "name": "Smooth...",
+   "menu": [
+    "Object",
+    "Path",
+    "Smooth..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Snap to Grid",
+   "name": "Snap to Grid",
+   "menu": [
+    "View",
+    "Perspective Grid",
+    "Snap to Grid"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "snapgrid",
+   "name": "Snap to Grid",
+   "menu": [
+    "View",
+    "Snap to Grid"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Snapomatic on-off menu item",
+   "name": "Smart Guides",
+   "menu": [
+    "View",
+    "Smart Guides"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "snappoint",
+   "name": "Snap to Point",
+   "menu": [
+    "View",
+    "Snap to Point"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "snapPref",
+   "name": "Smart Guides...",
+   "menu": [
+    "Edit",
+    "Preferences",
+    "Smart Guides..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "spacing",
+   "name": "Spacing",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Stair Step",
+   "name": "Stair Step",
+   "menu": [
+    "Type",
+    "Type on a Path",
+    "Stair Step"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Stray Points menu item",
+   "name": "Stray Points",
+   "menu": [
+    "Select",
+    "Object",
+    "Stray Points"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Style Palette",
+   "name": "Appearance",
+   "menu": [
+    "Window",
+    "Appearance"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "supportCommunity",
+   "name": "Support Community",
+   "menu": [
+    "Help",
+    "Support Community"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "SVG Filter Import",
+   "name": "Import SVG Filter...",
+   "menu": [
+    "Effect",
+    "SVG Filters",
+    "Import SVG Filter..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "SWFPresets",
+   "name": "SWF Presets...",
+   "menu": [
+    "Edit",
+    "SWF Presets..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Switch Orientation",
+   "name": "Switch Orientation",
+   "menu": [
+    "Object",
+    "Artboards",
+    "Switch Orientation"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "switchSelTool",
+   "name": "Switch Selection Tool",
+   "menu": [],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "System Info",
+   "name": "System Info...",
+   "menu": [
+    "Help",
+    "System Info..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Text Objects menu item",
+   "name": "All Text Objects",
+   "menu": [
+    "Select",
+    "Object",
+    "All Text Objects"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Text Wrap Options...",
+   "name": "Text Wrap Options...",
+   "menu": [
+    "Object",
+    "Text Wrap",
+    "Text Wrap Options..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Text Wrap Options…",
+   "name": "Text Wrap Options...",
+   "menu": [
+    "Object",
+    "Text Wrap",
+    "Text Wrap Options..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "textthreads",
+   "name": "Show / Hide Text Threads",
+   "menu": [
+    "View",
+    "Show / Hide Text Threads"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "threadTextCreate",
+   "name": "Create",
+   "menu": [
+    "Type",
+    "Threaded Text",
+    "Create"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "tile",
+   "name": "Tile",
+   "menu": [
+    "Window",
+    "Arrange",
+    "Tile"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "Title Case Change Case Item",
+   "name": "Title Case",
+   "menu": [
+    "Type",
+    "Change Case",
+    "Title Case"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "toggleAutoHyphen",
+   "name": "Toggle Auto Hyphenation",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "toggleLineComposer",
+   "name": "Toggle Line Composer",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "TouchPref",
+   "name": "Touch Workspace",
+   "menu": [
+    "Edit",
+    "Preferences",
+    "Touch Workspace"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "TracingPresets",
+   "name": "Tracing Presets...",
+   "menu": [
+    "Edit",
+    "Tracing Presets..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "tracking",
+   "name": "Tracking",
+   "menu": [],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Transform v23",
+   "name": "Transform Each...",
+   "menu": [
+    "Object",
+    "Transform",
+    "Transform Each..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "transformagain",
+   "name": "Transform Again",
+   "menu": [
+    "Object",
+    "Transform",
+    "Transform Again"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "transformmove",
+   "name": "Move...",
+   "menu": [
+    "Object",
+    "Transform",
+    "Move..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "transformreflect",
+   "name": "Reflect...",
+   "menu": [
+    "Object",
+    "Transform",
+    "Reflect..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "transformrotate",
+   "name": "Rotate...",
+   "menu": [
+    "Object",
+    "Transform",
+    "Rotate..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "transformscale",
+   "name": "Scale...",
+   "menu": [
+    "Object",
+    "Transform",
+    "Scale..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "transformshear",
+   "name": "Shear...",
+   "menu": [
+    "Object",
+    "Transform",
+    "Shear..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Transparency Presets",
+   "name": "Transparency Flattener Presets...",
+   "menu": [
+    "Edit",
+    "Transparency Flattener Presets..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "TransparencyGrid Menu Item",
+   "name": "Show / Hide Transparency Grid",
+   "menu": [
+    "View",
+    "Show / Hide Transparency Grid"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "TrimMark v25",
+   "name": "Create Trim Marks",
+   "menu": [
+    "Object",
+    "Create Trim Marks"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "TrimView",
+   "name": "TrimView",
+   "menu": [],
+   "selection": null,
+   "documented": false
+  },
+  {
+   "id": "type-horizontal",
+   "name": "Horizontal",
+   "menu": [
+    "Type",
+    "Type Orientation",
+    "Horizontal"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "type-vertical",
+   "name": "Vertical",
+   "menu": [
+    "Type",
+    "Type Orientation",
+    "Vertical"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "typeOnPathOptions",
+   "name": "Type on a Path Options...",
+   "menu": [
+    "Type",
+    "Type on a Path",
+    "Type on a Path Options..."
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "UIPref",
+   "name": "User Interface...",
+   "menu": [
+    "Edit",
+    "Preferences",
+    "User Interface..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "undo",
+   "name": "Undo",
+   "menu": [
+    "Edit",
+    "Undo"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "undo2",
+   "name": "Undo (Secondary)",
+   "menu": [],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "ungroup",
+   "name": "Ungroup",
+   "menu": [
+    "Object",
+    "Ungroup"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "ungroup all",
+   "name": "Ungroup All",
+   "menu": [
+    "Object",
+    "Ungroup All"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "ungroupAll",
+   "name": "ungroupAll",
+   "menu": [],
+   "selection": null,
+   "documented": false
+  },
+  {
+   "id": "unitundoPref",
+   "name": "Units...",
+   "menu": [
+    "Edit",
+    "Preferences",
+    "Units..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "unlockAll",
+   "name": "Unlock All",
+   "menu": [
+    "Object",
+    "Unlock All"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "unlockGuides",
+   "name": "unlockGuides",
+   "menu": [],
+   "selection": null,
+   "documented": false
+  },
+  {
+   "id": "updateLegacyTOP",
+   "name": "Update Legacy Type on a Path",
+   "menu": [
+    "Type",
+    "Type on a Path",
+    "Update Legacy Type on a Path"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "UpperCase Change Case Item",
+   "name": "UPPERCASE",
+   "menu": [
+    "Type",
+    "Change Case",
+    "UPPERCASE"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Vertical Align Bottom",
+   "name": "Vertical Align Bottom",
+   "menu": [
+    "Object",
+    "Align",
+    "Vertical Align Bottom"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Vertical Align Center",
+   "name": "Vertical Align Center",
+   "menu": [
+    "Object",
+    "Align",
+    "Vertical Align Center"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Vertical Align Top",
+   "name": "Vertical Align Top",
+   "menu": [
+    "Object",
+    "Align",
+    "Vertical Align Top"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Vertical Distribute Bottom",
+   "name": "Vertical Distribute Bottom",
+   "menu": [
+    "Object",
+    "Distribute",
+    "Vertical Distribute Bottom"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Vertical Distribute Center",
+   "name": "Vertical Distribute Center",
+   "menu": [
+    "Object",
+    "Distribute",
+    "Vertical Distribute Center"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Vertical Distribute Space",
+   "name": "Vertical Distribute Space",
+   "menu": [
+    "Object",
+    "Distribute",
+    "Vertical Distribute Space"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "Vertical Distribute Top",
+   "name": "Vertical Distribute Top",
+   "menu": [
+    "Object",
+    "Distribute",
+    "Vertical Distribute Top"
+   ],
+   "selection": true,
+   "documented": true
+  },
+  {
+   "id": "videoruler",
+   "name": "Show / Hide Video Rulers",
+   "menu": [
+    "View",
+    "Rulers",
+    "Show / Hide Video Rulers"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "whatsNewContent",
+   "name": "Tutorials...",
+   "menu": [
+    "Help",
+    "Tutorials..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "wishform",
+   "name": "Submit Bug/Feature Request...",
+   "menu": [
+    "Help",
+    "Submit Bug/Feature Request..."
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "XOnePointX[1P-Normal View]",
+   "name": "[1P-Normal View]",
+   "menu": [
+    "View",
+    "Perspective Grid",
+    "One Point Perspective",
+    "[1P-Normal View]"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "XThreePointX[3P-Normal View]",
+   "name": "[3P-Normal View]",
+   "menu": [
+    "View",
+    "Perspective Grid",
+    "Three Point Perspective",
+    "[3P-Normal View]"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "XTwoPointX[2P-Normal View]",
+   "name": "[2P-Normal View]",
+   "menu": [
+    "View",
+    "Perspective Grid",
+    "Two Point Perspective",
+    "[2P-Normal View]"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "zoomin",
+   "name": "Zoom In",
+   "menu": [
+    "View",
+    "Zoom In"
+   ],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "zoomin2",
+   "name": "Zoom In (Secondary)",
+   "menu": [],
+   "selection": null,
+   "documented": true
+  },
+  {
+   "id": "zoomout",
+   "name": "Zoom Out",
+   "menu": [
+    "View",
+    "Zoom Out"
+   ],
+   "selection": null,
+   "documented": true
+  }
+ ]
+}

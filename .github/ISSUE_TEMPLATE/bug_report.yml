@@ -24,15 +24,15 @@ body:
   - type: input
     id: version
     attributes:
-      label: indesign-mcp-server version
-      placeholder: "2.0.0"
+      label: Package and version
+      placeholder: "indesign-mcp-server 2.3.0, or illustrator-mcp-server 0.1.0"
     validations:
       required: true
   - type: input
     id: indesign
     attributes:
-      label: InDesign version and OS
-      placeholder: InDesign 2026 (21.0), macOS 15.5
+      label: Adobe application version and OS
+      placeholder: InDesign 2026 (21.0) or Illustrator 2025 (29.8), macOS 15.5
     validations:
       required: true
   - type: dropdown
