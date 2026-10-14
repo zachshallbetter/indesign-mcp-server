@@ -12,6 +12,12 @@
 - Older names that individual handlers read silently are now aliases in `src/handlers/aliases.js`, with deprecation warnings: `folderPath` -> `outputPath` (`export_images`, `package_document`), `pageRange` -> `pages` (`export_images`), `applyObjectStyle` -> `objectStyle` (`place_image`), `transparency` -> `opacity` (`create_object_style`)
 - Server instructions and `docs/LLM_PROMPT.md` describe `warnings`
 - UXP plugin version 1.2.0
+- `tests/unit/uxp.test.js` also covers the token on the bridge's WebSocket port
+
+### Security
+- With `BRIDGE_TOKEN` set, the bridge's WebSocket port requires it too. A connection must send `{ "type": "auth", "token": ... }` as its first message; a wrong token or another message closes it (code 4001), and no message within 5 s (`UXP_AUTH_TIMEOUT_MS`) closes it (4002). Before, any local process could connect as the plugin, receive every script and return fake results. The Bridge Panel has a token field next to the port, stored in `localStorage`; the plugin and bridge must come from the same version.
+- A connected plugin is no longer replaced by a new connection: other connections are closed (4009) while it is open. A connection that closes before authenticating no longer disconnects the plugin.
+- The bridge compares tokens in constant time.
 
 ## 2.2.0
 

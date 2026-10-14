@@ -223,8 +223,9 @@ const { createRuntime } = loadRuntime();
 
 /** Connects to the bridge like uxp/plugin/index.js does and serves executes from `world`. */
 class FakePlugin {
-    constructor(port) {
+    constructor(port, token) {
         this.port = port;
+        this.token = token;
         this.world = makeWorld();
     }
     use(world) {
@@ -247,10 +248,13 @@ class FakePlugin {
         return new Promise((resolve, reject) => {
             const ws = new WebSocket(`ws://127.0.0.1:${this.port}`);
             this.ws = ws;
-            ws.on('open', resolve);
+            ws.on('open', () => ws.send(JSON.stringify({ type: 'auth', token: this.token })));
             ws.on('error', reject);
+            ws.on('close', (code) => reject(new Error(`bridge closed the connection (${code})`)));
             ws.on('message', (data) => {
-                this.runtime.handleMessage(JSON.parse(String(data)), (out) => ws.send(out));
+                const msg = JSON.parse(String(data));
+                if (msg.type === 'auth-ok') return resolve();
+                this.runtime.handleMessage(msg, (out) => ws.send(out));
             });
         });
     }
@@ -280,7 +284,13 @@ async function startBridge() {
     const httpPort = await freePort();
     const wsPort = await freePort();
     const child = spawn(process.execPath, [path.join(root, 'uxp/bridge/server.js')], {
-        env: { ...process.env, UXP_HTTP_PORT: String(httpPort), UXP_WS_PORT: String(wsPort), BRIDGE_TOKEN: TOKEN },
+        env: {
+            ...process.env,
+            UXP_HTTP_PORT: String(httpPort),
+            UXP_WS_PORT: String(wsPort),
+            BRIDGE_TOKEN: TOKEN,
+            UXP_AUTH_TIMEOUT_MS: '300',
+        },
         stdio: ['ignore', 'pipe', 'pipe'],
     });
     let stdout = '';
@@ -309,6 +319,27 @@ async function waitForConnected(url, want) {
     throw new Error(`bridge never reported connected=${want}`);
 }
 
+/**
+ * A WebSocket client that is not the plugin: sends `first` (if given) on open and records every
+ * message the bridge sends it, so a test can check it never receives a script.
+ */
+function intruder(port, first) {
+    const ws = new WebSocket(`ws://127.0.0.1:${port}`);
+    const messages = [];
+    ws.on('open', () => {
+        if (first !== undefined) ws.send(typeof first === 'string' ? first : JSON.stringify(first));
+    });
+    ws.on('message', (data) => messages.push(JSON.parse(String(data))));
+    const closed = new Promise((resolve) => ws.on('close', (code) => resolve(code)));
+    const opened = new Promise((resolve, reject) => {
+        ws.on('open', resolve);
+        ws.on('error', reject);
+    });
+    return { ws, messages, closed, opened };
+}
+
+const executes = (messages) => messages.filter((m) => m.type === 'execute');
+
 /** Run a script over the UXP backend the way a tool call does. */
 async function viaUXP(script) {
     try {
@@ -325,7 +356,7 @@ const scripts = (await collectToolScripts())
     .flatMap(({ tool, scripts: list }) => list.map((script, i) => ({ name: list.length > 1 ? `${tool.name}#${i}` : tool.name, script })));
 
 const bridge = await startBridge();
-const plugin = new FakePlugin(bridge.wsPort);
+const plugin = new FakePlugin(bridge.wsPort, TOKEN);
 const env = { ...process.env };
 process.env.INDESIGN_BACKEND = 'uxp';
 process.env.UXP_BRIDGE_URL = bridge.url;
@@ -366,10 +397,48 @@ test('uxp mode does not fall back when the plugin is not connected', async () =>
     }
 });
 
-test('fake plugin connects', async () => {
+test('WebSocket connections with a wrong or missing token are closed and never get scripts', async () => {
+    const wrong = intruder(bridge.wsPort, { type: 'auth', token: 'wrong' });
+    const empty = intruder(bridge.wsPort, { type: 'auth' });
+    const notAuth = intruder(bridge.wsPort, { type: 'result', id: 'x', result: 'fake' });
+    const garbage = intruder(bridge.wsPort, 'not json');
+    const silent = intruder(bridge.wsPort);
+    await silent.opened;
+    // While `silent` is still inside its auth window, the bridge has no plugin to send scripts to.
+    const r = await viaUXP('"secret script"');
+    assert.match(r.error, /Plugin not connected/);
+    assert.equal(await wrong.closed, 4001);
+    assert.equal(await empty.closed, 4001);
+    assert.equal(await notAuth.closed, 4001);
+    assert.equal(await garbage.closed, 4001);
+    assert.equal(await silent.closed, 4002);
+    for (const c of [wrong, empty, notAuth, garbage, silent]) {
+        assert.deepEqual(executes(c.messages), []);
+        assert.ok(!c.messages.some((m) => m.type === 'auth-ok'));
+    }
+    const status = await fetch(`${bridge.url}/status`, { headers: { Authorization: `Bearer ${TOKEN}` } });
+    assert.equal((await status.json()).connected, false);
+});
+
+test('fake plugin connects with the right token', async () => {
     await plugin.connect();
     await waitForConnected(bridge.url, true);
     assert.equal(await ScriptExecutor.isUXPAvailable(), true);
+});
+
+test('a second connection cannot replace the connected plugin', async () => {
+    const wrong = intruder(bridge.wsPort, { type: 'auth', token: 'wrong' });
+    assert.equal(await wrong.closed, 4001);
+    const right = intruder(bridge.wsPort, { type: 'auth', token: TOKEN });
+    assert.equal(await right.closed, 4009);
+    // An unauthenticated connection that closes on its own does not disconnect the plugin.
+    const quitter = intruder(bridge.wsPort);
+    await quitter.opened;
+    quitter.ws.close();
+    await quitter.closed;
+    await waitForConnected(bridge.url, true);
+    assert.deepEqual(await viaUXP('"still the plugin"'), { value: 'still the plugin' });
+    for (const c of [wrong, right, quitter]) assert.deepEqual(executes(c.messages), []);
 });
 
 test(`every handler script returns its ExtendScript result over UXP (no document; ${scripts.length} scripts)`, async () => {

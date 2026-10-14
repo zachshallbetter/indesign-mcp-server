@@ -78,11 +78,11 @@ The timeout is 120 s, and the temp file is deleted afterwards. `INDESIGN_APP_NAM
 
 | Part | Role |
 | --- | --- |
-| `uxp/bridge/server.js` (`indesign-mcp-uxp-bridge`) | Express on `127.0.0.1:${UXP_HTTP_PORT:-3000}` serves `GET /status` and `POST /execute`. A WebSocket server listens on `127.0.0.1:${UXP_WS_PORT:-3001}`. Executions run one at a time from a queue, with a 30 s limit each. When `BRIDGE_TOKEN` is set, `/execute` and `/status` require `Authorization: Bearer <token>`. |
-| `uxp/plugin` | A UXP panel (manifest v5, InDesign 18.0+) that connects to `ws://127.0.0.1:<port>`; the port defaults to 3001 and is set in the panel. `runtime.js` runs each request with a 25 s limit, as described below. `require` is limited to `indesign` and `uxp`. |
+| `uxp/bridge/server.js` (`indesign-mcp-uxp-bridge`) | Express on `127.0.0.1:${UXP_HTTP_PORT:-3000}` serves `GET /status` and `POST /execute`. A WebSocket server listens on `127.0.0.1:${UXP_WS_PORT:-3001}`. Executions run one at a time from a queue, with a 30 s limit each. When `BRIDGE_TOKEN` is set, `/execute` and `/status` require `Authorization: Bearer <token>`, and a WebSocket connection becomes the plugin only after its first message is `{ type: 'auth', token }` with that token (otherwise it is closed with code 4001, or 4002 after `UXP_AUTH_TIMEOUT_MS`, 5 s by default). A connected plugin is never replaced: other connections are closed with 4009 while it is open. |
+| `uxp/plugin` | A UXP panel (manifest v5, InDesign 18.0+) that connects to `ws://127.0.0.1:<port>`; the port defaults to 3001 and is set in the panel, next to the token it sends as its first message. `runtime.js` runs each request with a 25 s limit, as described below. `require` is limited to `indesign` and `uxp`. |
 | `ScriptExecutor.executeViaUXP` | Posts `{ code }` with the optional bearer token and a 35 s timeout. `executeUXPScript` turns the returned `result` into a string, trimming strings as the AppleScript/COM paths trim stdout. |
 
-The bridge binds to loopback only. Without `BRIDGE_TOKEN`, any local process can send code to InDesign through it.
+The bridge binds to loopback only. Without `BRIDGE_TOKEN`, any local process can send code to InDesign through it, and can connect as the plugin while no plugin is connected.
 
 ### How the plugin runs ExtendScript
 
@@ -93,7 +93,7 @@ The handler scripts are written for ExtendScript. They use `File`, `Folder`, glo
 - It wraps `app` in a proxy: `collection[i]` falls back to `collection.item(i)`, `constructor.name` falls back to `constructorName` when the native name is empty, `fullName` strings come back as `File` shims, and shims and proxies are unwrapped (a `File` becomes its path string) before they reach a DOM method.
 - Code that does not parse as a classic script (top-level `return` or `await`) runs as the body of an async function, as the plugin did before, and returns only what it `return`s.
 
-`tests/unit/uxp.test.js` (`npm run test:uxp`, part of `npm test`) starts the real bridge, connects a fake plugin that loads `runtime.js` in a Node `vm`, and gives it a fake DOM shaped like UXP's: collections without `[i]`, an empty `constructor.name`, and no `File`/`Folder` globals. Every generated handler script (132) must return through `ScriptExecutor` exactly what the same script returns when evaluated ExtendScript-style against the same data, with no document open and with a one-page document. With no document open, 129 scripts reach the result InDesign would give (mostly `No document open`); `create_document`, `create_book` and `open_cloud_document` stop at methods the fake DOM does not have. With the document open, 16 scripts run to their normal output, including `list_page_items` and `export_pdf`; the rest stop at members the small fake DOM does not model. Where a script stops early, the error must still match between the two runs. The test also covers the token on `/status`, the `auto` re-check and fallback, and the shims.
+`tests/unit/uxp.test.js` (`npm run test:uxp`, part of `npm test`) starts the real bridge, connects a fake plugin that loads `runtime.js` in a Node `vm`, and gives it a fake DOM shaped like UXP's: collections without `[i]`, an empty `constructor.name`, and no `File`/`Folder` globals. Every generated handler script (132) must return through `ScriptExecutor` exactly what the same script returns when evaluated ExtendScript-style against the same data, with no document open and with a one-page document. With no document open, 129 scripts reach the result InDesign would give (mostly `No document open`); `create_document`, `create_book` and `open_cloud_document` stop at methods the fake DOM does not have. With the document open, 16 scripts run to their normal output, including `list_page_items` and `export_pdf`; the rest stop at members the small fake DOM does not model. Where a script stops early, the error must still match between the two runs. The test also covers the token on `/status`, WebSocket auth (a wrong, missing or late token is closed and never receives a script; a second connection, even with the right token, cannot replace the plugin), the `auto` re-check and fallback, and the shims.
 
 On a real InDesign, `indesign_status` with `probe: true` returns `backend.uxpProbe` under the UXP backend. The plugin checks the behaviors these gaps depend on (enum equality, native `[i]`, `constructor.name`, `fs` path forms, Promise-returning methods) and lists `problems` and `handled` differences. `uxp/README.md` describes the fields.
 
@@ -103,7 +103,6 @@ This has not been run against a real InDesign. Known gaps:
 - It has not been checked that every DOM method taking a file accepts a path string.
 - DOM methods that return a Promise under UXP are not awaited.
 - The shim's `File.fullName` is the plain path, not ExtendScript's URI-style path.
-- The WebSocket port is not covered by `BRIDGE_TOKEN`: any local process can connect as the plugin.
 
 Treat the UXP backend as experimental, and use `extendscript` for normal work until it has been tested against InDesign.
 
