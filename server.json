@@ -1,0 +1,38 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.zachshallbetter/indesign-mcp-server",
+  "title": "InDesign MCP Server",
+  "description": "Drive Adobe InDesign from any MCP client: 135+ tools for layout, styles, books and PDF export.",
+  "repository": {
+    "url": "https://github.com/zachshallbetter/indesign-mcp-server",
+    "source": "github"
+  },
+  "version": "1.4.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "indesign-mcp-server",
+      "version": "1.4.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "INDESIGN_APP_NAME",
+          "description": "macOS only: force a specific app name, e.g. \"Adobe InDesign 2026\"",
+          "isRequired": false
+        },
+        {
+          "name": "INDESIGN_ALLOWED_DIRS",
+          "description": "Extra directories allowed for file operations (':' on macOS, ';' on Windows)",
+          "isRequired": false
+        },
+        {
+          "name": "INDESIGN_BACKEND",
+          "description": "Execution backend: extendscript (default), uxp or auto",
+          "isRequired": false
+        }
+      ]
+    }
+  ]
+}

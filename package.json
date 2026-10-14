@@ -1,21 +1,36 @@
 {
   "name": "indesign-mcp-server",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "MCP server that turns Adobe InDesign into an AI design automation platform — 135+ tools for layout, styles, export, and publishing workflows",
+  "mcpName": "io.github.zachshallbetter/indesign-mcp-server",
   "main": "src/index.js",
+  "bin": {
+    "indesign-mcp-server": "src/index.js",
+    "indesign-mcp-uxp-bridge": "uxp/bridge/server.js"
+  },
+  "files": [
+    "src/",
+    "uxp/",
+    "docs/",
+    "LICENSE",
+    "README.md",
+    "server.json"
+  ],
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --inspect src/index.js",
     "build": "echo 'No build step required for Node.js'",
-    "test": "node tests/unit/jsxSafe.test.js",
+    "test": "node tests/unit/jsxSafe.test.js && node tests/unit/protocol.test.js",
     "test:unit": "node tests/unit/jsxSafe.test.js",
     "test:integration": "node tests/index.js",
     "test:unified": "node tests/unified-test-runner.js",
-    "check": "node --check src/index.js && node --check src/core/scriptExecutor.js && node --check src/core/InDesignMCPServer.js && node --check src/handlers/documentHandlers.js && node --check src/handlers/exportHandlers.js && node --check src/handlers/graphicsHandlers.js && node --check src/handlers/textHandlers.js && node --check src/handlers/pageHandlers.js && node --check src/handlers/utilityHandlers.js",
+    "check": "node --check src/index.js && node --check src/core/scriptExecutor.js && node --check src/core/InDesignMCPServer.js && node --check src/handlers/documentHandlers.js && node --check src/handlers/exportHandlers.js && node --check src/handlers/graphicsHandlers.js && node --check src/handlers/textHandlers.js && node --check src/handlers/pageHandlers.js && node --check src/handlers/utilityHandlers.js && node --check uxp/bridge/server.js",
     "uxp:bridge": "node uxp/bridge/server.js",
     "start:uxp": "INDESIGN_BACKEND=uxp node src/index.js",
-    "start:auto": "INDESIGN_BACKEND=auto node src/index.js"
+    "start:auto": "INDESIGN_BACKEND=auto node src/index.js",
+    "test:protocol": "node tests/unit/protocol.test.js",
+    "prepublishOnly": "npm run check && npm test"
   },
   "keywords": [
     "mcp",
@@ -39,7 +54,7 @@
   "author": "Zach Shallbetter",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^0.5.0",
+    "@modelcontextprotocol/sdk": "^1.32.1",
     "express": "^4.22.3",
     "ws": "^8.21.3"
   },

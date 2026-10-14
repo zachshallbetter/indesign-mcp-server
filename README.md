@@ -1,5 +1,6 @@
 # InDesign MCP Server
 
+[![npm](https://img.shields.io/npm/v/indesign-mcp-server.svg)](https://www.npmjs.com/package/indesign-mcp-server)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org/)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows-lightgrey.svg)](https://github.com/zachshallbetter/indesign-mcp-server)
@@ -66,23 +67,24 @@ Uses COM automation through PowerShell. No extra install steps. InDesign should 
 
 ### Installation
 
+Nothing to clone. MCP clients start the server with `npx`, which downloads it from npm on first run. It is also listed in the [official MCP Registry](https://registry.modelcontextprotocol.io/) as `io.github.zachshallbetter/indesign-mcp-server`.
+
+Claude Code:
+
 ```bash
-git clone https://github.com/zachshallbetter/indesign-mcp-server.git
-cd indesign-mcp-server
-npm install
-npm start
+claude mcp add indesign -- npx -y indesign-mcp-server
 ```
 
 ### MCP client config
 
-Add to your MCP config (e.g. Claude Desktop `claude_desktop_config.json`):
+Any other client (Claude Desktop `claude_desktop_config.json`, Cursor, Warp, …):
 
 ```json
 {
   "mcpServers": {
     "indesign": {
-      "command": "node",
-      "args": ["/ABSOLUTE/PATH/TO/indesign-mcp-server/src/index.js"]
+      "command": "npx",
+      "args": ["-y", "indesign-mcp-server"]
     }
   }
 }
@@ -94,8 +96,8 @@ Optional environment overrides:
 {
   "mcpServers": {
     "indesign": {
-      "command": "node",
-      "args": ["/ABSOLUTE/PATH/TO/indesign-mcp-server/src/index.js"],
+      "command": "npx",
+      "args": ["-y", "indesign-mcp-server"],
       "env": {
         "INDESIGN_APP_NAME": "Adobe InDesign 2026",
         "INDESIGN_ALLOWED_DIRS": "/Users/you/Projects:/Users/you/Documents"
@@ -108,7 +110,9 @@ Optional environment overrides:
 - `INDESIGN_APP_NAME` — macOS only; force a specific app name for AppleScript
 - `INDESIGN_ALLOWED_DIRS` — extra directories allowed for file operations (delimiter is `:` on macOS, `;` on Windows)
 
-Replace the path with your local clone. Restart the client, open InDesign, then try: *Create an A4 doc and add a centered title.*
+Restart the client, open InDesign, then try: *Create an A4 doc and add a centered title.*
+
+To run from a clone instead (for development), use `"command": "node"` with `"args": ["/ABSOLUTE/PATH/TO/indesign-mcp-server/src/index.js"]` after `npm install`.
 
 ### Help system
 
@@ -286,7 +290,7 @@ Existing handlers also use `escapeJsxString` from `stringUtils.js`. Prefer `jsxS
 
 ```bash
 npm run check          # syntax check core modules
-npm test               # unit tests (no InDesign required)
+npm test               # unit + MCP protocol tests (no InDesign required)
 npm run test:integration   # full suite — requires InDesign running
 npm run test:unified       # single-document unified runner
 ```
@@ -300,7 +304,7 @@ CI runs `check` + unit tests on every push/PR.
 | Backend | How to enable |
 | --- | --- |
 | ExtendScript / COM (default) | unset or `INDESIGN_BACKEND=extendscript` |
-| UXP bridge + plugin | `INDESIGN_BACKEND=uxp` (or `auto`) + `npm run uxp:bridge` + load `uxp/plugin` |
+| UXP bridge + plugin | `INDESIGN_BACKEND=uxp` (or `auto`) + `npx -p indesign-mcp-server indesign-mcp-uxp-bridge` + load `uxp/plugin` |
 
 Details: [`docs/architecture-execution.md`](./docs/architecture-execution.md) and [`uxp/README.md`](./uxp/README.md).
 

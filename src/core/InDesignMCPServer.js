@@ -21,13 +21,16 @@ import {
 } from '../handlers/index.js';
 import { formatResponse, formatErrorResponse } from '../utils/stringUtils.js';
 import { ScriptExecutor } from './scriptExecutor.js';
+import { readFileSync } from 'node:fs';
+
+const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
 
 export class InDesignMCPServer {
     constructor() {
         this.server = new Server(
             {
-                name: 'indesign-mcp-server',
-                version: '1.3.0',
+                name: pkg.name,
+                version: pkg.version,
             },
             {
                 capabilities: {

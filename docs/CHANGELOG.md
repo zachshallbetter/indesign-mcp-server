@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.4.0
+
+### Added
+- Published to npm: run with `npx -y indesign-mcp-server`, no clone needed (`bin` + `files` in `package.json`)
+- `indesign-mcp-uxp-bridge` command for the UXP bridge
+- `server.json` and `mcpName` for the official MCP Registry (`io.github.zachshallbetter/indesign-mcp-server`)
+- MCP protocol test (`tests/unit/protocol.test.js`): handshake, tool list and schemas over stdio, no InDesign required; runs in `npm test` and CI
+
+### Changed
+- `@modelcontextprotocol/sdk` upgraded from 0.5 to 1.32
+- Server name and version over MCP are read from `package.json`
+- README install instructions use `npx`
+
+### Fixed
+- UXP bridge crashed on start: it used CommonJS `require` inside an ES module package and imported `uuid`, which was not a dependency. It now uses ES imports and `crypto.randomUUID`.
+
 ## 1.3.0
 
 ### Added

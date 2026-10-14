@@ -1,10 +1,11 @@
+#!/usr/bin/env node
 /**
  * UXP bridge — HTTP /execute + WebSocket to InDesign plugin.
  * Adapted from theloniuser/indesign-uxp-server (see uxp/NOTICE).
  */
-const { WebSocketServer } = require('ws');
-const express = require('express');
-const { v4: uuidv4 } = require('uuid');
+import { randomUUID } from 'node:crypto';
+import { WebSocketServer } from 'ws';
+import express from 'express';
 
 const WS_PORT = Number(process.env.UXP_WS_PORT || 3001);
 const HTTP_PORT = Number(process.env.UXP_HTTP_PORT || 3000);
@@ -55,7 +56,7 @@ function drainQueue() {
 
   processingQueue = true;
   const { code, resolve, reject } = requestQueue.shift();
-  const id = uuidv4();
+  const id = randomUUID();
 
   const timer = setTimeout(() => {
     pending.delete(id);
