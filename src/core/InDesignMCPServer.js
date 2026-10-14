@@ -23,7 +23,7 @@ import {
 } from '../handlers/index.js';
 import { formatResponse, formatErrorResponse } from '../utils/stringUtils.js';
 import { ScriptExecutor } from './scriptExecutor.js';
-import { normalizeArgs } from '../handlers/aliases.js';
+import { normalizeArgs, unknownArgWarnings, withWarnings } from '../handlers/aliases.js';
 import { readFileSync } from 'node:fs';
 
 const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
@@ -41,7 +41,7 @@ Conventions:
 - Fonts are fontName: "Family\\tStyle" (for example "Arial\\tBold") or a family name. Stroke weight is strokeWeight, in points. alignment takes InDesign Justification names: LEFT_ALIGN, CENTER_ALIGN, RIGHT_ALIGN, LEFT_JUSTIFIED, RIGHT_JUSTIFIED, CENTER_JUSTIFIED, FULLY_JUSTIFIED.
 - File paths must be absolute and inside the user's home folder or INDESIGN_ALLOWED_DIRS.
 
-A call that fails returns isError with a message such as "No document open" or "Error ...": read it and fix the arguments rather than retrying unchanged. Tool annotations mark destructive tools (delete_*, cleanup_document, close_document discards unsaved changes, execute_indesign_code); confirm with the user before using them on work that is not saved.
+A call that fails returns isError with a message such as "No document open" or "Error ...": read it and fix the arguments rather than retrying unchanged. A result with a "warnings" list names arguments that were ignored (unknown names, with the closest valid one) or deprecated: correct them in later calls. Tool annotations mark destructive tools (delete_*, cleanup_document, close_document discards unsaved changes, execute_indesign_code); confirm with the user before using them on work that is not saved.
 
 help({ tool }) describes any tool's parameters; help({ category }) lists tools by area.`;
 
@@ -80,16 +80,34 @@ export class InDesignMCPServer {
                 };
             } catch (error) {
                 return {
-                    content: [{ type: 'text', text: JSON.stringify({ success: false, error: error.message }, null, 2) }],
+                    content: [{ type: 'text', text: JSON.stringify({ success: false, error: error.message, ...(error.warnings ? { warnings: error.warnings } : {}) }, null, 2) }],
                     isError: true,
                 };
             }
         });
     }
 
+    /**
+     * Run a tool. Older parameter names and values are mapped to the canonical
+     * ones first (src/handlers/aliases.js); the result lists any deprecated or
+     * unknown arguments under `warnings`.
+     */
     async handleToolCall(name, args) {
-        // Older parameter names and values are accepted as aliases (src/handlers/aliases.js)
-        args = normalizeArgs(name, args);
+        const warnings = [];
+        args = normalizeArgs(name, args, warnings);
+        warnings.push(...unknownArgWarnings(name, args));
+        let result;
+        try {
+            result = await this.dispatch(name, args);
+        } catch (error) {
+            if (warnings.length) error.warnings = warnings;
+            throw error;
+        }
+        return withWarnings(result, warnings);
+    }
+
+    /** Send a tool call (with canonical argument names) to its handler. */
+    async dispatch(name, args) {
         // Document Management
         switch (name) {
             case 'get_document_info': return await DocumentHandlers.getDocumentInfo();

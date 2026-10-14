@@ -125,7 +125,7 @@ export class GraphicsHandlers {
             scale = 100,
             fitMode = 'PROPORTIONALLY',
         } = args;
-        const objectStyle = args.objectStyle ?? args.applyObjectStyle ?? '';
+        const objectStyle = args.objectStyle ?? '';
 
         const resolvedPath = validateFilePath(filePath);
         const fileLit = jsxPath(resolvedPath);
@@ -195,7 +195,7 @@ export class GraphicsHandlers {
      */
     static async createObjectStyle(args) {
         const { name, fillColor, strokeColor, strokeWeight, cornerRadius = 0 } = args;
-        const opacity = args.opacity ?? args.transparency;
+        const opacity = args.opacity;
         if (!has(name)) return formatResponse('Invalid style name: must be a non-empty string', 'Create Object Style');
 
         const pre = [];

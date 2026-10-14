@@ -6,7 +6,7 @@ This is a map of `src/` for contributors. To add a tool, follow the checklist in
 src/
   index.js                    Entry point (bin: indesign-mcp-server); starts the stdio server
   core/
-    InDesignMCPServer.js      MCP Server: SERVER_INSTRUCTIONS, tools/list, tools/call dispatch (handleToolCall switch)
+    InDesignMCPServer.js      MCP Server: SERVER_INSTRUCTIONS, tools/list, tools/call: handleToolCall (aliases, warnings) and the dispatch switch
     scriptExecutor.js         Runs scripts in InDesign: AppleScript (macOS), COM (Windows), UXP bridge; indesign_status data
     sessionManager.js         In-process state: last document page size, last created item, default positioning
   handlers/                   One class of static async methods per area; each method implements one tool
@@ -37,11 +37,11 @@ src/
 ## Request flow
 
 1. `tools/list` returns `allToolDefinitions`. Each entry has `name`, `title`, `description`, `inputSchema` and `annotations`.
-2. `tools/call` runs `InDesignMCPServer.handleToolCall(name, args)`. A `switch` sends each tool name to a handler method. Unknown names return an error result.
+2. `tools/call` runs `InDesignMCPServer.handleToolCall(name, args)`. It maps older parameter names to the canonical ones (`handlers/aliases.js`) and collects a warning for each alias and each argument the tool does not take. `dispatch(name, args)` then sends the call to its handler method through a `switch`. Unknown tool names return an error result.
 3. The handler validates the arguments, builds an ExtendScript string and calls `ScriptExecutor.executeInDesignScript(script)`.
 4. The executor runs the script through the selected backend and returns its result as a string. See [docs/architecture-execution.md](../docs/architecture-execution.md).
 5. The handler returns `formatResponse(result, "Operation Name")`. `success` is `!looksLikeFailure(result)`.
-6. The server serializes the object as JSON text and sets `isError` when `success === false`. If the handler threw, the server returns `{ success: false, error }` with `isError: true`.
+6. `handleToolCall` adds `warnings` to the result when there are any. The server serializes the object as JSON text and sets `isError` when `success === false`. If the handler threw, the server returns `{ success: false, error }` (plus `warnings`) with `isError: true`.
 
 ## Handler conventions
 

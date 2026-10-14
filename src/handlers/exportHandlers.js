@@ -135,12 +135,12 @@ export class ExportHandlers {
      */
     static async exportImages(args) {
         const {
-            outputPath = args.folderPath,
+            outputPath,
             format = 'JPEG',
             resolution = 300,
             quality = 80,
         } = args;
-        const pages = args.pages ?? args.pageRange ?? 'all';
+        const pages = args.pages ?? 'all';
 
         const resolved = validateFilePath(outputPath);
         const folderJsx = jsxPath(resolved);
@@ -254,7 +254,7 @@ export class ExportHandlers {
      */
     static async packageDocument(args) {
         const {
-            outputPath = args.folderPath,
+            outputPath,
             includeFonts = true,
             includeLinks = true,
             includeProfiles = true,

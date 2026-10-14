@@ -78,7 +78,12 @@ test('index parameters are integers with a lower bound', () => each((t, p) => {
 
 test('one name per concept: aliases are not advertised', () => each((t, p) => {
     const props = t.inputSchema?.properties || {};
-    for (const old of [...Object.keys(PARAM_ALIASES), 'fontStyle']) if (old in props) p.push(`${t.name}.${old}`);
+    if ('fontStyle' in props) p.push(`${t.name}.fontStyle`);
+    for (const a of PARAM_ALIASES) {
+        if (a.tools && !a.tools.includes(t.name)) continue;
+        if (a.old in props) p.push(`${t.name}.${a.old}`);
+        if (a.tools && !(a.canonical in props)) p.push(`${t.name}: alias ${a.old} -> ${a.canonical}, which it does not take`);
+    }
 }));
 
 test('alignment parameters take InDesign Justification names', () => each((t, p) => {

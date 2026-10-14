@@ -81,6 +81,15 @@ test('help lists every advertised tool and documents each one', async () => {
     }
 });
 
+test('tools/call reports unknown and deprecated arguments under warnings', async () => {
+    const plain = JSON.parse((await client.callTool({ name: 'help', arguments: { tool: 'create_rectangle' } })).content[0].text);
+    assert.equal(plain.warnings, undefined, 'no warnings key when every argument is known');
+    const res = await client.callTool({ name: 'help', arguments: { tool: 'create_rectangle', tools: 'x' } });
+    assert.notEqual(res.isError, true);
+    const body = JSON.parse(res.content[0].text);
+    assert.deepEqual(body.warnings, ["Unknown parameter 'tools' was ignored; did you mean 'tool'?"]);
+});
+
 async function run() {
     await client.connect(transport);
     try {
