@@ -10,8 +10,6 @@ This page covers installing the InDesign MCP server, connecting it to an MCP cli
 
 The npm package is `indesign-mcp-server` and the MCP Registry name is `io.github.zachshallbetter/indesign-mcp-server`. Clients start it with `npx -y indesign-mcp-server`, so you do not have to clone anything.
 
-> **Before the first npm release** `npx` cannot find the package yet. Until then, clone the repository, run `npm install`, and point your client at `node /ABSOLUTE/PATH/TO/indesign-mcp-server/src/index.js`.
-
 ## Client configuration
 
 ### Claude Code

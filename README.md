@@ -67,9 +67,7 @@ Uses COM automation through PowerShell. No extra install steps. InDesign should 
 
 ### Installation
 
-> **Not on npm yet.** Until the first npm release, clone this repository, run `npm install`, and use `"command": "node"` with `"args": ["/ABSOLUTE/PATH/TO/indesign-mcp-server/src/index.js"]` in your client config.
-
-Nothing to clone once it is published: MCP clients start the server with `npx`, which downloads it from npm on first run. Its [MCP Registry](https://registry.modelcontextprotocol.io/) name is `io.github.zachshallbetter/indesign-mcp-server`.
+Nothing to clone. MCP clients start the server with `npx`, which downloads it from [npm](https://www.npmjs.com/package/indesign-mcp-server) on first run. It is listed in the [official MCP Registry](https://registry.modelcontextprotocol.io/) as `io.github.zachshallbetter/indesign-mcp-server`.
 
 Claude Code:
 
