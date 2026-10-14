@@ -2,9 +2,11 @@
 
 ## Unreleased
 
+### Canonical parameter names
+
 One parameter name and one enum vocabulary per concept, so agents stop guessing. The older names and values are still accepted as aliases (mapped in `src/handlers/aliases.js` before a handler runs) and generate exactly the same scripts; they are no longer advertised in the schemas.
 
-### Canonical parameter names
+#### Names
 
 | Concept | Canonical | Still accepted | Tools |
 | --- | --- | --- | --- |
@@ -13,15 +15,36 @@ One parameter name and one enum vocabulary per concept, so agents stop guessing.
 | Alignment | `alignment` with InDesign `Justification` names: `LEFT_ALIGN`, `CENTER_ALIGN`, `RIGHT_ALIGN`, `LEFT_JUSTIFIED`, `RIGHT_JUSTIFIED`, `CENTER_JUSTIFIED`, `FULLY_JUSTIFIED` | `LEFT`, `CENTER`, `RIGHT`, `JUSTIFY` (= `LEFT_JUSTIFIED`), any case | `create_text_frame`, `edit_text_frame` (already Justification: `create_paragraph_style`, `create_master_text_frame`) |
 | Item index | `itemIndex` | `objectIndex` | `apply_color` |
 
-### Changed
+#### Changed
 - `create_text_frame` and `edit_text_frame` now also accept `RIGHT_JUSTIFIED`, `CENTER_JUSTIFIED` and `FULLY_JUSTIFIED`
 - Every index parameter is an `integer` with `minimum: 0` (`spreadIndex`, `referenceSpreadIndex` and `matchIndex` were `number`; the page-item and group indexes had no minimum)
 - Every item index description names its collection: `page.allPageItems` (the `list_page_items` / `list_groups` numbering) for the page-item and group tools, `page.textFrames` for `frameIndex`, `page.allGraphics` for `get_image_info`, and the chosen collection for `apply_color` / `apply_object_style`
 - Server instructions and `docs/LLM_PROMPT.md` describe the canonical names and index spaces
 
-### Added
+#### Added
 - `tests/unit/aliases.test.js`: each alias generates the same script as its canonical name
 - Definition tests: index parameters are bounded integers, aliases are not advertised, alignment enums are the Justification names
+
+### UXP backend returns tool results
+
+Under `INDESIGN_BACKEND=uxp`, most tools returned an empty result: the plugin only passed back an explicit `return`, while the handler scripts end with a bare expression, and the scripts used ExtendScript globals that UXP does not have. The plugin now runs them with ExtendScript semantics. This is tested against a fake InDesign DOM only; the backend stays experimental until it has been run against InDesign.
+
+#### Changed
+- The UXP plugin (`uxp/plugin/runtime.js`, plugin version 1.1.0) evaluates each script with `eval` and returns its completion value, as `do script` / `DoScript` do. Code with a top-level `return` or `await` still runs as an async function body.
+- Enums and classes a script names come from `require('indesign')`; `File`, `Folder` and `$` are shims. `File.exists` and `Folder.create()` use UXP's `fs` module, so the plugin manifest now requests `localFileSystem: fullAccess`.
+- `app` is wrapped so `collection[i]` falls back to `item(i)` and `constructor.name` to `constructorName` (UXP DOM differences documented by Adobe); `File` shims reach DOM methods as path strings.
+- UXP string results are trimmed, as the AppleScript/COM paths trim stdout.
+- The plugin's WebSocket port is set in the Bridge Panel (default 3001, remembered), so `UXP_WS_PORT` on the bridge no longer breaks the connection. The bridge prints the port to enter when it is not 3001.
+- `auto` re-checks the bridge every 5 s instead of once per process, and falls back to ExtendScript for a call only when the bridge is unreachable or the plugin is not connected (the script cannot have run).
+- With `BRIDGE_TOKEN` set, the bridge requires it on `/status` as well as `/execute`.
+- A UXP bridge timeout is reported as a timeout, not as "bridge not reachable".
+
+#### Added
+- `tests/unit/uxp.test.js` (`npm run test:uxp`, part of `npm test`): the real bridge with a fake plugin running `runtime.js` in a Node `vm` against a UXP-shaped fake DOM. Every handler script must return over UXP what it returns when evaluated ExtendScript-style. It also covers the token, `auto` re-check and fallback, and the shims.
+- `tests/audit/collectScripts.js`: the script capture shared by the audit and the UXP test.
+
+#### Known gaps
+- Enum comparisons with `==` may fail if UXP enum values are objects (six handler scripts compare enums). Whether every DOM method that takes a file accepts a path string is unverified. Details in `uxp/README.md`.
 
 ## 2.1.0
 

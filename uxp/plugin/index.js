@@ -1,25 +1,26 @@
 // Adapted from theloniuser/indesign-uxp-server — see uxp/NOTICE
-const { app } = require("indesign");
+const indesign = require("indesign");
 const { entrypoints } = require("uxp");
+const { createRuntime } = require("./runtime.js");
 
 const statusEl = document.getElementById("status");
+const portEl = document.getElementById("port");
+const formEl = document.getElementById("portForm");
 
-function serializeResult(value) {
-  if (value === null || value === undefined) return null;
-  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') return value;
-  if (Array.isArray(value)) return value.map(serializeResult);
-  if (typeof value === 'object') {
-    try {
-      return JSON.parse(JSON.stringify(value));
-    } catch (e) {
-      return String(value);
-    }
+const DEFAULT_PORT = 3001;
+const PORT_KEY = "bridgePort";
+
+function loadFs() {
+  try {
+    return require("fs");
+  } catch (e) {
+    console.warn("[Plugin] fs module unavailable; File.exists and Folder.create will throw:", e);
+    return null;
   }
-  return String(value);
 }
 
 // Whitelist: only 'indesign' and 'uxp' modules are allowed inside execute calls.
-// Passing raw require into new Function() would otherwise expose the full module system.
+// Passing raw require into the script would otherwise expose the full module system.
 const ALLOWED_MODULES = new Set(['indesign', 'uxp']);
 function sandboxedRequire(moduleName) {
   if (!ALLOWED_MODULES.has(moduleName)) {
@@ -28,31 +29,36 @@ function sandboxedRequire(moduleName) {
   return require(moduleName);
 }
 
-async function handleExecute(ws, msg) {
-  let timerId;
+const runtime = createRuntime({ indesign, require: sandboxedRequire, fs: loadFs(), timeoutMs: 25000 });
+
+function savedPort() {
   try {
-    // Pass sandboxedRequire so code inside new Function() can call require('indesign') etc.
-    // new Function() runs in global scope and loses UXP's module-scoped require.
-    const fn = new Function('app', 'require', `return (async () => { ${msg.code} })()`);
-    const result = await Promise.race([
-      fn(app, sandboxedRequire).finally(() => clearTimeout(timerId)),
-      new Promise((_, reject) => {
-        timerId = setTimeout(() => reject(new Error('Execution timed out in plugin (25s)')), 25000);
-      }),
-    ]);
-    ws.send(JSON.stringify({ type: 'result', id: msg.id, result: serializeResult(result) }));
+    const p = Number(localStorage.getItem(PORT_KEY));
+    if (Number.isInteger(p) && p > 0 && p < 65536) return p;
   } catch (e) {
-    clearTimeout(timerId);
-    ws.send(JSON.stringify({ type: 'error', id: msg.id, error: e.message || String(e) }));
+    // storage unavailable
   }
+  return DEFAULT_PORT;
 }
 
+let socket = null;
+let retryTimer = null;
+
 function connectToBridge() {
-  const ws = new WebSocket("ws://127.0.0.1:3001");
+  clearTimeout(retryTimer);
+  if (socket) {
+    socket.onclose = null;
+    try { socket.close(); } catch (e) { /* already closed */ }
+  }
+
+  const port = savedPort();
+  const ws = new WebSocket(`ws://127.0.0.1:${port}`);
+  socket = ws;
+  statusEl.textContent = `Connecting to bridge on port ${port}...`;
 
   ws.onopen = () => {
-    statusEl.textContent = "Connected to bridge ✓";
-    console.log("[Plugin] Connected to bridge");
+    statusEl.textContent = `Connected to bridge on port ${port} ✓`;
+    console.log("[Plugin] Connected to bridge on port", port);
   };
 
   ws.onmessage = (event) => {
@@ -63,45 +69,50 @@ function connectToBridge() {
       console.error("[Plugin] Invalid JSON:", event.data);
       return;
     }
-
     console.log("[Plugin] Received:", event.data.slice(0, 200));
-
-    if (msg.type === 'ping') {
-      ws.send(JSON.stringify({ type: 'pong', id: msg.id }));
-    } else if (msg.type === 'execute') {
-      handleExecute(ws, msg);
-    }
+    runtime.handleMessage(msg, (out) => ws.send(out));
   };
 
   ws.onerror = (err) => {
-    statusEl.textContent = "Bridge connection error";
+    statusEl.textContent = `Bridge connection error (port ${port})`;
     console.error("[Plugin] WebSocket error:", err);
   };
 
   ws.onclose = () => {
-    statusEl.textContent = "Disconnected — retrying in 3s";
-    setTimeout(connectToBridge, 3000);
+    statusEl.textContent = `Disconnected from port ${port} — retrying in 3s`;
+    retryTimer = setTimeout(connectToBridge, 3000);
   };
 }
+
+formEl.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const p = Number(portEl.value);
+  if (!Number.isInteger(p) || p < 1 || p > 65535) {
+    statusEl.textContent = "Port must be a number from 1 to 65535";
+    return;
+  }
+  try {
+    localStorage.setItem(PORT_KEY, String(p));
+  } catch (e) {
+    // storage unavailable: the port lasts until the panel reloads
+  }
+  connectToBridge();
+});
+
+let started = false;
 
 entrypoints.setup({
   panels: {
     mainPanel: {
       show() {
+        if (started) return;
+        started = true;
+        portEl.value = String(savedPort());
         try {
-          const docCount = app.documents.length;
-          console.log("[Plugin] DOM OK — open docs:", docCount);
+          console.log("[Plugin] DOM OK — open docs:", indesign.app.documents.length);
         } catch (e) {
           console.error("[Plugin] DOM access failed:", e);
         }
-
-        try {
-          const result = new Function('return 1 + 1')();
-          console.log("[Plugin] new Function() OK:", result);
-        } catch (e) {
-          console.error("[Plugin] new Function() failed:", e);
-        }
-
         connectToBridge();
       }
     }

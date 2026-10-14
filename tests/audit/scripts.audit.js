@@ -18,9 +18,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import * as acorn from 'acorn';
 import * as walk from 'acorn-walk';
-import { ScriptExecutor } from '../../src/core/scriptExecutor.js';
-import { InDesignMCPServer } from '../../src/core/InDesignMCPServer.js';
-import { allToolDefinitions } from '../../src/types/index.js';
+import { collectToolScripts } from './collectScripts.js';
 
 const require = createRequire(import.meta.url);
 const typesRoot = path.dirname(require.resolve('types-for-adobe/package.json'));
@@ -62,37 +60,6 @@ function loadTypings() {
     for (const m of dts.matchAll(/declare\s+(?:class|enum|var|const|let|function|interface)\s+([A-Za-z_$][\w$]*)/g)) globals.add(m[1]);
     globals.delete('JSON'); // not available in InDesign's ExtendScript engine
     return { members, globals };
-}
-
-function sample(name, schema) {
-    if (!schema) return 'Sample';
-    if (schema.enum) return schema.enum[0];
-    if (schema.default !== undefined) return schema.default;
-    const n = name.toLowerCase();
-    switch (schema.type) {
-        case 'number':
-        case 'integer':
-            return /index|page|spread|position|row|column/.test(n) ? 0 : 10;
-        case 'boolean':
-            return true;
-        case 'array': {
-            const one = (i) => {
-                const v = sample(name, schema.items ?? { type: 'string' });
-                return typeof v === 'number' ? v + i : v;
-            };
-            return Array.from({ length: Math.max(2, schema.minItems ?? 0) }, (_, i) => one(i));
-        }
-        case 'object': {
-            const o = {};
-            for (const [k, v] of Object.entries(schema.properties || {})) o[k] = sample(k, v);
-            return o;
-        }
-        default:
-            if (/folder|directory|outputdir/.test(n)) return path.join(process.env.HOME || root, 'Documents');
-            if (/path|file/.test(n)) return path.join(process.env.HOME || root, 'Documents', 'audit.indd');
-            if (/colou?r|swatch/.test(n)) return 'Black';
-            return 'Sample';
-    }
 }
 
 function checkScript(src, typings) {
@@ -161,33 +128,18 @@ const typings = loadTypings();
 const serverSrc = readFileSync(path.join(root, 'src/core/InDesignMCPServer.js'), 'utf8');
 const dispatched = new Set([...serverSrc.matchAll(/case '([^']+)':/g)].map((m) => m[1]));
 
-let captured = [];
-ScriptExecutor.executeInDesignScript = async (script) => {
-    captured.push(script);
-    return 'OK';
-};
-ScriptExecutor.executeViaUXP = ScriptExecutor.executeInDesignScript;
-
-const server = new InDesignMCPServer();
 const problems = [];
 let checkedScripts = 0;
 let checkedTools = 0;
 
-for (const tool of allToolDefinitions) {
-    if (filter && !filter.test(tool.name)) continue;
+for (const { tool, args: toolArgs, scripts: captured, result, error } of await collectToolScripts({ filter })) {
     checkedTools++;
     if (!dispatched.has(tool.name)) {
         problems.push([tool.name, 'not dispatched in InDesignMCPServer.handleToolCall']);
         continue;
     }
-    const toolArgs = {};
-    for (const [k, v] of Object.entries(tool.inputSchema?.properties || {})) toolArgs[k] = sample(k, v);
-    captured = [];
-    let result;
-    try {
-        result = await server.handleToolCall(tool.name, toolArgs);
-    } catch (e) {
-        problems.push([tool.name, `threw with sample args ${JSON.stringify(toolArgs)}: ${e.message}`]);
+    if (error) {
+        problems.push([tool.name, `threw with sample args ${JSON.stringify(toolArgs)}: ${error.message}`]);
         continue;
     }
     if (/not found or not implemented/.test(JSON.stringify(result))) {

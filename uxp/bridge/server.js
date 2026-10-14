@@ -11,7 +11,7 @@ const WS_PORT = Number(process.env.UXP_WS_PORT || 3001);
 const HTTP_PORT = Number(process.env.UXP_HTTP_PORT || 3000);
 const TIMEOUT_MS = 30000;
 
-// L1: Optional auth token — set BRIDGE_TOKEN env var to require Bearer auth on /execute.
+// L1: Optional auth token — set BRIDGE_TOKEN env var to require Bearer auth on /execute and /status.
 // Without it the bridge is open to any local process; token is recommended for shared machines.
 const BRIDGE_TOKEN = process.env.BRIDGE_TOKEN || null;
 if (!BRIDGE_TOKEN) {
@@ -24,7 +24,7 @@ app.use(express.json());
 
 // Auth middleware — only applied when BRIDGE_TOKEN is configured
 if (BRIDGE_TOKEN) {
-  app.use('/execute', (req, res, next) => {
+  app.use(['/execute', '/status'], (req, res, next) => {
     const auth = req.headers['authorization'];
     if (!auth || auth !== `Bearer ${BRIDGE_TOKEN}`) {
       return res.status(401).json({ error: 'Unauthorized: missing or invalid BRIDGE_TOKEN' });
@@ -182,5 +182,8 @@ app.post('/execute', async (req, res) => {
 app.listen(HTTP_PORT, '127.0.0.1', () => {
   console.log(`[Bridge] HTTP server on http://127.0.0.1:${HTTP_PORT}`);
   console.log(`[Bridge] WebSocket server on ws://127.0.0.1:${WS_PORT}`);
+  if (WS_PORT !== 3001) {
+    console.log(`[Bridge] Set the port in the InDesign Bridge panel to ${WS_PORT}.`);
+  }
   console.log('[Bridge] Waiting for UXP plugin to connect...');
 });
