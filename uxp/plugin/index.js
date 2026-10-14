@@ -5,10 +5,17 @@ const { createRuntime } = require("./runtime.js");
 
 const statusEl = document.getElementById("status");
 const portEl = document.getElementById("port");
+const tokenEl = document.getElementById("token");
 const formEl = document.getElementById("portForm");
 
 const DEFAULT_PORT = 3001;
 const PORT_KEY = "bridgePort";
+const TOKEN_KEY = "bridgeToken";
+
+// Close codes from uxp/bridge/server.js.
+const CLOSE_UNAUTHORIZED = 4001;
+const CLOSE_AUTH_TIMEOUT = 4002;
+const CLOSE_ALREADY_CONNECTED = 4009;
 
 function loadFs() {
   try {
@@ -41,6 +48,17 @@ function savedPort() {
   return DEFAULT_PORT;
 }
 
+// Used when localStorage is unavailable: the token lasts until the panel reloads.
+let sessionToken = "";
+
+function savedToken() {
+  try {
+    return localStorage.getItem(TOKEN_KEY) || "";
+  } catch (e) {
+    return sessionToken;
+  }
+}
+
 let socket = null;
 let retryTimer = null;
 
@@ -57,8 +75,10 @@ function connectToBridge() {
   statusEl.textContent = `Connecting to bridge on port ${port}...`;
 
   ws.onopen = () => {
-    statusEl.textContent = `Connected to bridge on port ${port} ✓`;
-    console.log("[Plugin] Connected to bridge on port", port);
+    statusEl.textContent = `Authenticating with bridge on port ${port}...`;
+    // Always the first message. The bridge closes the connection if BRIDGE_TOKEN is set and this
+    // token does not match; without BRIDGE_TOKEN it ignores the token.
+    ws.send(JSON.stringify({ type: "auth", token: savedToken() }));
   };
 
   ws.onmessage = (event) => {
@@ -67,6 +87,15 @@ function connectToBridge() {
       msg = JSON.parse(event.data);
     } catch (e) {
       console.error("[Plugin] Invalid JSON:", event.data);
+      return;
+    }
+    if (msg.type === "auth-ok") {
+      statusEl.textContent = `Connected to bridge on port ${port} ✓`;
+      console.log("[Plugin] Connected to bridge on port", port);
+      return;
+    }
+    if (msg.type === "auth-error") {
+      console.error("[Plugin] Bridge refused the connection:", msg.error);
       return;
     }
     console.log("[Plugin] Received:", event.data.slice(0, 200));
@@ -78,8 +107,17 @@ function connectToBridge() {
     console.error("[Plugin] WebSocket error:", err);
   };
 
-  ws.onclose = () => {
-    statusEl.textContent = `Disconnected from port ${port} — retrying in 3s`;
+  ws.onclose = (event) => {
+    if (event.code === CLOSE_UNAUTHORIZED || event.code === CLOSE_AUTH_TIMEOUT) {
+      // Retrying with the same token cannot succeed; wait for a new one.
+      statusEl.textContent = `Bridge on port ${port} rejected the token — enter BRIDGE_TOKEN and click Connect`;
+      return;
+    }
+    if (event.code === CLOSE_ALREADY_CONNECTED) {
+      statusEl.textContent = `Another plugin is connected to port ${port} — retrying in 3s`;
+    } else {
+      statusEl.textContent = `Disconnected from port ${port} — retrying in 3s`;
+    }
     retryTimer = setTimeout(connectToBridge, 3000);
   };
 }
@@ -91,10 +129,12 @@ formEl.addEventListener("submit", (event) => {
     statusEl.textContent = "Port must be a number from 1 to 65535";
     return;
   }
+  sessionToken = tokenEl.value;
   try {
     localStorage.setItem(PORT_KEY, String(p));
+    localStorage.setItem(TOKEN_KEY, tokenEl.value);
   } catch (e) {
-    // storage unavailable: the port lasts until the panel reloads
+    // storage unavailable: the port and token last until the panel reloads
   }
   connectToBridge();
 });
@@ -108,6 +148,7 @@ entrypoints.setup({
         if (started) return;
         started = true;
         portEl.value = String(savedPort());
+        tokenEl.value = savedToken();
         try {
           console.log("[Plugin] DOM OK — open docs:", indesign.app.documents.length);
         } catch (e) {

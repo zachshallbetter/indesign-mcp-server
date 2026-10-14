@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Security
+- With `BRIDGE_TOKEN` set, the bridge's WebSocket port requires it too. A connection must send `{ "type": "auth", "token": ... }` as its first message; a wrong token or another message closes it (code 4001), and no message within 5 s (`UXP_AUTH_TIMEOUT_MS`) closes it (4002). Before, any local process could connect as the plugin, receive every script and return fake results. The Bridge Panel has a token field next to the port, stored in `localStorage`; the plugin and bridge must come from the same version.
+- A connected plugin is no longer replaced by a new connection: other connections are closed (4009) while it is open. A connection that closes before authenticating no longer disconnects the plugin.
+- The bridge compares tokens in constant time.
+
+### Changed
+- `tests/unit/uxp.test.js` also covers the token on the bridge's WebSocket port
+
 ## 2.2.0
 
 ### Canonical parameter names
