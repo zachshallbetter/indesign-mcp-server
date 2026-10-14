@@ -2,16 +2,11 @@
  * Style management handlers
  */
 import { ScriptExecutor } from '../core/scriptExecutor.js';
-import { formatResponse, str, num, index, enumOf, ALLOWED } from '../utils/stringUtils.js';
+import { formatResponse, str, num, index, enumOf } from '../utils/stringUtils.js';
 import { jsxProgram, jsxPage, jsxItemAt, jsxSwatch, jsxFont, JSX_HELPERS } from './pageItemHandlers.js';
+import { justificationOf } from './aliases.js';
 
 const has = (v) => v !== undefined && v !== null && v !== '';
-
-/** Accepts real Justification members; "JUSTIFY" is kept as an alias of LEFT_JUSTIFIED. */
-function justificationOf(alignment) {
-    const v = String(alignment).toUpperCase();
-    return enumOf(v === 'JUSTIFY' ? 'LEFT_JUSTIFIED' : v, ALLOWED.alignment, { name: 'alignment' });
-}
 
 const JSX_NAMES = [
     'function __justName(j) {',
@@ -29,12 +24,12 @@ export class StyleHandlers {
      * Create a paragraph style
      */
     static async createParagraphStyle(args) {
-        const { name, fontFamily, fontSize, textColor, alignment, leading, spaceBefore, spaceAfter } = args;
+        const { name, fontName, fontSize, textColor, alignment, leading, spaceBefore, spaceAfter } = args;
         if (!has(name)) return formatResponse('Invalid style name: must be a non-empty string', 'Create Paragraph Style');
 
         const pre = [];
         const set = [];
-        if (has(fontFamily)) { pre.push(...jsxFont('__font1', fontFamily)); set.push('style.appliedFont = __font1;'); }
+        if (has(fontName)) { pre.push(...jsxFont('__font1', fontName)); set.push('style.appliedFont = __font1;'); }
         if (has(textColor)) { pre.push(...jsxSwatch('__color', textColor, 'text')); set.push('style.fillColor = __color;'); }
         if (has(fontSize)) set.push(`style.pointSize = ${num(fontSize, { name: 'fontSize', min: 0.1, max: 1296 })};`);
         if (has(alignment)) set.push(`style.justification = Justification.${justificationOf(alignment)};`);
@@ -60,12 +55,12 @@ export class StyleHandlers {
      * Create a character style
      */
     static async createCharacterStyle(args) {
-        const { name, fontFamily, fontSize, textColor, bold = false, italic = false, underline = false } = args;
+        const { name, fontName, fontSize, textColor, bold = false, italic = false, underline = false } = args;
         if (!has(name)) return formatResponse('Invalid style name: must be a non-empty string', 'Create Character Style');
 
         const pre = [];
         const set = [];
-        if (has(fontFamily)) { pre.push(...jsxFont('__font1', fontFamily)); set.push('style.appliedFont = __font1;'); }
+        if (has(fontName)) { pre.push(...jsxFont('__font1', fontName)); set.push('style.appliedFont = __font1;'); }
         if (has(textColor)) { pre.push(...jsxSwatch('__color', textColor, 'text')); set.push('style.fillColor = __color;'); }
         if (has(fontSize)) set.push(`style.pointSize = ${num(fontSize, { name: 'fontSize', min: 0.1, max: 1296 })};`);
         // Bold/italic select the font style of the applied (or inherited) family.
@@ -80,7 +75,7 @@ export class StyleHandlers {
             ...pre,
             `var style = doc.characterStyles.add({ name: ${str(name)} });`,
             ...set,
-            `return ${str(`Character style '${name}' created`)} + ${has(fontFamily) ? '": font " + __fontName(style.appliedFont)' : '""'} + ${fontStyle ? '", style " + style.fontStyle' : '""'};`,
+            `return ${str(`Character style '${name}' created`)} + ${has(fontName) ? '": font " + __fontName(style.appliedFont)' : '""'} + ${fontStyle ? '", style " + style.fontStyle' : '""'};`,
         ], { errorPrefix: 'Error creating character style' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);
@@ -257,7 +252,7 @@ export class StyleHandlers {
      * Apply a swatch as fill or stroke to a page item or to a text frame's text
      */
     static async applyColor(args) {
-        const { objectIndex = 0, colorName, colorType = 'FILL', targetType = 'pageItem', pageIndex } = args;
+        const { itemIndex = 0, colorName, colorType = 'FILL', targetType = 'pageItem', pageIndex } = args;
         if (!has(colorName)) return formatResponse('Invalid colorName: must be a swatch name or #RRGGBB', 'Apply Color');
 
         const prop = enumOf(String(colorType).toUpperCase(), ['FILL', 'STROKE'], { name: 'colorType' }) === 'FILL' ? 'fillColor' : 'strokeColor';
@@ -276,11 +271,11 @@ export class StyleHandlers {
             ...jsxPage(pageIndex),
             ...jsxSwatch('color', colorName),
             ...(kind === 'pageItem' ? ['var __all = page.allPageItems;'] : []),
-            ...jsxItemAt('obj', collection, objectIndex, `${kind} index`),
+            ...jsxItemAt('obj', collection, itemIndex, `${kind} index`),
             ...(kind === 'text'
                 ? [`obj.texts[0].${prop} = color;`]
                 : ['if (obj.locked) { return "Cannot apply color: object is locked"; }', `obj.${prop} = color;`]),
-            `return ${str(`Color '${colorName}' applied as ${prop === 'fillColor' ? 'fill' : 'stroke'} to ${kind} `)} + ${index(objectIndex, { name: 'objectIndex' })} + " (" + obj.constructor.name + ")";`,
+            `return ${str(`Color '${colorName}' applied as ${prop === 'fillColor' ? 'fill' : 'stroke'} to ${kind} `)} + ${index(itemIndex, { name: 'itemIndex' })} + " (" + obj.constructor.name + ")";`,
         ], { errorPrefix: 'Error applying color' });
 
         const result = await ScriptExecutor.executeInDesignScript(script);

@@ -6,6 +6,8 @@
 import assert from 'node:assert/strict';
 import { allToolDefinitions } from '../../src/types/index.js';
 import { unknownAnnotationNames } from '../../src/types/annotations.js';
+import { PARAM_ALIASES } from '../../src/handlers/aliases.js';
+import { ALLOWED } from '../../src/utils/stringUtils.js';
 
 let passed = 0;
 function test(name, fn) {
@@ -64,6 +66,24 @@ test('required parameters exist, and enums contain their defaults', () => each((
         }
         if ('required' in v) p.push(`${t.name}.${k}: 'required' belongs in the schema's required list`);
     }
+}));
+
+test('index parameters are integers with a lower bound', () => each((t, p) => {
+    for (const [k, v] of Object.entries(t.inputSchema?.properties || {})) {
+        if (!/Index$/.test(k)) continue;
+        if (v.type !== 'integer') p.push(`${t.name}.${k}: type ${v.type}`);
+        if (typeof v.minimum !== 'number') p.push(`${t.name}.${k}: no minimum`);
+    }
+}));
+
+test('one name per concept: aliases are not advertised', () => each((t, p) => {
+    const props = t.inputSchema?.properties || {};
+    for (const old of [...Object.keys(PARAM_ALIASES), 'fontStyle']) if (old in props) p.push(`${t.name}.${old}`);
+}));
+
+test('alignment parameters take InDesign Justification names', () => each((t, p) => {
+    const a = t.inputSchema?.properties?.alignment;
+    if (a && JSON.stringify(a.enum) !== JSON.stringify(ALLOWED.alignment)) p.push(`${t.name}.alignment: ${JSON.stringify(a.enum)}`);
 }));
 
 console.log(`\n${passed} definition tests passed`);

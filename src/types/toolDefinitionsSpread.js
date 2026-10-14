@@ -16,7 +16,7 @@ export const spreadToolDefinitions = [
         inputSchema: {
             type: 'object',
             properties: {
-                spreadIndex: { type: 'number', description: 'Spread index (0-based)' },
+                spreadIndex: { type: 'integer', minimum: 0, description: 'Spread index (0-based)' },
             },
             required: ['spreadIndex'],
         },
@@ -27,9 +27,9 @@ export const spreadToolDefinitions = [
         inputSchema: {
             type: 'object',
             properties: {
-                spreadIndex: { type: 'number', description: 'Spread index to duplicate (0-based)' },
+                spreadIndex: { type: 'integer', minimum: 0, description: 'Spread index to duplicate (0-based)' },
                 position: { type: 'string', enum: ['AT_END', 'AT_BEGINNING', 'BEFORE', 'AFTER'], default: 'AT_END', description: 'Where to put the copy (LocationOptions)' },
-                referenceSpreadIndex: { type: 'number', description: 'Reference spread index (0-based); required for BEFORE/AFTER' },
+                referenceSpreadIndex: { type: 'integer', minimum: 0, description: 'Reference spread index (0-based); required for BEFORE/AFTER' },
             },
             required: ['spreadIndex'],
         },
@@ -40,9 +40,9 @@ export const spreadToolDefinitions = [
         inputSchema: {
             type: 'object',
             properties: {
-                spreadIndex: { type: 'number', description: 'Spread index to move (0-based)' },
+                spreadIndex: { type: 'integer', minimum: 0, description: 'Spread index to move (0-based)' },
                 position: { type: 'string', enum: ['AT_END', 'AT_BEGINNING', 'BEFORE', 'AFTER'], default: 'AT_END', description: 'Destination (LocationOptions)' },
-                referenceSpreadIndex: { type: 'number', description: 'Reference spread index (0-based); required for BEFORE/AFTER, must differ from spreadIndex' },
+                referenceSpreadIndex: { type: 'integer', minimum: 0, description: 'Reference spread index (0-based); required for BEFORE/AFTER, must differ from spreadIndex' },
             },
             required: ['spreadIndex'],
         },
@@ -53,7 +53,7 @@ export const spreadToolDefinitions = [
         inputSchema: {
             type: 'object',
             properties: {
-                spreadIndex: { type: 'number', description: 'Spread index to delete (0-based)' },
+                spreadIndex: { type: 'integer', minimum: 0, description: 'Spread index to delete (0-based)' },
             },
             required: ['spreadIndex'],
         },
@@ -64,7 +64,7 @@ export const spreadToolDefinitions = [
         inputSchema: {
             type: 'object',
             properties: {
-                spreadIndex: { type: 'number', description: 'Spread index (0-based)' },
+                spreadIndex: { type: 'integer', minimum: 0, description: 'Spread index (0-based)' },
                 name: { type: 'string', description: "Spread name (InDesign treats this as an alias of the spread's label)" },
                 label: { type: 'string', description: 'Script label (any string)' },
                 allowPageShuffle: { type: 'boolean', description: 'If true, the spread holds at most two pages when pages are added; if false, pages can be added or moved into this existing spread' },
@@ -82,7 +82,7 @@ export const spreadToolDefinitions = [
         inputSchema: {
             type: 'object',
             properties: {
-                spreadIndex: { type: 'number', description: 'Spread index (0-based)' },
+                spreadIndex: { type: 'integer', minimum: 0, description: 'Spread index (0-based)' },
                 numberOfRows: { type: 'number', description: 'Number of rows to create on each page (0-100)', default: 0 },
                 numberOfColumns: { type: 'number', description: 'Number of columns to create on each page (0-100)', default: 0 },
                 rowGutter: { type: 'number', description: 'Row gutter in mm', default: 5 },
@@ -101,7 +101,7 @@ export const spreadToolDefinitions = [
         inputSchema: {
             type: 'object',
             properties: {
-                spreadIndex: { type: 'number', description: 'Spread index (0-based)' },
+                spreadIndex: { type: 'integer', minimum: 0, description: 'Spread index (0-based)' },
                 filePath: { type: 'string', description: 'Absolute path to the file to place (must be inside the allowed directories)' },
                 x: { type: 'number', description: 'X of the place point in mm, measured from the ruler origin (spread origin by default)', default: 10 },
                 y: { type: 'number', description: 'Y of the place point in mm, measured from the ruler origin', default: 10 },
@@ -118,9 +118,9 @@ export const spreadToolDefinitions = [
         inputSchema: {
             type: 'object',
             properties: {
-                spreadIndex: { type: 'number', description: 'Spread index (0-based)' },
+                spreadIndex: { type: 'integer', minimum: 0, description: 'Spread index (0-based)' },
                 xmlElementName: { type: 'string', description: 'Tag name (markup tag) of the XML element to place' },
-                matchIndex: { type: 'number', description: 'Which element to use when several have this tag (0-based, document order)', default: 0 },
+                matchIndex: { type: 'integer', minimum: 0, description: 'Which element to use when several have this tag (0-based, document order)', default: 0 },
                 x: { type: 'number', description: 'X of the place point in mm, measured from the ruler origin', default: 10 },
                 y: { type: 'number', description: 'Y of the place point in mm, measured from the ruler origin', default: 10 },
                 autoflowing: { type: 'boolean', description: 'Autoflow placed text', default: false },
@@ -134,7 +134,7 @@ export const spreadToolDefinitions = [
         inputSchema: {
             type: 'object',
             properties: {
-                spreadIndex: { type: 'number', description: 'Spread index to select (0-based)' },
+                spreadIndex: { type: 'integer', minimum: 0, description: 'Spread index to select (0-based)' },
                 selectionMode: { type: 'string', enum: ['REPLACE_WITH', 'ADD_TO', 'REMOVE_FROM', 'SET_KEY'], default: 'REPLACE_WITH', description: 'How the selection relates to the existing selection (SelectionOptions)' },
                 makeActive: { type: 'boolean', description: "Also make it the layout window's active spread (scrolls it into view)", default: true },
             },
@@ -147,7 +147,7 @@ export const spreadToolDefinitions = [
         inputSchema: {
             type: 'object',
             properties: {
-                spreadIndex: { type: 'number', description: 'Spread index (0-based)' },
+                spreadIndex: { type: 'integer', minimum: 0, description: 'Spread index (0-based)' },
             },
             required: ['spreadIndex'],
         },

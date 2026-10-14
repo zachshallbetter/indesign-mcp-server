@@ -843,7 +843,7 @@ Get detailed information about a spread: pages, applied master, page shuffle, ma
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `spreadIndex` | number | yes |  | Spread index (0-based) |
+| `spreadIndex` | integer | yes |  | Spread index (0-based) |
 
 ### `duplicate_spread`
 
@@ -853,9 +853,9 @@ Duplicate a spread (Spread.duplicate) and place the copy at the given location i
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `spreadIndex` | number | yes |  | Spread index to duplicate (0-based) |
+| `spreadIndex` | integer | yes |  | Spread index to duplicate (0-based) |
 | `position` | `AT_END`, `AT_BEGINNING`, `BEFORE`, `AFTER` |  | `"AT_END"` | Where to put the copy (LocationOptions) |
-| `referenceSpreadIndex` | number |  |  | Reference spread index (0-based); required for BEFORE/AFTER |
+| `referenceSpreadIndex` | integer |  |  | Reference spread index (0-based); required for BEFORE/AFTER |
 
 ### `move_spread`
 
@@ -865,9 +865,9 @@ Move a spread (Spread.move) to a different position in the document
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `spreadIndex` | number | yes |  | Spread index to move (0-based) |
+| `spreadIndex` | integer | yes |  | Spread index to move (0-based) |
 | `position` | `AT_END`, `AT_BEGINNING`, `BEFORE`, `AFTER` |  | `"AT_END"` | Destination (LocationOptions) |
-| `referenceSpreadIndex` | number |  |  | Reference spread index (0-based); required for BEFORE/AFTER, must differ from spreadIndex |
+| `referenceSpreadIndex` | integer |  |  | Reference spread index (0-based); required for BEFORE/AFTER, must differ from spreadIndex |
 
 ### `delete_spread`
 
@@ -877,7 +877,7 @@ Delete a spread and all its pages. The last remaining spread cannot be deleted.
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `spreadIndex` | number | yes |  | Spread index to delete (0-based) |
+| `spreadIndex` | integer | yes |  | Spread index to delete (0-based) |
 
 ### `set_spread_properties`
 
@@ -887,7 +887,7 @@ Set writable properties of a spread. Only the properties you pass are changed; e
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `spreadIndex` | number | yes |  | Spread index (0-based) |
+| `spreadIndex` | integer | yes |  | Spread index (0-based) |
 | `name` | string |  |  | Spread name (InDesign treats this as an alias of the spread's label) |
 | `label` | string |  |  | Script label (any string) |
 | `allowPageShuffle` | boolean |  |  | If true, the spread holds at most two pages when pages are added; if false, pages can be added or moved into this existing spread |
@@ -904,7 +904,7 @@ Create row/column guides on every page of a spread (Spread.createGuides). Set nu
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `spreadIndex` | number | yes |  | Spread index (0-based) |
+| `spreadIndex` | integer | yes |  | Spread index (0-based) |
 | `numberOfRows` | number |  | `0` | Number of rows to create on each page (0-100) |
 | `numberOfColumns` | number |  | `0` | Number of columns to create on each page (0-100) |
 | `rowGutter` | number |  | `5` | Row gutter in mm |
@@ -922,7 +922,7 @@ Place a file (image, PDF, text, InDesign snippet...) on a spread at a point (Spr
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `spreadIndex` | number | yes |  | Spread index (0-based) |
+| `spreadIndex` | integer | yes |  | Spread index (0-based) |
 | `filePath` | string | yes |  | Absolute path to the file to place (must be inside the allowed directories) |
 | `x` | number |  | `10` | X of the place point in mm, measured from the ruler origin (spread origin by default) |
 | `y` | number |  | `10` | Y of the place point in mm, measured from the ruler origin |
@@ -938,9 +938,9 @@ Place an element of the document's XML structure on a spread (Spread.placeXML). 
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `spreadIndex` | number | yes |  | Spread index (0-based) |
+| `spreadIndex` | integer | yes |  | Spread index (0-based) |
 | `xmlElementName` | string | yes |  | Tag name (markup tag) of the XML element to place |
-| `matchIndex` | number |  | `0` | Which element to use when several have this tag (0-based, document order) |
+| `matchIndex` | integer |  | `0` | Which element to use when several have this tag (0-based, document order) |
 | `x` | number |  | `10` | X of the place point in mm, measured from the ruler origin |
 | `y` | number |  | `10` | Y of the place point in mm, measured from the ruler origin |
 | `autoflowing` | boolean |  | `false` | Autoflow placed text |
@@ -953,7 +953,7 @@ Select a spread (Spread.select) and optionally make it the active spread in the 
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `spreadIndex` | number | yes |  | Spread index to select (0-based) |
+| `spreadIndex` | integer | yes |  | Spread index to select (0-based) |
 | `selectionMode` | `REPLACE_WITH`, `ADD_TO`, `REMOVE_FROM`, `SET_KEY` |  | `"REPLACE_WITH"` | How the selection relates to the existing selection (SelectionOptions) |
 | `makeActive` | boolean |  | `true` | Also make it the layout window's active spread (scrolls it into view) |
 
@@ -965,7 +965,7 @@ Summarize the content of a spread: item counts by type, overset text frames, pla
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `spreadIndex` | number | yes |  | Spread index (0-based) |
+| `spreadIndex` | integer | yes |  | Spread index (0-based) |
 
 ## Text & Tables
 <a id="text"></a>
@@ -987,9 +987,9 @@ Create a text frame on the active page (or pageIndex). Styles are applied first;
 | `width` | number |  |  | Width in mm |
 | `height` | number |  |  | Height in mm |
 | `fontSize` | number |  |  | Font size in points (default: style/document default) |
-| `fontName` | string |  |  | Font as "Family\tStyle" (e.g. "Arial\tRegular") or a family name (default: style/document default) |
+| `fontName` | string |  |  | Font as "Family\tStyle" (e.g. "Arial\tRegular", InDesign's Font.name) or a family name (default: style/document default) |
 | `textColor` | string |  |  | Text color (default: style/document default): swatch name (e.g. "Black", "Paper") or "#RRGGBB" |
-| `alignment` | `LEFT`, `CENTER`, `RIGHT`, `JUSTIFY` |  |  | JUSTIFY = justified, last line left |
+| `alignment` | `LEFT_ALIGN`, `CENTER_ALIGN`, `RIGHT_ALIGN`, `LEFT_JUSTIFIED`, `RIGHT_JUSTIFIED`, `CENTER_JUSTIFIED`, `FULLY_JUSTIFIED` |  |  | Paragraph alignment (InDesign Justification; LEFT_JUSTIFIED = justified, last line left) |
 | `paragraphStyle` | string |  |  | Paragraph style name to apply |
 | `characterStyle` | string |  |  | Character style name to apply |
 
@@ -1001,13 +1001,13 @@ Edit the content and/or formatting of an existing text frame
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `frameIndex` | integer | yes |  | Index of the text frame on the page (page.textFrames order) |
+| `frameIndex` | integer | yes |  | Index in page.textFrames (top-level text frames only; not the list_page_items numbering) |
 | `pageIndex` | integer |  |  | Page index (0-based); defaults to the active page |
 | `content` | string |  |  | New text content (replaces existing text) |
 | `fontSize` | number |  |  | Font size in points |
-| `fontName` | string |  |  | Font as "Family\tStyle" or a family name |
+| `fontName` | string |  |  | Font as "Family\tStyle" (e.g. "Arial\tRegular", InDesign's Font.name) or a family name |
 | `textColor` | string |  |  | Text color: swatch name (e.g. "Black", "Paper") or "#RRGGBB" |
-| `alignment` | `LEFT`, `CENTER`, `RIGHT`, `JUSTIFY` |  |  | Paragraph alignment for the whole frame (JUSTIFY = justified, last line left) |
+| `alignment` | `LEFT_ALIGN`, `CENTER_ALIGN`, `RIGHT_ALIGN`, `LEFT_JUSTIFIED`, `RIGHT_JUSTIFIED`, `CENTER_JUSTIFIED`, `FULLY_JUSTIFIED` |  |  | Paragraph alignment for the whole frame (InDesign Justification; LEFT_JUSTIFIED = justified, last line left) |
 
 ### `find_replace_text`
 
@@ -1047,7 +1047,7 @@ Fill table cells from a 2-D array. Tables are numbered across the text frames of
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `tableIndex` | integer |  | `0` | Table index on the page |
+| `tableIndex` | integer |  | `0` | Index among the tables in page.textFrames, counted frame by frame |
 | `pageIndex` | integer |  |  | Page index (0-based); defaults to the active page |
 | `data` | array of array | yes |  | Rows of cell values; null becomes an empty cell |
 | `startRow` | integer |  | `0` | Starting row index (header rows count) |
@@ -1092,7 +1092,7 @@ Create a rectangle on the active page (or pageIndex)
 | `height` | number |  |  | Height in mm |
 | `fillColor` | string |  |  | Fill color: swatch name (e.g. "Black", "Paper") or "#RRGGBB" |
 | `strokeColor` | string |  |  | Stroke color: swatch name (e.g. "Black", "Paper") or "#RRGGBB" |
-| `strokeWidth` | number |  |  | Stroke weight in points (default 1 when strokeColor is given) |
+| `strokeWeight` | number |  |  | Stroke weight in points (default 1 when strokeColor is given) |
 | `cornerRadius` | number |  | `0` | Rounded corner radius in mm (0 = square corners) |
 
 ### `create_ellipse`
@@ -1110,7 +1110,7 @@ Create an ellipse on the active page (or pageIndex)
 | `height` | number |  |  | Height in mm |
 | `fillColor` | string |  |  | Fill color: swatch name (e.g. "Black", "Paper") or "#RRGGBB" |
 | `strokeColor` | string |  |  | Stroke color: swatch name (e.g. "Black", "Paper") or "#RRGGBB" |
-| `strokeWidth` | number |  |  | Stroke weight in points (default 1 when strokeColor is given) |
+| `strokeWeight` | number |  |  | Stroke weight in points (default 1 when strokeColor is given) |
 
 ### `create_polygon`
 
@@ -1128,7 +1128,7 @@ Create a regular polygon on the active page (or pageIndex)
 | `sides` | integer |  | `6` | Number of sides |
 | `fillColor` | string |  |  | Fill color: swatch name (e.g. "Black", "Paper") or "#RRGGBB" |
 | `strokeColor` | string |  |  | Stroke color: swatch name (e.g. "Black", "Paper") or "#RRGGBB" |
-| `strokeWidth` | number |  |  | Stroke weight in points (default 1 when strokeColor is given) |
+| `strokeWeight` | number |  |  | Stroke weight in points (default 1 when strokeColor is given) |
 
 ### `create_object_style`
 
@@ -1162,8 +1162,8 @@ Apply an object style to a page item
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `styleName` | string | yes |  | Object style name |
-| `itemType` | `rectangle`, `ellipse`, `polygon`, `textFrame`, `pageItem` |  | `"rectangle"` | Collection itemIndex refers to; pageItem = index from list_page_items |
-| `itemIndex` | integer |  | `0` | Item index within itemType on the page |
+| `itemType` | `rectangle`, `ellipse`, `polygon`, `textFrame`, `pageItem` |  | `"rectangle"` | Collection itemIndex counts in: page.rectangles, page.ovals, page.polygons, page.textFrames, or pageItem = page.allPageItems (the list_page_items numbering) |
+| `itemIndex` | integer |  | `0` | Index within the itemType collection on the page |
 | `pageIndex` | integer |  |  | Page index (0-based); defaults to the active page |
 | `clearOverrides` | boolean |  | `false` | Clear local formatting overrides |
 
@@ -1175,7 +1175,7 @@ Get link, resolution, scale and position of a placed graphic on a page
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `itemIndex` | integer |  | `0` | Index among the placed graphics on the page |
+| `itemIndex` | integer |  | `0` | Index in page.allGraphics (placed graphics, not their frames; not the list_page_items numbering) |
 | `pageIndex` | integer |  |  | Page index (0-based); defaults to the active page |
 
 ## Styles & Colors
@@ -1192,10 +1192,10 @@ Create a paragraph style; only the attributes you pass are set
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `name` | string | yes |  | Style name |
-| `fontFamily` | string |  |  | Font as "Family\tStyle" (e.g. "Arial\tRegular") or a family name |
+| `fontName` | string |  |  | Font as "Family\tStyle" (e.g. "Arial\tRegular", InDesign's Font.name) or a family name |
 | `fontSize` | number |  |  | Font size in points |
 | `textColor` | string |  |  | Text color: swatch name (e.g. "Black", "Paper") or "#RRGGBB" |
-| `alignment` | `LEFT_ALIGN`, `CENTER_ALIGN`, `RIGHT_ALIGN`, `LEFT_JUSTIFIED`, `RIGHT_JUSTIFIED`, `CENTER_JUSTIFIED`, `FULLY_JUSTIFIED` |  |  | Paragraph justification (InDesign Justification values) |
+| `alignment` | `LEFT_ALIGN`, `CENTER_ALIGN`, `RIGHT_ALIGN`, `LEFT_JUSTIFIED`, `RIGHT_JUSTIFIED`, `CENTER_JUSTIFIED`, `FULLY_JUSTIFIED` |  |  | Paragraph alignment (InDesign Justification; LEFT_JUSTIFIED = justified, last line left) |
 | `leading` | number |  |  | Leading in points |
 | `spaceBefore` | number |  |  | Space before paragraph in points |
 | `spaceAfter` | number |  |  | Space after paragraph in points |
@@ -1209,7 +1209,7 @@ Create a character style; only the attributes you pass are set
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `name` | string | yes |  | Style name |
-| `fontFamily` | string |  |  | Font as "Family\tStyle" or a family name |
+| `fontName` | string |  |  | Font as "Family\tStyle" (e.g. "Arial\tRegular", InDesign's Font.name) or a family name |
 | `fontSize` | number |  |  | Font size in points |
 | `textColor` | string |  |  | Text color: swatch name (e.g. "Black", "Paper") or "#RRGGBB" |
 | `bold` | boolean |  | `false` | Set font style "Bold" ("Bold Italic" with italic) |
@@ -1225,7 +1225,7 @@ Apply a paragraph style to all text in a text frame
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `styleName` | string | yes |  | Paragraph style name |
-| `frameIndex` | integer | yes |  | Text frame index on the page |
+| `frameIndex` | integer | yes |  | Index in page.textFrames (top-level text frames only; not the list_page_items numbering) |
 | `pageIndex` | integer |  |  | Page index (0-based); defaults to the active page |
 
 ### `apply_character_style`
@@ -1237,7 +1237,7 @@ Apply a character style to all text in a text frame, or to a character range
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | `styleName` | string | yes |  | Character style name |
-| `frameIndex` | integer |  | `0` | Text frame index on the page |
+| `frameIndex` | integer |  | `0` | Index in page.textFrames (top-level text frames only; not the list_page_items numbering) |
 | `pageIndex` | integer |  |  | Page index (0-based); defaults to the active page |
 | `startIndex` | integer |  | `0` | First character index (with endIndex) |
 | `endIndex` | integer |  | `-1` | Last character index (inclusive); -1 applies to the whole frame |
@@ -1283,10 +1283,10 @@ Apply a swatch as fill or stroke to a page item, or to the text of a text frame
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `objectIndex` | integer | yes |  | Index within targetType on the page |
+| `itemIndex` | integer | yes |  | Index within the targetType collection on the page (see targetType) |
 | `colorName` | string | yes |  | Color: swatch name (e.g. "Black", "Paper") or "#RRGGBB" |
 | `colorType` | `FILL`, `STROKE` |  | `"FILL"` | Apply the swatch to the fill or the stroke |
-| `targetType` | `pageItem`, `text`, `textFrame`, `rectangle`, `ellipse`, `polygon` |  | `"pageItem"` | pageItem = index from list_page_items; text = the text inside page.textFrames[objectIndex] |
+| `targetType` | `pageItem`, `text`, `textFrame`, `rectangle`, `ellipse`, `polygon` |  | `"pageItem"` | Collection itemIndex counts in: pageItem = page.allPageItems (the list_page_items numbering); text and textFrame = page.textFrames (text = the text inside the frame); rectangle, ellipse, polygon = page.rectangles, page.ovals, page.polygons |
 | `pageIndex` | integer |  |  | Page index (0-based); defaults to the active page |
 
 ## Layout, Masters & Layers
@@ -1302,8 +1302,8 @@ Get detailed information about a specific page item
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `pageIndex` | integer | yes |  | Index of the page containing the item |
-| `itemIndex` | integer | yes |  | Index of the page item to get info for |
+| `pageIndex` | integer | yes |  | Index of the page containing the item (0-based) |
+| `itemIndex` | integer | yes |  | Index of the page item to get info for, in page.allPageItems as numbered by list_page_items (nested items included) |
 
 ### `select_page_item`
 
@@ -1313,8 +1313,8 @@ Select a page item (by index from list_page_items) in the document window
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `pageIndex` | integer | yes |  | Index of the page containing the item |
-| `itemIndex` | integer | yes |  | Index of the page item to select |
+| `pageIndex` | integer | yes |  | Index of the page containing the item (0-based) |
+| `itemIndex` | integer | yes |  | Index of the page item to select, in page.allPageItems as numbered by list_page_items (nested items included) |
 | `existingSelection` | `REPLACE_WITH`, `ADD_TO`, `REMOVE_FROM` |  | `"REPLACE_WITH"` | How to handle existing selection |
 
 ### `move_page_item`
@@ -1325,8 +1325,8 @@ Move a page item so its top-left corner (geometric bounds) is at x, y mm on the 
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `pageIndex` | integer | yes |  | Index of the page containing the item |
-| `itemIndex` | integer | yes |  | Index of the page item to move |
+| `pageIndex` | integer | yes |  | Index of the page containing the item (0-based) |
+| `itemIndex` | integer | yes |  | Index of the page item to move, in page.allPageItems as numbered by list_page_items (nested items included) |
 | `x` | number | yes |  | New X of the item's top-left corner, in mm from the page left edge |
 | `y` | number | yes |  | New Y of the item's top-left corner, in mm from the page top edge |
 
@@ -1338,8 +1338,8 @@ Resize a page item to width x height mm around an anchor point
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `pageIndex` | integer | yes |  | Index of the page containing the item |
-| `itemIndex` | integer | yes |  | Index of the page item to resize |
+| `pageIndex` | integer | yes |  | Index of the page containing the item (0-based) |
+| `itemIndex` | integer | yes |  | Index of the page item to resize, in page.allPageItems as numbered by list_page_items (nested items included) |
 | `width` | number | yes |  | New width in mm |
 | `height` | number | yes |  | New height in mm |
 | `anchorPoint` | `CENTER_ANCHOR`, `TOP_LEFT_ANCHOR`, `TOP_CENTER_ANCHOR`, `TOP_RIGHT_ANCHOR`, `LEFT_CENTER_ANCHOR`, `RIGHT_CENTER_ANCHOR`, `BOTTOM_LEFT_ANCHOR`, `BOTTOM_CENTER_ANCHOR`, `BOTTOM_RIGHT_ANCHOR` |  | `"CENTER_ANCHOR"` | Anchor point for resizing |
@@ -1352,8 +1352,8 @@ Set fill, stroke, visibility and lock state of a page item (only the properties 
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `pageIndex` | integer | yes |  | Index of the page containing the item |
-| `itemIndex` | integer | yes |  | Index of the page item to modify |
+| `pageIndex` | integer | yes |  | Index of the page containing the item (0-based) |
+| `itemIndex` | integer | yes |  | Index of the page item to modify, in page.allPageItems as numbered by list_page_items (nested items included) |
 | `fillColor` | string |  |  | Fill swatch name (e.g. "Black", "None") or "#RRGGBB" |
 | `strokeColor` | string |  |  | Stroke swatch name or "#RRGGBB" |
 | `strokeWeight` | number |  |  | Stroke weight in points |
@@ -1368,8 +1368,8 @@ Duplicate a page item on the same page, optionally placing the copy at x/y; retu
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `pageIndex` | integer | yes |  | Index of the page containing the item |
-| `itemIndex` | integer | yes |  | Index of the page item to duplicate |
+| `pageIndex` | integer | yes |  | Index of the page containing the item (0-based) |
+| `itemIndex` | integer | yes |  | Index of the page item to duplicate, in page.allPageItems as numbered by list_page_items (nested items included) |
 | `x` | number | yes |  | X of the duplicate's top-left corner, in mm from the page left edge |
 | `y` | number | yes |  | Y of the duplicate's top-left corner, in mm from the page top edge |
 
@@ -1381,18 +1381,18 @@ Delete a page item (by index from list_page_items) from a page
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `pageIndex` | integer | yes |  | Index of the page containing the item |
-| `itemIndex` | integer | yes |  | Index of the page item to delete |
+| `pageIndex` | integer | yes |  | Index of the page containing the item (0-based) |
+| `itemIndex` | integer | yes |  | Index of the page item to delete, in page.allPageItems as numbered by list_page_items (nested items included) |
 
 ### `list_page_items`
 
-List all page items on a specific page
+List the page items on a page with their index in page.allPageItems (nested items included, such as the image inside a frame and group members). itemIndex and groupIndex in the page-item and group tools use this numbering.
 
 *read-only*
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `pageIndex` | integer | yes |  | Index of the page to list items from |
+| `pageIndex` | integer | yes |  | Index of the page to list items from (0-based) |
 
 ### `create_group`
 
@@ -1402,7 +1402,7 @@ Group the page items currently selected in InDesign (at least 2)
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `pageIndex` | integer | yes |  | Index of the page where the group will be created |
+| `pageIndex` | integer | yes |  | Index of the page where the group will be created (0-based) |
 
 ### `create_group_from_items`
 
@@ -1412,7 +1412,7 @@ Create a group from specific page items by their indices
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `pageIndex` | integer | yes |  | Index of the page containing the items |
+| `pageIndex` | integer | yes |  | Index of the page containing the items (0-based) |
 | `itemIndices` | array of integer | yes |  | Indices (from list_page_items) of top-level items to group together |
 
 ### `ungroup`
@@ -1423,8 +1423,8 @@ Ungroup a group, releasing all its items
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `pageIndex` | integer | yes |  | Index of the page containing the group |
-| `groupIndex` | integer | yes |  | Index of the group to ungroup |
+| `pageIndex` | integer | yes |  | Index of the page containing the group (0-based) |
+| `groupIndex` | integer | yes |  | Index of the group to ungroup, as numbered by list_groups (its index in page.allPageItems) |
 
 ### `get_group_info`
 
@@ -1434,8 +1434,8 @@ Get information about a group, including its direct members and their indices
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `pageIndex` | integer | yes |  | Index of the page containing the group |
-| `groupIndex` | integer | yes |  | Index of the group to get info for |
+| `pageIndex` | integer | yes |  | Index of the page containing the group (0-based) |
+| `groupIndex` | integer | yes |  | Index of the group to get info for, as numbered by list_groups (its index in page.allPageItems) |
 
 ### `add_item_to_group`
 
@@ -1445,9 +1445,9 @@ Add a top-level page item to an existing group (the group is rebuilt: it keeps i
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `pageIndex` | integer | yes |  | Index of the page containing the group and item |
-| `groupIndex` | integer | yes |  | Index of the group to add the item to |
-| `itemIndex` | integer | yes |  | Index (from list_page_items) of the page item to add to the group |
+| `pageIndex` | integer | yes |  | Index of the page containing the group and item (0-based) |
+| `groupIndex` | integer | yes |  | Index of the group to add the item to, as numbered by list_groups (its index in page.allPageItems) |
+| `itemIndex` | integer | yes |  | Index of the page item to add to the group, in page.allPageItems as numbered by list_page_items (nested items included) |
 
 ### `remove_item_from_group`
 
@@ -1457,9 +1457,9 @@ Remove a member from a group (the group is rebuilt with the remaining members, o
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `pageIndex` | integer | yes |  | Index of the page containing the group |
-| `groupIndex` | integer | yes |  | Index of the group (from list_groups) to remove the item from |
-| `itemIndex` | integer | yes |  | Index of the member within the group, as listed by get_group_info |
+| `pageIndex` | integer | yes |  | Index of the page containing the group (0-based) |
+| `groupIndex` | integer | yes |  | Index of the group to remove the item from, as numbered by list_groups (its index in page.allPageItems) |
+| `itemIndex` | integer | yes |  | Index of the member within the group (group.pageItems), as listed by get_group_info; not the list_page_items numbering |
 
 ### `list_groups`
 
@@ -1469,7 +1469,7 @@ List the groups on a page with their index, name, item count and bounds
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `pageIndex` | integer | yes |  | Index of the page to list groups from |
+| `pageIndex` | integer | yes |  | Index of the page to list groups from (0-based) |
 
 ### `set_group_properties`
 
@@ -1479,8 +1479,8 @@ Set a group's name, visibility and locked state
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `pageIndex` | integer | yes |  | Index of the page containing the group |
-| `groupIndex` | integer | yes |  | Index of the group to modify |
+| `pageIndex` | integer | yes |  | Index of the page containing the group (0-based) |
+| `groupIndex` | integer | yes |  | Index of the group to modify, as numbered by list_groups (its index in page.allPageItems) |
 | `visible` | boolean |  |  | Whether the group is visible |
 | `locked` | boolean |  |  | Whether the group is locked |
 | `name` | string |  |  | Name for the group |
@@ -1558,10 +1558,9 @@ Create a text frame on a page of a master spread. Position and size are in mm fr
 | `width` | number |  | `100` | Width in mm |
 | `height` | number |  | `50` | Height in mm |
 | `fontSize` | number |  | `12` | Font size in points |
-| `fontFamily` | string |  | `"Helvetica Neue"` | Font family name |
-| `fontStyle` | string |  |  | Font style (e.g. "Regular", "Bold"); default: the font's current style |
+| `fontName` | string |  | `"Helvetica Neue"` | Font as "Family\tStyle" (e.g. "Arial\tBold", InDesign's Font.name) or a family name |
 | `textColor` | string |  | `"Black"` | Text color: swatch name in the document (e.g. "Black", "Paper", "None") or "#RRGGBB" |
-| `alignment` | `LEFT_ALIGN`, `CENTER_ALIGN`, `RIGHT_ALIGN`, `LEFT_JUSTIFIED`, `RIGHT_JUSTIFIED`, `CENTER_JUSTIFIED`, `FULLY_JUSTIFIED` |  | `"LEFT_ALIGN"` | Paragraph justification for the frame text (InDesign Justification values) |
+| `alignment` | `LEFT_ALIGN`, `CENTER_ALIGN`, `RIGHT_ALIGN`, `LEFT_JUSTIFIED`, `RIGHT_JUSTIFIED`, `CENTER_JUSTIFIED`, `FULLY_JUSTIFIED` |  | `"LEFT_ALIGN"` | Paragraph alignment for the frame text (InDesign Justification; LEFT_JUSTIFIED = justified, last line left) |
 | `isPrimaryTextFrame` | boolean |  | `false` | Make this the master spread's primary text frame |
 
 ### `create_master_rectangle`
@@ -1580,7 +1579,7 @@ Create a rectangle on a page of a master spread. Position and size are in mm fro
 | `height` | number | yes |  | Height in mm |
 | `fillColor` | string |  |  | Fill: swatch name in the document (e.g. "Black", "Paper", "None") or "#RRGGBB" (default: document default) |
 | `strokeColor` | string |  |  | Stroke: swatch name in the document (e.g. "Black", "Paper", "None") or "#RRGGBB" (default: document default) |
-| `strokeWidth` | number |  | `1` | Stroke weight in points |
+| `strokeWeight` | number |  | `1` | Stroke weight in points |
 | `cornerRadius` | number |  | `0` | Rounded-corner radius in mm (0 = square corners) |
 
 ### `create_master_guides`

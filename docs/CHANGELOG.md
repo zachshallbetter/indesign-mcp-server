@@ -1,5 +1,28 @@
 # Changelog
 
+## Unreleased
+
+One parameter name and one enum vocabulary per concept, so agents stop guessing. The older names and values are still accepted as aliases (mapped in `src/handlers/aliases.js` before a handler runs) and generate exactly the same scripts; they are no longer advertised in the schemas.
+
+### Canonical parameter names
+
+| Concept | Canonical | Still accepted | Tools |
+| --- | --- | --- | --- |
+| Stroke weight (points) | `strokeWeight` | `strokeWidth` | `create_rectangle`, `create_ellipse`, `create_polygon`, `create_master_rectangle` (already `strokeWeight`: `create_object_style`, `set_page_item_properties`) |
+| Font | `fontName` (`"Family\tStyle"`, InDesign's `Font.name`, or a family name) | `fontFamily`; `fontFamily` + `fontStyle` | `create_paragraph_style`, `create_character_style`, `create_master_text_frame` (already `fontName`: `create_text_frame`, `edit_text_frame`) |
+| Alignment | `alignment` with InDesign `Justification` names: `LEFT_ALIGN`, `CENTER_ALIGN`, `RIGHT_ALIGN`, `LEFT_JUSTIFIED`, `RIGHT_JUSTIFIED`, `CENTER_JUSTIFIED`, `FULLY_JUSTIFIED` | `LEFT`, `CENTER`, `RIGHT`, `JUSTIFY` (= `LEFT_JUSTIFIED`), any case | `create_text_frame`, `edit_text_frame` (already Justification: `create_paragraph_style`, `create_master_text_frame`) |
+| Item index | `itemIndex` | `objectIndex` | `apply_color` |
+
+### Changed
+- `create_text_frame` and `edit_text_frame` now also accept `RIGHT_JUSTIFIED`, `CENTER_JUSTIFIED` and `FULLY_JUSTIFIED`
+- Every index parameter is an `integer` with `minimum: 0` (`spreadIndex`, `referenceSpreadIndex` and `matchIndex` were `number`; the page-item and group indexes had no minimum)
+- Every item index description names its collection: `page.allPageItems` (the `list_page_items` / `list_groups` numbering) for the page-item and group tools, `page.textFrames` for `frameIndex`, `page.allGraphics` for `get_image_info`, and the chosen collection for `apply_color` / `apply_object_style`
+- Server instructions and `docs/LLM_PROMPT.md` describe the canonical names and index spaces
+
+### Added
+- `tests/unit/aliases.test.js`: each alias generates the same script as its canonical name
+- Definition tests: index parameters are bounded integers, aliases are not advertised, alignment enums are the Justification names
+
 ## 2.1.0
 
 Ready for public and agent use: agents get instructions, tool annotations and a full reference; docs are rewritten against the code.

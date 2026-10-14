@@ -11,18 +11,19 @@ If you are unsure InDesign is reachable, call `indesign_status` with `probe: tru
 ## Conventions
 
 - **Units.** Positions and sizes are millimeters, measured from the top-left corner of the target page. Stroke weights, font sizes, leading and paragraph spacing are points. A few tools take their own units: `adjust_page_layout` has `units`, `resize_page` takes factors or ratios for some `resizeMethod` values, and `place_file_on_spread` / `place_xml_on_spread` measure x/y from the spread's ruler origin.
-- **Indexes are 0-based.** That covers `pageIndex`, `spreadIndex`, `itemIndex`, `frameIndex`, `groupIndex` and table rows and columns. There are two exceptions. Page *ranges* in `export_pdf.pages`, `export_images.pages` and `apply_master_spread.pageRange` are 1-based page numbers such as `"1-3,5"`. Master spreads are addressed by full name, such as `"A-Master"`.
+- **Indexes are 0-based integers.** That covers `pageIndex`, `spreadIndex`, `itemIndex`, `frameIndex`, `groupIndex` and table rows and columns. There are two exceptions. Page *ranges* in `export_pdf.pages`, `export_images.pages` and `apply_master_spread.pageRange` are 1-based page numbers such as `"1-3,5"`. Master spreads are addressed by full name, such as `"A-Master"`.
 - **Optional `pageIndex`** defaults to the page active in the layout window.
 - **Item indexes depend on the tool:**
-  - `list_page_items` numbers `page.allPageItems`. That list includes nested items, such as the image inside a frame and the members of a group. The `itemIndex` parameters of the page-item tools (`move_page_item`, `delete_page_item` and the like) and `apply_color` with `targetType: "pageItem"` use this numbering.
-  - Text tools (`edit_text_frame`, `apply_paragraph_style`, `apply_character_style`) take `frameIndex` in `page.textFrames` order. So does `apply_color` with `targetType: "text"` or `"textFrame"`.
-  - `apply_object_style` counts within its `itemType` collection.
-  - Groups use the indexes that `list_groups` returns.
+  - `list_page_items` numbers `page.allPageItems`. That list includes nested items, such as the image inside a frame and the members of a group. The `itemIndex` parameters of the page-item tools (`move_page_item`, `delete_page_item` and the like) use this numbering, and so does `groupIndex`, which `list_groups` reports.
+  - Text tools (`edit_text_frame`, `apply_paragraph_style`, `apply_character_style`) take `frameIndex` in `page.textFrames` order: top-level text frames only, so it is usually not the `list_page_items` index.
+  - `apply_color` (`targetType`) and `apply_object_style` (`itemType`) take `itemIndex` within the collection you choose: `pageItem` is `page.allPageItems`, `text`/`textFrame` is `page.textFrames`, and `rectangle`, `ellipse`, `polygon` are `page.rectangles`, `page.ovals`, `page.polygons`.
+  - `get_image_info` counts `page.allGraphics`; `populate_table` counts the tables in `page.textFrames`; `remove_item_from_group` counts the group's own members as `get_group_info` lists them.
+  - Every index parameter's description names its collection.
 - **Colors** are swatch names that exist in the document (`list_color_swatches`), such as `"Black"`, `"Paper"`, `"None"` or a custom swatch. You can also pass `"#RRGGBB"`, which creates an RGB swatch with that name when it does not exist yet. `create_color_swatch` makes named swatches from 0-255 RGB values.
-- **Fonts** are `"Family\tStyle"` with a real tab between family and style, for example `"Arial\tBold"`, or a family name alone. A font that is not installed returns an error. `create_master_text_frame` is the exception: it takes `fontFamily` and `fontStyle` separately.
-- **Alignment enums differ by tool:**
-  - `create_text_frame` and `edit_text_frame` take `LEFT`, `CENTER`, `RIGHT` or `JUSTIFY`.
-  - `create_paragraph_style` and `create_master_text_frame` take InDesign `Justification` names such as `LEFT_ALIGN`, `CENTER_ALIGN` or `FULLY_JUSTIFIED`.
+- **Fonts** are `fontName`: `"Family\tStyle"` with a real tab between family and style (InDesign's `Font.name`), for example `"Arial\tBold"`, or a family name alone. A font that is not installed returns an error, except in `create_master_text_frame`, which applies the name as given.
+- **Stroke weight** is `strokeWeight`, in points, on every tool that sets a stroke.
+- **Alignment** is `alignment` with InDesign `Justification` names on every tool: `LEFT_ALIGN`, `CENTER_ALIGN`, `RIGHT_ALIGN`, `LEFT_JUSTIFIED`, `RIGHT_JUSTIFIED`, `CENTER_JUSTIFIED`, `FULLY_JUSTIFIED`. `LEFT_JUSTIFIED` is justified text with the last line left.
+- **Older names still work.** Calls written for 2.1 and earlier keep working: `strokeWidth` (now `strokeWeight`), `fontFamily` and `fontFamily` + `fontStyle` (now `fontName`), `objectIndex` (now `itemIndex` in `apply_color`), and the alignment values `LEFT`, `CENTER`, `RIGHT`, `JUSTIFY` (now `LEFT_ALIGN`, `CENTER_ALIGN`, `RIGHT_ALIGN`, `LEFT_JUSTIFIED`). They are not in the schemas; use the canonical names in new calls.
 - **File paths** must be absolute and inside the user's home folder or a directory listed in `INDESIGN_ALLOWED_DIRS`. System folders are always refused. Other paths are rejected with `Access denied: ...`.
 - **Omitted geometry.** If you leave out `x`, `y`, `width` or `height` on a create tool, the server picks values that fit the page. Pass explicit values when the layout matters.
 
@@ -69,8 +70,8 @@ await tools.call("create_document", { width: 210, height: 297, pages: 2, marginT
 
 // Define colors and styles before content
 await tools.call("create_color_swatch", { name: "Brand Blue", red: 0, green: 82, blue: 155 });
-await tools.call("create_paragraph_style", { name: "Heading", fontFamily: "Arial\tBold", fontSize: 28, leading: 32, textColor: "Brand Blue", spaceAfter: 6 });
-await tools.call("create_paragraph_style", { name: "Body", fontFamily: "Arial\tRegular", fontSize: 10, leading: 14, alignment: "LEFT_ALIGN" });
+await tools.call("create_paragraph_style", { name: "Heading", fontName: "Arial\tBold", fontSize: 28, leading: 32, textColor: "Brand Blue", spaceAfter: 6 });
+await tools.call("create_paragraph_style", { name: "Body", fontName: "Arial\tRegular", fontSize: 10, leading: 14, alignment: "LEFT_ALIGN" });
 
 // Content on page 0
 await tools.call("create_text_frame", { pageIndex: 0, content: "Annual Report", x: 15, y: 15, width: 180, height: 20, paragraphStyle: "Heading" });
