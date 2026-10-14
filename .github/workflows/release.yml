@@ -1,12 +1,15 @@
 name: Release
 
-# Publishes to npm and the MCP Registry when a version tag (v1.2.3) is pushed.
+# Publishes one package when its tag is pushed: <package name>@<version>, e.g.
+#   indesign-mcp-server@2.4.0   illustrator-mcp-server@0.1.0   adobe-mcp-core@0.1.0
+# to npm and, for packages with a server.json, to the MCP Registry.
 # Both use GitHub OIDC, so no tokens or logins are needed:
-#   - npm: trusted publishing (configured once on npmjs.com for this workflow)
+#   - npm: trusted publishing, configured on npmjs.com for each package
+#     (repository zachshallbetter/adobe-mcp, workflow release.yml)
 #   - MCP Registry: mcp-publisher login github-oidc
 on:
   push:
-    tags: ['v*']
+    tags: ['*@*']
 
 permissions:
   contents: read
@@ -37,44 +40,59 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Check the tag matches package.json and server.json
+      - name: Find the package and check the tag matches its version
         run: |
-          version="$(node -p "require('./package.json').version")"
-          server="$(node -p "require('./server.json').version")"
-          package="$(node -p "require('./server.json').packages[0].version")"
-          if [ "$GITHUB_REF_NAME" != "v$version" ] || [ "$server" != "$version" ] || [ "$package" != "$version" ]; then
-            echo "Tag $GITHUB_REF_NAME, package.json $version, server.json $server / $package must all match" >&2
-            exit 1
+          name="${GITHUB_REF_NAME%@*}"
+          version="${GITHUB_REF_NAME##*@}"
+          dir=""
+          for d in packages/*/; do
+            if [ "$(node -p "require('./${d}package.json').name")" = "$name" ]; then dir="${d%/}"; fi
+          done
+          if [ -z "$dir" ]; then echo "No package named $name" >&2; exit 1; fi
+          pkg="$(node -p "require('./$dir/package.json').version")"
+          if [ "$pkg" != "$version" ]; then echo "Tag $GITHUB_REF_NAME, but $dir/package.json is $pkg" >&2; exit 1; fi
+          if [ -f "$dir/server.json" ]; then
+            server="$(node -p "require('./$dir/server.json').version")"
+            package="$(node -p "require('./$dir/server.json').packages[0].version")"
+            if [ "$server" != "$version" ] || [ "$package" != "$version" ]; then
+              echo "$dir/server.json is $server / $package, tag is $version" >&2; exit 1
+            fi
           fi
+          echo "NAME=$name" >> "$GITHUB_ENV"
           echo "VERSION=$version" >> "$GITHUB_ENV"
+          echo "DIR=$dir" >> "$GITHUB_ENV"
 
       - name: Test
         run: npm run check && npm test
 
       - name: Publish to npm
         run: |
-          if npm view "indesign-mcp-server@$VERSION" version >/dev/null 2>&1; then
-            echo "indesign-mcp-server@$VERSION is already on npm; skipping"
+          if npm view "$NAME@$VERSION" version >/dev/null 2>&1; then
+            echo "$NAME@$VERSION is already on npm; skipping"
           else
-            npm publish
+            npm publish --workspace "$DIR"
           fi
 
       # The registry checks that the npm version exists before accepting it.
       - name: Wait for npm to serve the version
+        if: hashFiles(format('{0}/server.json', env.DIR)) != ''
         run: |
           for i in $(seq 1 40); do
-            if npm view "indesign-mcp-server@$VERSION" version >/dev/null 2>&1; then exit 0; fi
+            if npm view "$NAME@$VERSION" version >/dev/null 2>&1; then exit 0; fi
             sleep 15
           done
           echo "npm did not serve $VERSION within 10 minutes" >&2
           exit 1
 
       - name: Install mcp-publisher
+        if: hashFiles(format('{0}/server.json', env.DIR)) != ''
         run: |
           curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/download/${MCP_PUBLISHER_VERSION}/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
           ./mcp-publisher --help >/dev/null
 
       - name: Publish to the MCP Registry
+        if: hashFiles(format('{0}/server.json', env.DIR)) != ''
+        working-directory: ${{ env.DIR }}
         run: |
-          ./mcp-publisher login github-oidc
-          ./mcp-publisher publish
+          ../../mcp-publisher login github-oidc
+          ../../mcp-publisher publish

@@ -67,7 +67,7 @@ logs
 
 # Test artifacts
 test-*.js
-!tests/test-*.js
+!**/tests/test-*.js
 
 # Temporary test directories
 test-images/

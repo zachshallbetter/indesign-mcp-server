@@ -1,81 +1,17 @@
 {
-  "name": "indesign-mcp-server",
-  "version": "2.3.0",
-  "description": "MCP server that turns Adobe InDesign into an AI design automation platform — 135+ tools for layout, styles, export, and publishing workflows",
-  "mcpName": "io.github.zachshallbetter/indesign-mcp-server",
-  "main": "src/index.js",
-  "bin": {
-    "indesign-mcp-server": "src/index.js",
-    "indesign-mcp-uxp-bridge": "uxp/bridge/server.js"
-  },
-  "files": [
-    "src/",
-    "uxp/",
-    "docs/",
-    "LICENSE",
-    "README.md",
-    "server.json",
-    "SECURITY.md"
+  "name": "adobe-mcp",
+  "private": true,
+  "description": "MCP servers for Adobe applications: one package per app, and a suite that combines them",
+  "workspaces": [
+    "packages/core",
+    "packages/indesign",
+    "packages/illustrator"
   ],
-  "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "node --inspect src/index.js",
-    "build": "echo 'No build step required for Node.js'",
-    "test": "node tests/unit/jsxSafe.test.js && node tests/unit/failure.test.js && node tests/unit/definitions.test.js && node tests/unit/aliases.test.js && node tests/unit/warnings.test.js && node tests/unit/paths.test.js && node tests/unit/protocol.test.js && node tests/unit/uxp.test.js && node tests/audit/scripts.audit.js && node scripts/generate-tool-reference.js --check",
-    "test:unit": "node tests/unit/jsxSafe.test.js && node tests/unit/failure.test.js && node tests/unit/definitions.test.js && node tests/unit/aliases.test.js && node tests/unit/warnings.test.js && node tests/unit/paths.test.js",
-    "test:integration": "node tests/index.js",
-    "test:unified": "node tests/unified-test-runner.js",
-    "check": "node scripts/check-syntax.js",
-    "uxp:bridge": "node uxp/bridge/server.js",
-    "start:uxp": "INDESIGN_BACKEND=uxp node src/index.js",
-    "start:auto": "INDESIGN_BACKEND=auto node src/index.js",
-    "test:protocol": "node tests/unit/protocol.test.js",
-    "test:uxp": "node tests/unit/uxp.test.js",
-    "prepublishOnly": "npm run check && npm test",
-    "test:audit": "node tests/audit/scripts.audit.js",
-    "docs:tools": "node scripts/generate-tool-reference.js"
-  },
-  "keywords": [
-    "mcp",
-    "model-context-protocol",
-    "indesign",
-    "adobe",
-    "automation",
-    "publishing",
-    "desktop-publishing",
-    "claude",
-    "ai",
-    "llm",
-    "design-automation",
-    "document-creation",
-    "layout-automation",
-    "windows",
-    "macos",
-    "com-automation",
-    "applescript"
-  ],
-  "author": "Zach Shallbetter",
-  "license": "MIT",
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.32.1",
-    "express": "^4.22.3",
-    "ws": "^8.21.3"
+    "check": "npm run check --workspaces --if-present",
+    "test": "npm test --workspaces --if-present"
   },
   "engines": {
     "node": ">=18.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/zachshallbetter/indesign-mcp-server.git"
-  },
-  "bugs": {
-    "url": "https://github.com/zachshallbetter/indesign-mcp-server/issues"
-  },
-  "homepage": "https://github.com/zachshallbetter/indesign-mcp-server#readme",
-  "devDependencies": {
-    "acorn": "^8.19.0",
-    "acorn-walk": "^8.3.5",
-    "types-for-adobe": "^7.2.6"
   }
 }
