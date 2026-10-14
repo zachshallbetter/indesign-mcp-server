@@ -1,0 +1,58 @@
+{
+  "name": "illustrator-mcp-server",
+  "version": "0.1.0",
+  "description": "MCP server for Adobe Illustrator: documents, artboards, layers, shapes, paths, text, colour, pathfinder and export through ExtendScript",
+  "mcpName": "io.github.zachshallbetter/illustrator-mcp-server",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "illustrator-mcp-server": "src/index.js"
+  },
+  "files": [
+    "src/",
+    "LICENSE",
+    "NOTICE",
+    "README.md",
+    "server.json"
+  ],
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test tests/",
+    "audit": "node tests/audit.js",
+    "check": "node scripts/check-syntax.js",
+    "docs:tools": "node scripts/generate-tool-reference.js",
+    "prepublishOnly": "npm run check && npm test"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "illustrator",
+    "adobe",
+    "vector",
+    "design-automation",
+    "extendscript",
+    "macos",
+    "windows"
+  ],
+  "author": "Zach Shallbetter",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zachshallbetter/adobe-mcp.git",
+    "directory": "packages/illustrator"
+  },
+  "bugs": {
+    "url": "https://github.com/zachshallbetter/adobe-mcp/issues"
+  },
+  "homepage": "https://github.com/zachshallbetter/adobe-mcp/tree/main/packages/illustrator#readme",
+  "dependencies": {
+    "adobe-mcp-core": "0.1.0"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "types-for-adobe": "^7.2.6"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "name": "adobe-mcp-core",
+  "version": "0.1.0",
+  "description": "Shared foundation for MCP servers that drive Adobe InDesign, Illustrator and other desktop Adobe applications through ExtendScript",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./testing": "./src/testing/audit.js"
+  },
+  "files": [
+    "src/",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test tests/",
+    "check": "node scripts/check-syntax.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "adobe",
+    "extendscript",
+    "indesign",
+    "illustrator",
+    "automation"
+  ],
+  "author": "Zach Shallbetter",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zachshallbetter/adobe-mcp.git",
+    "directory": "packages/core"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "acorn": "^8.19.0",
+    "acorn-walk": "^8.3.5"
+  },
+  "bugs": {
+    "url": "https://github.com/zachshallbetter/adobe-mcp/issues"
+  },
+  "homepage": "https://github.com/zachshallbetter/adobe-mcp/tree/main/packages/core#readme"
+}
