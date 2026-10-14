@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- Tool results carry a `warnings` list when an argument was not used as written: unknown parameters (ignored, with the closest valid name suggested) and deprecated aliases. Results without warnings are unchanged, and a warning never fails a call. Errors thrown before a call runs include the warnings too.
+- `tests/unit/warnings.test.js`, which also checks that handlers read only advertised parameters, so "was ignored" is accurate
+
+### Changed
+- `objectIndex` is accepted only by `apply_color`; on other tools it is reported as an unknown parameter
+- Older names that individual handlers read silently are now aliases in `src/handlers/aliases.js`, with deprecation warnings: `folderPath` -> `outputPath` (`export_images`, `package_document`), `pageRange` -> `pages` (`export_images`), `applyObjectStyle` -> `objectStyle` (`place_image`), `transparency` -> `opacity` (`create_object_style`)
+- Server instructions and `docs/LLM_PROMPT.md` describe `warnings`
+
 ## 2.2.0
 
 ### Canonical parameter names

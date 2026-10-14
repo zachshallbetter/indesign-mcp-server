@@ -23,7 +23,7 @@ If you are unsure InDesign is reachable, call `indesign_status` with `probe: tru
 - **Fonts** are `fontName`: `"Family\tStyle"` with a real tab between family and style (InDesign's `Font.name`), for example `"Arial\tBold"`, or a family name alone. A font that is not installed returns an error, except in `create_master_text_frame`, which applies the name as given.
 - **Stroke weight** is `strokeWeight`, in points, on every tool that sets a stroke.
 - **Alignment** is `alignment` with InDesign `Justification` names on every tool: `LEFT_ALIGN`, `CENTER_ALIGN`, `RIGHT_ALIGN`, `LEFT_JUSTIFIED`, `RIGHT_JUSTIFIED`, `CENTER_JUSTIFIED`, `FULLY_JUSTIFIED`. `LEFT_JUSTIFIED` is justified text with the last line left.
-- **Older names still work.** Calls written for 2.1 and earlier keep working: `strokeWidth` (now `strokeWeight`), `fontFamily` and `fontFamily` + `fontStyle` (now `fontName`), `objectIndex` (now `itemIndex` in `apply_color`), and the alignment values `LEFT`, `CENTER`, `RIGHT`, `JUSTIFY` (now `LEFT_ALIGN`, `CENTER_ALIGN`, `RIGHT_ALIGN`, `LEFT_JUSTIFIED`). They are not in the schemas; use the canonical names in new calls.
+- **Older names still work.** Calls written for 2.1 and earlier keep working: `strokeWidth` (now `strokeWeight`), `fontFamily` and `fontFamily` + `fontStyle` (now `fontName`), `objectIndex` (now `itemIndex` in `apply_color`), `folderPath` (now `outputPath` in `export_images` and `package_document`), `pageRange` (now `pages` in `export_images`), `applyObjectStyle` (now `objectStyle` in `place_image`), `transparency` (now `opacity` in `create_object_style`), and the alignment values `LEFT`, `CENTER`, `RIGHT`, `JUSTIFY` (now `LEFT_ALIGN`, `CENTER_ALIGN`, `RIGHT_ALIGN`, `LEFT_JUSTIFIED`). They are not in the schemas, and each use adds a deprecation warning to the result; use the canonical names in new calls.
 - **File paths** must be absolute and inside the user's home folder or a directory listed in `INDESIGN_ALLOWED_DIRS`. System folders are always refused. Other paths are rejected with `Access denied: ...`.
 - **Omitted geometry.** If you leave out `x`, `y`, `width` or `height` on a create tool, the server picks values that fit the page. Pass explicit values when the layout matters.
 
@@ -34,6 +34,8 @@ Every result is a JSON text block. A success looks like this:
 ```json
 { "success": true, "operation": "Create Text Frame", "result": "Text frame created on page 1 (ID 231, 17 characters)", "timestamp": "..." }
 ```
+
+When an argument was not used as written, the result also has a `warnings` list. An unknown name is ignored and the warning suggests the closest valid one, for example `Unknown parameter 'strokeColour' was ignored; did you mean 'strokeColor'?`. An older name still works and gets a deprecation note, such as `'strokeWidth' is deprecated; use 'strokeWeight'`. Fix the argument in later calls. A warning does not make a call fail, so check whether the ignored argument mattered. There is no `warnings` key when every argument was used.
 
 A failure sets MCP `isError: true` and `success: false`. The message is in `result` when InDesign reported the problem, or in `error` when the server rejected the call before running it. Typical messages and what to do about them:
 

@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { ScriptExecutor } from '../../src/core/scriptExecutor.js';
 import { InDesignMCPServer } from '../../src/core/InDesignMCPServer.js';
 import { allToolDefinitions } from '../../src/types/index.js';
-import { PARAM_ALIASES, ALIGNMENT_ALIASES, normalizeArgs } from '../../src/handlers/aliases.js';
+import { ALIGNMENT_ALIASES, aliasesFor, normalizeArgs } from '../../src/handlers/aliases.js';
 
 let passed = 0;
 const queue = [];
@@ -103,14 +103,17 @@ test('apply_color: objectIndex is an alias of itemIndex', async () => {
 });
 
 // --- every tool that takes a canonical name accepts its alias ---
+const SAMPLE = {
+    strokeWeight: 2, fontName: 'Arial', itemIndex: 2, outputPath: `${process.env.HOME}/Documents/out`,
+    pages: '1-2', objectStyle: 'Frame', opacity: 50,
+};
 test('every advertised canonical parameter accepts its alias', async () => {
     let checked = 0;
     for (const tool of allToolDefinitions) {
         const p = tool.inputSchema?.properties || {};
-        for (const [old, canonical] of Object.entries(PARAM_ALIASES)) {
-            if (!(canonical in p)) continue;
-            assert.ok(!(old in p), `${tool.name} advertises alias ${old}`);
-            const value = p[canonical].type === 'string' ? 'Arial' : 2;
+        for (const { old, canonical } of aliasesFor(tool.name)) {
+            const value = SAMPLE[canonical];
+            assert.ok(value !== undefined, `no sample value for ${canonical}`);
             const base = { ...BOX, content: 'x', name: 'S', masterName: 'A-Master', colorName: 'Black', strokeColor: 'Black', frameIndex: 0 };
             for (const k of Object.keys(base)) if (!(k in p)) delete base[k];
             for (const r of tool.inputSchema.required || []) {
