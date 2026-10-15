@@ -7,6 +7,9 @@ import { executor } from './executor.js';
 import { tools as documentTools } from './tools/documents.js';
 import { tools as imageTools } from './tools/image.js';
 import { tools as layerTools } from './tools/layers.js';
+import { tools as maskTools } from './tools/masks.js';
+import { tools as smartObjectTools } from './tools/smart-objects.js';
+import { tools as layerStyleTools } from './tools/layer-styles.js';
 import { tools as selectionTools } from './tools/selection.js';
 import { tools as adjustTools } from './tools/adjust.js';
 import { tools as filterTools } from './tools/filters.js';
@@ -42,6 +45,9 @@ const AREAS = [
     ['documents', documentTools],
     ['image', imageTools],
     ['layers', layerTools],
+    ['masks', maskTools],
+    ['smart objects', smartObjectTools],
+    ['layer styles', layerStyleTools],
     ['selection', selectionTools],
     ['adjustments', adjustTools],
     ['filters', filterTools],
