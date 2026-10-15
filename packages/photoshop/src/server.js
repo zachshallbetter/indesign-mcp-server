@@ -8,6 +8,9 @@ import { tools as documentTools } from './tools/documents.js';
 import { tools as imageTools } from './tools/image.js';
 import { tools as layerTools } from './tools/layers.js';
 import { tools as selectionTools } from './tools/selection.js';
+import { tools as channelTools } from './tools/channels.js';
+import { tools as transformTools } from './tools/transform.js';
+import { tools as analysisTools } from './tools/analysis.js';
 import { tools as adjustTools } from './tools/adjust.js';
 import { tools as filterTools } from './tools/filters.js';
 import { tools as paintTools } from './tools/paint.js';
@@ -53,6 +56,9 @@ const AREAS = [
     ['image', imageTools],
     ['layers', layerTools],
     ['selection', selectionTools],
+    ['channels', channelTools],
+    ['transformations', transformTools],
+    ['analysis', analysisTools],
     ['adjustments', adjustTools],
     ['filters', filterTools],
     ['painting', paintTools],
