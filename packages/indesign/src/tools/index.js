@@ -5,10 +5,12 @@
  * category they appear under.
  */
 import { tools as transformTools } from './transform.js';
+import { tools as paragraphTools } from './paragraph.js';
 
 /** [area id, tools, help category { name, description }] */
 export const AREAS = [
     ['transform', transformTools, { name: 'Transformations', description: 'Rotate, flip, scale, shear and align items, and transform them again' }],
+    ['paragraph', paragraphTools, { name: 'Paragraph formatting', description: 'Indents, spacing, alignment, justification, hyphenation, keep options, rules, borders, shading, span columns, drop caps and nested styles; underline and strikethrough options' }],
 ];
 
 /** Every module tool, with its area. */
