@@ -6,6 +6,7 @@ import { createMcpServer, createAnnotations } from 'adobe-mcp-core';
 import { executor } from './executor.js';
 import { tools as documentTools } from './tools/documents.js';
 import { tools as artworkTools } from './tools/artwork.js';
+import { tools as shapeTools } from './tools/shapes.js';
 import { tools as appearanceTools } from './tools/appearance.js';
 import { tools as arrangeTools } from './tools/arrange.js';
 import { tools as selectTools } from './tools/select.js';
@@ -47,6 +48,7 @@ help({ tool }) describes any tool's parameters.`;
 const AREAS = [
     ['documents', documentTools],
     ['artwork', artworkTools],
+    ['shapes', shapeTools],
     ['appearance', appearanceTools],
     ['styles', styleTools],
     ['color', colorTools],

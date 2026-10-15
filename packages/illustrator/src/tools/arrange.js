@@ -195,6 +195,7 @@ __result__ = { created: out.length, ids: out };`)),
             'illustrator.transformations.move_objects',
             'illustrator.symbols.transform_symbols',
             'illustrator.transformations.position_size',
+            'illustrator.shapes.move_live_shape',
         ],
         handler: (a) => {
             const absolute = a.x !== undefined || a.y !== undefined;
@@ -231,6 +232,7 @@ __result__ = out;`));
         features: [
             'illustrator.transformations.scale',
             'illustrator.transformations.scale_multiple',
+            'illustrator.shapes.scale_live_shape',
             'illustrator.symbols.transform_symbols',
             'illustrator.transformations.transform_panel_option.scale_strokes_and_effects',
             'illustrator.transformations.transform_dialog_option.transform_objects',
@@ -251,6 +253,7 @@ __result__ = { scaled: items.length };`));
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, angle: { type: 'number' }, origin: ORIGIN_SCHEMA }, required: ['target', 'angle'] },
         features: [
             'illustrator.transformations.rotate',
+            'illustrator.shapes.rotate_live_shape',
             'illustrator.symbols.transform_symbols',
             'illustrator.transformations.transform_dialog_option.transform_objects',
             'illustrator.transformations.transform_dialog_option.transform_patterns',
