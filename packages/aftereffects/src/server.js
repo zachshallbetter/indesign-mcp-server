@@ -12,6 +12,7 @@ import { tools as layerEditTools } from './tools/layer-edits.js';
 import { tools as compEditTools } from './tools/comp-edits.js';
 import { tools as timeTools } from './tools/time.js';
 import { tools as animationTools } from './tools/animation.js';
+import { tools as keyframeTools } from './tools/keyframes.js';
 import { tools as effectTools } from './tools/effects.js';
 import { tools as effectControlTools } from './tools/effect-controls.js';
 import { tools as textTools } from './tools/text.js';
@@ -58,6 +59,7 @@ const AREAS = [
     ['layers', layerEditTools],
     ['time', timeTools],
     ['animation', animationTools],
+    ['keyframes', keyframeTools],
     ['effects', effectTools],
     ['effect controls', effectControlTools],
     ['text', textTools],

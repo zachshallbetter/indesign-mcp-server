@@ -51,7 +51,7 @@ __result__ = { count: out.length, items: out };`)),
     },
     {
         name: 'import_files',
-        description: 'Import files into the project (File > Import): footage, image sequences, layered Photoshop or Illustrator files as footage or compositions, another After Effects or Premiere Pro project, and data files (JSON, mgJSON, CSV, TSV), optionally into a folder',
+        description: 'Import files into the project (File > Import): footage, image sequences, layered Photoshop or Illustrator files as footage or compositions, another After Effects or Premiere Pro project, data files (JSON, mgJSON, CSV, TSV), or a .jsx expression library that expressions call through footage("name.jsx"), optionally into a folder',
         inputSchema: {
             type: 'object',
             properties: {
@@ -75,6 +75,7 @@ __result__ = { count: out.length, items: out };`)),
             'aftereffects.footage.format_aep',
             'aftereffects.three_d.three_d_model_import',
             'aftereffects.three_d.three_d_model_formats',
+            'aftereffects.expressions.jsx_expression_library',
             'aftereffects.audio.format_mp2',
             'aftereffects.audio.format_aac',
             'aftereffects.audio.format_aiff',

@@ -1,6 +1,7 @@
 /**
  * Properties, keyframes and expressions: read and set any property, add and
- * remove keyframes with their interpolation and easing, and write expressions.
+ * remove keyframes with their interpolation and easing, write expressions,
+ * convert them to keyframes, and choose the project's expression engine.
  */
 import { num, bool, enumOf, json, str } from 'adobe-mcp-core';
 import { script } from '../script.js';
@@ -10,6 +11,17 @@ import { COMP_SCHEMA, LAYERS_SCHEMA, PROPERTY_SCHEMA, compSpec, layerSpec, prope
 const INTERP = { linear: 'LINEAR', bezier: 'BEZIER', hold: 'HOLD' };
 
 const TARGET = { comp: COMP_SCHEMA, layers: LAYERS_SCHEMA, property: PROPERTY_SCHEMA };
+
+/** Expression-language features: set_expression writes expressions that use them. */
+const LANGUAGE = [
+    'lang_global', 'lang_time_conversion', 'lang_vector_math', 'lang_random_numbers', 'lang_interpolation', 'lang_color_conversion',
+    'lang_other_math', 'lang_comp', 'lang_dropdown_menu', 'lang_footage', 'lang_layer_sub_objects', 'lang_layer_general',
+    'lang_layer_properties', 'lang_layer_3d', 'lang_layer_space_transforms', 'lang_camera', 'lang_light', 'lang_effect', 'lang_mask',
+    'lang_property', 'lang_project', 'lang_key', 'lang_marker_key', 'lang_path_points', 'lang_text_style',
+    'per_character_text_styling', 'paragraph_attributes_in_expressions', 'link_text_styles', 'expression_selector_attributes',
+].map((f) => `aftereffects.expressions.${f}`);
+
+const ENGINES = { javascript: 'javascript-1.0', extendscript: 'extendscript' };
 
 /** ES3: describe a property's value and keyframes. */
 const PROP_INFO = `
@@ -28,11 +40,11 @@ function __propInfo(p) {
 export const tools = [
     {
         name: 'get_property',
-        description: 'Read a layer property: its value, keyframes (time, value, interpolation) and expression. Properties are named by a shortcut or a path of match names or names',
+        description: 'Read a layer property: its value, keyframes (time, value, interpolation) and expression. Properties are named by a shortcut or a path of match names or names; this includes the Data group of a data-driven layer',
         inputSchema: { type: 'object', properties: { ...TARGET, time: { type: 'number', description: 'Also read the value at this time (seconds)' } }, required: ['layers', 'property'] },
         hints: { readOnly: true },
         auditArgs: { property: 'position', time: 1 },
-        features: ['aftereffects.animation.property_keyframes_object'],
+        features: ['aftereffects.animation.property_keyframes_object', 'aftereffects.animation.data_property_group'],
         handler: (a) => run('Get property', script(`${PROP_INFO}
 var c = __comp(${compSpec(a.comp)}), ls = __layers(c, ${layerSpec(a.layers)}), path = ${propertyPath(a.property)}, out = [];
 for (var i = 0; i < ls.length; i++) {
@@ -45,7 +57,7 @@ __result__ = { properties: out };`)),
     },
     {
         name: 'set_property',
-        description: 'Set a property\'s value: with no time and no keyframes the static value, otherwise a keyframe at the time (or the current time). Text layers\' Source Text takes a string',
+        description: 'Set a property\'s value, as in the Timeline or Properties panel (layer Transform, shape, camera and light options, effect properties): with no time and no keyframes the static value, otherwise a keyframe at the time (or the current time). Text layers\' Source Text takes a string',
         inputSchema: {
             type: 'object',
             properties: { ...TARGET, value: { description: 'A number, an array of numbers, text, or true/false' }, time: { type: 'number', description: 'Seconds: set a keyframe at this time' } },
@@ -60,6 +72,10 @@ __result__ = { properties: out };`)),
             'aftereffects.three_d.stereo_rig_option.converge_cameras',
             'aftereffects.three_d.stereo_rig_option.converge_to',
             'aftereffects.three_d.stereo_rig_option.configuration',
+            'aftereffects.animation.properties_layer_transform',
+            'aftereffects.animation.properties_shape_sections',
+            'aftereffects.animation.properties_camera_options',
+            'aftereffects.animation.properties_light_options',
         ],
         handler: (a) => {
             const v = propertyValue(a.value);
@@ -168,7 +184,7 @@ __result__ = { properties: out };`, { undo: 'Remove keyframes' })),
     },
     {
         name: 'set_expression',
-        description: 'Write an expression on a property (or clear it with an empty string), and report any expression error After Effects finds',
+        description: 'Write an expression on a property, as typed in the expression editor (or clear it with an empty string), and report any expression error After Effects finds. The expression can use the whole expression language: global objects (thisComp, thisLayer, time, value), time conversion, vector math, random numbers, interpolation (linear, ease), colour conversion and other math; comp, footage, layer (sub-objects, general, properties, 3D, space transforms), camera, light, effect, mask, property, project, key, marker and path attributes and methods; dropdown menu attributes; text style objects for per-character and paragraph styling and for linking styles across text layers on Source Text; and, on the Amount of a text animator\'s Expression selector, textIndex, textTotal and selectorValue. Text style methods need the JavaScript engine (set_expression_engine)',
         inputSchema: {
             type: 'object',
             properties: { ...TARGET, expression: { type: 'string', description: 'Expression source; "" removes it' }, enabled: { type: 'boolean', description: 'Default true', default: true } },
@@ -181,6 +197,8 @@ __result__ = { properties: out };`, { undo: 'Remove keyframes' })),
             'aftereffects.expressions.remove_expression',
             'aftereffects.expressions.enable_expression_switch',
             'aftereffects.expressions.expression_errors',
+            'aftereffects.expressions.expression_editor',
+            ...LANGUAGE,
         ],
         handler: (a) => run('Set expression', script(`
 var c = __comp(${compSpec(a.comp)}), ls = __layers(c, ${layerSpec(a.layers)}), path = ${propertyPath(a.property)}, out = [];
@@ -192,6 +210,62 @@ for (var i = 0; i < ls.length; i++) {
   out.push({ layer: ls[i].index, property: p.name, expression: p.expression, enabled: p.expressionEnabled, error: p.expressionError || null });
 }
 __result__ = { properties: out };`, { undo: 'Set expression' })),
+    },
+    {
+        name: 'convert_expression_to_keyframes',
+        description: 'Bake a property\'s expression into a keyframe on every frame and switch the expression off, keeping its text (Animation > Keyframe Assistant > Convert Expression to Keyframes). Keyframes already in the span are replaced',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                ...TARGET,
+                from: { type: 'number', description: 'Start (seconds). Default the layer\'s in point' },
+                to: { type: 'number', description: 'End (seconds). Default the layer\'s out point' },
+            },
+            required: ['layers', 'property'],
+        },
+        auditArgs: { property: 'rotation', from: 0, to: 2 },
+        features: ['aftereffects.expressions.convert_expression_to_keyframes'],
+        handler: (a) => run('Convert expression to keyframes', script(`
+var c = __comp(${compSpec(a.comp)}), ls = __layers(c, ${layerSpec(a.layers)}), path = ${propertyPath(a.property)}, out = [];
+for (var i = 0; i < ls.length; i++) {
+  var p = __prop(ls[i], path);
+  if (!p.canSetExpression || p.expression === "" || !p.expressionEnabled) throw new Error(p.name + " on " + ls[i].name + " has no enabled expression");
+  if (!p.canVaryOverTime) throw new Error(p.name + " cannot be animated");
+  var fd = c.frameDuration;
+  var t0 = ${a.from !== undefined ? num(a.from, { name: 'from' }) : 'Math.max(0, ls[i].inPoint)'}, t1 = ${a.to !== undefined ? num(a.to, { name: 'to' }) : 'Math.min(c.duration, ls[i].outPoint) - fd'};
+  if (t1 < t0) throw new Error("'to' is before 'from'");
+  var n = Math.floor((t1 - t0) / fd + 0.5) + 1;
+  if (n > 100000) throw new Error("That is " + n + " frames; convert a shorter span");
+  var times = [], vals = [];
+  for (var f = 0; f < n; f++) { times.push(t0 + f * fd); vals.push(p.valueAtTime(t0 + f * fd, false)); }
+  for (var k = p.numKeys; k >= 1; k--) { var kt = p.keyTime(k); if (kt >= t0 - fd / 2 && kt <= t1 + fd / 2) p.removeKey(k); }
+  p.expressionEnabled = false;
+  p.setValuesAtTimes(times, vals);
+  out.push({ layer: ls[i].index, property: p.name, keyframes: n, from: t0, to: t1, expression: p.expression, expressionEnabled: p.expressionEnabled });
+}
+__result__ = { properties: out };`, { undo: 'Convert expression to keyframes' })),
+    },
+    {
+        name: 'set_expression_engine',
+        description: 'Choose the engine that evaluates the project\'s expressions (File > Project Settings > Expressions): javascript (the default, faster, modern syntax) or extendscript (Legacy ExtendScript, for old expressions)',
+        inputSchema: {
+            type: 'object',
+            properties: { engine: { type: 'string', enum: Object.keys(ENGINES), description: 'javascript or extendscript' } },
+            required: ['engine'],
+        },
+        hints: { idempotent: true },
+        features: [
+            'aftereffects.expressions.expression_engine',
+            'aftereffects.expressions.javascript_engine',
+            'aftereffects.expressions.legacy_extendscript_engine',
+        ],
+        handler: (a) => {
+            const engine = ENGINES[enumOf(a.engine, Object.keys(ENGINES), { name: 'engine' })];
+            return run('Expression engine', script(`
+var before = proj.expressionEngine;
+proj.expressionEngine = ${str(engine)};
+__result__ = { engine: proj.expressionEngine, previous: before };`, { undo: 'Expression engine' }));
+        },
     },
 ];
 
