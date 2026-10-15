@@ -6,6 +6,7 @@ import { str, num, index, bool, enumOf, createPathPolicy, jsxPath } from 'adobe-
 import { script, WRITTEN_FN } from '../script.js';
 import { run } from '../executor.js';
 import { ARTBOARD_SCHEMA, TARGET_SCHEMA, targetSpec, artboardRange, colorSpec } from '../args.js';
+import { OPEN_EXTENSIONS, PDF_OPEN_SCHEMA, AUTOCAD_IMPORT_SCHEMA, extOf, withImportOptions } from '../import-options.js';
 import { ART_ON } from './layers.js';
 
 export const paths = createPathPolicy({ envVar: 'ILLUSTRATOR_ALLOWED_DIRS' });
@@ -14,6 +15,7 @@ const COLOR_MODES = ['CMYK', 'RGB'];
 const EPS_PREVIEWS = { none: 'None', tiff_bw: 'BWTIFF', tiff_color: 'COLORTIFF', tiff_transparent: 'TRANSPARENTCOLORTIFF' };
 const AI_ONLY = ['pdfCompatible', 'compressed', 'embedIccProfile', 'fontSubsetThreshold'];
 const EPS_ONLY = ['preview', 'postScript', 'embedFonts', 'cmykPostScript', 'compatibleGradientPrinting', 'thumbnails', 'overprint'];
+const FLATTENING = { preserve_paths: 'PRESERVEPATHS', preserve_appearance: 'PRESERVEAPPEARANCE' };
 const AI_VERSIONS = { '24': 'ILLUSTRATOR24', '17': 'ILLUSTRATOR17', '16': 'ILLUSTRATOR16', '15': 'ILLUSTRATOR15', '10': 'ILLUSTRATOR10', '8': 'ILLUSTRATOR8', '3': 'ILLUSTRATOR3' };
 const LAYOUTS = ['GridByRow', 'GridByCol', 'Row', 'Column', 'RLGridByRow', 'RLGridByCol', 'RLRow'];
 
@@ -119,22 +121,69 @@ __result__ = { name: d.name, colorMode: ${str(a.colorMode)}, artboards: d.artboa
     },
     {
         name: 'open_document',
-        description: 'Open an .ai, .pdf, .eps or .svg file',
-        inputSchema: { type: 'object', properties: { filePath: { type: 'string', description: 'Absolute path' } }, required: ['filePath'] },
+        description: 'Open a file as a new document (File > Open): Illustrator (.ai, .ait template), PDF, EPS, SVG/SVGZ, AutoCAD DWG/DXF, images (PSD, TIFF, PNG, JPEG, JPEG 2000, GIF, BMP, WebP, AVIF, HEIC, TGA, PCX, PXR), CGM, CorelDRAW, EMF/WMF, and Word, RTF or text (opened with Illustrator\'s last-used import options). PDF and AutoCAD import options are set for this call only',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                filePath: { type: 'string', description: 'Absolute path' },
+                pdf: PDF_OPEN_SCHEMA,
+                autocad: AUTOCAD_IMPORT_SCHEMA,
+            },
+            required: ['filePath'],
+        },
         features: [
             'illustrator.documents.open',
             'illustrator.import_export.open_ai',
             'illustrator.import_export.open_pdf',
             'illustrator.import_export.open_eps',
             'illustrator.import_export.open_svg',
+            'illustrator.import_export.open_svgz',
+            'illustrator.import_export.open_dwg',
+            'illustrator.import_export.open_dxf',
+            'illustrator.import_export.open_avif',
+            'illustrator.import_export.open_bmp',
+            'illustrator.import_export.open_cgm',
+            'illustrator.import_export.open_cdr',
+            'illustrator.import_export.open_emf',
+            'illustrator.import_export.open_wmf',
+            'illustrator.import_export.open_gif',
+            'illustrator.import_export.open_heic',
+            'illustrator.import_export.open_jpeg',
+            'illustrator.import_export.open_jpeg2000',
+            'illustrator.import_export.open_png',
+            'illustrator.import_export.open_psd',
+            'illustrator.import_export.open_tiff',
+            'illustrator.import_export.open_pcx',
+            'illustrator.import_export.open_pxr',
+            'illustrator.import_export.open_tga',
+            'illustrator.import_export.open_webp',
+            'illustrator.import_export.open_rtf',
+            'illustrator.import_export.open_doc',
+            'illustrator.import_export.open_docx',
+            'illustrator.import_export.open_txt',
+            'illustrator.import_export.import_pdf',
+            'illustrator.import_export.import_eps_dcs_autocad',
+            'illustrator.import_export.pdf_import_option.page_to_open',
+            'illustrator.import_export.pdf_import_option.crop_to',
+            'illustrator.import_export.autocad_import_option.layout',
+            'illustrator.import_export.autocad_import_option.scale_import',
+            'illustrator.import_export.autocad_import_option.scale_percent_import',
+            'illustrator.import_export.autocad_import_option.units_import',
+            'illustrator.import_export.autocad_import_option.unit_ratio_import',
+            'illustrator.import_export.autocad_import_option.scale_lineweights_import',
+            'illustrator.import_export.autocad_import_option.center_artwork',
+            'illustrator.import_export.autocad_import_option.merge_layers',
         ],
+        auditArgs: { filePath: path.join(process.env.HOME ?? '/tmp', 'Documents', 'audit.pdf'), pdf: { pages: '1-3', linkPages: false, cropTo: 'trim' }, autocad: undefined },
         handler: (a) => {
             const p = paths.validate(a.filePath);
+            const ext = extOf(p);
+            if (!OPEN_EXTENSIONS.includes(ext)) throw new Error(`Illustrator cannot open .${ext || '(no extension)'} files. It opens: ${OPEN_EXTENSIONS.map((e) => `.${e}`).join(', ')}`);
             return run('Open document', script(`
 var f = new File(${jsxPath(p)});
 if (!f.exists) throw new Error("File not found: " + f.fsName);
-var d = app.open(f);
-__result__ = { name: d.name, artboards: d.artboards.length };`, { needsDocument: false }));
+${withImportOptions(a, ext, `var d = app.open(f);
+__result__ = { name: d.name, artboards: d.artboards.length };`, { allowRange: true })}`, { needsDocument: false }));
         },
     },
     {
@@ -148,7 +197,7 @@ __result__ = { name: d.name, artboards: d.artboards.length };`, { needsDocument:
                 separateArtboards: { type: 'boolean', description: 'Also save each artboard to its own file, named after the artboard. Default false', default: false },
                 artboards: { type: 'string', description: 'With separateArtboards: the artboards to save, 1-based: "1", "1-3,5". Default all' },
                 embedLinkedFiles: { type: 'boolean', description: 'Embed linked images. Default false', default: false },
-                pdfCompatible: { type: 'boolean', description: '.ai: embed a PDF-compatible copy so other apps can preview it. Default true', default: true },
+                pdfCompatible: { type: 'boolean', description: '.ai: embed a PDF-compatible copy so other apps can preview it. Default true. False gives a much smaller native file', default: true },
                 compressed: { type: 'boolean', description: '.ai: compress the file. Default true', default: true },
                 embedIccProfile: { type: 'boolean', description: '.ai: embed the document\'s colour profile. Default true', default: true },
                 fontSubsetThreshold: { type: 'number', minimum: 0, maximum: 100, description: '.ai: subset embedded fonts when less than this percent of their characters is used. Default 100' },
@@ -159,6 +208,7 @@ __result__ = { name: d.name, artboards: d.artboards.length };`, { needsDocument:
                 compatibleGradientPrinting: { type: 'boolean', description: '.eps: rasterise gradients and meshes for older PostScript printers. Default false', default: false },
                 thumbnails: { type: 'boolean', description: '.eps: include a thumbnail. Default true', default: true },
                 overprint: { type: 'string', enum: ['preserve', 'discard'], description: '.eps: keep or discard overprints. Default preserve' },
+                transparency: { type: 'string', enum: Object.keys(FLATTENING), description: 'Saving for Illustrator 8 or 3 only, which have no transparency: preserve_paths (discard transparency) or preserve_appearance (flatten it)' },
             },
         },
         features: [
@@ -172,6 +222,8 @@ __result__ = { name: d.name, artboards: d.artboards.length };`, { needsDocument:
             'illustrator.import_export.ai_option.embed_icc_profiles',
             'illustrator.import_export.ai_option.subset_embedded_fonts_when_percent_of_characters_used_is_less_than',
             'illustrator.import_export.ai_option.save_each_artboard_to_a_separate_file',
+            'illustrator.import_export.ai_option.transparency_preserve_paths_preserve_appearance',
+            'illustrator.import_export.pdf_native_size',
             'illustrator.import_export.save_artboards_range',
             'illustrator.import_export.save_eps',
             'illustrator.import_export.eps_option.version_eps',
@@ -184,6 +236,7 @@ __result__ = { name: d.name, artboards: d.artboards.length };`, { needsDocument:
             'illustrator.import_export.eps_option.include_linked_files_eps',
             'illustrator.import_export.eps_option.overprints_eps',
             'illustrator.import_export.eps_option.use_artboards_eps',
+            'illustrator.import_export.eps_option.transparency_eps',
         ],
         handler: (a) => {
             // Options the caller set to something other than the default.
@@ -203,6 +256,7 @@ __result__ = { saved: true, file: doc.fullName.fsName };`));
             const wrong = given.filter((k) => other.includes(k));
             if (wrong.length) throw new Error(`${wrong.join(', ')} ${wrong.length > 1 ? 'apply' : 'applies'} only to ${ext === '.ai' ? '.eps' : '.ai'} files`);
             if (a.artboards !== undefined && !a.separateArtboards) throw new Error("'artboards' applies with separateArtboards: true");
+            if (a.transparency !== undefined && !['8', '3'].includes(String(a.compatibility))) throw new Error("'transparency' applies when saving for Illustrator 8 or 3: set compatibility to \"8\" or \"3\"");
             const range = a.artboards === undefined ? '' : artboardRange(a.artboards);
             const lines = ext === '.ai' ? [
                 'var o = new IllustratorSaveOptions();',
@@ -225,6 +279,7 @@ var target = new File(${jsxPath(p)}), since = new Date().getTime();
 ${lines.filter(Boolean).join('\n')}
 o.compatibility = Compatibility.${AI_VERSIONS[enumOf(a.compatibility ?? '24', Object.keys(AI_VERSIONS), { name: 'compatibility' })]};
 o.embedLinkedFiles = ${bool(a.embedLinkedFiles)};
+${a.transparency !== undefined ? `o.flattenOutput = OutputFlattening.${FLATTENING[enumOf(a.transparency, Object.keys(FLATTENING), { name: 'transparency' })]};` : ''}
 o.saveMultipleArtboards = ${bool(a.separateArtboards)};
 ${range ? `o.artboardRange = ${str(range)};` : ''}
 doc.saveAs(target, o);

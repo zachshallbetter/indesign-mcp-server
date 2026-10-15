@@ -7,6 +7,7 @@ import { script, WRITTEN_FN } from '../script.js';
 import { run } from '../executor.js';
 import { ARTBOARD_SCHEMA, artboardRange } from '../args.js';
 import { paths } from './documents.js';
+import { PLACE_EXTENSIONS, PDF_IMPORT_SCHEMA, AUTOCAD_IMPORT_SCHEMA, extOf, withImportOptions } from '../import-options.js';
 import { SCREEN_ADVANCED_SCHEMA, screenAdvanced, screenScales, screenItem } from './assets.js';
 
 const RANGE_SCHEMA = { type: 'string', description: 'Artboards to export, 1-based like Illustrator: "1", "1-3,5". Default all' };
@@ -17,6 +18,14 @@ const SCREEN_FORMATS = { png: 'SE_PNG24', png8: 'SE_PNG8', jpg: 'SE_JPEG80', jpg
 const SVG_STYLING = { internal_css: 'STYLEELEMENTS', inline_style: 'STYLEATTRIBUTES', presentation_attributes: 'PRESENTATIONATTRIBUTES', entities: 'ENTITIES' };
 const WEB_SVG_STYLING = ['internal_css', 'inline_style', 'presentation_attributes'];
 const SVG_IMAGES = { embed: 'EMBED', link: 'LINK', preserve: 'PRESERVE' };
+const SVG_PROFILES = { 'svg_1.0': 'SVG1_0', 'svg_1.1': 'SVG1_1', 'basic_1.1': 'SVGBASIC1_1', 'tiny_1.1': 'SVGTINY1_1', 'tiny_1.1_plus': 'SVGTINY1_1PLUS', 'tiny_1.2': 'SVGTINY1_2' };
+const SVG_SUBSETS = { none: 'None', glyphs_used: 'GLYPHSUSED', common_english: 'COMMONENGLISH', glyphs_used_plus_english: 'GLYPHSUSEDPLUSENGLISH', common_roman: 'COMMONROMAN', glyphs_used_plus_roman: 'GLYPHSUSEDPLUSROMAN', all_glyphs: 'ALLGLYPHS' };
+const SVG_ENCODINGS = { ascii: 'ASCII', utf8: 'UTF8', utf16: 'UTF16' };
+/** Save As SVG checkboxes: argument -> ExportOptionsSVG property. */
+const SVG_FLAGS = {
+    optimizeForSvgViewer: 'optimizeForSVGViewer', slices: 'slices', includeXmp: 'includeFileInfo', includeUnusedStyles: 'includeUnusedStyles',
+    includeVariables: 'includeVariablesAndDatasets', fewerTspans: 'sVGAutoKerning', textOnPath: 'sVGTextOnPath',
+};
 const SVG_IDS = { layer_names: 'SVGIDREGULAR', minimal: 'SVGIDMINIMAL', unique: 'SVGIDUNIQUE' };
 
 /** PDF settings Illustrator's object model names, keyed the way the Save Adobe PDF dialog shows them. */
@@ -26,10 +35,39 @@ const PDF_MARKS = { trim: 'trimMarks', registration: 'registrationMarks', color_
 const PDF_MARK_WEIGHTS = { '0.125': 'TRIMMARKWEIGHT0125', '0.25': 'TRIMMARKWEIGHT025', '0.5': 'TRIMMARKWEIGHT05' };
 const PDF_COLOR_CONVERSION = { none: 'None', convert_to_destination: 'COLORCONVERSIONTODEST', preserve_numbers: 'COLORCONVERSIONREPURPOSE' };
 const PDF_DESTINATIONS = { document_cmyk: 'COLORDESTINATIONDOCCMYK', working_cmyk: 'COLORDESTINATIONWORKINGCMYK', document_rgb: 'COLORDESTINATIONDOCRGB', working_rgb: 'COLORDESTINATIONWORKINGRGB' };
+const QUALITIES = ['minimum', 'low', 'medium', 'high', 'maximum'];
+const PDF_COMPRESSION = {
+    none: 'None', zip_8bit: 'ZIP8BIT', zip_4bit: 'ZIP4BIT',
+    ...Object.fromEntries(QUALITIES.flatMap((q) => [
+        [`jpeg_${q}`, `JPEG${q.toUpperCase()}`], [`jpeg2000_${q}`, `JPEG2000${q.toUpperCase()}`],
+        [`automatic_jpeg_${q}`, `AUTOMATICJPEG${q.toUpperCase()}`], [`automatic_jpeg2000_${q}`, `AUTOMATICJPEG2000${q.toUpperCase()}`],
+    ])),
+    jpeg2000_lossless: 'JPEG2000LOSSLESS', automatic_jpeg2000_lossless: 'AUTOMATICJPEG2000LOSSLESS',
+};
+const PDF_MONO_COMPRESSION = { none: 'None', ccitt_group3: 'CCIT3', ccitt_group4: 'CCIT4', zip: 'MONOZIP', run_length: 'RUNLENGTH' };
+const PDF_DOWNSAMPLE = { none: 'NODOWNSAMPLE', average: 'AVERAGEDOWNSAMPLE', bicubic: 'BICUBICDOWNSAMPLE', subsample: 'SUBSAMPLE' };
+const PDF_PRINTING = { 40: { none: 'PRINT40NONE', high_resolution: 'PRINT40HIGHRESOLUTION' }, 128: { none: 'PRINT128NONE', low_resolution: 'PRINT128LOWRESOLUTION', high_resolution: 'PRINT128HIGHRESOLUTION' } };
+const PDF_CHANGES = {
+    40: { none: 'CHANGE40NONE', page_layout: 'CHANGE40PAGELAYOUT', commenting: 'CHANGE40COMMENTING', any: 'CHANGE40ANYCHANGES' },
+    128: { none: 'CHANGE128NONE', edit_pages: 'CHANGE128EDITPAGE', fill_forms: 'CHANGE128FILLFORM', commenting: 'CHANGE128COMMENTING', any: 'CHANGE128ANYCHANGES' },
+};
+
+/** Compression panel settings for one kind of image (colour, grayscale or monochrome). */
+const pdfImageSchema = (mono) => ({
+    type: 'object',
+    properties: {
+        downsample: { type: 'string', enum: Object.keys(PDF_DOWNSAMPLE), description: 'none, average, bicubic or subsample' },
+        resolution: { type: 'number', minimum: 9, maximum: 2400, description: 'Downsample to this ppi' },
+        above: { type: 'number', minimum: 9, maximum: 9600, description: 'Only images above this ppi' },
+        compression: { type: 'string', enum: Object.keys(mono ? PDF_MONO_COMPRESSION : PDF_COMPRESSION), description: mono ? 'none, ccitt_group3, ccitt_group4, zip or run_length' : 'none, zip_8bit, zip_4bit, jpeg_<quality>, jpeg2000_<quality>, automatic_jpeg_<quality> or automatic_jpeg2000_<quality>; quality is minimum, low, medium, high or maximum (JPEG 2000 also lossless)' },
+        ...(mono ? {} : { tileSize: { type: 'integer', minimum: 1, maximum: 4096, description: 'Tile size for JPEG 2000 compression' } }),
+    },
+});
+
 const PDF_PROFILES = { none: 'None', all: 'INCLUDEALLPROFILE', destination: 'INCLUDEDESTPROFILE', rgb: 'INCLUDERGBPROFILE', unchanged: 'LEAVEPROFILEUNCHANGED' };
 
 /** A colour as #RRGGBB, for RGB-only options such as the JPEG matte. */
-function hexColor(value, name) {
+export function hexColor(value, name) {
     const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(String(value ?? '').trim());
     if (!m) throw new Error(`'${name}' must be a hex colour like #FFFFFF`);
     return m.slice(1).map((h) => parseInt(h, 16));
@@ -61,8 +99,19 @@ var mc = new RGBColor(); mc.red = ${r}; mc.green = ${g}; mc.blue = ${b};
 o.matteColor = mc;`;
 }
 
-/** Export each wanted artboard to its own file; optionLines set up `o`. */
-function perArtboardExport(a, { ext, type, optionLines }) {
+/** `o.matteColor` as an RGBColor from a #RRGGBB value. */
+export function matteLines(value, name = 'matteColor') {
+    const [r, g, b] = hexColor(value, name);
+    return `o.matte = true;
+var mc = new RGBColor(); mc.red = ${r}; mc.green = ${g}; mc.blue = ${b};
+o.matteColor = mc;`;
+}
+
+/**
+ * Export each wanted artboard to its own file; optionLines set up `o`, and
+ * perArtboard (optional) runs for artboard `i` just before it is exported.
+ */
+export function perArtboardExport(a, { ext, type, optionLines, perArtboard = '' }) {
     const folder = paths.validate(a.outputFolder);
     return script(`${RANGE_FN}
 var folder = new Folder(${jsxPath(folder)});
@@ -74,7 +123,8 @@ var was = doc.artboards.getActiveArtboardIndex();
 for (var k = 0; k < wanted.length; k++) {
   var i = wanted[k];
   doc.artboards.setActiveArtboardIndex(i);
-  var out = new File(folder.fsName + "/" + prefix + "-" + doc.artboards[i].name.replace(/[\\/:*?"<>|]/g, "_") + ".${ext}");
+  var out = new File(folder.fsName + "/" + prefix + "-" + doc.artboards[i].name.replace(/[\\/:*?"<>|]/g, "_") + ".${ext}");${perArtboard ? `
+  ${perArtboard}` : ''}
   doc.exportFile(out, ExportType.${type}, o);
   files.push(out.fsName);
 }
@@ -85,7 +135,7 @@ __result__ = { files: files };`);
 export const tools = [
     {
         name: 'place_image',
-        description: 'Place an image or other file (PNG, JPEG, TIFF, PSD, PDF, SVG, AI) at x, y on an artboard, linked or embedded. Give width to scale it proportionally',
+        description: 'Place an image or other file at x, y on an artboard, linked or embedded (File > Place): PNG, JPEG, JPEG 2000, TIFF, PSD, GIF, BMP, WebP, AVIF, HEIC, TGA, PCX, PXR, PDF (a chosen page), EPS and DCS, SVG/SVGZ, AI, AutoCAD DWG/DXF, CGM, CorelDRAW, EMF/WMF. Give width to scale it proportionally. Text files go through place_text_file',
         inputSchema: {
             type: 'object',
             properties: {
@@ -96,6 +146,8 @@ export const tools = [
                 embed: { type: 'boolean', description: 'Embed instead of linking. Default false', default: false },
                 layer: { type: 'string' },
                 name: { type: 'string' },
+                pdf: PDF_IMPORT_SCHEMA,
+                autocad: AUTOCAD_IMPORT_SCHEMA,
             },
             required: ['filePath'],
         },
@@ -113,16 +165,51 @@ export const tools = [
             'illustrator.import_export.place_pdf',
             'illustrator.import_export.place_svg',
             'illustrator.import_export.place_ai',
+            'illustrator.import_export.place_eps',
+            'illustrator.import_export.place_svgz',
+            'illustrator.import_export.place_dwg',
+            'illustrator.import_export.place_dxf',
+            'illustrator.import_export.place_avif',
+            'illustrator.import_export.place_bmp',
+            'illustrator.import_export.place_cgm',
+            'illustrator.import_export.place_cdr',
+            'illustrator.import_export.place_emf',
+            'illustrator.import_export.place_wmf',
+            'illustrator.import_export.place_gif',
+            'illustrator.import_export.place_heic',
+            'illustrator.import_export.place_jpeg2000',
+            'illustrator.import_export.place_pcx',
+            'illustrator.import_export.place_pxr',
+            'illustrator.import_export.place_tga',
+            'illustrator.import_export.place_webp',
+            'illustrator.import_export.import_pdf',
+            'illustrator.import_export.import_dcs',
+            'illustrator.import_export.import_duotone',
+            'illustrator.import_export.import_eps_dcs_autocad',
+            'illustrator.import_export.pdf_import_option.page_to_open',
+            'illustrator.import_export.pdf_import_option.crop_to',
+            'illustrator.import_export.autocad_import_option.layout',
+            'illustrator.import_export.autocad_import_option.scale_import',
+            'illustrator.import_export.autocad_import_option.scale_percent_import',
+            'illustrator.import_export.autocad_import_option.units_import',
+            'illustrator.import_export.autocad_import_option.unit_ratio_import',
+            'illustrator.import_export.autocad_import_option.scale_lineweights_import',
+            'illustrator.import_export.autocad_import_option.center_artwork',
+            'illustrator.import_export.autocad_import_option.merge_layers',
         ],
         handler: (a) => {
             const p = paths.validate(a.filePath);
+            const ext = extOf(p);
+            if (ext === 'txt') throw new Error('Place text files with place_text_file');
+            if (['doc', 'docx', 'rtf'].includes(ext)) throw new Error('Word and RTF files can be placed only through the Place dialog; open them with open_document, or save them as .txt and use place_text_file');
+            if (!PLACE_EXTENSIONS.includes(ext)) throw new Error(`Illustrator cannot place .${ext || '(no extension)'} files. It places: ${PLACE_EXTENSIONS.map((e) => `.${e}`).join(', ')}`);
             return run('Place image', script(`
 var f = new File(${jsxPath(p)});
 if (!f.exists) throw new Error("File not found: " + f.fsName);
 var layer = __layer(doc, ${a.layer ? str(a.layer) : 'null'});
 var ab = __artboard(doc, ${index(a.artboardIndex ?? 0, { name: 'artboardIndex' })});
 var it = layer.placedItems.add();
-it.file = f;
+${withImportOptions(a, ext, 'it.file = f;')}
 ${a.width !== undefined ? `var s = __len(doc, ${num(a.width, { min: 1, name: 'width' })}) / it.width * 100; it.resize(s, s);` : ''}
 var pos = __toDoc(doc, ab, ${num(a.x ?? 0, { name: 'x' })}, ${num(a.y ?? 0, { name: 'y' })});
 it.position = pos;
@@ -141,12 +228,21 @@ ${a.embed ? 'var info = __itemInfo(doc, it); it.embed(); info.embedded = true; _
                 scale: { type: 'number', minimum: 1, maximum: 7760, description: 'Percent. Default 100', default: 100 },
                 transparent: { type: 'boolean', default: true },
                 antiAlias: { type: 'boolean', default: true },
+                maxWidth: { type: 'number', minimum: 1, maximum: 100000, description: 'Fit each image within this width in pixels, instead of scale' },
+                maxHeight: { type: 'number', minimum: 1, maximum: 100000, description: 'Fit each image within this height in pixels, instead of scale' },
+                matteColor: { type: 'string', description: 'Blend edges (and, with transparent false, the background) against this colour, #RRGGBB' },
+                saveAsHtml: { type: 'boolean', description: 'Also write an HTML page showing each image. Default false', default: false },
                 prefix: { type: 'string', description: 'File name prefix. Default the document name' },
             },
             required: ['outputFolder'],
         },
         features: [
             'illustrator.import_export.export_png',
+            'illustrator.import_export.web_png',
+            'illustrator.import_export.png24_option.dimensions_png_24',
+            'illustrator.import_export.png24_option.matte_png_24',
+            'illustrator.import_export.png24_option.matte_color_png_24',
+            'illustrator.import_export.png24_option.save_as_html_png_24',
             'illustrator.artboards.artboard_export',
             'illustrator.import_export.png24_option.horizontal_scale_png_24',
             'illustrator.import_export.png24_option.vertical_scale_png_24',
@@ -154,11 +250,25 @@ ${a.embed ? 'var info = __itemInfo(doc, it); it.embed(); info.embedded = true; _
             'illustrator.import_export.png24_option.anti_aliasing_png_24',
             'illustrator.import_export.png24_option.clip_to_artboard_png_24',
         ],
-        handler: (a) => run('Export PNG', perArtboardExport(a, {
-            ext: 'png',
-            type: 'PNG24',
-            optionLines: pngOptions(a),
-        })),
+        handler: (a) => {
+            const fit = a.maxWidth !== undefined || a.maxHeight !== undefined;
+            if (fit && a.scale !== undefined) throw new Error('Give scale, or maxWidth/maxHeight, not both');
+            const fits = [
+                a.maxWidth !== undefined && `${num(a.maxWidth, { min: 1, max: 100000, name: 'maxWidth' })} / w`,
+                a.maxHeight !== undefined && `${num(a.maxHeight, { min: 1, max: 100000, name: 'maxHeight' })} / h`,
+            ].filter(Boolean);
+            return run('Export PNG', perArtboardExport(a, {
+                ext: 'png',
+                type: 'PNG24',
+                optionLines: [
+                    pngOptions(a),
+                    a.matteColor !== undefined ? matteLines(a.matteColor) : '',
+                    `o.saveAsHTML = ${bool(a.saveAsHtml)};`,
+                ].filter(Boolean).join('\n'),
+                perArtboard: fit ? `var r = doc.artboards[i].artboardRect, w = (r[2] - r[0]) * __sf(doc), h = (r[1] - r[3]) * __sf(doc);
+  o.horizontalScale = Math.min(Math.min(${fits.join(', ')}) * 100, 7760); o.verticalScale = o.horizontalScale;` : '',
+            }));
+        },
     },
     {
         name: 'export_jpeg',
@@ -174,6 +284,7 @@ ${a.embed ? 'var info = __itemInfo(doc, it); it.embed(); info.embedded = true; _
                 matteColor: { type: 'string', description: 'Background for transparent areas, #RRGGBB. Default #FFFFFF' },
                 blur: { type: 'number', minimum: 0, maximum: 2, description: 'Blur in pixels, 0-2, to reduce file size. Default 0', default: 0 },
                 optimized: { type: 'boolean', description: 'Optimised (smaller) encoding. Default true', default: true },
+                saveAsHtml: { type: 'boolean', description: 'Also write an HTML page showing each image. Default false', default: false },
                 prefix: { type: 'string', description: 'File name prefix. Default the document name' },
             },
             required: ['outputFolder'],
@@ -190,12 +301,14 @@ ${a.embed ? 'var info = __itemInfo(doc, it); it.embed(); info.embedded = true; _
             'illustrator.import_export.jpeg_option.matte_color_jpeg',
             'illustrator.import_export.jpeg_option.blur',
             'illustrator.import_export.jpeg_option.optimized',
+            'illustrator.import_export.jpeg_option.save_as_html_jpeg',
+            'illustrator.import_export.web_jpeg',
         ],
-        handler: (a) => run('Export JPEG', perArtboardExport(a, { ext: 'jpg', type: 'JPEG', optionLines: jpegOptions(a) })),
+        handler: (a) => run('Export JPEG', perArtboardExport(a, { ext: 'jpg', type: 'JPEG', optionLines: `${jpegOptions(a)}\no.saveAsHTML = ${bool(a.saveAsHtml)};` })),
     },
     {
         name: 'export_svg',
-        description: 'Save artboards as SVG files with the full SVG options (File > Save As > SVG): editing data, slices, SVGZ compression. For lean SVG for the web use export_web_svg',
+        description: 'Save artboards as SVG files with the full SVG Options (File > Save As > SVG): profile, font subsetting, encoding, editing data, slices, XMP, variables, text options, SVGZ compression. For lean SVG for the web use export_web_svg',
         inputSchema: {
             type: 'object',
             properties: {
@@ -206,6 +319,16 @@ ${a.embed ? 'var info = __itemInfo(doc, it); it.embed(); info.embedded = true; _
                 precision: { type: 'integer', minimum: 1, maximum: 7, default: 3, description: 'Decimal places' },
                 styling: { type: 'string', enum: Object.keys(SVG_STYLING), description: 'Where CSS properties go: internal_css (style elements, default), inline_style, presentation_attributes, entities' },
                 preserveEditability: { type: 'boolean', description: 'Keep Illustrator editing data so the SVG reopens fully editable. Default false', default: false },
+                profile: { type: 'string', enum: Object.keys(SVG_PROFILES), description: 'SVG profile. Default svg_1.1' },
+                fontSubsetting: { type: 'string', enum: Object.keys(SVG_SUBSETS), description: 'Which glyphs of SVG fonts to embed (text not outlined). Default glyphs_used' },
+                encoding: { type: 'string', enum: Object.keys(SVG_ENCODINGS), description: 'Character encoding. Default utf8' },
+                optimizeForSvgViewer: { type: 'boolean', description: 'Optimise for the Adobe SVG Viewer' },
+                slices: { type: 'boolean', description: 'Include slicing data' },
+                includeXmp: { type: 'boolean', description: 'Include the document metadata (XMP)' },
+                includeUnusedStyles: { type: 'boolean', description: 'Include unused graphic styles' },
+                includeVariables: { type: 'boolean', description: 'Include Adobe Graphics Server data (variables and data sets)' },
+                fewerTspans: { type: 'boolean', description: 'Output fewer <tspan> elements (lets the viewer kern text)' },
+                textOnPath: { type: 'boolean', description: 'Use <textPath> for text on a path' },
             },
             required: ['outputFile'],
         },
@@ -220,12 +343,28 @@ ${a.embed ? 'var info = __itemInfo(doc, it); it.embed(); info.embedded = true; _
             'illustrator.import_export.svg_option.css_properties',
             'illustrator.import_export.svg_option.compressed_svgz',
             'illustrator.import_export.svg_option.preserve_illustrator_editing_capabilities',
+            'illustrator.import_export.svg_option.svg_profiles',
+            'illustrator.import_export.svg_option.subsetting',
+            'illustrator.import_export.svg_option.encoding',
+            'illustrator.import_export.svg_option.optimize_for_adobe_svg_viewer',
+            'illustrator.import_export.svg_option.include_slicing_data',
+            'illustrator.import_export.svg_option.include_xmp',
+            'illustrator.import_export.svg_option.include_unused_graphic_styles',
+            'illustrator.import_export.svg_option.include_adobe_graphics_server_data',
+            'illustrator.import_export.svg_option.output_fewer_tspan_elements',
+            'illustrator.import_export.svg_option.use_textpath_element_for_text_on_path',
         ],
         handler: (a) => {
             const out = paths.validate(a.outputFile);
             const ext = path.extname(out).toLowerCase();
             if (ext !== '.svg' && ext !== '.svgz') throw new Error('outputFile must end in .svg or .svgz');
             const range = artboardRange(a.artboards);
+            if (a.fontSubsetting !== undefined && a.outlineText) throw new Error("'fontSubsetting' applies to SVG fonts; it has no effect with outlineText: true");
+            const extra = [];
+            if (a.profile !== undefined) extra.push(`o.DTD = SVGDTDVersion.${SVG_PROFILES[enumOf(a.profile, Object.keys(SVG_PROFILES), { name: 'profile' })]};`);
+            if (a.fontSubsetting !== undefined) extra.push(`o.fontSubsetting = SVGFontSubsetting.${SVG_SUBSETS[enumOf(a.fontSubsetting, Object.keys(SVG_SUBSETS), { name: 'fontSubsetting' })]};`);
+            if (a.encoding !== undefined) extra.push(`o.documentEncoding = SVGDocumentEncoding.${SVG_ENCODINGS[enumOf(a.encoding, Object.keys(SVG_ENCODINGS), { name: 'encoding' })]};`);
+            for (const [arg, prop] of Object.entries(SVG_FLAGS)) if (a[arg] !== undefined) extra.push(`o.${prop} = ${bool(a[arg])};`);
             return run('Export SVG', script(`${WRITTEN_FN}
 var target = new File(${jsxPath(out)}), since = new Date().getTime();
 var o = new ExportOptionsSVG();
@@ -237,6 +376,7 @@ o.coordinatePrecision = ${index(a.precision ?? 3, { name: 'precision', max: 7 })
 o.cssProperties = SVGCSSPropertyLocation.${SVG_STYLING[enumOf(a.styling ?? 'internal_css', Object.keys(SVG_STYLING), { name: 'styling' })]};
 o.compressed = ${ext === '.svgz'};
 o.preserveEditability = ${bool(a.preserveEditability)};
+${extra.join('\n')}
 doc.exportFile(target, ExportType.SVG, o);
 __result__ = { files: __written(target.parent, "*${ext}", since), artboards: ${str(range || 'all')} };`));
         },
@@ -328,6 +468,10 @@ __result__ = { files: __written(target.parent, "*.svg", since), artboards: ${str
             'illustrator.import_export.screens_jpg',
             'illustrator.import_export.screens_svg',
             'illustrator.import_export.screens_pdf',
+            'illustrator.import_export.jpeg_option_ui.resolution',
+            'illustrator.import_export.jpeg_option_ui.embed_icc_profile',
+            'illustrator.import_export.png_option_ui.background_color',
+            'illustrator.import_export.png_option_ui.interlaced',
         ],
         auditArgs: {
             artboards: '1', scales: [1, 2], formats: ['png', 'png8', 'jpg', 'svg', 'pdf'],
@@ -341,6 +485,7 @@ __result__ = { files: __written(target.parent, "*.svg", since), artboards: ${str
             const formats = (a.formats ?? ['png']).map((f) => SCREEN_FORMATS[enumOf(f, Object.keys(SCREEN_FORMATS), { name: 'formats' })]);
             const scale = screenScales(a);
             const range = artboardRange(a.artboards);
+            const bg = enumOf(a.pngBackground ?? 'transparent', ['transparent', 'white', 'black'], { name: 'pngBackground' });
             return run('Export for screens', script(`
 var folder = new Folder(${jsxPath(folder)});
 if (!folder.exists && !folder.create()) throw new Error("Cannot create " + folder.fsName);
@@ -370,7 +515,7 @@ __result__ = { folder: folder.fsName, exports: runs, formats: ${json(a.formats ?
     },
     {
         name: 'export_pdf',
-        description: 'Save a PDF copy of the document with a PDF preset (e.g. "[High Quality Print]", "[PDF/X-4:2008]"), optionally overriding its compatibility, PDF/X standard, bleed, printer\'s marks, colour conversion, output intent and Acrobat layers. The document must be saved first; it is reopened afterwards so you keep working on the .ai file',
+        description: 'Save a PDF copy of the document with a PDF preset (e.g. "[High Quality Print]", "[PDF/X-4:2008]"), optionally overriding its compatibility, PDF/X standard, image compression and downsampling, font subsetting, bleed, printer\'s marks, colour conversion, output intent, transparency flattening, passwords and permissions, thumbnails and Acrobat layers (Save Adobe PDF dialog). The document must be saved first; it is reopened afterwards so you keep working on the .ai file',
         inputSchema: {
             type: 'object',
             properties: {
@@ -398,6 +543,43 @@ __result__ = { folder: folder.fsName, exports: runs, formats: ${json(a.formats ?
                 registryName: { type: 'string', description: 'PDF/X registry, e.g. "http://www.color.org"' },
                 acrobatLayers: { type: 'boolean', description: 'Make Acrobat layers from top-level layers (acrobat6 or later)' },
                 fastWebView: { type: 'boolean', description: 'Optimise for fast web view' },
+                thumbnails: { type: 'boolean', description: 'Embed page thumbnails' },
+                openAfterSaving: { type: 'boolean', description: 'Open the PDF in the default PDF viewer afterwards. Default false', default: false },
+                images: {
+                    type: 'object',
+                    description: 'Compression panel: downsampling and compression per kind of image',
+                    properties: { color: pdfImageSchema(false), grayscale: pdfImageSchema(false), monochrome: pdfImageSchema(true) },
+                },
+                compressArt: { type: 'boolean', description: 'Compress text and line art' },
+                trapped: { type: 'boolean', description: 'Mark the PDF as trapped' },
+                fontSubsetThreshold: { type: 'number', minimum: 0, maximum: 100, description: 'Subset fonts when less than this percent of their characters is used' },
+                flattener: {
+                    type: 'object',
+                    description: 'Transparency flattening, used with compatibility acrobat4 (PDF 1.3). Give a preset or custom settings',
+                    properties: {
+                        preset: { type: 'string', description: 'Flattener preset name, e.g. "[High Resolution]"' },
+                        balance: { type: 'number', minimum: 0, maximum: 100, description: 'Custom: rasters (0) to vectors (100)' },
+                        lineArtResolution: { type: 'number', minimum: 72, maximum: 9600, description: 'Custom: line art and text resolution, ppi' },
+                        gradientResolution: { type: 'number', minimum: 72, maximum: 2400, description: 'Custom: gradient and mesh resolution, ppi' },
+                        textToOutlines: { type: 'boolean', description: 'Custom: convert all text to outlines' },
+                        strokesToOutlines: { type: 'boolean', description: 'Custom: convert all strokes to outlines' },
+                        clipComplexRegions: { type: 'boolean', description: 'Custom: clip complex regions' },
+                        resolution: { type: 'number', minimum: 72, maximum: 9600, description: 'Flattening resolution, ppi' },
+                    },
+                },
+                security: {
+                    type: 'object',
+                    description: 'Passwords and permissions. 40-bit with compatibility acrobat4, otherwise 128-bit. Not allowed with a PDF/X standard',
+                    properties: {
+                        openPassword: { type: 'string', description: 'Require this password to open the document' },
+                        permissionsPassword: { type: 'string', description: 'Require this password to change the permissions below' },
+                        printing: { type: 'string', enum: ['none', 'low_resolution', 'high_resolution'], description: 'Printing allowed (low_resolution needs 128-bit)' },
+                        changes: { type: 'string', enum: ['none', 'edit_pages', 'fill_forms', 'commenting', 'page_layout', 'any'], description: 'Changes allowed: 128-bit takes none, edit_pages, fill_forms, commenting, any; 40-bit takes none, page_layout, commenting, any' },
+                        allowCopy: { type: 'boolean', description: 'Allow copying text, images and other content (40-bit: copying and screen-reader access)' },
+                        allowScreenReaders: { type: 'boolean', description: 'Allow text access for screen readers (128-bit)' },
+                        plaintextMetadata: { type: 'boolean', description: 'Leave metadata unencrypted (acrobat6 or later)' },
+                    },
+                },
             },
             required: ['outputFile'],
         },
@@ -432,6 +614,26 @@ __result__ = { folder: folder.fsName, exports: runs, formats: ${json(a.formats ?
             'illustrator.import_export.pdf_option.create_acrobat_layers_from_top_level_layers',
             'illustrator.import_export.layered_pdf',
             'illustrator.import_export.pdf_option.optimize_for_fast_web_view',
+            'illustrator.import_export.pdf_option.embed_page_thumbnails',
+            'illustrator.import_export.pdf_option.view_pdf_after_saving',
+            ...['color', 'grayscale', 'monochrome'].flatMap((k) => ['downsampling', 'resolution', 'for_images_above', 'compression', ...(k === 'monochrome' ? [] : ['tile_size'])]
+                .map((o) => `illustrator.import_export.pdf_option.${k}_bitmap_images_${o}`)),
+            'illustrator.import_export.pdf_option.compress_text_and_line_art',
+            'illustrator.import_export.pdf_option.mark_as_trapped',
+            'illustrator.import_export.pdf_option.subset_fonts_when_percent_of_characters_used_is_less_than',
+            'illustrator.import_export.pdf_option.transparency_flattener_preset_pdf',
+            'illustrator.import_export.pdf_option.custom_flattener_options_pdf',
+            'illustrator.import_export.pdf_option.flattening_resolution_pdf',
+            'illustrator.import_export.pdf_option.require_a_password_to_open_the_document',
+            'illustrator.import_export.pdf_option.document_open_password',
+            'illustrator.import_export.pdf_option.use_a_password_to_restrict_printing_editing_and_other_tasks',
+            'illustrator.import_export.pdf_option.permissions_password',
+            'illustrator.import_export.pdf_option.printing_allowed',
+            'illustrator.import_export.pdf_option.changes_allowed',
+            'illustrator.import_export.pdf_option.enable_copying_of_text_images_and_other_content',
+            'illustrator.import_export.pdf_option.enable_text_access_for_screen_reader_devices_for_the_visually_impaired',
+            'illustrator.import_export.pdf_option.enable_copying_and_access_40_bit',
+            'illustrator.import_export.pdf_option.enable_plaintext_metadata',
         ],
         handler: (a) => {
             const out = paths.validate(a.outputFile);
@@ -447,7 +649,7 @@ if (!found) throw new Error("PDF preset not found: " + preset + ". Available: " 
 var o = new PDFSaveOptions();
 o.pDFPreset = preset;
 o.preserveEditability = ${bool(a.preserveEditability)};
-o.viewAfterSaving = false;
+o.viewAfterSaving = ${bool(a.openAfterSaving)};
 ${range ? `o.artboardRange = ${str(range)};` : ''}
 ${pdfOptionLines(a)}
 doc.saveAs(new File(${jsxPath(out)}), o);
@@ -509,5 +711,89 @@ function pdfOptionLines(a) {
         set('acrobatLayers', bool(a.acrobatLayers));
     }
     if (a.fastWebView !== undefined) set('optimization', bool(a.fastWebView));
+    if (a.thumbnails !== undefined) set('generateThumbnails', bool(a.thumbnails));
+    if (a.compressArt !== undefined) set('compressArt', bool(a.compressArt));
+    if (a.trapped !== undefined) set('trapped', bool(a.trapped));
+    if (a.fontSubsetThreshold !== undefined) set('fontSubsetThreshold', num(a.fontSubsetThreshold, { min: 0, max: 100, name: 'fontSubsetThreshold' }));
+    for (const kind of ['color', 'grayscale', 'monochrome']) if (a.images?.[kind]) pdfImageLines(kind, a.images[kind], set);
+    if (a.flattener) pdfFlattenerLines(a, set, lines);
+    if (a.security) pdfSecurityLines(a, set);
     return lines.join('\n');
+}
+
+/** Downsampling and compression for colour, grayscale or monochrome images. */
+function pdfImageLines(kind, spec, set) {
+    const name = `images.${kind}`;
+    const mono = kind === 'monochrome';
+    const method = spec.downsample === undefined ? undefined : enumOf(spec.downsample, Object.keys(PDF_DOWNSAMPLE), { name: `${name}.downsample` });
+    if (method !== undefined) set(`${kind}DownsamplingMethod`, `DownsampleMethod.${PDF_DOWNSAMPLE[method]}`);
+    if (method === 'none') {
+        if (spec.resolution !== undefined || spec.above !== undefined) throw new Error(`${name}: resolution and above apply when downsampling`);
+        set(`${kind}Downsampling`, '0');
+    }
+    const res = spec.resolution === undefined ? undefined : Number(num(spec.resolution, { min: 9, max: 2400, name: `${name}.resolution` }));
+    const above = spec.above === undefined ? undefined : Number(num(spec.above, { min: 9, max: 9600, name: `${name}.above` }));
+    if (res !== undefined && above !== undefined && above < res) throw new Error(`${name}: above must be at least resolution`);
+    if (res !== undefined) set(`${kind}Downsampling`, String(res));
+    if (above !== undefined) set(`${kind}DownsamplingImageThreshold`, String(above));
+    const table = mono ? PDF_MONO_COMPRESSION : PDF_COMPRESSION;
+    const compression = spec.compression === undefined ? undefined : enumOf(spec.compression, Object.keys(table), { name: `${name}.compression` });
+    if (compression !== undefined) set(`${kind}Compression`, `${mono ? 'MonochromeCompression' : 'CompressionQuality'}.${table[compression]}`);
+    if (spec.tileSize !== undefined) {
+        if (mono) throw new Error(`${name} has no tileSize`);
+        if (!compression?.includes('jpeg2000')) throw new Error(`${name}.tileSize applies with a jpeg2000 compression`);
+        set(`${kind}TileSize`, index(spec.tileSize, { name: `${name}.tileSize`, max: 4096 }));
+    }
+}
+
+/** Flattener preset or custom PrintFlattenerOptions, and the flattening resolution. */
+function pdfFlattenerLines(a, set, lines) {
+    const f = a.flattener;
+    if (a.compatibility !== undefined && a.compatibility !== 'acrobat4') throw new Error("'flattener' applies with compatibility acrobat4: later versions keep transparency");
+    const custom = ['balance', 'lineArtResolution', 'gradientResolution', 'textToOutlines', 'strokesToOutlines', 'clipComplexRegions'].filter((k) => f[k] !== undefined);
+    if (f.preset !== undefined && custom.length) throw new Error(`Give flattener.preset or custom settings (${custom.join(', ')}), not both`);
+    if (f.preset !== undefined) set('flattenerPreset', str(f.preset));
+    if (custom.length) {
+        lines.push('var fo = new PrintFlattenerOptions();');
+        if (f.balance !== undefined) lines.push(`fo.flatteningBalance = ${num(f.balance, { min: 0, max: 100, name: 'flattener.balance' })};`);
+        if (f.lineArtResolution !== undefined) lines.push(`fo.rasterizationResolution = ${num(f.lineArtResolution, { min: 72, max: 9600, name: 'flattener.lineArtResolution' })};`);
+        if (f.gradientResolution !== undefined) lines.push(`fo.gradientResolution = ${num(f.gradientResolution, { min: 72, max: 2400, name: 'flattener.gradientResolution' })};`);
+        if (f.textToOutlines !== undefined) lines.push(`fo.convertTextToOutlines = ${bool(f.textToOutlines)};`);
+        if (f.strokesToOutlines !== undefined) lines.push(`fo.convertStrokesToOutlines = ${bool(f.strokesToOutlines)};`);
+        if (f.clipComplexRegions !== undefined) lines.push(`fo.clipComplexRegions = ${bool(f.clipComplexRegions)};`);
+        set('flattenerOptions', 'fo');
+    }
+    if (f.resolution !== undefined) set('printerResolution', num(f.resolution, { min: 72, max: 9600, name: 'flattener.resolution' }));
+}
+
+/** Passwords and permissions; 40-bit with Acrobat 4 compatibility, otherwise 128-bit. */
+function pdfSecurityLines(a, set) {
+    const sec = a.security;
+    if (a.standard !== undefined && a.standard !== 'none') throw new Error('PDF/X does not allow security: remove security or set standard to none');
+    const bits = a.compatibility === 'acrobat4' ? 40 : 128;
+    const password = (v, name) => {
+        if (typeof v !== 'string' || !v.length || v.length > 32) throw new Error(`'security.${name}' must be 1-32 characters`);
+        return str(v);
+    };
+    if (sec.openPassword !== undefined) {
+        set('requireDocumentPassword', 'true');
+        set('documentPassword', password(sec.openPassword, 'openPassword'));
+    }
+    const perms = ['printing', 'changes', 'allowCopy', 'allowScreenReaders', 'plaintextMetadata'].filter((k) => sec[k] !== undefined);
+    if (perms.length && sec.permissionsPassword === undefined) throw new Error(`security.${perms[0]} needs security.permissionsPassword`);
+    if (sec.permissionsPassword !== undefined) {
+        set('requirePermissionPassword', 'true');
+        set('permissionPassword', password(sec.permissionsPassword, 'permissionsPassword'));
+    }
+    if (sec.printing !== undefined) set('pDFAllowPrinting', `PDFPrintAllowedEnum.${PDF_PRINTING[bits][enumOf(sec.printing, Object.keys(PDF_PRINTING[bits]), { name: `security.printing (${bits}-bit)` })]}`);
+    if (sec.changes !== undefined) set('pDFChangesAllowed', `PDFChangesAllowedEnum.${PDF_CHANGES[bits][enumOf(sec.changes, Object.keys(PDF_CHANGES[bits]), { name: `security.changes (${bits}-bit)` })]}`);
+    if (sec.allowCopy !== undefined) set(bits === 40 ? 'enableCopyAccess' : 'enableCopy', bool(sec.allowCopy));
+    if (sec.allowScreenReaders !== undefined) {
+        if (bits === 40) throw new Error('With 40-bit security (acrobat4), allowCopy covers screen-reader access');
+        set('enableAccess', bool(sec.allowScreenReaders));
+    }
+    if (sec.plaintextMetadata !== undefined) {
+        if (['acrobat4', 'acrobat5'].includes(a.compatibility)) throw new Error('plaintextMetadata needs compatibility acrobat6 or later');
+        set('enablePlainText', bool(sec.plaintextMetadata));
+    }
 }
