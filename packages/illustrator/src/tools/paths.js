@@ -26,12 +26,12 @@ export const PATH_OPERATIONS = {
 };
 
 /** ES3: select exactly these items. */
-const SELECT = `
+export const SELECT = `
 doc.selection = null;
 for (var k = 0; k < items.length; k++) items[k].selected = true;`;
 
 /** ES3: the selection as item info. */
-const SELECTION = `
+export const SELECTION = `
 var sel = doc.selection, out = [];
 if (sel && sel.length) for (var j = 0; j < sel.length && j < 500; j++) out.push(__itemInfo(doc, sel[j]));`;
 

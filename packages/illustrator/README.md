@@ -54,7 +54,8 @@ Settings > Privacy & Security > Automation).
 | Documents | `get_document_info`, `list_documents`, `create_document`, `open_document`, `save_document` (.ai or .eps, each artboard to its own file), `close_document` |
 | Artboards | `list_artboards`, `add_artboard`, `set_artboard`, `delete_artboard`, `set_active_artboard`, `fit_artboard_to_artwork`, `rearrange_artboards` |
 | Layers | `list_layers`, `create_layer`, `set_layer_properties`, `set_active_layer`, `delete_layer`, `move_items_to_layer` |
-| Shapes and paths | `create_rectangle`, `create_ellipse`, `create_polygon`, `create_star`, `create_line`, `create_path` |
+| Shapes and paths | `create_rectangle`, `create_ellipse`, `create_polygon`, `create_star`, `create_line` (end point, or length and angle), `create_path`, `create_arc`, `create_spiral`, `create_rectangular_grid`, `create_polar_grid` (each with its tool's dialog options) |
+| Live shapes | `convert_live_shapes` (Convert to Shape, Expand Shape), `toggle_corner_widget` |
 | Text | `create_text`, `set_text_style`, `set_text_contents`, `convert_text_to_outlines`, `list_fonts` |
 | Appearance | `set_fill`, `set_stroke` (both with a tint for spot and global swatches), `set_opacity`, `get_appearance`, `create_gradient` |
 | Colour | `list_swatches`, `create_swatch` (process, global, spot, spot from Lab values), `create_swatch_group`, `delete_swatches`, `add_used_colors`, `edit_colors` (convert to CMYK, RGB or grayscale, invert, blend) |
