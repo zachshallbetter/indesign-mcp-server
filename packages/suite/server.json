@@ -1,0 +1,39 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.zachshallbetter/adobe-mcp-suite",
+  "title": "Adobe MCP Suite",
+  "description": "Drive Adobe InDesign and Illustrator from one MCP server, with tools that work across both.",
+  "repository": {
+    "url": "https://github.com/zachshallbetter/adobe-mcp",
+    "source": "github",
+    "subfolder": "packages/suite"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "adobe-mcp-suite",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "ADOBE_MCP_APPS",
+          "description": "Applications to load, comma-separated: indesign, illustrator. Default all",
+          "isRequired": false
+        },
+        {
+          "name": "INDESIGN_ALLOWED_DIRS",
+          "description": "Extra directories InDesign tools may read and write (':' on macOS, ';' on Windows)",
+          "isRequired": false
+        },
+        {
+          "name": "ILLUSTRATOR_ALLOWED_DIRS",
+          "description": "Extra directories Illustrator tools may read and write (':' on macOS, ';' on Windows)",
+          "isRequired": false
+        }
+      ]
+    }
+  ]
+}

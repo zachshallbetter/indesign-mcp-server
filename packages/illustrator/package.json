@@ -1,10 +1,10 @@
 {
   "name": "adobe-mcp-illustrator",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "MCP server for Adobe Illustrator: documents, artboards, layers, shapes, paths, text, colour, pathfinder and export through ExtendScript",
   "mcpName": "io.github.zachshallbetter/adobe-mcp-illustrator",
   "type": "module",
-  "main": "src/index.js",
+  "main": "src/module.js",
   "bin": {
     "adobe-mcp-illustrator": "src/index.js"
   },
@@ -54,5 +54,9 @@
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.32.1",
     "types-for-adobe": "^7.2.6"
+  },
+  "exports": {
+    ".": "./src/module.js",
+    "./package.json": "./package.json"
   }
 }
