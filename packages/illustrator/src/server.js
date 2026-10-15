@@ -119,8 +119,7 @@ const annotations = createAnnotations({
         'arrange_items', 'align_items', 'set_preferences', 'select_tool', 'set_blend_options', 'set_overprint', 'select_same', 'select_all', 'set_path_options', 'bind_variable', 'show_data_set', 'set_variables_locked', 'export_variables', 'export_data_sets', 'export_png', 'export_jpeg', 'export_svg', 'export_web_svg', 'export_for_screens', 'export_pdf', 'move_items_to_layer',
     ],
     openWorld: ['print_document', ...hinted('openWorld')],
-    words: { svg: 'SVG', png: 'PNG', jpeg: 'JPEG', pdf: 'PDF', illustrator: 'Illustrator', '3d': '3D' },
-    words: { svg: 'SVG', png: 'PNG', jpeg: 'JPEG', pdf: 'PDF', csv: 'CSV', illustrator: 'Illustrator' },
+    words: { svg: 'SVG', png: 'PNG', jpeg: 'JPEG', pdf: 'PDF', csv: 'CSV', illustrator: 'Illustrator', '3d': '3D' },
 });
 
 /** Tool definitions as advertised: name, description, schema, title, annotations. */
