@@ -62,9 +62,9 @@ const annotations = createAnnotations({
     idempotent: [
         'save_document', 'set_artboard', 'set_active_artboard', 'set_active_layer', 'set_layer_properties',
         'select_items', 'deselect_all', 'set_fill', 'set_stroke', 'set_opacity', 'set_text_style', 'set_text_contents',
-        'arrange_items', 'align_items', 'set_preferences', 'select_tool', 'set_blend_options', 'export_png', 'export_svg', 'export_for_screens', 'export_pdf', 'move_items_to_layer',
+        'arrange_items', 'align_items', 'set_preferences', 'select_tool', 'set_blend_options', 'export_png', 'export_jpeg', 'export_svg', 'export_web_svg', 'export_for_screens', 'export_pdf', 'move_items_to_layer',
     ],
-    words: { svg: 'SVG', png: 'PNG', pdf: 'PDF', illustrator: 'Illustrator' },
+    words: { svg: 'SVG', png: 'PNG', jpeg: 'JPEG', pdf: 'PDF', illustrator: 'Illustrator' },
 });
 
 /** Tool definitions as advertised: name, description, schema, title, annotations. */
