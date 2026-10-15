@@ -74,6 +74,12 @@ __result__ = { count: out.length, items: out };`)),
             'aftereffects.footage.format_aep',
             'aftereffects.three_d.three_d_model_import',
             'aftereffects.three_d.three_d_model_formats',
+            'aftereffects.audio.format_mp2',
+            'aftereffects.audio.format_aac',
+            'aftereffects.audio.format_aiff',
+            'aftereffects.audio.format_mp3',
+            'aftereffects.audio.format_wav',
+            'aftereffects.audio.format_asnd',
         ],
         handler: (a) => {
             if (!Array.isArray(a.files) || !a.files.length) throw new Error("'files' must list at least one path");

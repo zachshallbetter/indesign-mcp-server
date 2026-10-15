@@ -63,6 +63,11 @@ Network, which file operations need.
 | Render | `list_render_templates`, `queue_render`, `render_queue` (in After Effects or Adobe Media Encoder), `manage_render_queue` |
 | Tracking | `start_tracking` (Track Motion, Track Mask, Track this Property, Mocha, Tracker panel, Motion Tracking workspace), `apply_warp_stabilizer`, `apply_camera_tracker` (3D Camera Tracker), `get_tracking_data` (track points, face measurements), `set_track_point` |
 | Colour | `get_color_management` (and colour profiles), `set_color_management` (bit depth, working space, gamma, linearize, blending), `set_display_color` (display colour management, Simulate Output, Lumetri Scopes), `apply_color_effect` (grading, broadcast-safe, output simulation on an adjustment layer) |
+| Application | `purge_caches` (Edit > Purge), `run_edit_command` (undo, redo, cut, copy, paste, select), `get_aftereffects_info` (version, system, GPU, preference values), `set_application_settings` (memory, GPU acceleration, documented preferences), `manage_script_settings`, `quit_aftereffects` |
+| Interface | `get_viewer_state`, `set_view_options` (zoom, resolution, channels, exposure, Fast Previews, rulers, guides), `run_view_command` (grid, layouts, new or close viewer), `edit_comp_guides`, `set_current_tool`, `go_to_time`, `show_panel`, `switch_workspace` |
+| Audio | `set_audio_levels`, `remap_layer_speed` (speed and pitch), `run_audio_command` (Convert Audio to Keyframes, Edit in Adobe Audition) |
+| Automation | `run_aftereffects_script_file` (now, scheduled, or from File > Scripts), `manage_motion_graphics_template` |
+| Collaboration | `manage_team_project` (status, create, open, share, get latest, resolve, convert, close) |
 | Utility | `aftereffects_status`, `run_menu_command`, `execute_aftereffects_code`, `help` |
 
 `help({ tool })` describes any tool's parameters.
