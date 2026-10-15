@@ -71,6 +71,7 @@ __result__ = { comp: __itemInfo(c), selected: sel, layers: out };`)),
             'aftereffects.three_d.light_type',
             'aftereffects.layers.create_layers_from_footage',
             'aftereffects.compositions.nest_composition',
+            'aftereffects.three_d.three_d_model_layer',
         ],
         handler: (a) => {
             const type = enumOf(a.type, LAYER_TYPES, { name: 'type' });
@@ -187,6 +188,7 @@ ${RESULT}`, { undo: 'Set layer properties' }));
             'aftereffects.layers.scale_property',
             'aftereffects.layers.rotation_property',
             'aftereffects.layers.opacity_property',
+            'aftereffects.three_d.transform_gizmo',
         ],
         handler: (a) => {
             const vec = (v, k) => json(v.map((x) => Number(num(x, { name: k }))));
