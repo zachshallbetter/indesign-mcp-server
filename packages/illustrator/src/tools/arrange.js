@@ -346,10 +346,25 @@ __result__ = __itemInfo(doc, g);`)),
     },
     {
         name: 'ungroup_items',
-        description: 'Ungroup groups, leaving their contents in place',
-        inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA }, required: ['target'] },
-        features: ['illustrator.selection.ungroup'],
-        handler: (a) => run('Ungroup items', script(`
+        description: 'Ungroup groups, leaving their contents in place. With allLevels, ungroup every level of nested groups at once (Object > Ungroup All, Illustrator 29.3 or later)',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                target: TARGET_SCHEMA,
+                allLevels: { type: 'boolean', description: 'Ungroup nested groups too (Object > Ungroup All). Default false: one level', default: false },
+            },
+            required: ['target'],
+        },
+        features: ['illustrator.selection.ungroup', 'illustrator.selection.ungroup_all'],
+        menuCommands: ['ungroup all'],
+        handler: (a) => run('Ungroup items', script(a.allLevels ? `${SELECT}
+var v = String(app.version).split(".");
+if (Number(v[0]) < 29 || (Number(v[0]) === 29 && Number(v[1]) < 3)) throw new Error("allLevels needs Illustrator 29.3 or later (Object > Ungroup All); this is " + app.version);
+__select(doc, __targets(doc, ${targetSpec(a.target)}));
+app.executeMenuCommand("ungroup all");
+var sel = doc.selection, ids = [];
+for (var j = 0; sel && j < sel.length; j++) { try { ids.push(sel[j].uuid); } catch (e) {} }
+__result__ = { allLevels: true, selected: ids.length, ids: ids };` : `
 var items = __targets(doc, ${targetSpec(a.target)}), freed = [];
 for (var i = 0; i < items.length; i++) {
   var g = items[i];
