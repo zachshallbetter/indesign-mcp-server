@@ -125,8 +125,8 @@ function isPlainObjectVar(ast, name) {
 }
 
 const typings = loadTypings();
-const serverSrc = readFileSync(path.join(root, 'src/core/InDesignMCPServer.js'), 'utf8');
-const dispatched = new Set([...serverSrc.matchAll(/case '([^']+)':/g)].map((m) => m[1]));
+const { TOOL_HANDLERS } = await import('../../src/core/InDesignMCPServer.js');
+const dispatched = new Set(Object.keys(TOOL_HANDLERS));
 
 const problems = [];
 let checkedScripts = 0;
@@ -135,14 +135,14 @@ let checkedTools = 0;
 for (const { tool, args: toolArgs, scripts: captured, result, error } of await collectToolScripts({ filter })) {
     checkedTools++;
     if (!dispatched.has(tool.name)) {
-        problems.push([tool.name, 'not dispatched in InDesignMCPServer.handleToolCall']);
+        problems.push([tool.name, 'no handler in TOOL_HANDLERS (src/core/InDesignMCPServer.js)']);
         continue;
     }
     if (error) {
         problems.push([tool.name, `threw with sample args ${JSON.stringify(toolArgs)}: ${error.message}`]);
         continue;
     }
-    if (/not found or not implemented/.test(JSON.stringify(result))) {
+    if (/not found\. Use 'help'/.test(JSON.stringify(result))) {
         problems.push([tool.name, 'returns "not implemented"']);
         continue;
     }

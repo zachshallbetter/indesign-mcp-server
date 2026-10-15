@@ -9,6 +9,7 @@
  * - idempotent: calling again with the same arguments has no further effect.
  * - openWorld: talks to something beyond the local InDesign (cloud, printer).
  */
+import { createAnnotations } from 'adobe-mcp-core';
 
 const READ_ONLY = new Set([
     'help', 'indesign_status', 'get_session_info', 'view_document',
@@ -47,28 +48,13 @@ const IDEMPOTENT = new Set([
 
 const OPEN_WORLD = new Set(['save_document_to_cloud', 'open_cloud_document', 'print_book']);
 
-const WORDS = {
-    pdf: 'PDF', xml: 'XML', epub: 'EPUB', indesign: 'InDesign', id: 'ID',
-};
+const { titleFor, annotationsFor, unknownAnnotationNames } = createAnnotations({
+    readOnly: READ_ONLY,
+    destructive: DESTRUCTIVE,
+    idempotent: IDEMPOTENT,
+    openWorld: OPEN_WORLD,
+    words: { pdf: 'PDF', xml: 'XML', epub: 'EPUB', indesign: 'InDesign', id: 'ID' },
+});
 
 /** "export_document_xml" -> "Export Document XML" */
-export function titleFor(name) {
-    return name.split('_').map((w) => WORDS[w] ?? w[0].toUpperCase() + w.slice(1)).join(' ');
-}
-
-export function annotationsFor(name) {
-    const readOnly = READ_ONLY.has(name);
-    return {
-        title: titleFor(name),
-        readOnlyHint: readOnly,
-        destructiveHint: !readOnly && DESTRUCTIVE.has(name),
-        idempotentHint: readOnly || IDEMPOTENT.has(name),
-        openWorldHint: OPEN_WORLD.has(name),
-    };
-}
-
-/** Names in the lists above that are not real tools (caught by tests). */
-export function unknownAnnotationNames(toolNames) {
-    const known = new Set(toolNames);
-    return [...READ_ONLY, ...DESTRUCTIVE, ...IDEMPOTENT, ...OPEN_WORLD].filter((n) => !known.has(n));
-}
+export { titleFor, annotationsFor, unknownAnnotationNames };

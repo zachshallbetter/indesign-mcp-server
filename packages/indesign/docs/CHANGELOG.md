@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+- The server now runs on adobe-mcp-core, the foundation it shares with the other servers in the adobe-mcp repository: script escaping, path checks, the structured result wrapper, failure detection, argument aliases and warnings, annotations, the ExtendScript transport and the MCP server shell. Every tool generates exactly the same script as in 2.3.0.
+- ExtendScript calls no longer block the server while InDesign works: the transport starts osascript or PowerShell asynchronously and without a shell.
+- Tool dispatch is a table, `TOOL_HANDLERS` in `src/core/InDesignMCPServer.js`; the server refuses to start if an advertised tool has no handler.
+
+### Added
+- `INDESIGN_SCRIPT_TIMEOUT_MS` (default 120000): how long to wait for InDesign. A timeout now says a dialog is probably open in InDesign.
+
 ## 2.3.0
 
 ### Added

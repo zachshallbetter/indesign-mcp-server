@@ -81,6 +81,7 @@ Set these in the client's `env` block, or with `-e` for Claude Code.
 | Variable | Default | Purpose |
 | --- | --- | --- |
 | `INDESIGN_APP_NAME` | auto-detected | **macOS only.** The application name for AppleScript, such as `Adobe InDesign 2026`. Without it, the server uses the running InDesign process, then the newest `Adobe InDesign*.app` in `/Applications` or `~/Applications`, then `Adobe InDesign 2025`. Windows ignores it. |
+| `INDESIGN_SCRIPT_TIMEOUT_MS` | `120000` | How long to wait for InDesign to finish an ExtendScript call. When it runs out, the error says a dialog is probably open in InDesign. |
 | `INDESIGN_ALLOWED_DIRS` | none | More directories for file operations: open, save, place, export, data merge and books. Your home folder is always allowed. Separate entries with `:` on macOS and `;` on Windows. |
 | `INDESIGN_BACKEND` | `extendscript` | `extendscript` uses AppleScript (macOS) or COM (Windows). `uxp` uses the UXP bridge. `auto` uses UXP if the bridge reports a connected plugin and ExtendScript otherwise. Any other value means `extendscript`. |
 | `UXP_BRIDGE_URL` | `http://127.0.0.1:3000` | The UXP bridge's HTTP address. Only used with `uxp` or `auto`. |

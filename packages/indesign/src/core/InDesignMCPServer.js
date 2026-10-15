@@ -1,9 +1,9 @@
 /**
- * Main InDesign MCP Server class
+ * The InDesign MCP server: tool definitions, one handler per tool, and the
+ * instructions sent to clients. The protocol handling (tools/list, tools/call,
+ * argument aliases and warnings, error results) is adobe-mcp-core's server shell.
  */
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import { createMcpServer } from 'adobe-mcp-core';
 import { allToolDefinitions } from '../types/index.js';
 import {
     BookHandlers,
@@ -21,9 +21,8 @@ import {
     TextHandlers,
     UtilityHandlers
 } from '../handlers/index.js';
-import { formatResponse, formatErrorResponse } from '../utils/stringUtils.js';
 import { ScriptExecutor } from './scriptExecutor.js';
-import { normalizeArgs, unknownArgWarnings, withWarnings } from '../handlers/aliases.js';
+import { PARAM_ALIASES, normalizeValues } from '../handlers/aliases.js';
 import { readFileSync } from 'node:fs';
 
 const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
@@ -45,46 +44,209 @@ A call that fails returns isError with a message such as "No document open" or "
 
 help({ tool }) describes any tool's parameters; help({ category }) lists tools by area.`;
 
+/** Every advertised tool's handler, called with canonical argument names. */
+export const TOOL_HANDLERS = {
+    get_document_info: () => DocumentHandlers.getDocumentInfo(),
+    create_document: (args) => DocumentHandlers.createDocument(args),
+    open_document: (args) => DocumentHandlers.openDocument(args),
+    save_document: (args) => DocumentHandlers.saveDocument(args),
+    close_document: () => DocumentHandlers.closeDocument(),
+
+    // Document Advanced Tools
+    preflight_document: (args) => DocumentHandlers.preflightDocument(args),
+    zoom_to_page: (args) => DocumentHandlers.zoomToPage(args),
+    data_merge: (args) => DocumentHandlers.dataMerge(args),
+
+    // Document Elements & Styles
+    get_document_elements: (args) => DocumentHandlers.getDocumentElements(args),
+    get_document_styles: (args) => DocumentHandlers.getDocumentStyles(args),
+    get_document_colors: (args) => DocumentHandlers.getDocumentColors(args),
+
+    // Document Preferences
+    get_document_preferences: (args) => DocumentHandlers.getDocumentPreferences(args),
+    set_document_preferences: (args) => DocumentHandlers.setDocumentPreferences(args),
+
+    // Document Stories & Text
+    get_document_stories: (args) => DocumentHandlers.getDocumentStories(args),
+    find_text_in_document: (args) => DocumentHandlers.findTextInDocument(args),
+
+    // Document Layers & Organization
+    get_document_layers: (args) => DocumentHandlers.getDocumentLayers(args),
+    organize_document_layers: (args) => DocumentHandlers.organizeDocumentLayers(args),
+
+    // Document Hyperlinks & Interactivity
+    get_document_hyperlinks: (args) => DocumentHandlers.getDocumentHyperlinks(args),
+    create_document_hyperlink: (args) => DocumentHandlers.createDocumentHyperlink(args),
+
+    // Document Sections & Numbering
+    get_document_sections: () => DocumentHandlers.getDocumentSections(),
+    create_document_section: (args) => DocumentHandlers.createDocumentSection(args),
+
+    // Document XML & Structure
+    get_document_xml_structure: (args) => DocumentHandlers.getDocumentXmlStructure(args),
+    export_document_xml: (args) => DocumentHandlers.exportDocumentXml(args),
+
+    // Document Cloud & Collaboration
+    save_document_to_cloud: (args) => DocumentHandlers.saveDocumentToCloud(args),
+    open_cloud_document: (args) => DocumentHandlers.openCloudDocument(args),
+
+    // Document Grid & Layout
+    get_document_grid_settings: () => DocumentHandlers.getDocumentGridSettings(),
+    set_document_grid_settings: (args) => DocumentHandlers.setDocumentGridSettings(args),
+    get_document_layout_preferences: () => DocumentHandlers.getDocumentLayoutPreferences(),
+    set_document_layout_preferences: (args) => DocumentHandlers.setDocumentLayoutPreferences(args),
+
+    // Document Validation & Cleanup
+    validate_document: (args) => DocumentHandlers.validateDocument(args),
+    cleanup_document: (args) => DocumentHandlers.cleanupDocument(args),
+
+    // Page Management
+    add_page: (args) => PageHandlers.addPage(args),
+    get_page_info: (args) => PageHandlers.getPageInfo(args),
+    navigate_to_page: (args) => PageHandlers.navigateToPage(args),
+
+    // Advanced Page Management
+    duplicate_page: (args) => PageHandlers.duplicatePage(args),
+    move_page: (args) => PageHandlers.movePage(args),
+    delete_page: (args) => PageHandlers.deletePage(args),
+    set_page_properties: (args) => PageHandlers.setPageProperties(args),
+    set_page_background: (args) => PageHandlers.setPageBackground(args),
+    adjust_page_layout: (args) => PageHandlers.adjustPageLayout(args),
+    resize_page: (args) => PageHandlers.resizePage(args),
+    create_page_guides: (args) => PageHandlers.createPageGuides(args),
+    place_file_on_page: (args) => PageHandlers.placeFileOnPage(args),
+    place_xml_on_page: (args) => PageHandlers.placeXmlOnPage(args),
+    snapshot_page_layout: (args) => PageHandlers.snapshotPageLayout(args),
+    delete_page_layout_snapshot: (args) => PageHandlers.deletePageLayoutSnapshot(args),
+    delete_all_page_layout_snapshots: (args) => PageHandlers.deleteAllPageLayoutSnapshots(args),
+    reframe_page: (args) => PageHandlers.reframePage(args),
+    select_page: (args) => PageHandlers.selectPage(args),
+    get_page_content_summary: (args) => PageHandlers.getPageContentSummary(args),
+
+    // Text Management
+    create_text_frame: (args) => TextHandlers.createTextFrame(args),
+    edit_text_frame: (args) => TextHandlers.editTextFrame(args),
+    create_table: (args) => TextHandlers.createTable(args),
+    populate_table: (args) => TextHandlers.populateTable(args),
+    find_replace_text: (args) => TextHandlers.findReplaceText(args),
+
+    // Graphics Management
+    create_rectangle: (args) => GraphicsHandlers.createRectangle(args),
+    create_ellipse: (args) => GraphicsHandlers.createEllipse(args),
+    create_polygon: (args) => GraphicsHandlers.createPolygon(args),
+    place_image: (args) => GraphicsHandlers.placeImage(args),
+    create_object_style: (args) => GraphicsHandlers.createObjectStyle(args),
+    list_object_styles: () => GraphicsHandlers.listObjectStyles(),
+    apply_object_style: (args) => GraphicsHandlers.applyObjectStyle(args),
+    get_image_info: (args) => GraphicsHandlers.getImageInfo(args),
+
+    // Style Management
+    create_paragraph_style: (args) => StyleHandlers.createParagraphStyle(args),
+    create_character_style: (args) => StyleHandlers.createCharacterStyle(args),
+    apply_paragraph_style: (args) => StyleHandlers.applyParagraphStyle(args),
+    apply_character_style: (args) => StyleHandlers.applyCharacterStyle(args),
+    apply_color: (args) => StyleHandlers.applyColor(args),
+    create_color_swatch: (args) => StyleHandlers.createColorSwatch(args),
+    list_styles: (args) => StyleHandlers.listStyles(args),
+    list_color_swatches: () => StyleHandlers.listColorSwatches(),
+
+    // Export Functions
+    export_pdf: (args) => ExportHandlers.exportPDF(args),
+    export_images: (args) => ExportHandlers.exportImages(args),
+    export_epub: (args) => ExportHandlers.exportEPUB(args),
+    package_document: (args) => ExportHandlers.packageDocument(args),
+
+    // Master Spread Management
+    create_master_spread: (args) => MasterSpreadHandlers.createMasterSpread(args),
+    list_master_spreads: (args) => MasterSpreadHandlers.listMasterSpreads(args),
+    delete_master_spread: (args) => MasterSpreadHandlers.deleteMasterSpread(args),
+    duplicate_master_spread: (args) => MasterSpreadHandlers.duplicateMasterSpread(args),
+    apply_master_spread: (args) => MasterSpreadHandlers.applyMasterSpread(args),
+    create_master_text_frame: (args) => MasterSpreadHandlers.createMasterTextFrame(args),
+    create_master_rectangle: (args) => MasterSpreadHandlers.createMasterRectangle(args),
+    create_master_guides: (args) => MasterSpreadHandlers.createMasterGuides(args),
+    get_master_spread_info: (args) => MasterSpreadHandlers.getMasterSpreadInfo(args),
+    detach_master_items: (args) => MasterSpreadHandlers.detachMasterItems(args),
+    remove_master_override: (args) => MasterSpreadHandlers.removeMasterOverride(args),
+
+    // Spread Management
+    list_spreads: (args) => SpreadHandlers.listSpreads(args),
+    get_spread_info: (args) => SpreadHandlers.getSpreadInfo(args),
+    duplicate_spread: (args) => SpreadHandlers.duplicateSpread(args),
+    move_spread: (args) => SpreadHandlers.moveSpread(args),
+    delete_spread: (args) => SpreadHandlers.deleteSpread(args),
+    set_spread_properties: (args) => SpreadHandlers.setSpreadProperties(args),
+    create_spread_guides: (args) => SpreadHandlers.createSpreadGuides(args),
+    place_file_on_spread: (args) => SpreadHandlers.placeFileOnSpread(args),
+    place_xml_on_spread: (args) => SpreadHandlers.placeXmlOnSpread(args),
+    select_spread: (args) => SpreadHandlers.selectSpread(args),
+    get_spread_content_summary: (args) => SpreadHandlers.getSpreadContentSummary(args),
+
+    // Layer Management
+    create_layer: (args) => LayerHandlers.createLayer(args),
+    set_active_layer: (args) => LayerHandlers.setActiveLayer(args),
+    list_layers: (args) => LayerHandlers.listLayers(args),
+
+    // Book Management
+    create_book: (args) => BookHandlers.createBook(args),
+    open_book: (args) => BookHandlers.openBook(args),
+    list_books: (args) => BookHandlers.listBooks(args),
+    add_document_to_book: (args) => BookHandlers.addDocumentToBook(args),
+    synchronize_book: (args) => BookHandlers.synchronizeBook(args),
+    repaginate_book: (args) => BookHandlers.repaginateBook(args),
+    update_all_cross_references: (args) => BookHandlers.updateAllCrossReferences(args),
+    update_all_numbers: (args) => BookHandlers.updateAllNumbers(args),
+    update_chapter_and_paragraph_numbers: (args) => BookHandlers.updateChapterAndParagraphNumbers(args),
+    export_book: (args) => BookHandlers.exportBook(args),
+    package_book: (args) => BookHandlers.packageBook(args),
+    preflight_book: (args) => BookHandlers.preflightBook(args),
+    print_book: (args) => BookHandlers.printBook(args),
+    get_book_info: (args) => BookHandlers.getBookInfo(args),
+    set_book_properties: (args) => BookHandlers.setBookProperties(args),
+
+    // PageItem Management
+    get_page_item_info: (args) => PageItemHandlers.getPageItemInfo(args),
+    select_page_item: (args) => PageItemHandlers.selectPageItem(args),
+    move_page_item: (args) => PageItemHandlers.movePageItem(args),
+    resize_page_item: (args) => PageItemHandlers.resizePageItem(args),
+    set_page_item_properties: (args) => PageItemHandlers.setPageItemProperties(args),
+    duplicate_page_item: (args) => PageItemHandlers.duplicatePageItem(args),
+    delete_page_item: (args) => PageItemHandlers.deletePageItem(args),
+    list_page_items: (args) => PageItemHandlers.listPageItems(args),
+
+    // Group Management
+    create_group: (args) => GroupHandlers.createGroup(args),
+    create_group_from_items: (args) => GroupHandlers.createGroupFromItems(args),
+    ungroup: (args) => GroupHandlers.ungroup(args),
+    get_group_info: (args) => GroupHandlers.getGroupInfo(args),
+    add_item_to_group: (args) => GroupHandlers.addItemToGroup(args),
+    remove_item_from_group: (args) => GroupHandlers.removeItemFromGroup(args),
+    list_groups: (args) => GroupHandlers.listGroups(args),
+    set_group_properties: (args) => GroupHandlers.setGroupProperties(args),
+
+    // Utility Functions
+    indesign_status: (args) => UtilityHandlers.getIndesignStatus(args),
+    execute_indesign_code: (args) => UtilityHandlers.executeInDesignCode(args),
+    view_document: () => UtilityHandlers.viewDocument(),
+    get_session_info: () => UtilityHandlers.getSessionInfo(),
+    clear_session: () => UtilityHandlers.clearSession(),
+
+    // Help System
+    help: (args) => HelpHandlers.getHelp(args),
+};
+
 export class InDesignMCPServer {
     constructor() {
-        this.server = new Server(
-            {
-                name: pkg.name,
-                version: pkg.version,
-            },
-            {
-                capabilities: {
-                    tools: {},
-                },
-                instructions: SERVER_INSTRUCTIONS,
-            }
-        );
-
-        this.setupToolHandlers();
-        ScriptExecutor.cleanupTempScripts();
-    }
-
-    setupToolHandlers() {
-        this.server.setRequestHandler(ListToolsRequestSchema, async () => ({
+        this.mcp = createMcpServer({
+            info: { name: pkg.name, version: pkg.version },
+            instructions: SERVER_INSTRUCTIONS,
             tools: allToolDefinitions,
-        }));
-
-        this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
-            const { name, arguments: args } = request.params;
-
-            try {
-                const result = await this.handleToolCall(name, args ?? {});
-                return {
-                    content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-                    isError: result?.success === false,
-                };
-            } catch (error) {
-                return {
-                    content: [{ type: 'text', text: JSON.stringify({ success: false, error: error.message, ...(error.warnings ? { warnings: error.warnings } : {}) }, null, 2) }],
-                    isError: true,
-                };
-            }
+            handlers: TOOL_HANDLERS,
+            aliases: PARAM_ALIASES,
+            normalizeValues,
         });
+        this.server = this.mcp.server;
+        ScriptExecutor.cleanupTempScripts();
     }
 
     /**
@@ -93,221 +255,11 @@ export class InDesignMCPServer {
      * unknown arguments under `warnings`.
      */
     async handleToolCall(name, args) {
-        const warnings = [];
-        args = normalizeArgs(name, args, warnings);
-        warnings.push(...unknownArgWarnings(name, args));
-        let result;
-        try {
-            result = await this.dispatch(name, args);
-        } catch (error) {
-            if (warnings.length) error.warnings = warnings;
-            throw error;
-        }
-        return withWarnings(result, warnings);
-    }
-
-    /** Send a tool call (with canonical argument names) to its handler. */
-    async dispatch(name, args) {
-        // Document Management
-        switch (name) {
-            case 'get_document_info': return await DocumentHandlers.getDocumentInfo();
-            case 'create_document': return await DocumentHandlers.createDocument(args);
-            case 'open_document': return await DocumentHandlers.openDocument(args);
-            case 'save_document': return await DocumentHandlers.saveDocument(args);
-            case 'close_document': return await DocumentHandlers.closeDocument();
-
-            // Document Advanced Tools
-            case 'preflight_document': return await DocumentHandlers.preflightDocument(args);
-            case 'zoom_to_page': return await DocumentHandlers.zoomToPage(args);
-            case 'data_merge': return await DocumentHandlers.dataMerge(args);
-
-            // Document Elements & Styles
-            case 'get_document_elements': return await DocumentHandlers.getDocumentElements(args);
-            case 'get_document_styles': return await DocumentHandlers.getDocumentStyles(args);
-            case 'get_document_colors': return await DocumentHandlers.getDocumentColors(args);
-
-            // Document Preferences
-            case 'get_document_preferences': return await DocumentHandlers.getDocumentPreferences(args);
-            case 'set_document_preferences': return await DocumentHandlers.setDocumentPreferences(args);
-
-            // Document Stories & Text
-            case 'get_document_stories': return await DocumentHandlers.getDocumentStories(args);
-            case 'find_text_in_document': return await DocumentHandlers.findTextInDocument(args);
-
-            // Document Layers & Organization
-            case 'get_document_layers': return await DocumentHandlers.getDocumentLayers(args);
-            case 'organize_document_layers': return await DocumentHandlers.organizeDocumentLayers(args);
-
-            // Document Hyperlinks & Interactivity
-            case 'get_document_hyperlinks': return await DocumentHandlers.getDocumentHyperlinks(args);
-            case 'create_document_hyperlink': return await DocumentHandlers.createDocumentHyperlink(args);
-
-            // Document Sections & Numbering
-            case 'get_document_sections': return await DocumentHandlers.getDocumentSections();
-            case 'create_document_section': return await DocumentHandlers.createDocumentSection(args);
-
-            // Document XML & Structure
-            case 'get_document_xml_structure': return await DocumentHandlers.getDocumentXmlStructure(args);
-            case 'export_document_xml': return await DocumentHandlers.exportDocumentXml(args);
-
-            // Document Cloud & Collaboration
-            case 'save_document_to_cloud': return await DocumentHandlers.saveDocumentToCloud(args);
-            case 'open_cloud_document': return await DocumentHandlers.openCloudDocument(args);
-
-            // Document Grid & Layout
-            case 'get_document_grid_settings': return await DocumentHandlers.getDocumentGridSettings();
-            case 'set_document_grid_settings': return await DocumentHandlers.setDocumentGridSettings(args);
-            case 'get_document_layout_preferences': return await DocumentHandlers.getDocumentLayoutPreferences();
-            case 'set_document_layout_preferences': return await DocumentHandlers.setDocumentLayoutPreferences(args);
-
-            // Document Validation & Cleanup
-            case 'validate_document': return await DocumentHandlers.validateDocument(args);
-            case 'cleanup_document': return await DocumentHandlers.cleanupDocument(args);
-
-            // Page Management
-            case 'add_page': return await PageHandlers.addPage(args);
-            case 'get_page_info': return await PageHandlers.getPageInfo(args);
-            case 'navigate_to_page': return await PageHandlers.navigateToPage(args);
-
-            // Advanced Page Management
-            case 'duplicate_page': return await PageHandlers.duplicatePage(args);
-            case 'move_page': return await PageHandlers.movePage(args);
-            case 'delete_page': return await PageHandlers.deletePage(args);
-            case 'set_page_properties': return await PageHandlers.setPageProperties(args);
-            case 'set_page_background': return await PageHandlers.setPageBackground(args);
-            case 'adjust_page_layout': return await PageHandlers.adjustPageLayout(args);
-            case 'resize_page': return await PageHandlers.resizePage(args);
-            case 'create_page_guides': return await PageHandlers.createPageGuides(args);
-            case 'place_file_on_page': return await PageHandlers.placeFileOnPage(args);
-            case 'place_xml_on_page': return await PageHandlers.placeXmlOnPage(args);
-            case 'snapshot_page_layout': return await PageHandlers.snapshotPageLayout(args);
-            case 'delete_page_layout_snapshot': return await PageHandlers.deletePageLayoutSnapshot(args);
-            case 'delete_all_page_layout_snapshots': return await PageHandlers.deleteAllPageLayoutSnapshots(args);
-            case 'reframe_page': return await PageHandlers.reframePage(args);
-            case 'select_page': return await PageHandlers.selectPage(args);
-            case 'get_page_content_summary': return await PageHandlers.getPageContentSummary(args);
-
-            // Text Management
-            case 'create_text_frame': return await TextHandlers.createTextFrame(args);
-            case 'edit_text_frame': return await TextHandlers.editTextFrame(args);
-            case 'create_table': return await TextHandlers.createTable(args);
-            case 'populate_table': return await TextHandlers.populateTable(args);
-            case 'find_replace_text': return await TextHandlers.findReplaceText(args);
-
-            // Graphics Management
-            case 'create_rectangle': return await GraphicsHandlers.createRectangle(args);
-            case 'create_ellipse': return await GraphicsHandlers.createEllipse(args);
-            case 'create_polygon': return await GraphicsHandlers.createPolygon(args);
-            case 'place_image': return await GraphicsHandlers.placeImage(args);
-            case 'create_object_style': return await GraphicsHandlers.createObjectStyle(args);
-            case 'list_object_styles': return await GraphicsHandlers.listObjectStyles();
-            case 'apply_object_style': return await GraphicsHandlers.applyObjectStyle(args);
-            case 'get_image_info': return await GraphicsHandlers.getImageInfo(args);
-
-            // Style Management
-            case 'create_paragraph_style': return await StyleHandlers.createParagraphStyle(args);
-            case 'create_character_style': return await StyleHandlers.createCharacterStyle(args);
-            case 'apply_paragraph_style': return await StyleHandlers.applyParagraphStyle(args);
-            case 'apply_character_style': return await StyleHandlers.applyCharacterStyle(args);
-            case 'apply_color': return await StyleHandlers.applyColor(args);
-            case 'create_color_swatch': return await StyleHandlers.createColorSwatch(args);
-            case 'list_styles': return await StyleHandlers.listStyles(args);
-            case 'list_color_swatches': return await StyleHandlers.listColorSwatches();
-
-            // Export Functions
-            case 'export_pdf': return await ExportHandlers.exportPDF(args);
-            case 'export_images': return await ExportHandlers.exportImages(args);
-            case 'export_epub': return await ExportHandlers.exportEPUB(args);
-            case 'package_document': return await ExportHandlers.packageDocument(args);
-
-            // Master Spread Management
-            case 'create_master_spread': return await MasterSpreadHandlers.createMasterSpread(args);
-            case 'list_master_spreads': return await MasterSpreadHandlers.listMasterSpreads(args);
-            case 'delete_master_spread': return await MasterSpreadHandlers.deleteMasterSpread(args);
-            case 'duplicate_master_spread': return await MasterSpreadHandlers.duplicateMasterSpread(args);
-            case 'apply_master_spread': return await MasterSpreadHandlers.applyMasterSpread(args);
-            case 'create_master_text_frame': return await MasterSpreadHandlers.createMasterTextFrame(args);
-            case 'create_master_rectangle': return await MasterSpreadHandlers.createMasterRectangle(args);
-            case 'create_master_guides': return await MasterSpreadHandlers.createMasterGuides(args);
-            case 'get_master_spread_info': return await MasterSpreadHandlers.getMasterSpreadInfo(args);
-            case 'detach_master_items': return await MasterSpreadHandlers.detachMasterItems(args);
-            case 'remove_master_override': return await MasterSpreadHandlers.removeMasterOverride(args);
-
-            // Spread Management
-            case 'list_spreads': return await SpreadHandlers.listSpreads(args);
-            case 'get_spread_info': return await SpreadHandlers.getSpreadInfo(args);
-            case 'duplicate_spread': return await SpreadHandlers.duplicateSpread(args);
-            case 'move_spread': return await SpreadHandlers.moveSpread(args);
-            case 'delete_spread': return await SpreadHandlers.deleteSpread(args);
-            case 'set_spread_properties': return await SpreadHandlers.setSpreadProperties(args);
-            case 'create_spread_guides': return await SpreadHandlers.createSpreadGuides(args);
-            case 'place_file_on_spread': return await SpreadHandlers.placeFileOnSpread(args);
-            case 'place_xml_on_spread': return await SpreadHandlers.placeXmlOnSpread(args);
-            case 'select_spread': return await SpreadHandlers.selectSpread(args);
-            case 'get_spread_content_summary': return await SpreadHandlers.getSpreadContentSummary(args);
-
-            // Layer Management
-            case 'create_layer': return await LayerHandlers.createLayer(args);
-            case 'set_active_layer': return await LayerHandlers.setActiveLayer(args);
-            case 'list_layers': return await LayerHandlers.listLayers(args);
-
-            // Book Management
-            case 'create_book': return await BookHandlers.createBook(args);
-            case 'open_book': return await BookHandlers.openBook(args);
-            case 'list_books': return await BookHandlers.listBooks(args);
-            case 'add_document_to_book': return await BookHandlers.addDocumentToBook(args);
-            case 'synchronize_book': return await BookHandlers.synchronizeBook(args);
-            case 'repaginate_book': return await BookHandlers.repaginateBook(args);
-            case 'update_all_cross_references': return await BookHandlers.updateAllCrossReferences(args);
-            case 'update_all_numbers': return await BookHandlers.updateAllNumbers(args);
-            case 'update_chapter_and_paragraph_numbers': return await BookHandlers.updateChapterAndParagraphNumbers(args);
-            case 'export_book': return await BookHandlers.exportBook(args);
-            case 'package_book': return await BookHandlers.packageBook(args);
-            case 'preflight_book': return await BookHandlers.preflightBook(args);
-            case 'print_book': return await BookHandlers.printBook(args);
-            case 'get_book_info': return await BookHandlers.getBookInfo(args);
-            case 'set_book_properties': return await BookHandlers.setBookProperties(args);
-
-            // PageItem Management
-            case 'get_page_item_info': return await PageItemHandlers.getPageItemInfo(args);
-            case 'select_page_item': return await PageItemHandlers.selectPageItem(args);
-            case 'move_page_item': return await PageItemHandlers.movePageItem(args);
-            case 'resize_page_item': return await PageItemHandlers.resizePageItem(args);
-            case 'set_page_item_properties': return await PageItemHandlers.setPageItemProperties(args);
-            case 'duplicate_page_item': return await PageItemHandlers.duplicatePageItem(args);
-            case 'delete_page_item': return await PageItemHandlers.deletePageItem(args);
-            case 'list_page_items': return await PageItemHandlers.listPageItems(args);
-
-            // Group Management
-            case 'create_group': return await GroupHandlers.createGroup(args);
-            case 'create_group_from_items': return await GroupHandlers.createGroupFromItems(args);
-            case 'ungroup': return await GroupHandlers.ungroup(args);
-            case 'get_group_info': return await GroupHandlers.getGroupInfo(args);
-            case 'add_item_to_group': return await GroupHandlers.addItemToGroup(args);
-            case 'remove_item_from_group': return await GroupHandlers.removeItemFromGroup(args);
-            case 'list_groups': return await GroupHandlers.listGroups(args);
-            case 'set_group_properties': return await GroupHandlers.setGroupProperties(args);
-
-            // Utility Functions
-            case 'indesign_status': return await UtilityHandlers.getIndesignStatus(args);
-            case 'execute_indesign_code': return await UtilityHandlers.executeInDesignCode(args);
-            case 'view_document': return await UtilityHandlers.viewDocument();
-            case 'get_session_info': return await UtilityHandlers.getSessionInfo();
-            case 'clear_session': return await UtilityHandlers.clearSession();
-
-            // Help System
-            case 'help': return await HelpHandlers.getHelp(args);
-
-            // Add more handlers as we create them
-            default:
-                return formatErrorResponse(`Tool '${name}' not found or not implemented. Use 'help' to see available tools.`, "Tool Call");
-        }
+        return this.mcp.handleToolCall(name, args);
     }
 
     async run() {
-        const transport = new StdioServerTransport();
-        await this.server.connect(transport);
-        // Don't log to stdout as it interferes with MCP protocol
-        // console.log('InDesign MCP Server started');
+        // Nothing may be written to stdout once connected: it carries the protocol.
+        await this.mcp.run();
     }
-} 
+}
