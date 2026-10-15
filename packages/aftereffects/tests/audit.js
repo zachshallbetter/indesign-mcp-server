@@ -19,19 +19,24 @@ const types = path.dirname(require.resolve('types-for-adobe/package.json'));
 
 // Fields of the spec objects the server passes into its scripts: __comp(spec) reads
 // id and name; __layers(spec) reads indexes, names and selected; keyframe lists
-// carry t, v, i and e.
-const HELPER_FIELDS = ['id', 'name', 'indexes', 'names', 'selected', 't', 'v', 'i', 'e'];
+// carry t, v, i and e. Project.usedFonts entries carry usedAt, declared in an inline
+// type the typings scan does not see.
+const HELPER_FIELDS = ['id', 'name', 'indexes', 'names', 'selected', 't', 'v', 'i', 'e', 'usedAt'];
 
 const AE_TYPINGS = path.join(types, 'AfterEffects/26.0/index.d.ts');
 
-// ToolType's members (ToolType.Tool_CameraOrbit) are in mixed case, which the shared
-// loader, reading upper-case enum members only, does not pick up.
-const TOOL_TYPES = /declare enum ToolType \{([^}]*)\}/.exec(readFileSync(AE_TYPINGS, 'utf8'))[1];
-const TOOL_TYPE_MEMBERS = [...TOOL_TYPES.matchAll(/^\s*(\w+)\s*=/gm)].map((m) => m[1]);
+// Some enums have mixed-case members (ToolType.Tool_CameraOrbit,
+// PREFType.PREF_Type_MACHINE_SPECIFIC), which the shared loader, reading
+// upper-case enum members only, does not pick up.
+const MIXED_CASE_ENUMS = ['ToolType', 'PREFType'];
+const ENUM_MEMBERS = MIXED_CASE_ENUMS.flatMap((e) => {
+    const body = new RegExp(`declare enum ${e} \\{([^}]*)\\}`).exec(readFileSync(AE_TYPINGS, 'utf8'))[1];
+    return [...body.matchAll(/^\s*(\w+)\s*=/gm)].map((m) => m[1]);
+});
 
 export const typings = loadTypings({
     files: [AE_TYPINGS, ...['shared/JavaScript.d.ts', 'shared/global.d.ts'].map((f) => path.join(types, f))],
-    allowedNames: [...HELPER_FIELDS, ...TOOL_TYPE_MEMBERS, 'hasOwnProperty'],
+    allowedNames: [...HELPER_FIELDS, ...ENUM_MEMBERS, 'hasOwnProperty'],
     allowedGlobals: [],
 });
 

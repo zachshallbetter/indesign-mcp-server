@@ -26,7 +26,7 @@ export const tools = [
     },
     {
         name: 'run_menu_command',
-        description: 'Run an After Effects menu command by its English menu name (found with app.findMenuCommandId) or its numeric id. Commands act on the current selection; one that opens a dialog waits for the user, so prefer the specific tools',
+        description: 'Run an After Effects menu command by its English menu name (found with app.findMenuCommandId) or its numeric id, such as an extension panel under Window > Extensions or a custom workspace. Commands act on the current selection; one that opens a dialog waits for the user, so prefer the specific tools',
         inputSchema: {
             type: 'object',
             properties: {
@@ -36,7 +36,7 @@ export const tools = [
         },
         auditArgs: { name: 'Select All', id: undefined },
         hints: { destructive: true },
-        features: ['aftereffects.automation.execute_menu_command'],
+        features: ['aftereffects.automation.execute_menu_command', 'aftereffects.effects.effects_and_presets_panel', 'aftereffects.automation.extensions_menu'],
         handler: (a) => {
             if ((a.name === undefined) === (a.id === undefined)) throw new Error('Give name or id');
             return run('Menu command', script(`
@@ -48,10 +48,10 @@ __result__ = { command: id };`, { undo: 'Menu command' }));
     },
     {
         name: 'execute_aftereffects_code',
-        description: 'Run your own ExtendScript in After Effects and return its last expression. It runs unrestricted: it can change or delete anything and read or write files. Prefer the specific tools',
+        description: 'Run your own ExtendScript in After Effects and return its last expression. It runs unrestricted: it can change or delete anything, read or write files, and run system commands (system.callSystem, which needs Allow Scripts to Write Files and Access Network). Prefer the specific tools',
         inputSchema: { type: 'object', properties: { code: { type: 'string', description: 'ExtendScript (ES3) source' } }, required: ['code'] },
         hints: { destructive: true },
-        features: ['aftereffects.automation.run_script_file', 'aftereffects.automation.command_line_scripts'],
+        features: ['aftereffects.automation.run_script_file', 'aftereffects.automation.command_line_scripts', 'aftereffects.automation.system_call'],
         handler: async (a) => {
             if (typeof a.code !== 'string' || !a.code.trim()) throw new Error("'code' is empty");
             const r = await executor.runStructured(a.code);

@@ -1,0 +1,1592 @@
+{
+ "note": "The UXP Premiere DOM, require(\"premierepro\"), for the static script audit. Names and minimum versions only. Classes: the capability atlas (corpus/premiere/surfaces/uxp.json). Members and constants: the reference pages the atlas cites, AdobeDocs/uxp-premiere-pro src/pages/ppro-reference at 55a2a2d (Apache-2.0); atlasMembers lists the members the atlas names itself.",
+ "source": {
+  "atlas": "corpus/premiere/surfaces/uxp.json",
+  "reference": "https://github.com/AdobeDocs/uxp-premiere-pro/tree/55a2a2d3eb0c4a2453eb9d38e8d067f851fa6b6e/src/pages/ppro-reference"
+ },
+ "classes": {
+  "AAFExportOptions": {
+   "since": "26.3",
+   "constructorSince": "26.3",
+   "properties": {
+    "audioFileFormat": "26.3",
+    "bitsPerSample": "26.3",
+    "embedAudio": "26.3",
+    "explodeToMono": "26.3",
+    "handleFrames": "26.3",
+    "interleaveWithoutEffects": "26.3",
+    "mixdownVideo": "26.3",
+    "preserveParentFolder": "26.3",
+    "renderAudioEffects": "26.3",
+    "sampleRate": "26.3",
+    "trimSources": "26.3",
+    "videoMixdownPresetPath": "26.3"
+   },
+   "static": {},
+   "instance": {
+    "setAudioFileFormat": "26.3",
+    "setBitsPerSample": "26.3",
+    "setEmbedAudio": "26.3",
+    "setExplodeToMono": "26.3",
+    "setHandleFrames": "26.3",
+    "setInterleaveWithoutEffects": "26.3",
+    "setMixdownVideo": "26.3",
+    "setPreserveParentFolder": "26.3",
+    "setRenderAudioEffects": "26.3",
+    "setSampleRate": "26.3",
+    "setTrimSources": "26.3",
+    "setVideoMixdownPresetPath": "26.3"
+   },
+   "atlasMembers": [
+    "setAudioFileFormat",
+    "setBitsPerSample",
+    "setEmbedAudio",
+    "setExplodeToMono",
+    "setHandleFrames",
+    "setInterleaveWithoutEffects",
+    "setMixdownVideo",
+    "setPreserveParentFolder",
+    "setRenderAudioEffects",
+    "setSampleRate",
+    "setTrimSources",
+    "setVideoMixdownPresetPath"
+   ]
+  },
+  "Action": {
+   "since": "25.6",
+   "properties": {},
+   "static": {},
+   "instance": {},
+   "atlasMembers": []
+  },
+  "AddTransitionOptions": {
+   "since": "25.6",
+   "constructorSince": "25.6",
+   "properties": {
+    "applyToStart": "25.6",
+    "duration": "25.6",
+    "forceSingleSided": "25.6",
+    "transitionAlignment": "25.6"
+   },
+   "static": {},
+   "instance": {
+    "setApplyToStart": "25.6",
+    "setDuration": "25.6",
+    "setForceSingleSided": "25.6",
+    "setTransitionAlignment": "25.6"
+   },
+   "atlasMembers": [
+    "setApplyToStart",
+    "setDuration",
+    "setForceSingleSided",
+    "setTransitionAlignment"
+   ]
+  },
+  "Application": {
+   "since": "25.6",
+   "properties": {
+    "version": "25.6"
+   },
+   "static": {},
+   "instance": {},
+   "atlasMembers": []
+  },
+  "AppPreference": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "getValue": "25.6",
+    "setValue": "25.6"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "getValue",
+    "setValue"
+   ]
+  },
+  "AudioClipTrackItem": {
+   "since": "25.6",
+   "properties": {},
+   "static": {},
+   "instance": {
+    "createMoveAction": "25.6",
+    "createSetDisabledAction": "25.6",
+    "createSetEndAction": "25.6",
+    "createSetInPointAction": "25.6",
+    "createSetNameAction": "25.6",
+    "createSetOutPointAction": "25.6",
+    "createSetStartAction": "25.6",
+    "getComponentChain": "25.6",
+    "getDuration": "25.6",
+    "getEndTime": "25.6",
+    "getInPoint": "25.6",
+    "getIsSelected": "25.6",
+    "getMatchName": "25.6",
+    "getMediaType": "25.6",
+    "getName": "25.6",
+    "getOutPoint": "25.6",
+    "getProjectItem": "25.6",
+    "getSpeed": "25.6",
+    "getStartTime": "25.6",
+    "getTrackIndex": "25.6",
+    "getType": "25.6",
+    "isAdjustmentLayer": "25.6",
+    "isDisabled": "25.6",
+    "isSpeedReversed": "25.6"
+   },
+   "atlasMembers": [
+    "createMoveAction",
+    "createSetDisabledAction",
+    "createSetEndAction",
+    "createSetInPointAction",
+    "createSetNameAction",
+    "createSetOutPointAction",
+    "createSetStartAction",
+    "getComponentChain",
+    "getEndTime",
+    "getMatchName",
+    "getStartTime",
+    "getTrackIndex",
+    "isDisabled"
+   ]
+  },
+  "AudioComponentChain": {
+   "since": "25.6",
+   "properties": {},
+   "static": {},
+   "instance": {
+    "createAppendComponentAction": "25.6",
+    "createInsertComponentAction": "25.6",
+    "createRemoveComponentAction": "25.6",
+    "getComponentAtIndex": "25.6",
+    "getComponentCount": "25.6"
+   },
+   "atlasMembers": [
+    "createAppendComponentAction",
+    "createInsertComponentAction",
+    "createRemoveComponentAction",
+    "getComponentAtIndex",
+    "getComponentCount"
+   ]
+  },
+  "AudioFilterComponent": {
+   "since": "25.6",
+   "properties": {},
+   "static": {},
+   "instance": {},
+   "atlasMembers": []
+  },
+  "AudioFilterFactory": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "createComponentByDisplayName": "25.6",
+    "getDisplayNames": "25.6"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "createComponentByDisplayName",
+    "getDisplayNames"
+   ]
+  },
+  "AudioTrack": {
+   "since": "25.6",
+   "properties": {
+    "id": "25.6",
+    "name": "25.6"
+   },
+   "static": {},
+   "instance": {
+    "createSetNameAction": "26.3",
+    "getIndex": "25.6",
+    "getMediaType": "25.6",
+    "getTrackItems": "25.6",
+    "isMuted": "25.6",
+    "setMute": "25.6"
+   },
+   "atlasMembers": [
+    "createSetNameAction",
+    "getIndex",
+    "getTrackItems"
+   ]
+  },
+  "C2PAService": {
+   "since": "26.5",
+   "properties": {},
+   "static": {
+    "getManifest": "26.5"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "getManifest"
+   ]
+  },
+  "CaptionTrack": {
+   "since": "25.6",
+   "properties": {
+    "id": "25.6",
+    "name": "25.6"
+   },
+   "static": {},
+   "instance": {
+    "createSetNameAction": "26.3",
+    "getIndex": "25.6",
+    "getMediaType": "25.6",
+    "getTrackItems": "25.6",
+    "isMuted": "25.6",
+    "setMute": "25.6"
+   },
+   "atlasMembers": [
+    "createSetNameAction",
+    "getIndex",
+    "getTrackItems"
+   ]
+  },
+  "ClipProjectItem": {
+   "since": "25.6",
+   "properties": {
+    "name": "25.6",
+    "type": "25.6"
+   },
+   "static": {
+    "cast": "25.6"
+   },
+   "instance": {
+    "attachProxy": "25.6",
+    "canChangeMediaPath": "25.6",
+    "canProxy": "25.6",
+    "changeMediaFilePath": "25.6",
+    "createClearInOutPointsAction": "25.6",
+    "createSetColorLabelAction": "25.6",
+    "createSetFootageInterpretationAction": "25.6",
+    "createSetInOutPointsAction": "25.6",
+    "createSetInPointAction": "25.6",
+    "createSetInputLUTIDAction": "25.6",
+    "createSetNameAction": "25.6",
+    "createSetOfflineAction": "25.6",
+    "createSetOutPointAction": "25.6",
+    "createSetOverrideFrameRateAction": "25.6",
+    "createSetOverridePixelAspectRatioAction": "25.6",
+    "createSetScaleToFrameSizeAction": "25.6",
+    "createSubClipAction": "26.3",
+    "findItemsMatchingMediaPath": "25.6",
+    "getColorLabelIndex": "25.6",
+    "getComponentChain": "25.6",
+    "getContentType": "25.6",
+    "getEmbeddedLUTID": "25.6",
+    "getFootageInterpretation": "25.6",
+    "getInPoint": "25.6",
+    "getInputLUTID": "25.6",
+    "getMedia": "25.6",
+    "getMediaFilePath": "25.6",
+    "getOriginatingProjectPath": "26.2",
+    "getOutPoint": "25.6",
+    "getProject": "25.6",
+    "getProxyPath": "25.6",
+    "getSequence": "25.6",
+    "hasProxy": "25.6",
+    "isMergedClip": "25.6",
+    "isMulticamClip": "25.6",
+    "isOffline": "25.6",
+    "isSequence": "25.6",
+    "refreshMedia": "25.6"
+   },
+   "atlasMembers": []
+  },
+  "CloseProjectOptions": {
+   "since": "25.6",
+   "constructorSince": "25.6",
+   "properties": {
+    "isAppBeingPreparedToQuit": "25.6",
+    "promptIfDirty": "25.6",
+    "saveWorkspace": "25.6",
+    "showCancelButton": "25.6"
+   },
+   "static": {},
+   "instance": {
+    "setIsAppBeingPreparedToQuit": "25.6",
+    "setPromptIfDirty": "25.6",
+    "setSaveWorkspace": "25.6",
+    "setShowCancelButton": "25.6"
+   },
+   "atlasMembers": [
+    "setIsAppBeingPreparedToQuit",
+    "setPromptIfDirty",
+    "setSaveWorkspace",
+    "setShowCancelButton"
+   ]
+  },
+  "Color": {
+   "since": "25.6",
+   "constructorSince": "25.6",
+   "properties": {
+    "alpha": "25.6",
+    "blue": "25.6",
+    "green": "25.6",
+    "red": "25.6"
+   },
+   "static": {},
+   "instance": {
+    "equals": "25.6"
+   },
+   "atlasMembers": [
+    "equals"
+   ]
+  },
+  "Component": {
+   "since": "25.6",
+   "properties": {},
+   "static": {},
+   "instance": {
+    "getDisplayName": "25.6",
+    "getMatchName": "25.6",
+    "getParam": "25.6",
+    "getParamCount": "25.6"
+   },
+   "atlasMembers": [
+    "getParam",
+    "getParamCount"
+   ]
+  },
+  "ComponentParam": {
+   "since": "25.6",
+   "properties": {
+    "displayName": "25.6"
+   },
+   "static": {},
+   "instance": {
+    "areKeyframesSupported": "25.6",
+    "createAddKeyframeAction": "25.6",
+    "createKeyframe": "25.6",
+    "createRemoveKeyframeAction": "25.6",
+    "createRemoveKeyframeRangeAction": "25.6",
+    "createSetInterpolationAtKeyframeAction": "25.6",
+    "createSetTimeVaryingAction": "25.6",
+    "createSetValueAction": "25.6",
+    "findNearestKeyframe": "25.6",
+    "findNextKeyframe": "25.6",
+    "findPreviousKeyframe": "25.6",
+    "getKeyframeListAsTickTimes": "25.6",
+    "getKeyframePtr": "25.6",
+    "getStartValue": "25.6",
+    "getValueAtTime": "25.6",
+    "isTimeVarying": "25.6"
+   },
+   "atlasMembers": [
+    "createAddKeyframeAction",
+    "createKeyframe",
+    "createRemoveKeyframeAction",
+    "createRemoveKeyframeRangeAction",
+    "createSetInterpolationAtKeyframeAction",
+    "createSetTimeVaryingAction",
+    "createSetValueAction",
+    "findNearestKeyframe",
+    "findNextKeyframe",
+    "findPreviousKeyframe",
+    "getKeyframeListAsTickTimes",
+    "getKeyframePtr",
+    "getStartValue"
+   ]
+  },
+  "CompoundAction": {
+   "since": "25.6",
+   "properties": {
+    "empty": "25.6"
+   },
+   "static": {},
+   "instance": {
+    "addAction": "25.6"
+   },
+   "atlasMembers": [
+    "addAction"
+   ]
+  },
+  "EncoderManager": {
+   "since": "25.6",
+   "properties": {
+    "isAMEInstalled": "25.6"
+   },
+   "static": {
+    "getExportFileExtension": "25.6",
+    "getManager": "25.6"
+   },
+   "instance": {
+    "encodeFile": "25.6",
+    "encodeProjectItem": "25.6",
+    "exportSequence": "25.6",
+    "launchEncoder": "26.3",
+    "setEmbeddedXMPEnabled": "26.3",
+    "setSidecarXMPEnabled": "26.3",
+    "startBatchEncode": "26.3"
+   },
+   "atlasMembers": [
+    "getExportFileExtension",
+    "getManager",
+    "exportSequence",
+    "startBatchEncode"
+   ]
+  },
+  "EventManager": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "addEventListener": "25.6",
+    "addGlobalEventListener": "25.6",
+    "removeEventListener": "25.6",
+    "removeGlobalEventListener": "25.6"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "addEventListener",
+    "addGlobalEventListener",
+    "removeEventListener",
+    "removeGlobalEventListener"
+   ]
+  },
+  "Exporter": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "exportSequenceFrame": "25.6"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "exportSequenceFrame"
+   ]
+  },
+  "FolderItem": {
+   "since": "25.6",
+   "properties": {
+    "name": "25.6",
+    "type": "25.6"
+   },
+   "static": {
+    "cast": "25.6"
+   },
+   "instance": {
+    "createBinAction": "25.6",
+    "createMoveItemAction": "25.6",
+    "createRemoveItemAction": "25.6",
+    "createRenameBinAction": "25.6",
+    "createSetColorLabelAction": "25.6",
+    "createSetNameAction": "25.6",
+    "createSmartBinAction": "25.6",
+    "getColorLabelIndex": "25.6",
+    "getItems": "25.6",
+    "getProject": "25.6"
+   },
+   "atlasMembers": [
+    "cast",
+    "createBinAction",
+    "createMoveItemAction",
+    "createRemoveItemAction",
+    "createRenameBinAction",
+    "createSetColorLabelAction",
+    "createSetNameAction",
+    "createSmartBinAction",
+    "getColorLabelIndex",
+    "getItems",
+    "getProject"
+   ]
+  },
+  "FootageInterpretation": {
+   "since": "25.6",
+   "properties": {
+    "ALPHACHANNEL_IGNORE": "25.6",
+    "ALPHACHANNEL_NONE": "25.6",
+    "ALPHACHANNEL_PREMULTIPLIED": "25.6",
+    "ALPHACHANNEL_STRAIGHT": "25.6",
+    "FIELD_TYPE_DEFAULT": "25.6",
+    "FIELD_TYPE_LOWERFIRST": "25.6",
+    "FIELD_TYPE_PROGRESSIVE": "25.6",
+    "FIELD_TYPE_UPPERFIRST": "25.6"
+   },
+   "static": {},
+   "instance": {
+    "getAlphaUsage": "25.6",
+    "getFieldType": "25.6",
+    "getFrameRate": "25.6",
+    "getIgnoreAlpha": "25.6",
+    "getInputLUTID": "25.6",
+    "getInvertAlpha": "25.6",
+    "getPixelAspectRatio": "25.6",
+    "getRemovePullDown": "25.6",
+    "getVrConform": "25.6",
+    "getVrHorzView": "25.6",
+    "getVrLayout": "25.6",
+    "getVrVertView": "25.6",
+    "setAlphaUsage": "25.6",
+    "setFieldType": "25.6",
+    "setFrameRate": "25.6",
+    "setIgnoreAlpha": "25.6",
+    "setInputLUTID": "25.6",
+    "setInvertAlpha": "25.6",
+    "setPixelAspectRatio": "25.6",
+    "setRemovePullDown": "25.6",
+    "setVrConform": "25.6",
+    "setVrHorzView": "25.6",
+    "setVrLayout": "25.6",
+    "setVrVertView": "25.6"
+   },
+   "atlasMembers": []
+  },
+  "FrameRate": {
+   "since": "25.6",
+   "constructorSince": "25.6",
+   "properties": {
+    "ticksPerFrame": "25.6",
+    "value": "25.6"
+   },
+   "static": {
+    "createWithValue": "25.6"
+   },
+   "instance": {
+    "equals": "25.6"
+   },
+   "atlasMembers": [
+    "createWithValue",
+    "equals"
+   ]
+  },
+  "Guid": {
+   "since": "25.6",
+   "constructorSince": "25.6",
+   "properties": {},
+   "static": {
+    "fromString": "25.6"
+   },
+   "instance": {
+    "toString": "25.6"
+   },
+   "atlasMembers": [
+    "fromString",
+    "toString"
+   ]
+  },
+  "IngestSettings": {
+   "since": "25.6",
+   "properties": {},
+   "static": {},
+   "instance": {
+    "getIsIngestEnabled": "25.6",
+    "setIngestEnabled": "25.6"
+   },
+   "atlasMembers": [
+    "getIsIngestEnabled",
+    "setIngestEnabled"
+   ]
+  },
+  "Keyframe": {
+   "since": "25.6",
+   "properties": {
+    "value": "25.6",
+    "position": "25.6"
+   },
+   "static": {},
+   "instance": {
+    "getTemporalInterpolationMode": "25.6",
+    "setTemporalInterpolationMode": "25.6"
+   },
+   "atlasMembers": [
+    "getTemporalInterpolationMode",
+    "setTemporalInterpolationMode"
+   ]
+  },
+  "Marker": {
+   "since": "25.6",
+   "properties": {
+    "guid": "26.3"
+   },
+   "static": {},
+   "instance": {
+    "createSetColorByIndexAction": "25.6",
+    "createSetCommentsAction": "25.6",
+    "createSetDurationAction": "25.6",
+    "createSetNameAction": "25.6",
+    "createSetTypeAction": "25.6",
+    "getColor": "25.6",
+    "getColorIndex": "25.6",
+    "getComments": "25.6",
+    "getDuration": "25.6",
+    "getName": "25.6",
+    "getStart": "25.6",
+    "getTarget": "25.6",
+    "getType": "25.6",
+    "getUrl": "25.6"
+   },
+   "atlasMembers": [
+    "createSetColorByIndexAction",
+    "createSetCommentsAction",
+    "createSetDurationAction",
+    "createSetNameAction",
+    "createSetTypeAction",
+    "getColor",
+    "getColorIndex",
+    "getDuration",
+    "getTarget",
+    "getUrl"
+   ]
+  },
+  "Markers": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "getMarkers": "25.6"
+   },
+   "instance": {
+    "createAddMarkerAction": "25.6",
+    "createMoveMarkerAction": "25.6",
+    "createRemoveMarkerAction": "25.6",
+    "getMarkers": "25.6"
+   },
+   "atlasMembers": [
+    "getMarkers",
+    "createAddMarkerAction",
+    "createMoveMarkerAction",
+    "createRemoveMarkerAction"
+   ]
+  },
+  "Media": {
+   "since": "25.6",
+   "properties": {
+    "duration": "26.5",
+    "start": "26.5"
+   },
+   "static": {},
+   "instance": {
+    "createSetStartAction": "25.6",
+    "getDuration": "26.5",
+    "getStart": "26.5"
+   },
+   "atlasMembers": [
+    "createSetStartAction",
+    "getDuration",
+    "getStart"
+   ]
+  },
+  "MediaManager": {
+   "since": "26.5",
+   "properties": {},
+   "static": {
+    "purgeMediaCache": "26.5"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "purgeMediaCache"
+   ]
+  },
+  "Metadata": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "addPropertyToProjectMetadataSchema": "25.6",
+    "createSetProjectMetadataAction": "25.6",
+    "createSetXMPMetadataAction": "25.6",
+    "getProjectColumnsMetadata": "25.6",
+    "getProjectMetadata": "25.6",
+    "getProjectPanelMetadata": "25.6",
+    "getXMPMetadata": "25.6",
+    "setProjectPanelMetadata": "25.6"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "createSetProjectMetadataAction",
+    "createSetXMPMetadataAction",
+    "getProjectColumnsMetadata"
+   ]
+  },
+  "ObjectMaskUtils": {
+   "since": "26.3",
+   "properties": {},
+   "static": {
+    "hasObjectMask": "26.3"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "hasObjectMask"
+   ]
+  },
+  "OpenProjectOptions": {
+   "since": "25.6",
+   "constructorSince": "25.6",
+   "properties": {
+    "addToMRUList": "25.6",
+    "showConvertProjectDialog": "25.6",
+    "showLocateFileDialog": "25.6",
+    "showWarningDialog": "25.6"
+   },
+   "static": {},
+   "instance": {
+    "setAddToMRUList": "25.6",
+    "setShowConvertProjectDialog": "25.6",
+    "setShowLocateFileDialog": "25.6",
+    "setShowWarningDialog": "25.6"
+   },
+   "atlasMembers": [
+    "setAddToMRUList",
+    "setShowConvertProjectDialog",
+    "setShowLocateFileDialog",
+    "setShowWarningDialog"
+   ]
+  },
+  "PointF": {
+   "since": "25.6",
+   "constructorSince": "25.6",
+   "properties": {
+    "x": "25.6",
+    "y": "25.6"
+   },
+   "static": {},
+   "instance": {
+    "distanceTo": "25.6"
+   },
+   "atlasMembers": [
+    "distanceTo"
+   ]
+  },
+  "PointKeyframe": {
+   "since": "25.6",
+   "properties": {
+    "position": "25.6",
+    "value": "25.6"
+   },
+   "static": {},
+   "instance": {},
+   "atlasMembers": []
+  },
+  "Project": {
+   "since": "25.6",
+   "properties": {
+    "guid": "25.6",
+    "name": "25.6",
+    "path": "25.6"
+   },
+   "static": {
+    "createProject": "25.6",
+    "getActiveProject": "25.6",
+    "getProject": "25.6",
+    "isProject": "26.2",
+    "open": "25.6"
+   },
+   "instance": {
+    "close": "25.6",
+    "closeSequence": "26.2",
+    "createSequence": "25.6",
+    "createSequenceFromMedia": "25.6",
+    "createSequenceWithPresetPath": "26.3",
+    "deleteSequence": "25.6",
+    "executeTransaction": "25.6",
+    "getActiveSequence": "25.6",
+    "getColorSettings": "25.6",
+    "getInsertionBin": "25.6",
+    "getRootItem": "25.6",
+    "getSequence": "25.6",
+    "getSequences": "25.6",
+    "importAEComps": "25.6",
+    "importAllAEComps": "25.6",
+    "importFiles": "25.6",
+    "importSequences": "25.6",
+    "lockedAccess": "25.6",
+    "openSequence": "25.6",
+    "pauseGrowing": "25.6",
+    "save": "25.6",
+    "saveAs": "25.6",
+    "setActiveSequence": "25.6"
+   },
+   "atlasMembers": [
+    "createProject",
+    "getActiveProject",
+    "getProject",
+    "isProject",
+    "open",
+    "close",
+    "closeSequence",
+    "createSequence",
+    "createSequenceFromMedia",
+    "createSequenceWithPresetPath",
+    "executeTransaction",
+    "getColorSettings",
+    "getSequence",
+    "lockedAccess",
+    "setActiveSequence"
+   ]
+  },
+  "ProjectColorSettings": {
+   "since": "25.6",
+   "properties": {},
+   "static": {},
+   "instance": {
+    "getGraphicsWhiteLuminance": "25.6",
+    "getSupportedGraphicsWhiteLuminances": "25.6"
+   },
+   "atlasMembers": []
+  },
+  "ProjectConverter": {
+   "since": "26.2",
+   "properties": {},
+   "static": {
+    "exportAAF": "26.3",
+    "exportAsFinalCutProXML": "26.2",
+    "exportAsOpenTimelineIO": "26.2"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "exportAsOpenTimelineIO"
+   ]
+  },
+  "ProjectItem": {
+   "since": "25.6",
+   "properties": {
+    "name": "25.6",
+    "type": "25.6"
+   },
+   "static": {
+    "cast": "25.6"
+   },
+   "instance": {
+    "createSetColorLabelAction": "25.6",
+    "createSetNameAction": "25.6",
+    "getColorLabelIndex": "25.6",
+    "getId": "25.6",
+    "getParentBin": "25.6",
+    "getProject": "25.6"
+   },
+   "atlasMembers": [
+    "cast",
+    "createSetColorLabelAction",
+    "createSetNameAction",
+    "getColorLabelIndex",
+    "getId",
+    "getParentBin",
+    "getProject"
+   ]
+  },
+  "ProjectItemSelection": {
+   "since": "25.6",
+   "properties": {},
+   "static": {},
+   "instance": {
+    "getItems": "25.6"
+   },
+   "atlasMembers": [
+    "getItems"
+   ]
+  },
+  "ProjectSettings": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "createSetIngestSettingsAction": "25.6",
+    "createSetScratchDiskSettingsAction": "25.6",
+    "getIngestSettings": "25.6",
+    "getScratchDiskSettings": "25.6"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "createSetIngestSettingsAction",
+    "createSetScratchDiskSettingsAction",
+    "getIngestSettings",
+    "getScratchDiskSettings"
+   ]
+  },
+  "ProjectUtils": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "getProjectFromViewId": "25.6",
+    "getProjectViewIds": "25.6",
+    "getSelection": "25.6",
+    "getSelectionFromViewId": "25.6"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "getSelection",
+    "getSelectionFromViewId"
+   ]
+  },
+  "Properties": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "getProperties": "25.6"
+   },
+   "instance": {
+    "createClearValueAction": "25.6",
+    "createSetValueAction": "25.6",
+    "getValue": "25.6",
+    "getValueAsBool": "25.6",
+    "getValueAsFloat": "25.6",
+    "getValueAsInt": "25.6",
+    "hasValue": "25.6"
+   },
+   "atlasMembers": [
+    "getProperties",
+    "createClearValueAction",
+    "createSetValueAction",
+    "getValue",
+    "getValueAsBool",
+    "getValueAsFloat",
+    "getValueAsInt",
+    "hasValue"
+   ]
+  },
+  "PRProduction": {
+   "since": "26.2",
+   "properties": {},
+   "static": {
+    "getActiveProduction": "26.2"
+   },
+   "instance": {
+    "getScratchDiskSettings": "26.2"
+   },
+   "atlasMembers": [
+    "getActiveProduction",
+    "getScratchDiskSettings"
+   ]
+  },
+  "RectF": {
+   "since": "25.6",
+   "constructorSince": "25.6",
+   "properties": {
+    "height": "25.6",
+    "width": "25.6"
+   },
+   "static": {},
+   "instance": {},
+   "atlasMembers": []
+  },
+  "ScratchDiskSettings": {
+   "since": "25.6",
+   "properties": {},
+   "static": {},
+   "instance": {
+    "getScratchDiskPath": "25.6",
+    "setScratchDiskPath": "25.6"
+   },
+   "atlasMembers": [
+    "getScratchDiskPath"
+   ]
+  },
+  "Sequence": {
+   "since": "25.6",
+   "properties": {
+    "guid": "25.6",
+    "name": "25.6"
+   },
+   "static": {},
+   "instance": {
+    "clearSelection": "25.6",
+    "createCloneAction": "25.6",
+    "createSetInPointAction": "25.6",
+    "createSetOutPointAction": "25.6",
+    "createSetSettingsAction": "25.6",
+    "createSetZeroPointAction": "25.6",
+    "createSubsequence": "25.6",
+    "getAudioTrack": "25.6",
+    "getAudioTrackCount": "25.6",
+    "getCaptionTrack": "25.6",
+    "getCaptionTrackCount": "25.6",
+    "getEndTime": "25.6",
+    "getFrameSize": "25.6",
+    "getInPoint": "25.6",
+    "getOutPoint": "25.6",
+    "getPlayerPosition": "25.6",
+    "getProjectItem": "25.6",
+    "getSelection": "25.6",
+    "getSequenceAudioTimeDisplayFormat": "25.6",
+    "getSequenceVideoTimeDisplayFormat": "25.6",
+    "getSettings": "25.6",
+    "getTimebase": "25.6",
+    "getVideoTrack": "25.6",
+    "getVideoTrackCount": "25.6",
+    "getZeroPoint": "25.6",
+    "isDoneAnalyzingForVideoEffects": "25.6",
+    "setPlayerPosition": "25.6",
+    "setSelection": "25.6"
+   },
+   "atlasMembers": [
+    "clearSelection",
+    "createCloneAction",
+    "createSetInPointAction",
+    "createSetOutPointAction",
+    "createSetSettingsAction",
+    "createSetZeroPointAction",
+    "getAudioTrack",
+    "getAudioTrackCount",
+    "getCaptionTrack",
+    "getCaptionTrackCount",
+    "getEndTime",
+    "getFrameSize",
+    "getSequenceAudioTimeDisplayFormat",
+    "getSequenceVideoTimeDisplayFormat",
+    "getVideoTrack",
+    "getVideoTrackCount",
+    "setSelection"
+   ]
+  },
+  "SequenceEditor": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "getEditor": "25.6",
+    "getInstalledMogrtPath": "25.6"
+   },
+   "instance": {
+    "createCloneTrackItemAction": "25.6",
+    "createInsertProjectItemAction": "25.6",
+    "createOverwriteItemAction": "25.6",
+    "createRemoveItemsAction": "25.6",
+    "insertMogrtFromLibrary": "25.6",
+    "insertMogrtFromPath": "25.6"
+   },
+   "atlasMembers": [
+    "getEditor",
+    "getInstalledMogrtPath",
+    "createCloneTrackItemAction",
+    "createInsertProjectItemAction",
+    "createOverwriteItemAction",
+    "createRemoveItemsAction",
+    "insertMogrtFromLibrary",
+    "insertMogrtFromPath"
+   ]
+  },
+  "SequenceSettings": {
+   "since": "25.6",
+   "properties": {},
+   "static": {},
+   "instance": {
+    "getAudioChannelCount": "25.6",
+    "getAudioChannelType": "25.6",
+    "getAudioDisplayFormat": "25.6",
+    "getAudioSampleRate": "25.6",
+    "getCompositeInLinearColor": "25.6",
+    "getEditingMode": "25.6",
+    "getMaximumBitDepth": "25.6",
+    "getMaxRenderQuality": "25.6",
+    "getPreviewCodec": "25.6",
+    "getPreviewFileFormat": "25.6",
+    "getPreviewFrameRect": "25.6",
+    "getVideoDisplayFormat": "25.6",
+    "getVideoFieldType": "25.6",
+    "getVideoFrameRate": "26.2",
+    "getVideoFrameRect": "25.6",
+    "getVideoPixelAspectRatio": "25.6",
+    "setAudioDisplayFormat": "25.6",
+    "setAudioSampleRate": "25.6",
+    "setCompositeInLinearColor": "25.6",
+    "setEditingMode": "25.6",
+    "setMaximumBitDepth": "25.6",
+    "setMaxRenderQuality": "25.6",
+    "setPreviewCodec": "25.6",
+    "setPreviewFileFormat": "25.6",
+    "setPreviewFrameRect": "25.6",
+    "setVideoDisplayFormat": "25.6",
+    "setVideoFieldType": "25.6",
+    "setVideoFrameRate": "26.2",
+    "setVideoFrameRect": "25.6",
+    "setVideoPixelAspectRatio": "25.6"
+   },
+   "atlasMembers": [
+    "getCompositeInLinearColor",
+    "getMaxRenderQuality",
+    "getPreviewCodec",
+    "getPreviewFrameRect",
+    "getVideoFrameRect",
+    "setAudioDisplayFormat",
+    "setAudioSampleRate",
+    "setCompositeInLinearColor",
+    "setEditingMode",
+    "setMaximumBitDepth",
+    "setMaxRenderQuality",
+    "setPreviewCodec",
+    "setPreviewFileFormat",
+    "setPreviewFrameRect",
+    "setVideoDisplayFormat",
+    "setVideoFieldType",
+    "setVideoFrameRate",
+    "setVideoFrameRect",
+    "setVideoPixelAspectRatio"
+   ]
+  },
+  "SequenceUtils": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "performSceneEditDetectionOnSelection": "25.6"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "performSceneEditDetectionOnSelection"
+   ]
+  },
+  "SourceMonitor": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "closeAllClips": "25.6",
+    "closeClip": "25.6",
+    "getPosition": "25.6",
+    "getProjectItem": "25.6",
+    "openFilePath": "25.6",
+    "openProjectItem": "25.6",
+    "play": "25.6",
+    "setPosition": "26.3"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "setPosition"
+   ]
+  },
+  "TextSegments": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "importFromJSON": "25.6"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "importFromJSON"
+   ]
+  },
+  "TickTime": {
+   "since": "25.6",
+   "constructorSince": "25.6",
+   "properties": {
+    "seconds": "25.6",
+    "ticks": "25.6",
+    "ticksNumber": "25.6"
+   },
+   "static": {
+    "createWithFrameAndFrameRate": "25.6",
+    "createWithSeconds": "25.6",
+    "createWithTicks": "25.6"
+   },
+   "instance": {
+    "add": "25.6",
+    "alignToFrame": "25.6",
+    "alignToNearestFrame": "25.6",
+    "divide": "25.6",
+    "equals": "25.6",
+    "multiply": "25.6",
+    "subtract": "25.6"
+   },
+   "atlasMembers": [
+    "createWithFrameAndFrameRate",
+    "createWithSeconds",
+    "createWithTicks",
+    "add",
+    "alignToFrame",
+    "alignToNearestFrame",
+    "divide",
+    "equals",
+    "multiply",
+    "subtract"
+   ]
+  },
+  "TimeDisplay": {
+   "since": "25.6",
+   "properties": {
+    "type": "25.6"
+   },
+   "static": {},
+   "instance": {},
+   "atlasMembers": []
+  },
+  "TrackItemSelection": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "createEmptySelection": "25.6"
+   },
+   "instance": {
+    "addItem": "25.6",
+    "getTrackItems": "25.6",
+    "removeItem": "25.6"
+   },
+   "atlasMembers": [
+    "createEmptySelection",
+    "addItem",
+    "getTrackItems",
+    "removeItem"
+   ]
+  },
+  "Transcript": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "createImportTextSegmentsAction": "25.6",
+    "exportToJSON": "25.6",
+    "hasTranscript": "26.3",
+    "importFromJSON": "25.6",
+    "isLanguagePackAvailable": "25.6",
+    "querySupportedLanguages": "26.3",
+    "transcribeClipProjectItem": "25.6"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "createImportTextSegmentsAction",
+    "exportToJSON",
+    "hasTranscript",
+    "importFromJSON",
+    "isLanguagePackAvailable",
+    "querySupportedLanguages",
+    "transcribeClipProjectItem"
+   ]
+  },
+  "TransitionFactory": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "createVideoTransition": "25.6",
+    "getVideoTransitionMatchNames": "25.6"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "createVideoTransition",
+    "getVideoTransitionMatchNames"
+   ]
+  },
+  "UniqueSerializeable": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "cast": "25.6"
+   },
+   "instance": {
+    "getUniqueID": "25.6"
+   },
+   "atlasMembers": [
+    "cast",
+    "getUniqueID"
+   ]
+  },
+  "Utils": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "isAEInstalled": "25.6"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "isAEInstalled"
+   ]
+  },
+  "VideoClipTrackItem": {
+   "since": "25.6",
+   "properties": {},
+   "static": {},
+   "instance": {
+    "createAddVideoTransitionAction": "25.6",
+    "createMoveAction": "25.6",
+    "createRemoveVideoTransitionAction": "25.6",
+    "createSetDisabledAction": "25.6",
+    "createSetEndAction": "25.6",
+    "createSetInPointAction": "25.6",
+    "createSetNameAction": "25.6",
+    "createSetOutPointAction": "25.6",
+    "createSetStartAction": "25.6",
+    "getComponentChain": "25.6",
+    "getDuration": "25.6",
+    "getEndTime": "25.6",
+    "getInPoint": "25.6",
+    "getIsSelected": "25.6",
+    "getMatchName": "25.6",
+    "getMediaType": "25.6",
+    "getName": "25.6",
+    "getOutPoint": "25.6",
+    "getProjectItem": "25.6",
+    "getSpeed": "25.6",
+    "getStartTime": "25.6",
+    "getTrackIndex": "25.6",
+    "getType": "25.6",
+    "isAdjustmentLayer": "25.6",
+    "isDisabled": "25.6",
+    "isSpeedReversed": "25.6"
+   },
+   "atlasMembers": [
+    "createAddVideoTransitionAction",
+    "createMoveAction",
+    "createRemoveVideoTransitionAction",
+    "createSetDisabledAction",
+    "createSetEndAction",
+    "createSetInPointAction",
+    "createSetNameAction",
+    "createSetOutPointAction",
+    "createSetStartAction",
+    "getComponentChain",
+    "getEndTime",
+    "getMatchName",
+    "getStartTime",
+    "getTrackIndex",
+    "isDisabled"
+   ]
+  },
+  "VideoComponentChain": {
+   "since": "25.6",
+   "properties": {},
+   "static": {},
+   "instance": {
+    "createAppendComponentAction": "25.6",
+    "createInsertComponentAction": "25.6",
+    "createRemoveComponentAction": "25.6",
+    "getComponentAtIndex": "25.6",
+    "getComponentCount": "25.6"
+   },
+   "atlasMembers": [
+    "createAppendComponentAction",
+    "createInsertComponentAction",
+    "createRemoveComponentAction",
+    "getComponentAtIndex",
+    "getComponentCount"
+   ]
+  },
+  "VideoFilterComponent": {
+   "since": "25.6",
+   "properties": {},
+   "static": {},
+   "instance": {},
+   "atlasMembers": []
+  },
+  "VideoFilterFactory": {
+   "since": "25.6",
+   "properties": {},
+   "static": {
+    "createComponent": "25.6",
+    "getDisplayNames": "25.6",
+    "getMatchNames": "25.6"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "createComponent",
+    "getDisplayNames",
+    "getMatchNames"
+   ]
+  },
+  "VideoTrack": {
+   "since": "25.6",
+   "properties": {
+    "id": "25.6",
+    "name": "25.6"
+   },
+   "static": {},
+   "instance": {
+    "createSetNameAction": "26.3",
+    "getIndex": "25.6",
+    "getMediaType": "25.6",
+    "getTrackItems": "25.6",
+    "isMuted": "25.6",
+    "setMute": "25.6"
+   },
+   "atlasMembers": [
+    "createSetNameAction",
+    "getIndex",
+    "getTrackItems"
+   ]
+  },
+  "VideoTransition": {
+   "since": "25.6",
+   "properties": {},
+   "static": {},
+   "instance": {},
+   "atlasMembers": []
+  },
+  "WorkAreaUtils": {
+   "since": "26.5",
+   "properties": {},
+   "static": {
+    "getWorkAreaInPoint": "26.5",
+    "getWorkAreaOutPoint": "26.5",
+    "setWorkAreaInOutPoints": "26.5",
+    "setWorkAreaInPoint": "26.5",
+    "setWorkAreaOutPoint": "26.5"
+   },
+   "instance": {},
+   "atlasMembers": [
+    "setWorkAreaInOutPoints"
+   ]
+  }
+ },
+ "constants": {
+  "AAFExportAudioFormat": [
+   "AIFF",
+   "WAV"
+  ],
+  "AudioChannelType": [
+   "MONO",
+   "STEREO",
+   "SURROUND_51",
+   "MULTI"
+  ],
+  "AudioDisplayFormatType": [
+   "SAMPLE_RATE",
+   "MILLISECONDS"
+  ],
+  "AudioTrackEvent": [
+   "TRACK_CHANGED",
+   "INFO_CHANGED",
+   "LOCK_CHANGED"
+  ],
+  "C2PAManifestLocation": [
+   "CLOUD",
+   "EMBEDDED",
+   "NONE",
+   "SIDE_CAR"
+  ],
+  "ContentType": [
+   "ANY",
+   "SEQUENCE",
+   "MEDIA"
+  ],
+  "EncoderEvent": [
+   "RENDER_COMPLETE",
+   "RENDER_ERROR",
+   "RENDER_CANCEL",
+   "RENDER_QUEUE",
+   "RENDER_PROGRESS"
+  ],
+  "ExportType": [
+   "QUEUE_TO_AME",
+   "QUEUE_TO_APP",
+   "IMMEDIATELY"
+  ],
+  "InterpolationMode": [
+   "BEZIER",
+   "HOLD",
+   "LINEAR",
+   "TIME",
+   "TIME_TRANSITION_END",
+   "TIME_TRANSITION_START"
+  ],
+  "MarkerColor": [
+   "GREEN",
+   "RED",
+   "MAGNETA",
+   "MAGENTA",
+   "ORANGE",
+   "YELLOW",
+   "BLUE",
+   "CYAN"
+  ],
+  "MediaType": [
+   "ANY",
+   "DATA",
+   "VIDEO",
+   "AUDIO"
+  ],
+  "MetadataType": [
+   "INTEGER",
+   "REAL",
+   "TEXT",
+   "BOOLEAN"
+  ],
+  "OperationCompleteEvent": [
+   "CLIP_EXTEND_REACHED",
+   "EFFECT_DROP_COMPLETE",
+   "EFFECT_DRAG_OVER",
+   "EXPORT_MEDIA_COMPLETE",
+   "GENERATIVE_EXTEND_COMPLETE",
+   "IMPORT_MEDIA_COMPLETE"
+  ],
+  "OperationCompleteState": [
+   "SUCCESS",
+   "CANCELLED",
+   "FAILED"
+  ],
+  "PixelAspectRatio": [
+   "SQUARE",
+   "DVNTSC",
+   "DVPAL"
+  ],
+  "PreferenceKey": [
+   "AUTO_PEAK_GENERATION",
+   "IMPORT_WORKSPACE",
+   "SHOW_QUICKSTART_DIALOG"
+  ],
+  "ProjectEvent": [
+   "OPENED",
+   "CLOSED",
+   "DIRTY",
+   "ACTIVATED",
+   "PROJECT_ITEM_SELECTION_CHANGED"
+  ],
+  "ProjectItemColorLabel": [
+   "VIOLET",
+   "IRIS",
+   "LAVENDER",
+   "CERULEAN",
+   "FOREST",
+   "ROSE",
+   "MANGO",
+   "PURPLE",
+   "BLUE",
+   "TEAL",
+   "MAGENTA",
+   "TAN",
+   "GREEN",
+   "BROWN",
+   "YELLOW"
+  ],
+  "PropertyType": [
+   "PERSISTENT",
+   "NON_PERSISTENT"
+  ],
+  "ScratchDiskFolder": [
+   "SAME_AS_PROJECT",
+   "MY_DOCUMENTS"
+  ],
+  "ScratchDiskFolderType": [
+   "CAPTURE",
+   "AUDIO_PREVIEW",
+   "VIDEO_PREVIEW",
+   "AUTO_SAVE",
+   "CCL_LIBRARIES",
+   "CAPSULE_MEDIA"
+  ],
+  "SequenceEvent": [
+   "ACTIVATED",
+   "CLOSED",
+   "SELECTION_CHANGED"
+  ],
+  "SequenceOperation": [
+   "APPLYCUT",
+   "CREATEMARKER",
+   "CREATESUBCLIP"
+  ],
+  "SnapEvent": [
+   "KEYFRAME",
+   "RAZOR_PLAYHEAD",
+   "RAZOR_MARKER",
+   "TRACKITEM",
+   "GUIDES",
+   "PLAYHEAD_TRACKITEM"
+  ],
+  "TrackItemType": [
+   "EMPTY",
+   "CLIP",
+   "TRANSITION",
+   "PREVIEW",
+   "FEEDBACK"
+  ],
+  "TransitionPosition": [
+   "START",
+   "END"
+  ],
+  "VideoDisplayFormatType": [
+   "FPS_23_976",
+   "FPS_25",
+   "FPS_29_97",
+   "FPS_29_97_NON_DROP",
+   "FRAMES"
+  ],
+  "VideoFieldType": [
+   "PROGRESSIVE",
+   "UPPER_FIRST",
+   "LOWER_FIRST"
+  ],
+  "VideoTrackEvent": [
+   "TRACK_CHANGED",
+   "INFO_CHANGED",
+   "LOCK_CHANGED"
+  ]
+ }
+}

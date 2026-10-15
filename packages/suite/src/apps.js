@@ -9,6 +9,7 @@ export const APPS = {
     illustrator: () => import('adobe-mcp-illustrator'),
     photoshop: () => import('adobe-mcp-photoshop'),
     aftereffects: () => import('adobe-mcp-aftereffects'),
+    premiere: () => import('adobe-mcp-premiere'),
 };
 
 /** The app ids to load, from argv (--apps a,b or --apps=a,b) or the environment. */
