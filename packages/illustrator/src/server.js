@@ -10,6 +10,7 @@ import { tools as appearanceTools } from './tools/appearance.js';
 import { tools as arrangeTools } from './tools/arrange.js';
 import { tools as outputTools } from './tools/output.js';
 import { tools as effectTools } from './tools/effects.js';
+import { tools as blendTools } from './tools/blends.js';
 import { tools as utilityTools, helpTool } from './tools/utility.js';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
@@ -38,6 +39,7 @@ const AREAS = [
     ['appearance', appearanceTools],
     ['arrange', arrangeTools],
     ['effects', effectTools],
+    ['blends', blendTools],
     ['output', outputTools],
     ['utility', utilityTools],
 ];
@@ -55,12 +57,12 @@ const annotations = createAnnotations({
     destructive: [
         'close_document', 'delete_artboard', 'delete_layer', 'delete_items', 'set_text_contents',
         'convert_text_to_outlines', 'ungroup_items', 'pathfinder', 'make_compound_path', 'execute_illustrator_code',
-        'execute_menu_command', 'save_document', 'set_preferences',
+        'execute_menu_command', 'save_document', 'set_preferences', 'release_blend', 'expand_blend',
     ],
     idempotent: [
         'save_document', 'set_artboard', 'set_active_artboard', 'set_active_layer', 'set_layer_properties',
         'select_items', 'deselect_all', 'set_fill', 'set_stroke', 'set_opacity', 'set_text_style', 'set_text_contents',
-        'arrange_items', 'align_items', 'set_preferences', 'select_tool', 'export_png', 'export_svg', 'export_for_screens', 'export_pdf', 'move_items_to_layer',
+        'arrange_items', 'align_items', 'set_preferences', 'select_tool', 'set_blend_options', 'export_png', 'export_svg', 'export_for_screens', 'export_pdf', 'move_items_to_layer',
     ],
     words: { svg: 'SVG', png: 'PNG', pdf: 'PDF', illustrator: 'Illustrator' },
 });

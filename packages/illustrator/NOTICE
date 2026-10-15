@@ -13,7 +13,14 @@ compiled from:
   https://github.com/ten-A/AiMenuObject
   Copyright (c) 2019 Ten Agata. MIT licence.
 
-Both licences require this notice to be kept with copies of the data:
+src/blend.js writes Blend Options as a generated Action, in the format and
+with the parameter codes used by:
+
+  BlendSp, jsx/blend/BlendSp.jsx
+  https://github.com/swwwitch/illustrator-scripts
+  Masahiro Takano (@swwwitch). MIT licence.
+
+These licences require this notice to be kept with copies of the data:
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal

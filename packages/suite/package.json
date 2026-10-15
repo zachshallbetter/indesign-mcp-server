@@ -1,6 +1,6 @@
 {
   "name": "adobe-mcp-suite",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "One MCP server for Adobe InDesign and Illustrator together, with tools that work across them",
   "mcpName": "io.github.zachshallbetter/adobe-mcp-suite",
   "type": "module",
@@ -50,7 +50,7 @@
   "dependencies": {
     "adobe-mcp-core": "0.1.0",
     "adobe-mcp-indesign": "2.4.0",
-    "adobe-mcp-illustrator": "0.3.0"
+    "adobe-mcp-illustrator": "0.4.0"
   },
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.32.1",

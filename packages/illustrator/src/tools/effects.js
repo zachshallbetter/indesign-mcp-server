@@ -76,6 +76,8 @@ export const tools = [
         features: [
             'illustrator.geometry.offset_path_option.offset', 'illustrator.geometry.offset_path_option.joins',
             'illustrator.geometry.offset_path_option.miter_limit', 'illustrator.effects.live_effect',
+            'illustrator.effects.offset_path', 'illustrator.effects.round_corners', 'illustrator.effects.roughen',
+            'illustrator.effects.transform', 'illustrator.effects.drop_shadow', 'illustrator.effects.ps_gaussian_blur',
         ],
         handler: (a) => {
             const effect = EFFECTS[enumOf(a.effect, Object.keys(EFFECTS), { name: 'effect' })];
@@ -117,6 +119,9 @@ __result__ = { effect: ${str(a.effect)}, expanded: ${bool(a.expand)}, items: out
             'illustrator.geometry.pf_outline', 'illustrator.geometry.pf_minus_back', 'illustrator.geometry.pathfinder_options',
             'illustrator.geometry.pathfinder_option.precision', 'illustrator.geometry.pathfinder_option.remove_redundant_points',
             'illustrator.geometry.pathfinder_option.divide_and_outline_will_remove_unpainted_artwork',
+            'illustrator.effects.pf_add', 'illustrator.effects.pf_intersect', 'illustrator.effects.pf_exclude',
+            'illustrator.effects.pf_subtract', 'illustrator.effects.pf_minus_back', 'illustrator.effects.pf_divide',
+            'illustrator.effects.pf_trim', 'illustrator.effects.pf_merge', 'illustrator.effects.pf_crop', 'illustrator.effects.pf_outline',
         ],
         menuCommands: ['expandStyle', 'ungroup', 'Live Pathfinder Add', 'Live Pathfinder Subtract', 'Live Pathfinder Intersect',
             'Live Pathfinder Exclude', 'Live Pathfinder Divide', 'Live Pathfinder Trim', 'Live Pathfinder Merge',
