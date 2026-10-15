@@ -52,7 +52,15 @@ __result__ = { properties: out };`)),
             required: ['layers', 'property', 'value'],
         },
         auditArgs: { property: 'opacity', value: 50 },
-        features: ['aftereffects.layers.edit_value', 'aftereffects.animation.add_property_keyframe', 'aftereffects.text.source_text'],
+        features: [
+            'aftereffects.layers.edit_value',
+            'aftereffects.animation.add_property_keyframe',
+            'aftereffects.text.source_text',
+            'aftereffects.three_d.stereo_rig_option.stereo_scene_depth',
+            'aftereffects.three_d.stereo_rig_option.converge_cameras',
+            'aftereffects.three_d.stereo_rig_option.converge_to',
+            'aftereffects.three_d.stereo_rig_option.configuration',
+        ],
         handler: (a) => {
             const v = propertyValue(a.value);
             return run('Set property', script(`${PROP_INFO}

@@ -7,6 +7,7 @@
  *
  * Object-model names: types-for-adobe's After Effects 26.0 declarations.
  */
+import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { auditTools, loadTypings, sample } from 'adobe-mcp-core/testing';
@@ -21,9 +22,16 @@ const types = path.dirname(require.resolve('types-for-adobe/package.json'));
 // carry t, v, i and e.
 const HELPER_FIELDS = ['id', 'name', 'indexes', 'names', 'selected', 't', 'v', 'i', 'e'];
 
+const AE_TYPINGS = path.join(types, 'AfterEffects/26.0/index.d.ts');
+
+// ToolType's members (ToolType.Tool_CameraOrbit) are in mixed case, which the shared
+// loader, reading upper-case enum members only, does not pick up.
+const TOOL_TYPES = /declare enum ToolType \{([^}]*)\}/.exec(readFileSync(AE_TYPINGS, 'utf8'))[1];
+const TOOL_TYPE_MEMBERS = [...TOOL_TYPES.matchAll(/^\s*(\w+)\s*=/gm)].map((m) => m[1]);
+
 export const typings = loadTypings({
-    files: ['AfterEffects/26.0/index.d.ts', 'shared/JavaScript.d.ts', 'shared/global.d.ts'].map((f) => path.join(types, f)),
-    allowedNames: [...HELPER_FIELDS, 'hasOwnProperty'],
+    files: [AE_TYPINGS, ...['shared/JavaScript.d.ts', 'shared/global.d.ts'].map((f) => path.join(types, f))],
+    allowedNames: [...HELPER_FIELDS, ...TOOL_TYPE_MEMBERS, 'hasOwnProperty'],
     allowedGlobals: [],
 });
 

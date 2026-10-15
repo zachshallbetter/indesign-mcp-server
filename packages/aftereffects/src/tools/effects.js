@@ -40,7 +40,7 @@ __result__ = { total: total, effects: out };`)),
             required: ['layers', 'effect'],
         },
         auditArgs: { effect: 'ADBE Gaussian Blur 2', properties: { Blurriness: 12 } },
-        features: ['aftereffects.effects.apply_effect'],
+        features: ['aftereffects.effects.apply_effect', 'aftereffects.three_d.depth_data_extraction'],
         handler: (a) => {
             const props = Object.entries(a.properties ?? {}).map(([k, v]) => [String(k), JSON.parse(propertyValue(v, `properties.${k}`))]);
             return run('Apply effect', script(`
