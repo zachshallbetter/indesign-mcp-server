@@ -312,3 +312,78 @@ test('save_document: AI and EPS options, each artboard to its own file', async (
     await assert.rejects(mcp.handleToolCall('save_document', { filePath: `${home}/Documents/a.ai`, artboards: '1' }), /separateArtboards: true/);
     await assert.rejects(mcp.handleToolCall('save_document', { filePath: `${home}/Documents/a.pdf` }), /\.ai or \.eps/);
 });
+
+test('swatches: global, spot from Lab values, groups, and tints', async () => {
+    const [global, lab, fill, group, used] = await scriptsFor([
+        ['create_swatch', { name: 'Brand Blue', color: 'cmyk(100,60,0,0)', global: true, group: 'Brand' }],
+        ['create_swatch', { name: 'Varnish', color: 'lab(50,20,-30)', spot: true }],
+        ['set_fill', { target: { selection: true }, color: 'Brand Blue', tint: 40 }],
+        ['create_swatch_group', { name: 'Brand', swatches: ['Brand Blue', 'Varnish'] }],
+        ['add_used_colors', { group: 'Used' }],
+    ]);
+    for (const line of ['sp.colorType = ColorModel.PROCESS;', 'grp.addSpot(sp);', 'grp.name = "Brand";']) assert.ok(global.includes(line), line);
+    for (const line of ['sp.spotKind = SpotColorKind.SPOTLAB;', 'l.l = 50; l.a = 20; l.b = -30;', 'sp.colorType = ColorModel.SPOT;']) assert.ok(lab.includes(line), line);
+    assert.match(fill, /if \(c\.typename !== "SpotColor"\) throw new Error\("tint needs a spot or global swatch as the colour"\); c\.tint = 40;/);
+    assert.match(group, /grp\.addSwatch\(sw\); return; \} catch \(e\) \{\}\n {2}grp\.addSpot/);
+    assert.match(used, /"C=" \+ r\(c\.cyan\)/);
+    const mcp = (await import('../src/server.js')).createServer();
+    await assert.rejects(mcp.handleToolCall('create_swatch', { name: 'x', color: 'lab(50,0,0)' }), /only define a spot colour/);
+    await assert.rejects(mcp.handleToolCall('create_swatch', { name: 'x', color: '#000000', spot: true, global: true }), /spot or global, not both/);
+    await assert.rejects(mcp.handleToolCall('create_swatch', { name: 'x', color: 'lab(120,0,0)', spot: true }), /color L/);
+    await assert.rejects(mcp.handleToolCall('set_stroke', { target: { selection: true }, tint: 50 }), /'tint' needs a color/);
+});
+
+test('edit_colors, select_same and trim marks run their menu commands on the targets', async () => {
+    const { EDIT_COLORS } = await import('../src/tools/color.js');
+    const calls = Object.keys(EDIT_COLORS).map((operation) => ['edit_colors', { target: { selection: true }, operation }]);
+    const sent = await scriptsFor([...calls, ['select_same', { target: { ids: ['42'] }, attribute: 'stroke_weight' }], ['create_trim_marks', { target: { selection: true } }], ['select_all', { artboardIndex: 1 }]]);
+    Object.values(EDIT_COLORS).forEach((command, i) => assert.ok(sent[i].includes(`app.executeMenuCommand("${command}");`), command));
+    assert.match(sent[calls.length], /app\.executeMenuCommand\("Find Stroke Weight menu item"\);/);
+    assert.match(sent[calls.length + 1], /app\.executeMenuCommand\("TrimMark v25"\);/);
+    assert.match(sent[calls.length + 2], /setActiveArtboardIndex\(ab\);\napp\.executeMenuCommand\("selectallinartboard"\);/);
+    const mcp = (await import('../src/server.js')).createServer();
+    await assert.rejects(mcp.handleToolCall('edit_colors', { target: { selection: true }, operation: 'saturate' }), /Allowed: convert_to_cmyk/);
+});
+
+test('overprint covers paths and text', async () => {
+    const [s] = await scriptsFor([['set_overprint', { target: { selection: true }, fill: true, stroke: false }]]);
+    assert.match(s, /p\.fillOverprint = true; p\.strokeOverprint = false;/);
+    assert.match(s, /ca\.overprintFill = true; ca\.overprintStroke = false;/);
+    const mcp = (await import('../src/server.js')).createServer();
+    await assert.rejects(mcp.handleToolCall('set_overprint', { target: { selection: true } }), /Give fill, stroke or both/);
+});
+
+test('print_document fills only the Print dialog pages it is given', async () => {
+    const [full, bare] = await scriptsFor([
+        ['print_document', {
+            outputFile: `${home}/Documents/proof.ps`, preset: 'Proof',
+            general: { copies: 2, artboards: '2-3', layers: 'visible', bounds: 'artwork' },
+            placement: { orientation: 'landscape', fitToPage: true },
+            marks: { marks: ['all'], trimMarkWeight: 0.25, bleed: 9 },
+            output: { mode: 'separations', convertSpotColors: true },
+            fonts: { substitution: 'tint' },
+            colorManagement: { profile: 'custom', profileName: 'Coated FOGRA39 (ISO 12647-2:2004)', intent: 'relative_colorimetric' },
+            flattener: { preset: '[High Resolution]' },
+        }],
+        ['print_document', {}],
+    ]);
+    const lines = [
+        'o.jobOptions = new PrintJobOptions();', 'o.jobOptions.copies = 2;', 'o.jobOptions.printAllArtboards = false;', 'o.jobOptions.artboardRange = "2-3";',
+        'o.jobOptions.designation = PrintArtworkDesignation.VISIBLELAYERS;', 'o.jobOptions.printArea = PrintingBounds.ARTWORKBOUNDS;',
+        'o.coordinateOptions.orientation = PrintOrientation.LANDSCAPE;', 'o.pageMarksOptions.trimMarks = true;', 'o.pageMarksOptions.pageInfoMarks = true;',
+        'o.pageMarksOptions.trimMarksWeight = 0.25;', 'o.pageMarksOptions.bleedOffsetRect = [9, 9, 9, 9];',
+        'o.colorSeparationOptions.colorSeparationMode = PrintColorSeparationMode.HOSTBASEDSEPARATION;',
+        'o.fontOptions.fontSubstitution = FontSubstitutionPolicy.SUBSTITUTETINT;', 'o.colorManagementOptions.colorProfileMode = PrintColorProfile.CUSTOMPROFILE;',
+        'o.colorManagementOptions.intent = PrintColorIntent.RELATIVECOLORIMETRIC;', 'o.flattenerPreset = "[High Resolution]";', 'o.printPreset = "Proof";',
+        'o.jobOptions.file = new File(', 'doc.print(o);',
+    ];
+    for (const line of lines) assert.ok(full.includes(line), line);
+    assert.doesNotMatch(full, /new PrintPaperOptions|new PrintPostScriptOptions|new PrintFlattenerOptions/, 'pages not given keep the preset');
+    assert.doesNotMatch(bare, /new Print\w+Options\(\)/);
+    const mcp = (await import('../src/server.js')).createServer();
+    await assert.rejects(mcp.handleToolCall('print_document', { marks: { crops: true } }), /'marks' has no option crops/);
+    await assert.rejects(mcp.handleToolCall('print_document', { colorManagement: { profile: 'custom' } }), /needs profileName/);
+    await assert.rejects(mcp.handleToolCall('print_document', { outputFile: `${home}/Documents/proof.pdf` }), /\.ps/);
+    const def = (await import('../src/server.js')).toolDefinitions.find((t) => t.name === 'print_document');
+    assert.equal(def.annotations.openWorldHint, true, 'printing reaches a device');
+});

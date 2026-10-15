@@ -39,7 +39,6 @@ export const USER_CODE = ['execute_illustrator_code'];
 /** Valid arguments for parameters with a format the generic samples cannot meet. */
 const docs = path.join(process.env.HOME ?? '/tmp', 'Documents');
 const OVERRIDES = {
-    create_swatch: { color: 'cmyk(0,60,100,0)' },
     create_path: { points: [[0, 0], [100, 0], { x: 100, y: 100, in: [90, 80], out: [110, 120] }], closed: true },
     export_png: { artboards: '1-2' },
     export_svg: { artboards: '1', outputFile: path.join(docs, 'audit.svg') },
@@ -58,6 +57,12 @@ const OVERRIDES = {
     apply_effect: { effect: 'offset_path', options: { offset: -2, joins: 'round' }, expand: true },
     get_preferences: { names: ['usePreviewBounds', 'keyboardIncrement'] },
     open_document: { filePath: path.join(docs, 'audit.ai') },
+    print_document: { outputFile: path.join(docs, 'audit.ps'), marks: { marks: ['all'], trimMarkWeight: 0.25, bleed: 9 }, general: { artboards: '1-2', copies: 2 } },
+    edit_colors: { operation: 'convert_to_cmyk' },
+    create_swatch: { color: 'lab(50,20,-30)', spot: true, group: 'Brand' },
+    set_fill: { color: 'PANTONE 185 C', tint: 40 },
+    set_stroke: { color: 'Brand Blue', tint: 60 },
+    select_same: { attribute: 'fill_color' },
     save_document: {
         filePath: path.join(docs, 'audit.eps'), separateArtboards: true, artboards: '1-2',
         pdfCompatible: undefined, compressed: undefined, embedIccProfile: undefined, fontSubsetThreshold: undefined,

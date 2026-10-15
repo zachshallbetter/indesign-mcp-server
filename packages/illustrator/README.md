@@ -56,13 +56,15 @@ Settings > Privacy & Security > Automation).
 | Layers | `list_layers`, `create_layer`, `set_layer_properties`, `set_active_layer`, `delete_layer`, `move_items_to_layer` |
 | Shapes and paths | `create_rectangle`, `create_ellipse`, `create_polygon`, `create_star`, `create_line`, `create_path` |
 | Text | `create_text`, `set_text_style`, `set_text_contents`, `convert_text_to_outlines`, `list_fonts` |
-| Appearance and colour | `set_fill`, `set_stroke`, `set_opacity`, `get_appearance`, `list_swatches`, `create_swatch`, `create_gradient` |
-| Selecting and arranging | `list_items`, `get_selection`, `select_items`, `deselect_all`, `delete_items`, `duplicate_items`, `move_items`, `scale_items`, `rotate_items`, `reflect_items`, `align_items`, `arrange_items`, `group_items`, `ungroup_items` |
+| Appearance | `set_fill`, `set_stroke` (both with a tint for spot and global swatches), `set_opacity`, `get_appearance`, `create_gradient` |
+| Colour | `list_swatches`, `create_swatch` (process, global, spot, spot from Lab values), `create_swatch_group`, `delete_swatches`, `add_used_colors`, `edit_colors` (convert to CMYK, RGB or grayscale, invert, blend) |
+| Selecting and arranging | `list_items`, `get_selection`, `select_items`, `select_same`, `select_all`, `deselect_all`, `delete_items`, `duplicate_items`, `move_items`, `scale_items`, `rotate_items`, `reflect_items`, `align_items`, `arrange_items`, `group_items`, `ungroup_items` |
 | Combining | `make_clipping_mask`, `make_compound_path`, `pathfinder` |
 | Effects | `apply_effect` (drop shadow, offset path, round corners, roughen, transform, Gaussian blur) |
 | Blends | `make_blend`, `set_blend_options` (steps, orientation), `release_blend`, `expand_blend`, `reverse_blend` |
 | Preferences and tools | `get_preferences`, `set_preferences`, `select_tool` |
 | Placing and export | `place_image`, `export_png`, `export_jpeg`, `export_svg` (Save As SVG), `export_web_svg` (Export As SVG: styling, IDs, minify, responsive), `export_for_screens`, `export_pdf` (preset plus PDF/X, bleed, marks, colour conversion, output intent, Acrobat layers) |
+| Prepress and printing | `set_overprint`, `create_trim_marks`, `list_print_settings`, `print_document` (to a printer or a PostScript file; preset plus each Print dialog page) |
 | Utility | `illustrator_status`, `execute_menu_command`, `find_menu_commands`, `execute_illustrator_code`, `help` |
 
 `help({ tool })` describes any tool's parameters.
