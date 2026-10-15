@@ -77,7 +77,7 @@ __result__ = __queue();`, { undo: 'Queue render' }));
             properties: { mediaEncoder: { type: 'boolean', description: 'Queue in Adobe Media Encoder instead. Default false', default: false }, startEncoding: { type: 'boolean', description: 'Media Encoder: start encoding at once. Default true', default: true } },
         },
         hints: { openWorld: false },
-        features: ['aftereffects.render_export.render', 'aftereffects.render_export.queue_in_ame'],
+        features: ['aftereffects.render_export.render', 'aftereffects.render_export.queue_in_ame', 'aftereffects.color.export_color_profile_to_ame'],
         handler: (a) => run('Render', script(`${QUEUE}
 var rq = proj.renderQueue;
 if (rq.numItems === 0) throw new Error("The Render Queue is empty: queue_render first");

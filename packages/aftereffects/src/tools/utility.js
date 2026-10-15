@@ -36,7 +36,7 @@ export const tools = [
         },
         auditArgs: { name: 'Select All', id: undefined },
         hints: { destructive: true },
-        features: ['aftereffects.automation.execute_menu_command'],
+        features: ['aftereffects.automation.execute_menu_command', 'aftereffects.effects.effects_and_presets_panel'],
         handler: (a) => {
             if ((a.name === undefined) === (a.id === undefined)) throw new Error('Give name or id');
             return run('Menu command', script(`
