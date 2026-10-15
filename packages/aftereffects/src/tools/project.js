@@ -178,10 +178,10 @@ __result__ = { saved: proj.file.fsName };`));
     },
     {
         name: 'open_project',
-        description: 'Open an .aep project, or start a new empty one. Unsaved changes in the current project are discarded, so save first',
-        inputSchema: { type: 'object', properties: { filePath: { type: 'string', description: 'Absolute .aep path. Omit for a new project' } } },
+        description: 'Open an .aep project (or a .mogrt Motion Graphics template as a project), or start a new empty one. Unsaved changes in the current project are discarded, so save first',
+        inputSchema: { type: 'object', properties: { filePath: { type: 'string', description: 'Absolute .aep (or .mogrt) path. Omit for a new project' } } },
         hints: { destructive: true },
-        features: ['aftereffects.projects.open_project', 'aftereffects.projects.new_project', 'aftereffects.projects.aep_format'],
+        features: ['aftereffects.projects.open_project', 'aftereffects.projects.new_project', 'aftereffects.projects.aep_format', 'aftereffects.essential_graphics.open_mogrt_as_project'],
         handler: (a) => {
             if (!a.filePath) return run('New project', script('var p = app.newProject();\n__result__ = { file: null, items: app.project.numItems };'));
             const p = paths.validate(a.filePath);

@@ -59,7 +59,8 @@ Network, which file operations need.
 | Text | `set_text` (Source Text and Character and Paragraph formatting) |
 | Masks | `add_mask` (rectangle, ellipse or path, with mode, feather, opacity, expansion) |
 | 3D | `set_camera_options` (zoom, F-Stop, depth of field, iris, highlights, Point of Interest), `set_light_options` (type, colour, intensity, cone, falloff, shadows, environment source), `set_material_options` (shadows, lights, reflections, transparency; environment layer), `set_geometry_options` (bevel, extrusion, curvature), `set_comp_3d_settings` (3D renderer, Draft 3D), `set_3d_view` (View > Switch 3D View, Reset, Look at, Create Camera from 3D View), `run_camera_command` (focus links, orbit null, stereo rig, cameras and lights from 3D models), `set_camera_tool` |
-| Render | `list_render_templates`, `queue_render`, `render_queue` (in After Effects or Adobe Media Encoder), `manage_render_queue` |
+| Render | `list_render_templates`, `queue_render` (a span, one frame, or a pre-render), `get_render_item`, `set_render_settings` (template and every Render Settings option, log, notification), `set_output_module` (template or format, file and file name template, channels, depth, resize, crop, audio, post-render action; add or remove modules), `render_queue` (in After Effects or Adobe Media Encoder), `manage_render_queue` (remove, duplicate, turn on and off), `control_render_queue` (pause, continue, stop, panel, progress), `configure_render_engine` (Multi-Frame Rendering, Watch Folder) |
+| Essential Graphics | `set_essential_graphics` (primary composition, template and control names), `add_essential_graphics_controls` (properties, dropdown menus, media replacement), `add_protected_region` (Responsive Design - Time), `export_motion_graphics_template` (.mogrt) |
 | Utility | `aftereffects_status`, `run_menu_command`, `execute_aftereffects_code`, `help` |
 
 `help({ tool })` describes any tool's parameters.
