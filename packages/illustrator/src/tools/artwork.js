@@ -62,7 +62,17 @@ export const tools = [
             },
             required: ['x', 'y', 'width', 'height'],
         },
-        features: ['illustrator.shapes.rectangle_tool', 'illustrator.shapes.rounded_rectangle_tool'],
+        features: [
+            'illustrator.shapes.rectangle_tool',
+            'illustrator.shapes.rounded_rectangle_tool',
+            'illustrator.shapes.rectangle_option.width_rectangle',
+            'illustrator.shapes.rectangle_option.height_rectangle',
+            'illustrator.shapes.rounded_rect_option.corner_radius_rounded_rectangle',
+            'illustrator.appearance.fill',
+            'illustrator.appearance.stroke',
+            'illustrator.appearance.stroke_option.weight',
+            'illustrator.appearance.opacity',
+        ],
         handler: (a) => run('Create rectangle', script(`${placement(a)}
 var p = ${xy(a)};
 var w = __len(doc, ${num(a.width, { min: 0, name: 'width' })}), h = __len(doc, ${num(a.height, { min: 0, name: 'height' })});
@@ -79,7 +89,15 @@ __result__ = __itemInfo(doc, it);`)),
             properties: { ...PLACEMENT_PROPS, x: { type: 'number' }, y: { type: 'number' }, width: { type: 'number', minimum: 0 }, height: { type: 'number', minimum: 0 }, ...STYLE_PROPS },
             required: ['x', 'y', 'width', 'height'],
         },
-        features: ['illustrator.shapes.ellipse_tool'],
+        features: [
+            'illustrator.shapes.ellipse_tool',
+            'illustrator.shapes.ellipse_option.width_ellipse',
+            'illustrator.shapes.ellipse_option.height_ellipse',
+            'illustrator.appearance.fill',
+            'illustrator.appearance.stroke',
+            'illustrator.appearance.stroke_option.weight',
+            'illustrator.appearance.opacity',
+        ],
         handler: (a) => run('Create ellipse', script(`${placement(a)}
 var p = ${xy(a)};
 var it = layer.pathItems.ellipse(p[1], p[0], __len(doc, ${num(a.width, { min: 0, name: 'width' })}), __len(doc, ${num(a.height, { min: 0, name: 'height' })}));
@@ -100,7 +118,14 @@ __result__ = __itemInfo(doc, it);`)),
             },
             required: ['centerX', 'centerY', 'radius'],
         },
-        features: ['illustrator.shapes.polygon_tool'],
+        features: [
+            'illustrator.shapes.polygon_tool',
+            'illustrator.shapes.polygon_option.sides',
+            'illustrator.appearance.fill',
+            'illustrator.appearance.stroke',
+            'illustrator.appearance.stroke_option.weight',
+            'illustrator.appearance.opacity',
+        ],
         handler: (a) => run('Create polygon', script(`${placement(a)}
 var c = ${xy(a, 'centerX', 'centerY')};
 var it = layer.pathItems.polygon(c[0], c[1], __len(doc, ${num(a.radius, { min: 0, name: 'radius' })}), ${index(a.sides ?? 6, { name: 'sides', max: 1000 })});
@@ -122,7 +147,16 @@ __result__ = __itemInfo(doc, it);`)),
             },
             required: ['centerX', 'centerY', 'radius'],
         },
-        features: ['illustrator.shapes.star_tool'],
+        features: [
+            'illustrator.shapes.star_tool',
+            'illustrator.shapes.star_option.radius_1',
+            'illustrator.shapes.star_option.radius_2',
+            'illustrator.shapes.star_option.points',
+            'illustrator.appearance.fill',
+            'illustrator.appearance.stroke',
+            'illustrator.appearance.stroke_option.weight',
+            'illustrator.appearance.opacity',
+        ],
         handler: (a) => run('Create star', script(`${placement(a)}
 var c = ${xy(a, 'centerX', 'centerY')};
 var it = layer.pathItems.star(c[0], c[1], __len(doc, ${num(a.radius, { min: 0, name: 'radius' })}), __len(doc, ${num(a.innerRadius ?? a.radius / 2, { min: 0, name: 'innerRadius' })}), ${index(a.points ?? 5, { name: 'points', max: 1000 })});
@@ -137,7 +171,13 @@ __result__ = __itemInfo(doc, it);`)),
             properties: { ...PLACEMENT_PROPS, x1: { type: 'number' }, y1: { type: 'number' }, x2: { type: 'number' }, y2: { type: 'number' }, ...STYLE_PROPS },
             required: ['x1', 'y1', 'x2', 'y2'],
         },
-        features: ['illustrator.shapes.line_segment_tool'],
+        features: [
+            'illustrator.shapes.line_segment_tool',
+            'illustrator.appearance.fill',
+            'illustrator.appearance.stroke',
+            'illustrator.appearance.stroke_option.weight',
+            'illustrator.appearance.opacity',
+        ],
         handler: (a) => run('Create line', script(`${placement(a)}
 var it = layer.pathItems.add();
 it.setEntirePath([${xy(a, 'x1', 'y1')}, ${xy(a, 'x2', 'y2')}]);
@@ -166,7 +206,17 @@ __result__ = __itemInfo(doc, it);`)),
             },
             required: ['points'],
         },
-        features: ['illustrator.geometry.pen_tool', 'illustrator.geometry.path_object'],
+        features: [
+            'illustrator.geometry.pen_tool',
+            'illustrator.geometry.path_object',
+            'illustrator.geometry.anchor_point_object',
+            'illustrator.geometry.path_closed',
+            'illustrator.geometry.point_type',
+            'illustrator.appearance.fill',
+            'illustrator.appearance.stroke',
+            'illustrator.appearance.stroke_option.weight',
+            'illustrator.appearance.opacity',
+        ],
         handler: (a) => {
             if (!Array.isArray(a.points) || a.points.length < 2) throw new Error("'points' needs at least two points");
             const pts = a.points.map((p, i) => {
@@ -215,7 +265,20 @@ __result__ = __itemInfo(doc, it);`));
             },
             required: ['contents', 'x', 'y'],
         },
-        features: ['illustrator.typography.type_tool', 'illustrator.typography.area_type_tool', 'illustrator.typography.point_type'],
+        features: [
+            'illustrator.typography.type_tool',
+            'illustrator.typography.area_type_tool',
+            'illustrator.typography.text_frame_object',
+            'illustrator.typography.point_type',
+            'illustrator.typography.area_type',
+            'illustrator.typography.character.font_family_and_style',
+            'illustrator.typography.character.font_size',
+            'illustrator.typography.character.leading',
+            'illustrator.typography.character.auto_leading',
+            'illustrator.typography.character.tracking',
+            'illustrator.typography.character.character_fill_color',
+            'illustrator.typography.paragraph.alignment_and_justification',
+        ],
         handler: (a) => {
             const area = (a.kind ?? 'point') === 'area';
             if (area && (a.width === undefined || a.height === undefined)) throw new Error('Area text needs width and height');
@@ -249,7 +312,26 @@ __result__ = info;`));
             },
             required: ['target'],
         },
-        features: ['illustrator.typography.character_panel', 'illustrator.typography.paragraph_panel'],
+        features: [
+            'illustrator.typography.character_panel',
+            'illustrator.typography.paragraph_panel',
+            'illustrator.typography.text_range_object',
+            'illustrator.typography.character.font_family_and_style',
+            'illustrator.typography.character.font_size',
+            'illustrator.typography.character.leading',
+            'illustrator.typography.character.auto_leading',
+            'illustrator.typography.character.tracking',
+            'illustrator.typography.character.character_fill_color',
+            'illustrator.typography.paragraph.alignment_and_justification',
+            'illustrator.typography.align_text_workflow',
+            'illustrator.typography.align_text_left',
+            'illustrator.typography.align_text_center',
+            'illustrator.typography.align_text_right',
+            'illustrator.typography.justify_left',
+            'illustrator.typography.justify_center',
+            'illustrator.typography.justify_right',
+            'illustrator.typography.justify_all',
+        ],
         handler: (a) => run('Set text style', script(`
 var items = __targets(doc, ${targetSpec(a.target)}), n = 0;
 for (var i = 0; i < items.length; i++) {
@@ -290,7 +372,7 @@ __result__ = { outlined: out };`)),
             type: 'object',
             properties: { query: { type: 'string', description: 'Case-insensitive text to match' }, limit: { type: 'integer', minimum: 1, maximum: 1000, default: 50 } },
         },
-        features: ['illustrator.typography.character.font_family_and_style'],
+        features: ['illustrator.typography.fonts_object'],
         handler: (a) => run('List fonts', script(`
 var q = ${str(String(a.query ?? '').toLowerCase())}, max = ${index(a.limit ?? 50, { name: 'limit', max: 1000 })}, out = [];
 for (var i = 0; i < app.textFonts.length && out.length < max; i++) {

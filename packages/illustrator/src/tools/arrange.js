@@ -32,7 +32,7 @@ export const tools = [
                 limit: { type: 'integer', minimum: 1, maximum: 2000, default: 200 },
             },
         },
-        features: ['illustrator.layers.layers_panel', 'illustrator.selection.selection_state'],
+        features: ['illustrator.layers.layers_panel', 'illustrator.transformations.position_size'],
         handler: (a) => run('List items', script(`
 var src = ${a.layer ? `__layer(doc, ${str(a.layer)}).pageItems` : 'doc.pageItems'};
 var max = ${index(a.limit ?? 200, { name: 'limit', max: 2000 })}, out = [], total = 0;
@@ -51,7 +51,7 @@ __result__ = { total: total, items: out, truncated: total > out.length };`)),
         name: 'get_selection',
         description: 'Describe the current selection',
         inputSchema: { type: 'object', properties: {} },
-        features: ['illustrator.selection.selection_tool'],
+        features: ['illustrator.selection.selection_state'],
         handler: () => run('Get selection', script(`
 var sel = doc.selection, out = [];
 if (sel && sel.length) for (var i = 0; i < sel.length; i++) { try { out.push(__itemInfo(doc, sel[i])); } catch (e) { out.push({ type: sel[i].typename }); } }
@@ -61,7 +61,7 @@ __result__ = { count: out.length, items: out };`)),
         name: 'select_items',
         description: 'Select items (replacing the current selection). Menu commands act on the selection',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA }, required: ['target'] },
-        features: ['illustrator.selection.selection_tool'],
+        features: ['illustrator.selection.selection_tool', 'illustrator.selection.selection_state'],
         handler: (a) => run('Select items', script(`${SELECT}
 var items = __targets(doc, ${targetSpec(a.target)});
 __select(doc, items);
@@ -80,7 +80,7 @@ __result__ = { selected: 0 };`)),
         name: 'delete_items',
         description: 'Delete items from the document (Illustrator\'s Edit > Undo can restore them)',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA }, required: ['target'] },
-        features: ['illustrator.documents.clear'],
+        features: ['illustrator.documents.clear', 'illustrator.documents.delete_objects'],
         handler: (a) => run('Delete items', script(`
 var items = __targets(doc, ${targetSpec(a.target)}), n = items.length;
 for (var i = items.length - 1; i >= 0; i--) items[i].remove();
@@ -98,7 +98,7 @@ __result__ = { deleted: n };`)),
             },
             required: ['target'],
         },
-        features: ['illustrator.transformations.transform_again', 'illustrator.documents.duplicate_objects'],
+        features: ['illustrator.documents.duplicate_objects'],
         handler: (a) => run('Duplicate items', script(`
 var items = __targets(doc, ${targetSpec(a.target)}), out = [];
 var dx = __len(doc, ${num(a.dx ?? 0, { name: 'dx' })}), dy = __len(doc, ${num(a.dy ?? 0, { name: 'dy' })});
@@ -126,7 +126,11 @@ __result__ = { created: out.length, ids: out };`)),
             },
             required: ['target'],
         },
-        features: ['illustrator.transformations.move'],
+        features: [
+            'illustrator.transformations.move',
+            'illustrator.transformations.move_objects',
+            'illustrator.transformations.position_size',
+        ],
         handler: (a) => {
             const absolute = a.x !== undefined || a.y !== undefined;
             if (!absolute && a.dx === undefined && a.dy === undefined) throw new Error('Give dx/dy, or x/y');
@@ -159,7 +163,13 @@ __result__ = out;`));
             },
             required: ['target'],
         },
-        features: ['illustrator.transformations.scale'],
+        features: [
+            'illustrator.transformations.scale',
+            'illustrator.transformations.scale_multiple',
+            'illustrator.transformations.transform_panel_option.scale_strokes_and_effects',
+            'illustrator.transformations.transform_dialog_option.transform_objects',
+            'illustrator.transformations.transform_dialog_option.transform_patterns',
+        ],
         handler: (a) => {
             const sx = a.scaleX ?? a.scale, sy = a.scaleY ?? a.scale;
             if (sx === undefined || sy === undefined) throw new Error('Give scale, or both scaleX and scaleY');
@@ -173,7 +183,11 @@ __result__ = { scaled: items.length };`));
         name: 'rotate_items',
         description: 'Rotate items by an angle in degrees (counter-clockwise, as in Illustrator)',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, angle: { type: 'number' }, origin: ORIGIN_SCHEMA }, required: ['target', 'angle'] },
-        features: ['illustrator.transformations.rotate'],
+        features: [
+            'illustrator.transformations.rotate',
+            'illustrator.transformations.transform_dialog_option.transform_objects',
+            'illustrator.transformations.transform_dialog_option.transform_patterns',
+        ],
         handler: (a) => run('Rotate items', script(`
 var items = __targets(doc, ${targetSpec(a.target)});
 for (var i = 0; i < items.length; i++) items[i].rotate(${num(a.angle, { min: -3600, max: 3600, name: 'angle' })}, true, true, true, true, Transformation.${ORIGINS[enumOf(a.origin ?? 'center', Object.keys(ORIGINS), { name: 'origin' })]});
@@ -183,7 +197,13 @@ __result__ = { rotated: items.length };`)),
         name: 'reflect_items',
         description: 'Flip items horizontally or vertically around their centre',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, axis: { type: 'string', enum: ['horizontal', 'vertical'], description: 'horizontal flips left-right' } }, required: ['target', 'axis'] },
-        features: ['illustrator.transformations.reflect'],
+        features: [
+            'illustrator.transformations.reflect',
+            'illustrator.transformations.transform_panel_option.flip_horizontal',
+            'illustrator.transformations.transform_panel_option.flip_vertical',
+            'illustrator.transformations.transform_dialog_option.transform_objects',
+            'illustrator.transformations.transform_dialog_option.transform_patterns',
+        ],
         handler: (a) => {
             const [x, y] = enumOf(a.axis, ['horizontal', 'vertical'], { name: 'axis' }) === 'horizontal' ? [-100, 100] : [100, -100];
             return run('Reflect items', script(`
@@ -205,7 +225,17 @@ __result__ = { reflected: items.length };`));
             },
             required: ['target', 'edge'],
         },
-        features: ['illustrator.transformations.align_panel'],
+        features: [
+            'illustrator.transformations.align_panel',
+            'illustrator.transformations.align_left',
+            'illustrator.transformations.align_hcenter',
+            'illustrator.transformations.align_right',
+            'illustrator.transformations.align_top',
+            'illustrator.transformations.align_vcenter',
+            'illustrator.transformations.align_bottom',
+            'illustrator.transformations.align_to_selection',
+            'illustrator.transformations.align_to_artboard',
+        ],
         handler: (a) => {
             const edge = enumOf(a.edge, ['left', 'center', 'right', 'top', 'middle', 'bottom'], { name: 'edge' });
             return run('Align items', script(`
@@ -227,7 +257,12 @@ __result__ = { aligned: items.length, edge: ${str(edge)} };`));
         name: 'arrange_items',
         description: 'Change stacking order: bring to front, bring forward, send backward, send to back',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, order: { type: 'string', enum: Object.keys(ORDER) } }, required: ['target', 'order'] },
-        features: ['illustrator.layers.bring_to_front', 'illustrator.layers.send_to_back'],
+        features: [
+            'illustrator.layers.bring_to_front',
+            'illustrator.layers.bring_forward',
+            'illustrator.layers.send_backward',
+            'illustrator.layers.send_to_back',
+        ],
         handler: (a) => run('Arrange items', script(`
 var items = __targets(doc, ${targetSpec(a.target)});
 for (var i = 0; i < items.length; i++) items[i].zOrder(ZOrderMethod.${ORDER[enumOf(a.order, Object.keys(ORDER), { name: 'order' })]});
@@ -237,7 +272,7 @@ __result__ = { arranged: items.length };`)),
         name: 'group_items',
         description: 'Group items. The group is created where the frontmost item is',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, name: { type: 'string' } }, required: ['target'] },
-        features: ['illustrator.selection.group'],
+        features: ['illustrator.selection.group', 'illustrator.selection.group_object'],
         handler: (a) => run('Group items', script(`
 var items = __targets(doc, ${targetSpec(a.target)});
 var g = items[0].parent.groupItems.add();
@@ -265,7 +300,12 @@ __result__ = { ungrouped: freed.length, ids: freed };`)),
         name: 'make_clipping_mask',
         description: 'Clip items with a path: the clipping path shows only the artwork inside it. clipPath must be a path id; it is moved above the other items',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, clipPathId: { type: 'string', description: 'Id of the path to clip with' } }, required: ['target', 'clipPathId'] },
-        features: ['illustrator.clipping.make'],
+        features: [
+            'illustrator.clipping.make',
+            'illustrator.clipping.clip_group',
+            'illustrator.clipping.clipping_path',
+            'illustrator.clipping.hide_with_mask',
+        ],
         handler: (a) => run('Make clipping mask', script(`
 var items = __targets(doc, ${targetSpec(a.target)}), clip = doc.getPageItemFromUuid(${str(a.clipPathId)});
 if (!clip || (clip.typename !== "PathItem" && clip.typename !== "CompoundPathItem")) throw new Error("clipPathId must be a path or compound path");
@@ -280,7 +320,7 @@ __result__ = __itemInfo(doc, g);`)),
         name: 'make_compound_path',
         description: 'Combine paths into one compound path (Object > Compound Path > Make): overlapping areas become holes',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA }, required: ['target'] },
-        features: ['illustrator.geometry.compound_make'],
+        features: ['illustrator.geometry.compound_make', 'illustrator.geometry.compound_path_object'],
         menuCommands: ['compoundPath'],
         handler: (a) => run('Make compound path', script(`${SELECT}
 var items = __targets(doc, ${targetSpec(a.target)});

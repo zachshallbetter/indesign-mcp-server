@@ -42,7 +42,15 @@ export const tools = [
         name: 'make_blend',
         description: 'Blend two or more objects (Object > Blend > Make), optionally setting the number of steps and the orientation. The objects blend in stacking order',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, ...OPTION_SCHEMA }, required: ['target'] },
-        features: ['illustrator.blends.blend_make', 'illustrator.blends.blend_object', 'illustrator.blends.blend_option.specified_steps', 'illustrator.blends.blend_option.orientation'],
+        features: [
+            'illustrator.blends.blend_make',
+            'illustrator.blends.blend_object',
+            'illustrator.blends.blend_option.spacing',
+            'illustrator.blends.blend_option.specified_steps',
+            'illustrator.blends.blend_option.orientation',
+            'illustrator.blends.blend_option.align_to_page',
+            'illustrator.blends.blend_option.align_to_path',
+        ],
         menuCommands: ['Path Blend Make'],
         handler: (a) => run('Make blend', script(`
 var items = __targets(doc, ${targetSpec(a.target)});
@@ -58,7 +66,14 @@ __result__ = { blend: out[0], steps: ${a.steps === undefined ? 'null' : Number(a
         name: 'set_blend_options',
         description: 'Set the number of steps and the orientation of existing blends (Object > Blend > Blend Options)',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, ...OPTION_SCHEMA }, required: ['target', 'steps'] },
-        features: ['illustrator.blends.blend_options', 'illustrator.blends.blend_option.spacing', 'illustrator.blends.blend_option.specified_steps', 'illustrator.blends.blend_option.orientation', 'illustrator.blends.blend_option.align_to_page', 'illustrator.blends.blend_option.align_to_path'],
+        features: [
+            'illustrator.blends.blend_options',
+            'illustrator.blends.blend_option.spacing',
+            'illustrator.blends.blend_option.specified_steps',
+            'illustrator.blends.blend_option.orientation',
+            'illustrator.blends.blend_option.align_to_page',
+            'illustrator.blends.blend_option.align_to_path',
+        ],
         handler: (a) => run('Set blend options', script(`
 var items = __targets(doc, ${targetSpec(a.target)});
 ${isBlendCheck('Blend options')}

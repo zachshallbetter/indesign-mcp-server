@@ -37,7 +37,21 @@ export const tools = [
             },
             required: ['filePath'],
         },
-        features: ['illustrator.images.place', 'illustrator.images.embed'],
+        features: [
+            'illustrator.images.place',
+            'illustrator.images.placed_item',
+            'illustrator.images.place_option.link',
+            'illustrator.images.embed',
+            'illustrator.images.links_menu.embed_image',
+            'illustrator.images.bitmap_import',
+            'illustrator.import_export.place_png',
+            'illustrator.import_export.place_jpeg',
+            'illustrator.import_export.place_tiff',
+            'illustrator.import_export.place_psd',
+            'illustrator.import_export.place_pdf',
+            'illustrator.import_export.place_svg',
+            'illustrator.import_export.place_ai',
+        ],
         handler: (a) => {
             const p = paths.validate(a.filePath);
             return run('Place image', script(`
@@ -69,7 +83,15 @@ ${a.embed ? 'var info = __itemInfo(doc, it); it.embed(); info.embedded = true; _
             },
             required: ['outputFolder'],
         },
-        features: ['illustrator.import_export.export_png'],
+        features: [
+            'illustrator.import_export.export_png',
+            'illustrator.artboards.artboard_export',
+            'illustrator.import_export.png24_option.horizontal_scale_png_24',
+            'illustrator.import_export.png24_option.vertical_scale_png_24',
+            'illustrator.import_export.png24_option.transparency_png_24',
+            'illustrator.import_export.png24_option.anti_aliasing_png_24',
+            'illustrator.import_export.png24_option.clip_to_artboard_png_24',
+        ],
         handler: (a) => {
             const folder = paths.validate(a.outputFolder);
             return run('Export PNG', script(`${RANGE_FN}
@@ -109,7 +131,14 @@ __result__ = { files: files };`));
             },
             required: ['outputFile'],
         },
-        features: ['illustrator.import_export.export_svg'],
+        features: [
+            'illustrator.import_export.save_svg',
+            'illustrator.artboards.artboard_export',
+            'illustrator.import_export.svg_option.use_artboards_svg',
+            'illustrator.import_export.svg_option.type_fonts',
+            'illustrator.import_export.svg_option.image_location',
+            'illustrator.import_export.svg_option.decimal_places',
+        ],
         handler: (a) => {
             const out = paths.validate(a.outputFile);
             const range = artboardRange(a.artboards);
@@ -138,7 +167,19 @@ __result__ = { exported: ${str(out)}, artboards: ${str(range || 'all')} };`));
             },
             required: ['outputFolder'],
         },
-        features: ['illustrator.asset_export.export_for_screens'],
+        features: [
+            'illustrator.asset_export.export_for_screens',
+            'illustrator.artboards.artboard_export',
+            'illustrator.asset_export.efs_option.artboards',
+            'illustrator.asset_export.efs_option.format',
+            'illustrator.asset_export.efs_option.scale',
+            'illustrator.asset_export.efs_option.prefix',
+            'illustrator.asset_export.efs_option.export_to',
+            'illustrator.import_export.screens_png',
+            'illustrator.import_export.screens_jpg',
+            'illustrator.import_export.screens_svg',
+            'illustrator.import_export.screens_pdf',
+        ],
         handler: (a) => {
             const folder = paths.validate(a.outputFolder);
             const formats = (a.formats ?? ['png']).map((f) => SCREEN_FORMATS[enumOf(f, Object.keys(SCREEN_FORMATS), { name: 'formats' })]);
@@ -182,7 +223,15 @@ __result__ = { folder: folder.fsName, exports: runs, formats: ${json(a.formats ?
             },
             required: ['outputFile'],
         },
-        features: ['illustrator.import_export.save_pdf', 'illustrator.import_export.pdf_presets'],
+        features: [
+            'illustrator.import_export.save_pdf',
+            'illustrator.import_export.export_pdf',
+            'illustrator.import_export.pdf_presets',
+            'illustrator.import_export.pdf_option.adobe_pdf_preset',
+            'illustrator.import_export.pdf_option.preserve_illustrator_editing_capabilities',
+            'illustrator.import_export.pdf_option.range_pdf',
+            'illustrator.import_export.multipage_pdf',
+        ],
         handler: (a) => {
             const out = paths.validate(a.outputFile);
             if (path.extname(out).toLowerCase() !== '.pdf') throw new Error('outputFile must end in .pdf');
