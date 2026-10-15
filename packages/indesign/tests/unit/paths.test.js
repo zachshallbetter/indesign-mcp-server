@@ -10,7 +10,7 @@ import { allToolDefinitions } from '../../src/types/index.js';
 
 const OUTSIDE = process.platform === 'win32' ? 'C:\\Windows\\System32\\drivers\\etc\\hosts' : '/etc/passwd';
 const PATH_PARAM = /path|file|folder|dataSource|outputDir/i;
-const NOT_A_PATH = /fileType|profile/i;
+const NOT_A_PATH = /fileType|profile|xpath/i;
 
 let captured = [];
 ScriptExecutor.executeInDesignScript = async (script) => {
