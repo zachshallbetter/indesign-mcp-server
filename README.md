@@ -14,12 +14,14 @@ client configuration.
 | [adobe-mcp-illustrator](packages/illustrator) | Adobe Illustrator: documents, artboards, layers, shapes and paths, typography, colour and swatches, effects and 3D, symbols, patterns, Image Trace, images and links, variables and data sets, actions, export, prepress and printing (308 tools) | `adobe-mcp-illustrator` |
 | [adobe-mcp-photoshop](packages/photoshop) | Adobe Photoshop: documents, image and canvas size, layers, selections, adjustments and filters, type, export and history (55 tools) | `adobe-mcp-photoshop` |
 | [adobe-mcp-aftereffects](packages/aftereffects) | Adobe After Effects: projects, compositions, layers, keyframes and expressions, effects, text, masks and rendering (44 tools) | `adobe-mcp-aftereffects` |
-| [adobe-mcp-suite](packages/suite) | InDesign, Illustrator, Photoshop and After Effects in one server, plus cross-application tools: Illustrator artwork into InDesign layouts, swatches with exact values | `adobe-mcp-suite` |
+| [adobe-mcp-premiere](packages/premiere) | Adobe Premiere Pro: projects and bins, sequences, timeline edits, markers, effects, keyframes and transitions, transcripts, metadata and export, through a UXP plugin (52 tools; not yet tested against Premiere Pro) | `adobe-mcp-premiere` |
+| [adobe-mcp-suite](packages/suite) | InDesign, Illustrator, Photoshop, After Effects and Premiere Pro in one server, plus cross-application tools: Illustrator artwork into InDesign layouts, swatches with exact values | `adobe-mcp-suite` |
 | [adobe-mcp-core](packages/core) | The shared foundation: script escaping, the script runner, the server shell and the static script audit | `adobe-mcp-core` |
 
 Each server runs on the machine where the Adobe application is installed and
 talks to it through ExtendScript, the scripting interface the applications ship
-with. macOS and Windows are supported.
+with. Premiere Pro has no outside scripting route, so its server talks to a
+UXP plugin inside Premiere Pro instead. macOS and Windows are supported.
 
 ## Install one application
 
@@ -63,6 +65,9 @@ packages/
   core/          adobe-mcp-core           shared by every server
   indesign/      adobe-mcp-indesign
   illustrator/   adobe-mcp-illustrator
+  photoshop/     adobe-mcp-photoshop
+  aftereffects/  adobe-mcp-aftereffects
+  premiere/      adobe-mcp-premiere       with its UXP plugin in uxp/plugin
   suite/         adobe-mcp-suite          every application in one server
 ```
 

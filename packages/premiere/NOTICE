@@ -1,0 +1,11 @@
+adobe-mcp-premiere
+Copyright (c) 2026 Zach Shallbetter. MIT licence: see LICENSE.
+
+The plugin connection design (token handshake, close codes 4001/4002/4009, one
+connected plugin, a panel that reconnects and remembers its port and token)
+follows the InDesign UXP bridge in packages/indesign/uxp, which was adapted
+from https://github.com/theloniuser/indesign-uxp-server (author: theloniuser).
+
+tests/fixtures/premiere-uxp-api.json lists class, member and constant names
+from Adobe's UXP for Premiere reference (https://github.com/AdobeDocs/uxp-premiere-pro,
+Apache-2.0). Names only; no documentation text is included.

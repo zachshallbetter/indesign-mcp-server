@@ -52,7 +52,8 @@
     "adobe-mcp-indesign": "2.4.0",
     "adobe-mcp-illustrator": "0.9.0",
     "adobe-mcp-photoshop": "0.1.0",
-    "adobe-mcp-aftereffects": "0.1.0"
+    "adobe-mcp-aftereffects": "0.1.0",
+    "adobe-mcp-premiere": "0.1.0"
   },
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.32.1",
