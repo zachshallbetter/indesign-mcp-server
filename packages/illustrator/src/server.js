@@ -20,6 +20,7 @@ import { tools as pathTools } from './tools/paths.js';
 import { tools as pathEditTools } from './tools/path-edit.js';
 import { tools as effectTools } from './tools/effects.js';
 import { tools as blendTools } from './tools/blends.js';
+import { tools as miscTools } from './tools/misc.js';
 import { tools as brushTools } from './tools/brushes.js';
 import { tools as perspectiveTools } from './tools/perspective.js';
 import { tools as threeDTools } from './tools/three_d.js';
@@ -52,7 +53,7 @@ Conventions:
 
 Illustrator gives no result from menu commands: execute_menu_command reports the selection and document afterwards, and an unknown command name does nothing. A command that opens a dialog waits for the user; if a call times out, a dialog is probably open in Illustrator.
 
-A call that fails returns isError with a message: read it and fix the arguments rather than retrying unchanged. A result with "warnings" names arguments that were ignored. Annotations mark destructive tools (delete_*, close_document, set_text_contents, convert_text_to_outlines, execute_illustrator_code); confirm with the user before using them on unsaved work. print_document sends a job to a real printer unless outputFile is given: confirm the printer and options with the user first.
+A call that fails returns isError with a message: read it and fix the arguments rather than retrying unchanged. A result with "warnings" names arguments that were ignored. Annotations mark destructive tools (delete_*, close_document, set_text_contents, convert_text_to_outlines, flatten_transparency, execute_illustrator_code); confirm with the user before using them on unsaved work. print_document sends a job to a real printer unless outputFile is given: confirm the printer and options with the user first.
 
 help({ tool }) describes any tool's parameters.`;
 
@@ -86,6 +87,7 @@ const AREAS = [
     ['assets', assetTools],
     ['prepress', prepressTools],
     ['variables', variableTools],
+    ['misc', miscTools],
     ['actions', actionTools],
     ['utility', utilityTools],
 ];

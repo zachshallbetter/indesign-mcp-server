@@ -48,6 +48,9 @@ export const PREFERENCES = {
     englishFontNames: { key: 'text/useEnglishFontNames', type: 'Boolean', description: 'Show font names in English' },
 };
 
+/** Toolbar names whose tool id differs: the name Illustrator shows -> the id (without "Adobe" and "Tool"). */
+const TOOL_ALIASES = { mesh: 'mesh editing', 'print tiling': 'page', 'group selection': 'direct object select' };
+
 const SHAPE_MODES = ['unite', 'intersect', 'exclude', 'minus_front'];
 
 /** The SVG filters new documents carry (Effect > SVG Filters), each also a menu command of the same name. */
@@ -466,10 +469,22 @@ __result__ = { updated: ${json(entries.map(([n]) => n))} };`, { needsDocument: f
     },
     {
         name: 'select_tool',
-        description: 'Switch Illustrator to a tool, ready for the user to draw with it. Name it as Illustrator does, e.g. "Pen Tool", "Shape Builder Tool", "Width Tool"',
+        description: 'Switch Illustrator to a tool, ready for the user to draw with it. Name it as Illustrator does, e.g. "Pen Tool", "Shape Builder Tool", "Width Tool", "Column Graph Tool", "Mesh Tool", "Blend Tool"',
         inputSchema: { type: 'object', properties: { tool: { type: 'string', description: 'Tool name' } }, required: ['tool'] },
         features: [
             'illustrator.ui.toolbar',
+            'illustrator.graphs.column_graph_tool',
+            'illustrator.graphs.stacked_column_graph_tool',
+            'illustrator.graphs.bar_graph_tool',
+            'illustrator.graphs.stacked_bar_graph_tool',
+            'illustrator.graphs.line_graph_tool',
+            'illustrator.graphs.area_graph_tool',
+            'illustrator.graphs.scatter_graph_tool',
+            'illustrator.graphs.pie_graph_tool',
+            'illustrator.graphs.radar_graph_tool',
+            'illustrator.blends.blend_tool',
+            'illustrator.meshes.mesh_tool',
+            'illustrator.prepress.print_tiling_tool',
             'illustrator.brushes.paintbrush_tool',
             'illustrator.brushes.blob_brush_tool',
             'illustrator.perspective.grid_tool',
@@ -480,7 +495,8 @@ __result__ = { updated: ${json(entries.map(([n]) => n))} };`, { needsDocument: f
             'illustrator.appearance.live_paint_selection_tool',
         ],
         handler: (a) => {
-            const want = String(a.tool ?? '').toLowerCase().replace(/^adobe\s+/, '').replace(/\s+tool$/, '').trim();
+            const asked = String(a.tool ?? '').toLowerCase().replace(/^adobe\s+/, '').replace(/\s+tool$/, '').trim();
+            const want = TOOL_ALIASES[asked] ?? asked;
             const match = TOOLS.find((t) => t.toLowerCase().replace(/^adobe\s+/, '').replace(/\s+tool$/, '') === want);
             if (!match) {
                 const near = TOOLS.filter((t) => t.toLowerCase().includes(want)).slice(0, 8);

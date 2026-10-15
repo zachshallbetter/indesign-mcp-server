@@ -12,8 +12,10 @@
  *   'menu' 1835363957  spacing, enumerated: 5 = specified steps
  *   'step' 1937007984  number of steps, integer
  *   'rota' 1919906913  orientation, enumerated: 0 align to page, 1 align to path
- * Smooth Color and Specified Distance are other spacing values; theirs are not
- * established, so they are not offered.
+ * Smooth Color and Specified Distance are other spacing values. No published
+ * script or recorded action gives their 'menu' values or the key that carries
+ * the distance (checked: BlendSp, AI_PS_Library, public .aia files), so they
+ * are not offered.
  */
 import { index, enumOf } from 'adobe-mcp-core';
 
@@ -25,7 +27,7 @@ const SPACING_SPECIFIED_STEPS = 5;
 const KEY = { menu: 1835363957, step: 1937007984, rota: 1919906913 };
 
 /** A name as Actions store it: the UTF-8 bytes in hex, preceded by the byte count. */
-function nameLines(indent, field, text) {
+export function nameLines(indent, field, text) {
     const hex = Buffer.from(text, 'utf8').toString('hex');
     return [`${indent}/${field} [ ${hex.length / 2}`, `${indent}\t${hex}`, `${indent}]`];
 }
@@ -83,21 +85,22 @@ export function blendOptionsAction({ steps, orientation = 'page' }) {
 /**
  * ES3 statements that write the action to a temporary file, load it, play it
  * on the current selection, and always unload it and remove the file.
- * `actionLiteral` is the .aia text as a JSX string literal.
+ * `actionLiteral` is the .aia text as a JSX string literal; `set` and `name`
+ * are the action set and action it defines (fixed identifiers, not caller input).
  */
-export function playActionStatements(actionLiteral) {
+export function playActionStatements(actionLiteral, set = ACTION_SET, name = ACTION_NAME) {
     return `
-var __aia = new File(Folder.temp + "/${ACTION_SET}-" + new Date().getTime() + ".aia");
+var __aia = new File(Folder.temp + "/${set}-" + new Date().getTime() + ".aia");
 __aia.encoding = "UTF-8";
 if (!__aia.open("w")) throw new Error("Cannot write a temporary action file in " + Folder.temp.fsName);
 __aia.write(${actionLiteral});
 __aia.close();
-try { app.unloadAction(${JSON.stringify(ACTION_SET)}, ""); } catch (e) {}
+try { app.unloadAction(${JSON.stringify(set)}, ""); } catch (e) {}
 try {
   app.loadAction(__aia);
-  app.doScript(${JSON.stringify(ACTION_NAME)}, ${JSON.stringify(ACTION_SET)});
+  app.doScript(${JSON.stringify(name)}, ${JSON.stringify(set)});
 } finally {
-  try { app.unloadAction(${JSON.stringify(ACTION_SET)}, ""); } catch (e) {}
+  try { app.unloadAction(${JSON.stringify(set)}, ""); } catch (e) {}
   try { __aia.remove(); } catch (e) {}
 }`;
 }
