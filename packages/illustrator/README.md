@@ -64,6 +64,7 @@ Settings > Privacy & Security > Automation).
 | Blends | `make_blend`, `set_blend_options` (steps, orientation), `release_blend`, `expand_blend`, `reverse_blend` |
 | Preferences and tools | `get_preferences`, `set_preferences`, `select_tool` |
 | Placing and export | `place_image`, `export_png`, `export_jpeg`, `export_svg` (Save As SVG), `export_web_svg` (Export As SVG: styling, IDs, minify, responsive), `export_for_screens`, `export_pdf` (preset plus PDF/X, bleed, marks, colour conversion, output intent, Acrobat layers) |
+| Variables and data sets | `list_variables`, `create_variable`, `bind_variable`, `delete_variables`, `create_data_sets` (from records: text, image files, visibility), `show_data_set`, `delete_data_sets`, `export_data_sets` (each data set to PNG or JPEG), `import_variables`, `export_variables`, `set_variables_locked` |
 | Prepress and printing | `set_overprint`, `create_trim_marks`, `list_print_settings`, `print_document` (to a printer or a PostScript file; preset plus each Print dialog page) |
 | Utility | `illustrator_status`, `execute_menu_command`, `find_menu_commands`, `execute_illustrator_code`, `help` |
 
@@ -92,6 +93,9 @@ Settings > Privacy & Security > Automation).
 - **Blend options through a temporary Action.** The object model cannot set a
   blend's steps or orientation, so `make_blend` and `set_blend_options` write a
   one-step Action, play it on the blend and unload it again.
+- **Data sets from records.** Illustrator captures a data set from the artwork as
+  it is, so `create_data_sets` sets each record's values on the bound objects and
+  then captures it, the way published variable scripts do.
 - **No raw input in scripts.** Every value a caller passes is validated and
   written into the script as a literal.
 

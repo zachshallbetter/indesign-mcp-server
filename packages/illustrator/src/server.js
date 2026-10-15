@@ -11,6 +11,7 @@ import { tools as arrangeTools } from './tools/arrange.js';
 import { tools as outputTools } from './tools/output.js';
 import { tools as colorTools } from './tools/color.js';
 import { tools as prepressTools } from './tools/prepress.js';
+import { tools as variableTools } from './tools/variables.js';
 import { tools as effectTools } from './tools/effects.js';
 import { tools as blendTools } from './tools/blends.js';
 import { tools as utilityTools, helpTool } from './tools/utility.js';
@@ -45,6 +46,7 @@ const AREAS = [
     ['blends', blendTools],
     ['output', outputTools],
     ['prepress', prepressTools],
+    ['variables', variableTools],
     ['utility', utilityTools],
 ];
 
@@ -56,17 +58,17 @@ toolTable.push(help);
 const annotations = createAnnotations({
     readOnly: [
         'help', 'illustrator_status', 'find_menu_commands', 'get_document_info', 'list_documents', 'list_artboards',
-        'list_layers', 'list_items', 'get_selection', 'get_appearance', 'list_swatches', 'list_fonts', 'get_preferences', 'list_print_settings',
+        'list_layers', 'list_items', 'get_selection', 'get_appearance', 'list_swatches', 'list_fonts', 'get_preferences', 'list_print_settings', 'list_variables',
     ],
     destructive: [
         'close_document', 'delete_artboard', 'delete_layer', 'delete_items', 'set_text_contents',
         'convert_text_to_outlines', 'ungroup_items', 'pathfinder', 'make_compound_path', 'execute_illustrator_code',
-        'execute_menu_command', 'save_document', 'set_preferences', 'release_blend', 'expand_blend', 'delete_swatches', 'edit_colors',
+        'execute_menu_command', 'save_document', 'set_preferences', 'release_blend', 'expand_blend', 'delete_swatches', 'edit_colors', 'delete_variables', 'delete_data_sets', 'import_variables',
     ],
     idempotent: [
         'save_document', 'set_artboard', 'set_active_artboard', 'set_active_layer', 'set_layer_properties',
         'select_items', 'deselect_all', 'set_fill', 'set_stroke', 'set_opacity', 'set_text_style', 'set_text_contents',
-        'arrange_items', 'align_items', 'set_preferences', 'select_tool', 'set_blend_options', 'set_overprint', 'select_same', 'select_all', 'export_png', 'export_jpeg', 'export_svg', 'export_web_svg', 'export_for_screens', 'export_pdf', 'move_items_to_layer',
+        'arrange_items', 'align_items', 'set_preferences', 'select_tool', 'set_blend_options', 'set_overprint', 'select_same', 'select_all', 'bind_variable', 'show_data_set', 'set_variables_locked', 'export_variables', 'export_data_sets', 'export_png', 'export_jpeg', 'export_svg', 'export_web_svg', 'export_for_screens', 'export_pdf', 'move_items_to_layer',
     ],
     openWorld: ['print_document'],
     words: { svg: 'SVG', png: 'PNG', jpeg: 'JPEG', pdf: 'PDF', illustrator: 'Illustrator' },

@@ -22,9 +22,10 @@ const require = createRequire(import.meta.url);
 const types = path.dirname(require.resolve('types-for-adobe/package.json'));
 const fixture = JSON.parse(readFileSync(new URL('./fixtures/illustrator-object-model.json', import.meta.url), 'utf8'));
 
-// Fields of the spec objects the server passes into its helpers (src/script.js):
-// __targets(spec) reads spec.ids and spec.names, __color(spec) reads spec.v.
-const HELPER_FIELDS = ['ids', 'names', 'v'];
+// Fields of the spec objects the server passes into its scripts: __targets(spec)
+// reads spec.ids and spec.names, __color(spec) reads spec.v, and
+// create_data_sets reads each value's fileError.
+const HELPER_FIELDS = ['ids', 'names', 'v', 'fileError'];
 
 export const typings = loadTypings({
     files: ['Illustrator/2022/index.d.ts', 'shared/JavaScript.d.ts', 'shared/global.d.ts'].map((f) => path.join(types, f)),
@@ -63,6 +64,14 @@ const OVERRIDES = {
     set_fill: { color: 'PANTONE 185 C', tint: 40 },
     set_stroke: { color: 'Brand Blue', tint: 60 },
     select_same: { attribute: 'fill_color' },
+    create_variable: { name: 'headline', kind: 'text' },
+    bind_variable: { name: 'headline' },
+    create_data_sets: { records: [{ name: 'Row 1', values: { headline: 'Spring sale', photo: path.join(docs, 'a.jpg'), badge: true } }] },
+    show_data_set: { name: 'Row 1', index: undefined },
+    delete_data_sets: { all: undefined },
+    import_variables: { filePath: path.join(docs, 'vars.xml') },
+    export_variables: { filePath: path.join(docs, 'vars.xml') },
+    export_data_sets: { format: 'jpeg', transparent: undefined, artboards: '1-2' },
     save_document: {
         filePath: path.join(docs, 'audit.eps'), separateArtboards: true, artboards: '1-2',
         pdfCompatible: undefined, compressed: undefined, embedIccProfile: undefined, fontSubsetThreshold: undefined,

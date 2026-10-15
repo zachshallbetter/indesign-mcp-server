@@ -34,6 +34,32 @@ function hexColor(value, name) {
     return m.slice(1).map((h) => parseInt(h, 16));
 }
 
+/** ExportOptionsPNG24 as `o`, from export_png's arguments. */
+export function pngOptions(a) {
+    return `var o = new ExportOptionsPNG24();
+o.artBoardClipping = true;
+o.horizontalScale = ${num(a.scale ?? 100, { min: 1, max: 7760, name: 'scale' })};
+o.verticalScale = o.horizontalScale;
+o.transparency = ${bool(a.transparent ?? true)};
+o.antiAliasing = ${bool(a.antiAlias ?? true)};`;
+}
+
+/** ExportOptionsJPEG as `o`, from export_jpeg's arguments. */
+export function jpegOptions(a) {
+    const [r, g, b] = hexColor(a.matteColor ?? '#FFFFFF', 'matteColor');
+    return `var o = new ExportOptionsJPEG();
+o.artBoardClipping = true;
+o.qualitySetting = ${index(a.quality ?? 80, { name: 'quality', max: 100 })};
+o.horizontalScale = ${num(a.scale ?? 100, { min: 1, max: 7760, name: 'scale' })};
+o.verticalScale = o.horizontalScale;
+o.antiAliasing = ${bool(a.antiAlias ?? true)};
+o.blurAmount = ${num(a.blur ?? 0, { min: 0, max: 2, name: 'blur' })};
+o.optimization = ${bool(a.optimized ?? true)};
+o.matte = true;
+var mc = new RGBColor(); mc.red = ${r}; mc.green = ${g}; mc.blue = ${b};
+o.matteColor = mc;`;
+}
+
 /** Export each wanted artboard to its own file; optionLines set up `o`. */
 function perArtboardExport(a, { ext, type, optionLines }) {
     const folder = paths.validate(a.outputFolder);
@@ -130,12 +156,7 @@ ${a.embed ? 'var info = __itemInfo(doc, it); it.embed(); info.embedded = true; _
         handler: (a) => run('Export PNG', perArtboardExport(a, {
             ext: 'png',
             type: 'PNG24',
-            optionLines: `var o = new ExportOptionsPNG24();
-o.artBoardClipping = true;
-o.horizontalScale = ${num(a.scale ?? 100, { min: 1, max: 7760, name: 'scale' })};
-o.verticalScale = o.horizontalScale;
-o.transparency = ${bool(a.transparent ?? true)};
-o.antiAliasing = ${bool(a.antiAlias ?? true)};`,
+            optionLines: pngOptions(a),
         })),
     },
     {
@@ -169,24 +190,7 @@ o.antiAliasing = ${bool(a.antiAlias ?? true)};`,
             'illustrator.import_export.jpeg_option.blur',
             'illustrator.import_export.jpeg_option.optimized',
         ],
-        handler: (a) => {
-            const [r, g, b] = hexColor(a.matteColor ?? '#FFFFFF', 'matteColor');
-            return run('Export JPEG', perArtboardExport(a, {
-                ext: 'jpg',
-                type: 'JPEG',
-                optionLines: `var o = new ExportOptionsJPEG();
-o.artBoardClipping = true;
-o.qualitySetting = ${index(a.quality ?? 80, { name: 'quality', max: 100 })};
-o.horizontalScale = ${num(a.scale ?? 100, { min: 1, max: 7760, name: 'scale' })};
-o.verticalScale = o.horizontalScale;
-o.antiAliasing = ${bool(a.antiAlias ?? true)};
-o.blurAmount = ${num(a.blur ?? 0, { min: 0, max: 2, name: 'blur' })};
-o.optimization = ${bool(a.optimized ?? true)};
-o.matte = true;
-var mc = new RGBColor(); mc.red = ${r}; mc.green = ${g}; mc.blue = ${b};
-o.matteColor = mc;`,
-            }));
-        },
+        handler: (a) => run('Export JPEG', perArtboardExport(a, { ext: 'jpg', type: 'JPEG', optionLines: jpegOptions(a) })),
     },
     {
         name: 'export_svg',
@@ -434,7 +438,7 @@ __result__ = { exported: ${str(out)}, preset: preset, reopened: src.fsName };`))
 ];
 
 /** ES3: "1-3,5" (1-based) -> [0,1,2,4]; "" -> every artboard. */
-const RANGE_FN = `
+export const RANGE_FN = `
 function __range(spec, count) {
   var out = [], i;
   if (!spec) { for (i = 0; i < count; i++) out.push(i); return out; }
