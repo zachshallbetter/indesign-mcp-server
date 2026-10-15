@@ -1,12 +1,14 @@
 /**
  * The applications the suite can load, and which ones to load.
  *
- * Choose with --apps indesign,illustrator or ADOBE_MCP_APPS=indesign,illustrator.
+ * Choose with --apps indesign,photoshop or ADOBE_MCP_APPS=indesign,photoshop.
  * Default: every application.
  */
 export const APPS = {
     indesign: () => import('adobe-mcp-indesign'),
     illustrator: () => import('adobe-mcp-illustrator'),
+    photoshop: () => import('adobe-mcp-photoshop'),
+    aftereffects: () => import('adobe-mcp-aftereffects'),
 };
 
 /** The app ids to load, from argv (--apps a,b or --apps=a,b) or the environment. */
@@ -24,7 +26,7 @@ export function selectedApps(argv = process.argv.slice(2), env = process.env) {
     return ids;
 }
 
-/** Load the chosen app modules: { indesign: app, illustrator: app }. */
+/** Load the chosen app modules: { indesign: app, illustrator: app, photoshop: app }. */
 export async function loadApps(ids) {
     const out = {};
     for (const id of ids) out[id] = (await APPS[id]()).app;

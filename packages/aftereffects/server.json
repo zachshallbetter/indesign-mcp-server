@@ -1,0 +1,39 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.zachshallbetter/adobe-mcp-aftereffects",
+  "title": "After Effects MCP Server",
+  "description": "Drive Adobe After Effects from any MCP client: compositions, layers, animation and rendering.",
+  "repository": {
+    "url": "https://github.com/zachshallbetter/adobe-mcp",
+    "source": "github",
+    "subfolder": "packages/aftereffects"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "adobe-mcp-aftereffects",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "AFTEREFFECTS_APP_NAME",
+          "description": "macOS only: address a specific copy, e.g. \"Adobe After Effects 2025\". Default: After Effects by bundle id",
+          "isRequired": false
+        },
+        {
+          "name": "AFTEREFFECTS_ALLOWED_DIRS",
+          "description": "Extra directories allowed for file operations (':' on macOS, ';' on Windows)",
+          "isRequired": false
+        },
+        {
+          "name": "AFTEREFFECTS_SCRIPT_TIMEOUT_MS",
+          "description": "How long to wait for After Effects before reporting that a dialog may be open. Default 120000",
+          "isRequired": false
+        }
+      ]
+    }
+  ]
+}
