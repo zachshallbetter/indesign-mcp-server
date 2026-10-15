@@ -11,7 +11,7 @@ client configuration.
 | Package | What it drives | npm |
 |---|---|---|
 | [adobe-mcp-indesign](packages/indesign) | Adobe InDesign: documents, pages, text, styles, tables, books, PDF and EPUB export (137 tools) | [`adobe-mcp-indesign`](https://www.npmjs.com/package/adobe-mcp-indesign) |
-| [adobe-mcp-illustrator](packages/illustrator) | Adobe Illustrator: artboards, layers, shapes and paths, text, colour and swatches, pathfinder, effects, blends, export, prepress and printing (85 tools) | `adobe-mcp-illustrator` |
+| [adobe-mcp-illustrator](packages/illustrator) | Adobe Illustrator: artboards, layers, shapes and paths, text, colour and swatches, pathfinder, effects, blends, export, prepress and printing, data-driven graphics (96 tools) | `adobe-mcp-illustrator` |
 | [adobe-mcp-suite](packages/suite) | InDesign and Illustrator in one server, plus cross-application tools: Illustrator artwork into InDesign layouts, swatches with exact values | `adobe-mcp-suite` |
 | [adobe-mcp-core](packages/core) | The shared foundation: script escaping, the script runner, the server shell and the static script audit | `adobe-mcp-core` |
 

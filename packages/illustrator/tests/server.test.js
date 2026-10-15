@@ -387,3 +387,49 @@ test('print_document fills only the Print dialog pages it is given', async () =>
     const def = (await import('../src/server.js')).toolDefinitions.find((t) => t.name === 'print_document');
     assert.equal(def.annotations.openWorldHint, true, 'printing reaches a device');
 });
+
+test('variables: names Illustrator can store, bound by kind', async () => {
+    const [create, bind] = await scriptsFor([
+        ['create_variable', { name: 'headline', kind: 'text', target: { selection: true } }],
+        ['bind_variable', { name: 'badge', target: { ids: ['7'] } }],
+    ]);
+    assert.match(create, /v\.kind = VariableKind\.TEXTUAL;\nv\.name = "headline";/);
+    assert.match(create, /catch \(e\) \{ v\.remove\(\); throw e; \}/, 'a failed binding removes the new variable');
+    assert.match(bind, /if \(k === VariableKind\.VISIBILITY\) \{ it\.visibilityVariable = v; return; \}/);
+    const mcp = (await import('../src/server.js')).createServer();
+    await assert.rejects(mcp.handleToolCall('create_variable', { name: 'two words', kind: 'text' }), /must start with a letter/);
+    await assert.rejects(mcp.handleToolCall('create_variable', { name: 'x', kind: 'colour' }), /Allowed: text, image, graph, visibility/);
+});
+
+test('data sets: each record sets the bound items, then is captured or updated', async () => {
+    const photo = `${home}/Documents/a.jpg`;
+    const [s] = await scriptsFor([['create_data_sets', {
+        records: [
+            { name: 'Spring', values: { headline: 'Spring sale', price: 19, photo, badge: true } },
+            { name: 'Summer', values: { headline: '/r/summer', badge: false } },
+        ],
+    }]]);
+    const records = JSON.parse(/var records = (\[.*?\]), made/.exec(s)[1]);
+    assert.deepEqual(records[0].values, [
+        { name: 'headline', text: 'Spring sale' }, { name: 'price', text: '19' }, { name: 'photo', text: photo, file: photo }, { name: 'badge', visible: true },
+    ]);
+    assert.equal(records[1].values[0].text, '/r/summer');
+    assert.ok(records[1].values[0].fileError, 'text that looks like a path outside the allowed folders is still text');
+    assert.match(s, /if \(ds\) ds\.display\(\);/, 'an existing data set is displayed, edited and updated');
+    assert.match(s, /if \(ds\) \{ ds\.update\(\); updated\.push\(rec\.name\); \}\n {2}else \{ ds = doc\.dataSets\.add\(\); ds\.name = rec\.name; made\.push\(rec\.name\); \}/);
+    assert.match(s, /getByName\("Spring"\)/, 'shows the first record afterwards');
+    const mcp = (await import('../src/server.js')).createServer();
+    await assert.rejects(mcp.handleToolCall('create_data_sets', { records: [{ name: 'x', values: { headline: ['a'] } }] }), /must be text, a file path or true\/false/);
+    await assert.rejects(mcp.handleToolCall('create_data_sets', { records: [{ values: {} }] }), /records\[0\] needs a name/);
+});
+
+test('export_data_sets displays each data set, exports its artboards and restores the one shown', async () => {
+    const [png, jpeg] = await scriptsFor([
+        ['export_data_sets', { outputFolder: `${home}/Documents/out`, dataSets: ['Spring'] }],
+        ['export_data_sets', { outputFolder: `${home}/Documents/out`, format: 'jpeg', quality: 90, artboards: '1' }],
+    ]);
+    assert.match(png, /sets\[s\]\.display\(\);[\s\S]*ExportType\.PNG24[\s\S]*\} finally \{[\s\S]*before\.display\(\)/);
+    assert.match(jpeg, /o\.qualitySetting = 90;[\s\S]*ExportType\.JPEG/);
+    const mcp = (await import('../src/server.js')).createServer();
+    await assert.rejects(mcp.handleToolCall('export_data_sets', { outputFolder: `${home}/Documents/out`, quality: 50 }), /applies to jpeg/);
+});
