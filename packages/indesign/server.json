@@ -1,6 +1,6 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.zachshallbetter/indesign-mcp-server",
+  "name": "io.github.zachshallbetter/adobe-mcp-indesign",
   "title": "InDesign MCP Server",
   "description": "Drive Adobe InDesign from any MCP client: 135+ tools for layout, styles, books and PDF export.",
   "repository": {
@@ -8,12 +8,12 @@
     "source": "github",
     "subfolder": "packages/indesign"
   },
-  "version": "2.3.0",
+  "version": "2.4.0",
   "packages": [
     {
       "registryType": "npm",
-      "identifier": "indesign-mcp-server",
-      "version": "2.3.0",
+      "identifier": "adobe-mcp-indesign",
+      "version": "2.4.0",
       "transport": {
         "type": "stdio"
       },

@@ -2,7 +2,7 @@
 
 The shared foundation for MCP servers that drive desktop Adobe applications
 through ExtendScript: adobe-mcp-illustrator, and
-[indesign-mcp-server](https://github.com/zachshallbetter/indesign-mcp-server),
+[adobe-mcp-indesign](../indesign),
 whose infrastructure it was extracted from.
 
 Each server keeps what is specific to its application: tool definitions,

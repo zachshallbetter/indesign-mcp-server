@@ -106,7 +106,7 @@ against the application.
 Shared infrastructure (script escaping, the executor, the server shell, the
 audit) comes from [adobe-mcp-core](https://github.com/zachshallbetter/adobe-mcp-core),
 the foundation shared with
-[indesign-mcp-server](https://github.com/zachshallbetter/indesign-mcp-server).
+[adobe-mcp-indesign](../indesign).
 
 ## Licence
 

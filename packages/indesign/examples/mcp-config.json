@@ -2,7 +2,7 @@
   "mcpServers": {
     "indesign": {
       "command": "npx",
-      "args": ["-y", "indesign-mcp-server"],
+      "args": ["-y", "adobe-mcp-indesign"],
       "env": {
         "INDESIGN_ALLOWED_DIRS": "/Volumes/Work:/Users/Shared/Assets"
       }

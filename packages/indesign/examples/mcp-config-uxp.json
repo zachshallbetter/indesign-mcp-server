@@ -2,7 +2,7 @@
   "mcpServers": {
     "indesign": {
       "command": "npx",
-      "args": ["-y", "indesign-mcp-server"],
+      "args": ["-y", "adobe-mcp-indesign"],
       "env": {
         "INDESIGN_BACKEND": "uxp",
         "UXP_BRIDGE_URL": "http://127.0.0.1:3000",

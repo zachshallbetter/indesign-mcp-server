@@ -12,8 +12,8 @@ Each package has its own guide for adding tools:
 
 A new application gets its own package, `packages/<app>`, published as
 `adobe-mcp-<app>` (for example `adobe-mcp-photoshop`), with the core as its only
-runtime dependency. `indesign-mcp-server` keeps the name it was first published
-under.
+runtime dependency. The InDesign server was published as `indesign-mcp-server` up
+to 2.3.0; that package is deprecated in favour of `adobe-mcp-indesign`.
 
 ## Before a pull request
 

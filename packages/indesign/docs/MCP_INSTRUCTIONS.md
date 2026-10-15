@@ -8,20 +8,20 @@ This page covers installing the InDesign MCP server, connecting it to an MCP cli
 - **Node.js 18 or newer**, which provides `npx`.
 - An MCP client that runs local stdio servers, such as Claude Desktop, Claude Code, Cursor or VS Code.
 
-The npm package is `indesign-mcp-server` and the MCP Registry name is `io.github.zachshallbetter/indesign-mcp-server`. Clients start it with `npx -y indesign-mcp-server`, so you do not have to clone anything.
+The npm package is `adobe-mcp-indesign` and the MCP Registry name is `io.github.zachshallbetter/adobe-mcp-indesign`. Clients start it with `npx -y adobe-mcp-indesign`, so you do not have to clone anything.
 
 ## Client configuration
 
 ### Claude Code
 
 ```bash
-claude mcp add indesign -- npx -y indesign-mcp-server
+claude mcp add indesign -- npx -y adobe-mcp-indesign
 ```
 
 With an environment variable:
 
 ```bash
-claude mcp add indesign -e INDESIGN_ALLOWED_DIRS=/Volumes/Work -- npx -y indesign-mcp-server
+claude mcp add indesign -e INDESIGN_ALLOWED_DIRS=/Volumes/Work -- npx -y adobe-mcp-indesign
 ```
 
 ### Claude Desktop
@@ -36,7 +36,7 @@ Edit `claude_desktop_config.json`, then restart Claude Desktop. The file is in o
   "mcpServers": {
     "indesign": {
       "command": "npx",
-      "args": ["-y", "indesign-mcp-server"]
+      "args": ["-y", "adobe-mcp-indesign"]
     }
   }
 }
@@ -56,7 +56,7 @@ VS Code reads `.vscode/mcp.json` (or the user-level MCP configuration). It uses 
     "indesign": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "indesign-mcp-server"]
+      "args": ["-y", "adobe-mcp-indesign"]
     }
   }
 }
@@ -67,12 +67,12 @@ VS Code reads `.vscode/mcp.json` (or the user-level MCP configuration). It uses 
 For development, or to run unreleased code:
 
 ```bash
-git clone https://github.com/zachshallbetter/indesign-mcp-server.git
-cd indesign-mcp-server
+git clone https://github.com/zachshallbetter/adobe-mcp.git
+cd adobe-mcp-indesign
 npm install
 ```
 
-Then point the client at the entry file: `"command": "node"`, `"args": ["/ABSOLUTE/PATH/TO/indesign-mcp-server/src/index.js"]`.
+Then point the client at the entry file: `"command": "node"`, `"args": ["/ABSOLUTE/PATH/TO/adobe-mcp-indesign/src/index.js"]`.
 
 ## Environment variables
 
@@ -117,7 +117,7 @@ Each call activates InDesign, so InDesign comes to the front while tools run.
 - Scripts are written to `%TEMP%` as `indesign_mcp_*.jsx`. They are removed after each call and again when the server starts.
 - In JSON, write paths with forward slashes (`C:/Users/me/Documents/file.indd`) or escaped backslashes (`C:\\Users\\me\\...`).
 - Separate `INDESIGN_ALLOWED_DIRS` entries with `;`.
-- If the client cannot start `npx`, use `"command": "cmd"` with `"args": ["/c", "npx", "-y", "indesign-mcp-server"]`.
+- If the client cannot start `npx`, use `"command": "cmd"` with `"args": ["/c", "npx", "-y", "adobe-mcp-indesign"]`.
 
 ## Optional UXP backend
 
@@ -126,7 +126,7 @@ The default backend runs ExtendScript and needs no plugin. The optional UXP back
 1. Start the bridge. It ships in the package:
 
    ```bash
-   BRIDGE_TOKEN=change-me npx -p indesign-mcp-server indesign-mcp-uxp-bridge
+   BRIDGE_TOKEN=change-me npx -p adobe-mcp-indesign adobe-mcp-indesign-uxp-bridge
    ```
 
 2. Load `uxp/plugin` in InDesign with the UXP Developer Tool, then open its **Bridge Panel**.
@@ -152,7 +152,7 @@ Then try a prompt such as: *Create an A4 document and add a centered title.*
 - Check that `node --version` reports 18 or newer.
 - GUI apps on macOS do not inherit your shell `PATH`. If Node comes from nvm, Volta or Homebrew, set `"command"` to the absolute path of `npx`, which `which npx` prints.
 - Restart the client after you edit its config.
-- The first start downloads the package, which can take longer than some clients wait. If the server times out on first use, restart the client, or install it once with `npm install -g indesign-mcp-server` and set `"command"` to `indesign-mcp-server` with no `args`.
+- The first start downloads the package, which can take longer than some clients wait. If the server times out on first use, restart the client, or install it once with `npm install -g adobe-mcp-indesign` and set `"command"` to `adobe-mcp-indesign` with no `args`.
 
 **InDesign not found.**
 
