@@ -9,6 +9,7 @@ import { script } from '../src/script.js';
 import { checkScript } from 'adobe-mcp-core/testing';
 import { wrapScriptForStructuredResult } from 'adobe-mcp-core';
 import { audit, typings } from './audit.js';
+import { scriptsFor, home } from './helpers.js';
 
 const featureIds = new Set(JSON.parse(readFileSync(new URL('./fixtures/feature-ids.json', import.meta.url), 'utf8')).ids);
 
@@ -237,26 +238,6 @@ test('blend tools load, play and always unload the Action', async () => {
     for (const s of sent) assert.deepEqual(checkScript(s, typings), []);
 });
 
-/** Run tool calls against a stubbed executor; returns the scripts sent. */
-async function scriptsFor(calls) {
-    const { executor } = await import('../src/executor.js');
-    const mcp = (await import('../src/server.js')).createServer();
-    const sent = [];
-    const original = executor.runScript;
-    executor.runScript = async (s) => { sent.push(s); return '{"ok":true,"result":"{}"}'; };
-    try {
-        for (const [name, args] of calls) {
-            const r = await mcp.handleToolCall(name, args);
-            assert.equal(r.success, true, `${name}: ${JSON.stringify(r)}`);
-        }
-    } finally {
-        executor.runScript = original;
-    }
-    for (const s of sent) assert.deepEqual(checkScript(s, typings), []);
-    return sent;
-}
-
-const home = process.env.HOME ?? '/tmp';
 
 test('PDF options override the preset with the object model\'s settings', async () => {
     const [s] = await scriptsFor([['export_pdf', {

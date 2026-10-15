@@ -15,7 +15,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { auditTools, loadTypings, sample } from 'adobe-mcp-core/testing';
-import { createServer } from '../src/server.js';
+import { createServer, toolTable } from '../src/server.js';
 import { executor } from '../src/executor.js';
 
 const require = createRequire(import.meta.url);
@@ -87,7 +87,9 @@ const OVERRIDES = {
 
 function sampleArgs(tool) {
     const args = Object.fromEntries(Object.entries(tool.inputSchema?.properties || {}).map(([k, v]) => [k, sample(k, v)]));
-    return { ...args, ...(OVERRIDES[tool.name] ?? {}) };
+    // A tool can carry its own audit arguments (auditArgs) instead of an entry here.
+    const own = toolTable.find((t) => t.name === tool.name)?.auditArgs;
+    return { ...args, ...(OVERRIDES[tool.name] ?? own ?? {}) };
 }
 
 export async function audit(filter = null) {

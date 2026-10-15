@@ -57,22 +57,28 @@ export const toolTable = AREAS.flatMap(([area, list]) => list.map((t) => ({ ...t
 const help = { ...helpTool(toolTable), area: 'utility' };
 toolTable.push(help);
 
+/** A tool can declare its own hints: { readOnly, destructive, idempotent, openWorld }. */
+const hinted = (kind) => toolTable.filter((t) => t.hints?.[kind]).map((t) => t.name);
+
 const annotations = createAnnotations({
     readOnly: [
+        ...hinted('readOnly'),
         'help', 'illustrator_status', 'find_menu_commands', 'get_document_info', 'list_documents', 'list_artboards',
         'list_layers', 'list_items', 'get_selection', 'get_appearance', 'list_swatches', 'list_fonts', 'get_preferences', 'list_print_settings', 'list_variables', 'get_path_info',
     ],
     destructive: [
+        ...hinted('destructive'),
         'close_document', 'delete_artboard', 'delete_layer', 'delete_items', 'set_text_contents',
         'convert_text_to_outlines', 'ungroup_items', 'pathfinder', 'make_compound_path', 'execute_illustrator_code',
         'execute_menu_command', 'save_document', 'set_preferences', 'release_blend', 'expand_blend', 'delete_swatches', 'edit_colors', 'delete_variables', 'delete_data_sets', 'import_variables', 'path_operation', 'clean_up', 'split_into_grid',
     ],
     idempotent: [
+        ...hinted('idempotent'),
         'save_document', 'set_artboard', 'set_active_artboard', 'set_active_layer', 'set_layer_properties',
         'select_items', 'deselect_all', 'set_fill', 'set_stroke', 'set_opacity', 'set_text_style', 'set_text_contents',
         'arrange_items', 'align_items', 'set_preferences', 'select_tool', 'set_blend_options', 'set_overprint', 'select_same', 'select_all', 'set_path_options', 'bind_variable', 'show_data_set', 'set_variables_locked', 'export_variables', 'export_data_sets', 'export_png', 'export_jpeg', 'export_svg', 'export_web_svg', 'export_for_screens', 'export_pdf', 'move_items_to_layer',
     ],
-    openWorld: ['print_document'],
+    openWorld: ['print_document', ...hinted('openWorld')],
     words: { svg: 'SVG', png: 'PNG', jpeg: 'JPEG', pdf: 'PDF', illustrator: 'Illustrator' },
 });
 
