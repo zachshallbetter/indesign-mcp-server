@@ -21,14 +21,14 @@ function test(name, fn) {
 
 const transport = new StdioClientTransport({
     command: process.execPath,
-    args: [path.join(root, pkg.bin['indesign-mcp-server'])],
+    args: [path.join(root, pkg.bin['adobe-mcp-indesign'])],
     stderr: 'pipe',
 });
 const client = new Client({ name: 'protocol-test', version: '0.0.0' });
 
 test('handshake reports the package name and version', async () => {
     const info = client.getServerVersion();
-    assert.equal(info.name, 'indesign-mcp-server');
+    assert.equal(info.name, 'adobe-mcp-indesign');
     assert.equal(info.version, pkg.version);
 });
 

@@ -9,17 +9,17 @@ Run InDesign scripts through a UXP plugin instead of AppleScript/COM. The tools 
 1. Start the bridge. It ships in the npm package, so there is nothing to install:
 
 ```bash
-npx -p indesign-mcp-server indesign-mcp-uxp-bridge
+npx -p adobe-mcp-indesign adobe-mcp-indesign-uxp-bridge
 # from a clone: npm run uxp:bridge
 ```
 
 Optional auth (recommended):
 
 ```bash
-BRIDGE_TOKEN="$(openssl rand -hex 32)" npx -p indesign-mcp-server indesign-mcp-uxp-bridge
+BRIDGE_TOKEN="$(openssl rand -hex 32)" npx -p adobe-mcp-indesign adobe-mcp-indesign-uxp-bridge
 ```
 
-2. Get the plugin folder: `uxp/plugin` in a clone, or `node_modules/indesign-mcp-server/uxp/plugin` after `npm install indesign-mcp-server`.
+2. Get the plugin folder: `uxp/plugin` in a clone, or `node_modules/adobe-mcp-indesign/uxp/plugin` after `npm install adobe-mcp-indesign`.
 
 3. Load the plugin in InDesign (UXP Developer Tool → add the plugin folder → load/watch). Open the **Bridge Panel**. It connects to the bridge's WebSocket port, 3001 by default. If you started the bridge with another `UXP_WS_PORT`, type that port in the panel. If you set `BRIDGE_TOKEN`, type the token in the panel's token field. Click **Connect**; the panel remembers both.
 

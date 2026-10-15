@@ -85,7 +85,7 @@ Releases publish from GitHub Actions (`.github/workflows/release.yml`); nothing 
 1. Set the same version in `package.json` (`npm version <x.y.z> --no-git-tag-version`) and in both `version` fields of `server.json`.
 2. Rename `## Unreleased` in `docs/CHANGELOG.md` to the version, and run `npm run docs:tools`.
 3. Commit, push to `main`, and wait for CI.
-4. Tag and push: `git tag -a indesign-mcp-server@<x.y.z> -m "indesign-mcp-server <x.y.z>"` then `git push origin indesign-mcp-server@<x.y.z>`.
+4. Tag and push: `git tag -a adobe-mcp-indesign@<x.y.z> -m "adobe-mcp-indesign <x.y.z>"` then `git push origin adobe-mcp-indesign@<x.y.z>`.
 
 The Release workflow checks that the tag matches both files, runs the checks and tests, publishes to npm, waits for npm to serve the version, then publishes to the MCP Registry. Re-running it is safe: a version already on npm is skipped. Then create the GitHub release from the changelog section.
 

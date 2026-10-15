@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## 2.4.0
+
+### Renamed
+- The package is now `adobe-mcp-indesign` (MCP Registry: `io.github.zachshallbetter/adobe-mcp-indesign`), matching the other servers in the adobe-mcp repository. Tools, parameters and behaviour are unchanged. Replace `indesign-mcp-server` with `adobe-mcp-indesign` in your client configuration; the old package is deprecated and stays at 2.3.0.
+- The UXP bridge command is `adobe-mcp-indesign-uxp-bridge`.
 
 ### Changed
 - The server now runs on adobe-mcp-core, the foundation it shares with the other servers in the adobe-mcp repository: script escaping, path checks, the structured result wrapper, failure detection, argument aliases and warnings, annotations, the ExtendScript transport and the MCP server shell. Every tool generates exactly the same script as in 2.3.0.

@@ -1,11 +1,11 @@
 # InDesign MCP Server
 
-[![npm](https://img.shields.io/npm/v/indesign-mcp-server.svg)](https://www.npmjs.com/package/indesign-mcp-server)
+[![npm](https://img.shields.io/npm/v/adobe-mcp-indesign.svg)](https://www.npmjs.com/package/adobe-mcp-indesign)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org/)
-[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows-lightgrey.svg)](https://github.com/zachshallbetter/indesign-mcp-server)
+[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows-lightgrey.svg)](https://github.com/zachshallbetter/adobe-mcp)
 [![MCP](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-blue.svg)](https://modelcontextprotocol.io/)
-[![GitHub stars](https://img.shields.io/github/stars/zachshallbetter/indesign-mcp-server?style=social)](https://github.com/zachshallbetter/indesign-mcp-server/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/zachshallbetter/adobe-mcp?style=social)](https://github.com/zachshallbetter/adobe-mcp/stargazers)
 
 **Turn Adobe InDesign into an AI design automation platform** — 135+ MCP tools for documents, layout, styles, images, books, and PDF export. Drive InDesign from Claude, Cursor, Warp, or any MCP client using natural language.
 
@@ -67,12 +67,12 @@ Uses COM automation through PowerShell. No extra install steps. InDesign should 
 
 ### Installation
 
-Nothing to clone. MCP clients start the server with `npx`, which downloads it from [npm](https://www.npmjs.com/package/indesign-mcp-server) on first run. It is listed in the [official MCP Registry](https://registry.modelcontextprotocol.io/) as `io.github.zachshallbetter/indesign-mcp-server`.
+Nothing to clone. MCP clients start the server with `npx`, which downloads it from [npm](https://www.npmjs.com/package/adobe-mcp-indesign) on first run. It is listed in the [official MCP Registry](https://registry.modelcontextprotocol.io/) as `io.github.zachshallbetter/adobe-mcp-indesign`.
 
 Claude Code:
 
 ```bash
-claude mcp add indesign -- npx -y indesign-mcp-server
+claude mcp add indesign -- npx -y adobe-mcp-indesign
 ```
 
 ### MCP client config
@@ -84,7 +84,7 @@ Any other client (Claude Desktop `claude_desktop_config.json`, Cursor, Warp, …
   "mcpServers": {
     "indesign": {
       "command": "npx",
-      "args": ["-y", "indesign-mcp-server"]
+      "args": ["-y", "adobe-mcp-indesign"]
     }
   }
 }
@@ -97,7 +97,7 @@ Optional environment overrides:
   "mcpServers": {
     "indesign": {
       "command": "npx",
-      "args": ["-y", "indesign-mcp-server"],
+      "args": ["-y", "adobe-mcp-indesign"],
       "env": {
         "INDESIGN_APP_NAME": "Adobe InDesign 2026",
         "INDESIGN_ALLOWED_DIRS": "/Users/you/Projects:/Users/you/Documents"
@@ -112,7 +112,7 @@ Optional environment overrides:
 
 Restart the client, open InDesign, then try: *Create an A4 doc and add a centered title.*
 
-To run from a clone instead (for development), use `"command": "node"` with `"args": ["/ABSOLUTE/PATH/TO/indesign-mcp-server/src/index.js"]` after `npm install`.
+To run from a clone instead (for development), use `"command": "node"` with `"args": ["/ABSOLUTE/PATH/TO/adobe-mcp-indesign/src/index.js"]` after `npm install`.
 
 ### Help system
 
@@ -269,7 +269,7 @@ CI runs `check` and `npm test` on every push and pull request. The audit checks 
 | Backend | How to enable |
 | --- | --- |
 | ExtendScript / COM (default) | unset or `INDESIGN_BACKEND=extendscript` |
-| UXP bridge + plugin | `INDESIGN_BACKEND=uxp` (or `auto`) + `npx -p indesign-mcp-server indesign-mcp-uxp-bridge` + load `uxp/plugin` |
+| UXP bridge + plugin | `INDESIGN_BACKEND=uxp` (or `auto`) + `npx -p adobe-mcp-indesign adobe-mcp-indesign-uxp-bridge` + load `uxp/plugin` |
 
 Details: [`docs/architecture-execution.md`](./docs/architecture-execution.md) and [`uxp/README.md`](./uxp/README.md).
 
@@ -299,4 +299,4 @@ MIT. See [LICENSE](./LICENSE).
 - [docs/architecture-execution.md](docs/architecture-execution.md): how scripts reach InDesign
 - [docs/CHANGELOG.md](docs/CHANGELOG.md)
 
-Issues: https://github.com/zachshallbetter/indesign-mcp-server/issues
+Issues: https://github.com/zachshallbetter/adobe-mcp/issues

@@ -4,7 +4,7 @@ This is a map of `src/` for contributors. To add a tool, follow the checklist in
 
 ```text
 src/
-  index.js                    Entry point (bin: indesign-mcp-server); starts the stdio server
+  index.js                    Entry point (bin: adobe-mcp-indesign); starts the stdio server
   core/
     InDesignMCPServer.js      SERVER_INSTRUCTIONS and TOOL_HANDLERS (one handler per tool); the protocol is adobe-mcp-core's server shell
     scriptExecutor.js         Runs scripts in InDesign: UXP bridge and backend selection here; AppleScript (macOS) and COM (Windows) through adobe-mcp-core's executor; indesign_status data

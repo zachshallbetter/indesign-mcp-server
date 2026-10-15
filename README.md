@@ -4,9 +4,13 @@ MCP servers for Adobe applications. Each application has its own server you
 can install on its own; a suite that combines them into one server is on the
 way.
 
+The InDesign server was published as `indesign-mcp-server` up to 2.3.0. It is
+now `adobe-mcp-indesign`, with the same tools; replace the package name in your
+client configuration.
+
 | Package | What it drives | npm |
 |---|---|---|
-| [indesign-mcp-server](packages/indesign) | Adobe InDesign: documents, pages, text, styles, tables, books, PDF and EPUB export (137 tools) | [`indesign-mcp-server`](https://www.npmjs.com/package/indesign-mcp-server) |
+| [adobe-mcp-indesign](packages/indesign) | Adobe InDesign: documents, pages, text, styles, tables, books, PDF and EPUB export (137 tools) | [`adobe-mcp-indesign`](https://www.npmjs.com/package/adobe-mcp-indesign) |
 | [adobe-mcp-illustrator](packages/illustrator) | Adobe Illustrator: artboards, layers, shapes and paths, text, colour, pathfinder, export (64 tools) | `adobe-mcp-illustrator` |
 | [adobe-mcp-core](packages/core) | The shared foundation: script escaping, the script runner, the server shell and the static script audit | `adobe-mcp-core` |
 
@@ -19,7 +23,7 @@ with. macOS and Windows are supported.
 Claude Code:
 
 ```bash
-claude mcp add indesign -- npx -y indesign-mcp-server
+claude mcp add indesign -- npx -y adobe-mcp-indesign
 ```
 
 ```bash
@@ -31,7 +35,7 @@ Any client that reads an `mcpServers` block:
 ```json
 {
   "mcpServers": {
-    "indesign": { "command": "npx", "args": ["-y", "indesign-mcp-server"] },
+    "indesign": { "command": "npx", "args": ["-y", "adobe-mcp-indesign"] },
     "illustrator": { "command": "npx", "args": ["-y", "adobe-mcp-illustrator"] }
   }
 }
@@ -44,7 +48,7 @@ Each package's README covers its tools, conventions and configuration.
 ```
 packages/
   core/          adobe-mcp-core           shared by every server
-  indesign/      indesign-mcp-server
+  indesign/      adobe-mcp-indesign
   illustrator/   adobe-mcp-illustrator
 ```
 
