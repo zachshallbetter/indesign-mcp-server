@@ -27,6 +27,11 @@ import { tools as pageTools } from './pages.js';
 import { tools as layerTools } from './layers.js';
 import { tools as selectionTools } from './selection.js';
 import { tools as historyTools } from './history.js';
+import { tools as dataMergeTools } from './data-merge.js';
+import { tools as findChangeTools } from './find-change.js';
+import { tools as proofingTools } from './proofing.js';
+import { tools as automationTools } from './automation.js';
+import { tools as incopyTools } from './incopy.js';
 
 /** [area id, tools, help category { name, description }] */
 export const AREAS = [
@@ -53,6 +58,11 @@ export const AREAS = [
     ['selection', selectionTools, { name: 'Selection and clipboard', description: 'Select commands, selection tools, cut, copy and paste variants, duplicating and Step and Repeat, and clipboard and drag-and-drop preferences' }],
     ['history', historyTools, { name: 'Undo and history', description: 'Undo, redo, stepping through and listing the document history' }],
     ['preferences', preferencesTools, { name: 'Preferences', description: 'Read and change the Preferences panes for the application or the active document: General, Interface, Type, Advanced Type, Composition, Units & Increments, Display Performance, GPU, File Handling, Clipboard, Guides & Pasteboard, Spelling, Autocorrect, Dictionary, Japanese layout and Generative AI' }],
+    ['data_merge', dataMergeTools, { name: 'Data merge', description: 'Data merge placeholders for text, images and QR codes; update, remove and preview the data source; layout and content placement options; merge to PDF' }],
+    ['find_change', findChangeTools, { name: 'Find and change', description: 'Text, GREP, glyph, object, colour and transliterate find/change with formats, options and scope; saved queries; Find Next and load-selection commands' }],
+    ['proofing', proofingTools, { name: 'Dictionaries and languages', description: 'Autocorrect word pairs, user dictionaries and hyphenation exceptions, word lists, languages and their dictionary vendors, and applying a language' }],
+    ['automation', automationTools, { name: 'Scripting and automation', description: 'Scripts panel, script preferences and labels, menu actions and script menus, event listeners, idle tasks, preference objects, performance metrics, workspaces, IDML schema and XML rules' }],
+    ['incopy', incopyTools, { name: 'InCopy and Creative Cloud', description: 'InCopy assignments and content, Creative Cloud Libraries assets and PDF comments' }],
 ];
 
 /** Every module tool, with its area. */
