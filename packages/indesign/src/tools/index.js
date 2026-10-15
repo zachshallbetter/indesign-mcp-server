@@ -7,12 +7,14 @@
 import { tools as transformTools } from './transform.js';
 import { tools as paragraphTools } from './paragraph.js';
 import { tools as effectsTools } from './effects.js';
+import { tools as longDocumentTools } from './long-documents.js';
 
 /** [area id, tools, help category { name, description }] */
 export const AREAS = [
     ['transform', transformTools, { name: 'Transformations', description: 'Rotate, flip, scale, shear and align items, and transform them again' }],
     ['paragraph', paragraphTools, { name: 'Paragraph formatting', description: 'Indents, spacing, alignment, justification, hyphenation, keep options, rules, borders, shading, span columns, drop caps and nested styles; underline and strikethrough options' }],
     ['effects', effectsTools, { name: 'Effects and transparency', description: 'Opacity, blending and effects on items, global light, blend space and transparency flattening' }],
+    ['long_documents', longDocumentTools, { name: 'Long documents', description: 'Tables of contents, footnotes and endnotes, the index, conditional text, hyperlinks, cross-references, bookmarks, text variables, captions and books' }],
 ];
 
 /** Every module tool, with its area. */
