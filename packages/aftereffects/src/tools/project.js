@@ -72,6 +72,8 @@ __result__ = { count: out.length, items: out };`)),
             'aftereffects.footage.format_psd',
             'aftereffects.footage.format_ai',
             'aftereffects.footage.format_aep',
+            'aftereffects.three_d.three_d_model_import',
+            'aftereffects.three_d.three_d_model_formats',
         ],
         handler: (a) => {
             if (!Array.isArray(a.files) || !a.files.length) throw new Error("'files' must list at least one path");
