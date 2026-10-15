@@ -44,7 +44,7 @@ __result__ = {
   colorMode: String(doc.documentColorSpace).replace("DocumentColorSpace.", ""),
   scaleFactor: __sf(doc), activeArtboard: doc.artboards.getActiveArtboardIndex(),
   artboards: abs, layers: layers, activeLayer: doc.activeLayer.name,
-  counts: { pageItems: doc.pageItems.length, paths: doc.pathItems.length, text: doc.textFrames.length, placed: doc.placedItems.length, raster: doc.rasterItems.length, groups: doc.groupItems.length, symbols: doc.symbolItems.length, swatches: doc.swatches.length },
+  counts: { pageItems: doc.pageItems.length, paths: doc.pathItems.length, text: doc.textFrames.length, placed: doc.placedItems.length, raster: doc.rasterItems.length, embeddedFiles: doc.embeddedItems.length, nonNative: doc.nonNativeItems.length, plugin: doc.pluginItems.length, groups: doc.groupItems.length, symbols: doc.symbolItems.length, swatches: doc.swatches.length },
   selection: doc.selection ? doc.selection.length : 0
 };`)),
     },
