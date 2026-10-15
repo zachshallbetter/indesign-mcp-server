@@ -1,0 +1,6740 @@
+{
+ "note": "Effects on the After Effects Effect menu, by category, with the match names published in the scripting guide (null where none is published: the effect is found by display name in app.effects at run time) and the controls the help pages list. From adobe-capability-atlas; regenerate with scripts/update-effects.js.",
+ "effects": [
+  {
+   "id": "aftereffects.effects.n3d_channel_extract",
+   "name": "3D Channel Extract",
+   "matchName": "ADBE AUX CHANNEL EXTRACT",
+   "category": "3D Channel",
+   "controls": [
+    {
+     "id": "aftereffects.effects.n3d_channel_extract_option.uv_right",
+     "name": "UV (right)"
+    },
+    {
+     "id": "aftereffects.effects.n3d_channel_extract_option.white_point_black_point",
+     "name": "White Point, Black Point"
+    },
+    {
+     "id": "aftereffects.effects.n3d_channel_extract_option.n3d_channel",
+     "name": "3D Channel"
+    },
+    {
+     "id": "aftereffects.effects.n3d_channel_extract_option.z_depth",
+     "name": "Z-Depth"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.cryptomatte",
+   "name": "Cryptomatte",
+   "matchName": null,
+   "category": "3D Channel",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.depth_matte",
+   "name": "Depth Matte",
+   "matchName": "ADBE DEPTH MATTE",
+   "category": "3D Channel",
+   "controls": [
+    {
+     "id": "aftereffects.effects.depth_matte_option.depth",
+     "name": "Depth"
+    },
+    {
+     "id": "aftereffects.effects.depth_matte_option.feather",
+     "name": "Feather"
+    },
+    {
+     "id": "aftereffects.effects.depth_matte_option.invert",
+     "name": "Invert"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.depth_of_field",
+   "name": "Depth of Field",
+   "matchName": "ADBE DEPTH FIELD",
+   "category": "3D Channel",
+   "controls": [
+    {
+     "id": "aftereffects.effects.depth_of_field_option.focal_plane",
+     "name": "Focal Plane"
+    },
+    {
+     "id": "aftereffects.effects.depth_of_field_option.maximum_radius",
+     "name": "Maximum Radius"
+    },
+    {
+     "id": "aftereffects.effects.depth_of_field_option.focal_bias",
+     "name": "Focal Bias"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.extractor",
+   "name": "EXtractoR",
+   "matchName": "EXtractoR",
+   "category": "3D Channel",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.fog_3d",
+   "name": "Fog 3D",
+   "matchName": "ADBE FOG_3D",
+   "category": "3D Channel",
+   "controls": [
+    {
+     "id": "aftereffects.effects.fog_3d_option.fog_start_depth",
+     "name": "Fog Start Depth"
+    },
+    {
+     "id": "aftereffects.effects.fog_3d_option.fog_end_depth",
+     "name": "Fog End Depth"
+    },
+    {
+     "id": "aftereffects.effects.fog_3d_option.scattering_density",
+     "name": "Scattering Density"
+    },
+    {
+     "id": "aftereffects.effects.fog_3d_option.foggy_background",
+     "name": "Foggy Background"
+    },
+    {
+     "id": "aftereffects.effects.fog_3d_option.gradient_layer",
+     "name": "Gradient Layer"
+    },
+    {
+     "id": "aftereffects.effects.fog_3d_option.layer_contribution",
+     "name": "Layer Contribution"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.id_matte",
+   "name": "ID Matte",
+   "matchName": "ADBE ID MATTE",
+   "category": "3D Channel",
+   "controls": [
+    {
+     "id": "aftereffects.effects.id_matte_option.aux_channel",
+     "name": "Aux. Channel"
+    },
+    {
+     "id": "aftereffects.effects.id_matte_option.feather",
+     "name": "Feather"
+    },
+    {
+     "id": "aftereffects.effects.id_matte_option.invert",
+     "name": "Invert"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.identifier",
+   "name": "IDentifier",
+   "matchName": "IDentifier",
+   "category": "3D Channel",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.backwards",
+   "name": "Backwards",
+   "matchName": "ADBE Aud Reverse",
+   "category": "Audio",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.bass_and_treble",
+   "name": "Bass & Treble",
+   "matchName": "ADBE Aud BT",
+   "category": "Audio",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.compressor",
+   "name": "Compressor",
+   "matchName": null,
+   "category": "Audio",
+   "controls": [
+    {
+     "id": "aftereffects.effects.compressor_option.threshold_db",
+     "name": "Threshold (dB)"
+    },
+    {
+     "id": "aftereffects.effects.compressor_option.ratio_x_1",
+     "name": "Ratio (x:1)"
+    },
+    {
+     "id": "aftereffects.effects.compressor_option.knee_db",
+     "name": "Knee (dB)"
+    },
+    {
+     "id": "aftereffects.effects.compressor_option.attack_ms",
+     "name": "Attack (ms)"
+    },
+    {
+     "id": "aftereffects.effects.compressor_option.release_ms",
+     "name": "Release (ms)"
+    },
+    {
+     "id": "aftereffects.effects.compressor_option.auto_release",
+     "name": "Auto Release"
+    },
+    {
+     "id": "aftereffects.effects.compressor_option.makeup_gain_db",
+     "name": "Makeup Gain (dB)"
+    },
+    {
+     "id": "aftereffects.effects.compressor_option.output_limit_db",
+     "name": "Output Limit (dB)"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.delay",
+   "name": "Delay",
+   "matchName": "ADBE Aud Delay",
+   "category": "Audio",
+   "controls": [
+    {
+     "id": "aftereffects.effects.delay_option.delay_time",
+     "name": "Delay Time"
+    },
+    {
+     "id": "aftereffects.effects.delay_option.delay_amount",
+     "name": "Delay Amount"
+    },
+    {
+     "id": "aftereffects.effects.delay_option.feedback",
+     "name": "Feedback"
+    },
+    {
+     "id": "aftereffects.effects.delay_option.dry_out_wet_out",
+     "name": "Dry Out, Wet Out"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.distortion",
+   "name": "Distortion",
+   "matchName": null,
+   "category": "Audio",
+   "controls": [
+    {
+     "id": "aftereffects.effects.distortion_option.type",
+     "name": "Type"
+    },
+    {
+     "id": "aftereffects.effects.distortion_option.drive",
+     "name": "Drive"
+    },
+    {
+     "id": "aftereffects.effects.distortion_option.gain",
+     "name": "Gain"
+    },
+    {
+     "id": "aftereffects.effects.distortion_option.mix",
+     "name": "Mix"
+    },
+    {
+     "id": "aftereffects.effects.distortion_option.volume",
+     "name": "Volume"
+    },
+    {
+     "id": "aftereffects.effects.distortion_option.resolution_bit",
+     "name": "Resolution (bit)"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.flange_and_chorus",
+   "name": "Flange & Chorus",
+   "matchName": "ADBE Aud_Flange",
+   "category": "Audio",
+   "controls": [
+    {
+     "id": "aftereffects.effects.flange_and_chorus_option.voice_separation_time",
+     "name": "Voice Separation Time"
+    },
+    {
+     "id": "aftereffects.effects.flange_and_chorus_option.voices",
+     "name": "Voices"
+    },
+    {
+     "id": "aftereffects.effects.flange_and_chorus_option.modulation_rate",
+     "name": "Modulation Rate"
+    },
+    {
+     "id": "aftereffects.effects.flange_and_chorus_option.voice_phase_change",
+     "name": "Voice Phase Change"
+    },
+    {
+     "id": "aftereffects.effects.flange_and_chorus_option.invert_phase",
+     "name": "Invert Phase"
+    },
+    {
+     "id": "aftereffects.effects.flange_and_chorus_option.stereo_voices",
+     "name": "Stereo Voices"
+    },
+    {
+     "id": "aftereffects.effects.flange_and_chorus_option.dry_out_wet_out",
+     "name": "Dry Out, Wet Out"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.gate",
+   "name": "Gate",
+   "matchName": null,
+   "category": "Audio",
+   "controls": [
+    {
+     "id": "aftereffects.effects.gate_option.threshold_db",
+     "name": "Threshold (dB)"
+    },
+    {
+     "id": "aftereffects.effects.gate_option.attack_ms",
+     "name": "Attack (ms)"
+    },
+    {
+     "id": "aftereffects.effects.gate_option.hold_ms",
+     "name": "Hold (ms)"
+    },
+    {
+     "id": "aftereffects.effects.gate_option.release_ms",
+     "name": "Release (ms)"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.high_low_pass",
+   "name": "High-Low Pass",
+   "matchName": "ADBE Aud HiLo",
+   "category": "Audio",
+   "controls": [
+    {
+     "id": "aftereffects.effects.high_low_pass_option.cutoff_frequency",
+     "name": "Cutoff Frequency"
+    },
+    {
+     "id": "aftereffects.effects.high_low_pass_option.dry_out_wet_out",
+     "name": "Dry Out, Wet Out"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.modulator",
+   "name": "Modulator",
+   "matchName": "ADBE Aud Modulator",
+   "category": "Audio",
+   "controls": [
+    {
+     "id": "aftereffects.effects.modulator_option.modulation_type",
+     "name": "Modulation Type"
+    },
+    {
+     "id": "aftereffects.effects.modulator_option.modulation_rate",
+     "name": "Modulation Rate"
+    },
+    {
+     "id": "aftereffects.effects.modulator_option.modulation_depth",
+     "name": "Modulation Depth"
+    },
+    {
+     "id": "aftereffects.effects.modulator_option.amplitude_modulation",
+     "name": "Amplitude Modulation"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.parametric_eq",
+   "name": "Parametric EQ",
+   "matchName": "ADBE Param EQ",
+   "category": "Audio",
+   "controls": [
+    {
+     "id": "aftereffects.effects.parametric_eq_option.band_enabled",
+     "name": "Band Enabled"
+    },
+    {
+     "id": "aftereffects.effects.parametric_eq_option.frequency",
+     "name": "Frequency"
+    },
+    {
+     "id": "aftereffects.effects.parametric_eq_option.bandwidth",
+     "name": "Bandwidth"
+    },
+    {
+     "id": "aftereffects.effects.parametric_eq_option.boost_cut",
+     "name": "Boost/Cut"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.reverb",
+   "name": "Reverb",
+   "matchName": "ADBE Aud Reverb",
+   "category": "Audio",
+   "controls": [
+    {
+     "id": "aftereffects.effects.reverb_option.reverb_time",
+     "name": "Reverb Time"
+    },
+    {
+     "id": "aftereffects.effects.reverb_option.diffusion",
+     "name": "Diffusion"
+    },
+    {
+     "id": "aftereffects.effects.reverb_option.decay",
+     "name": "Decay"
+    },
+    {
+     "id": "aftereffects.effects.reverb_option.brightness",
+     "name": "Brightness"
+    },
+    {
+     "id": "aftereffects.effects.reverb_option.dry_out_wet_out",
+     "name": "Dry Out, Wet Out"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.stereo_mixer",
+   "name": "Stereo Mixer",
+   "matchName": "ADBE Aud Stereo Mixer",
+   "category": "Audio",
+   "controls": [
+    {
+     "id": "aftereffects.effects.stereo_mixer_option.invert_phase",
+     "name": "Invert Phase"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.tone",
+   "name": "Tone",
+   "matchName": "ADBE Aud Tone",
+   "category": "Audio",
+   "controls": [
+    {
+     "id": "aftereffects.effects.tone_option.waveform_options",
+     "name": "Waveform Options"
+    },
+    {
+     "id": "aftereffects.effects.tone_option.frequency",
+     "name": "Frequency"
+    },
+    {
+     "id": "aftereffects.effects.tone_option.level",
+     "name": "Level"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.bilateral_blur",
+   "name": "Bilateral Blur",
+   "matchName": "ADBE Bilateral",
+   "category": "Blur & Sharpen",
+   "controls": [
+    {
+     "id": "aftereffects.effects.bilateral_blur_option.threshold",
+     "name": "Threshold"
+    },
+    {
+     "id": "aftereffects.effects.bilateral_blur_option.radius",
+     "name": "Radius"
+    },
+    {
+     "id": "aftereffects.effects.bilateral_blur_option.colorize",
+     "name": "Colorize"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.camera_lens_blur",
+   "name": "Camera Lens Blur",
+   "matchName": "ADBE Camera Lens Blur",
+   "category": "Blur & Sharpen",
+   "controls": [
+    {
+     "id": "aftereffects.effects.camera_lens_blur_option.iris_properties",
+     "name": "Iris Properties"
+    },
+    {
+     "id": "aftereffects.effects.camera_lens_blur_option.diffraction_fringe",
+     "name": "Diffraction Fringe"
+    },
+    {
+     "id": "aftereffects.effects.camera_lens_blur_option.blur_map",
+     "name": "Blur Map"
+    },
+    {
+     "id": "aftereffects.effects.camera_lens_blur_option.layer",
+     "name": "Layer"
+    },
+    {
+     "id": "aftereffects.effects.camera_lens_blur_option.channel",
+     "name": "Channel"
+    },
+    {
+     "id": "aftereffects.effects.camera_lens_blur_option.blur_focal_distance",
+     "name": "Blur Focal Distance"
+    },
+    {
+     "id": "aftereffects.effects.camera_lens_blur_option.highlight",
+     "name": "Highlight"
+    },
+    {
+     "id": "aftereffects.effects.camera_lens_blur_option.gain",
+     "name": "Gain"
+    },
+    {
+     "id": "aftereffects.effects.camera_lens_blur_option.threshold",
+     "name": "Threshold"
+    },
+    {
+     "id": "aftereffects.effects.camera_lens_blur_option.saturation",
+     "name": "Saturation"
+    },
+    {
+     "id": "aftereffects.effects.camera_lens_blur_option.edge_behavior",
+     "name": "Edge Behavior"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.camera_shake_deblur",
+   "name": "Camera-Shake Deblur",
+   "matchName": "ADBE CameraShakeDeblur",
+   "category": "Blur & Sharpen",
+   "controls": [
+    {
+     "id": "aftereffects.effects.camera_shake_deblur_option.blur_duration",
+     "name": "Blur Duration"
+    },
+    {
+     "id": "aftereffects.effects.camera_shake_deblur_option.deblur_method",
+     "name": "Deblur Method"
+    },
+    {
+     "id": "aftereffects.effects.camera_shake_deblur_option.strength",
+     "name": "Strength"
+    },
+    {
+     "id": "aftereffects.effects.camera_shake_deblur_option.shake_sensitivity",
+     "name": "Shake Sensitivity"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.cc_cross_blur",
+   "name": "CC Cross Blur",
+   "matchName": "CS CrossBlur",
+   "category": "Blur & Sharpen",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_radial_blur",
+   "name": "CC Radial Blur",
+   "matchName": "CC Radial Blur",
+   "category": "Blur & Sharpen",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_radial_fast_blur",
+   "name": "CC Radial Fast Blur",
+   "matchName": "CC Radial Fast Blur",
+   "category": "Blur & Sharpen",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_vector_blur",
+   "name": "CC Vector Blur",
+   "matchName": "CC Vector Blur",
+   "category": "Blur & Sharpen",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.channel_blur",
+   "name": "Channel Blur",
+   "matchName": "ADBE Channel Blur",
+   "category": "Blur & Sharpen",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.compound_blur",
+   "name": "Compound Blur",
+   "matchName": "ADBE Compound Blur",
+   "category": "Blur & Sharpen",
+   "controls": [
+    {
+     "id": "aftereffects.effects.compound_blur_option.maximum_blur",
+     "name": "Maximum Blur"
+    },
+    {
+     "id": "aftereffects.effects.compound_blur_option.stretch_map_to_fit",
+     "name": "Stretch Map To Fit"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.directional_blur",
+   "name": "Directional Blur",
+   "matchName": "ADBE Motion Blur",
+   "category": "Blur & Sharpen",
+   "controls": [
+    {
+     "id": "aftereffects.effects.directional_blur_option.direction",
+     "name": "Direction"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.fast_box_blur",
+   "name": "Fast Box Blur",
+   "matchName": "ADBE Box Blur2",
+   "category": "Blur & Sharpen",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.gaussian_blur",
+   "name": "Gaussian Blur",
+   "matchName": "ADBE Gaussian Blur 2",
+   "category": "Blur & Sharpen",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.radial_blur",
+   "name": "Radial Blur",
+   "matchName": "ADBE Radial Blur",
+   "category": "Blur & Sharpen",
+   "controls": [
+    {
+     "id": "aftereffects.effects.radial_blur_option.type",
+     "name": "Type"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.sharpen",
+   "name": "Sharpen",
+   "matchName": "ADBE Sharpen",
+   "category": "Blur & Sharpen",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.smart_blur",
+   "name": "Smart Blur",
+   "matchName": "ADBE Smart Blur",
+   "category": "Blur & Sharpen",
+   "controls": [
+    {
+     "id": "aftereffects.effects.smart_blur_option.radius",
+     "name": "Radius"
+    },
+    {
+     "id": "aftereffects.effects.smart_blur_option.threshold",
+     "name": "Threshold"
+    },
+    {
+     "id": "aftereffects.effects.smart_blur_option.mode",
+     "name": "Mode"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.unsharp_mask",
+   "name": "Unsharp Mask",
+   "matchName": "ADBE Unsharp Mask2",
+   "category": "Blur & Sharpen",
+   "controls": [
+    {
+     "id": "aftereffects.effects.unsharp_mask_option.radius",
+     "name": "Radius"
+    },
+    {
+     "id": "aftereffects.effects.unsharp_mask_option.threshold",
+     "name": "Threshold"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.mocha_ae",
+   "name": "Mocha AE",
+   "matchName": null,
+   "category": "Boris FX Mocha",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.arithmetic",
+   "name": "Arithmetic",
+   "matchName": "ADBE Arithmetic",
+   "category": "Channel",
+   "controls": [
+    {
+     "id": "aftereffects.effects.arithmetic_option.operator",
+     "name": "Operator"
+    },
+    {
+     "id": "aftereffects.effects.arithmetic_option.max",
+     "name": "Max"
+    },
+    {
+     "id": "aftereffects.effects.arithmetic_option.min",
+     "name": "Min"
+    },
+    {
+     "id": "aftereffects.effects.arithmetic_option.block_above",
+     "name": "Block Above"
+    },
+    {
+     "id": "aftereffects.effects.arithmetic_option.block_below",
+     "name": "Block Below"
+    },
+    {
+     "id": "aftereffects.effects.arithmetic_option.slice",
+     "name": "Slice"
+    },
+    {
+     "id": "aftereffects.effects.arithmetic_option.screen",
+     "name": "Screen"
+    },
+    {
+     "id": "aftereffects.effects.arithmetic_option.clip_result_values",
+     "name": "Clip Result Values"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.blend",
+   "name": "Blend",
+   "matchName": "ADBE Blend",
+   "category": "Channel",
+   "controls": [
+    {
+     "id": "aftereffects.effects.blend_option.blend_with_layer",
+     "name": "Blend With Layer"
+    },
+    {
+     "id": "aftereffects.effects.blend_option.blend_with_original",
+     "name": "Blend With Original"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.calculations",
+   "name": "Calculations",
+   "matchName": "ADBE Calculations",
+   "category": "Channel",
+   "controls": [
+    {
+     "id": "aftereffects.effects.calculations_option.input_channel",
+     "name": "Input Channel"
+    },
+    {
+     "id": "aftereffects.effects.calculations_option.invert_input",
+     "name": "Invert Input"
+    },
+    {
+     "id": "aftereffects.effects.calculations_option.second_layer",
+     "name": "Second Layer"
+    },
+    {
+     "id": "aftereffects.effects.calculations_option.second_layer_channel",
+     "name": "Second Layer Channel"
+    },
+    {
+     "id": "aftereffects.effects.calculations_option.second_layer_opacity",
+     "name": "Second Layer Opacity"
+    },
+    {
+     "id": "aftereffects.effects.calculations_option.invert_second_layer",
+     "name": "Invert Second Layer"
+    },
+    {
+     "id": "aftereffects.effects.calculations_option.stretch_second_layer_to_fit",
+     "name": "Stretch Second Layer To Fit"
+    },
+    {
+     "id": "aftereffects.effects.calculations_option.preserve_transparency",
+     "name": "Preserve Transparency"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.cc_composite",
+   "name": "CC Composite",
+   "matchName": "CC Composite",
+   "category": "Channel",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.channel_combiner",
+   "name": "Channel Combiner",
+   "matchName": "ADBE Channel Combiner",
+   "category": "Channel",
+   "controls": [
+    {
+     "id": "aftereffects.effects.channel_combiner_option.from",
+     "name": "From"
+    },
+    {
+     "id": "aftereffects.effects.channel_combiner_option.invert",
+     "name": "Invert"
+    },
+    {
+     "id": "aftereffects.effects.channel_combiner_option.solid_alpha",
+     "name": "Solid Alpha"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.compound_arithmetic",
+   "name": "Compound Arithmetic",
+   "matchName": "ADBE Compound Arithmetic",
+   "category": "Channel",
+   "controls": [
+    {
+     "id": "aftereffects.effects.compound_arithmetic_option.second_source_layer",
+     "name": "Second Source Layer"
+    },
+    {
+     "id": "aftereffects.effects.compound_arithmetic_option.operator",
+     "name": "Operator"
+    },
+    {
+     "id": "aftereffects.effects.compound_arithmetic_option.operate_on_channels",
+     "name": "Operate On Channels"
+    },
+    {
+     "id": "aftereffects.effects.compound_arithmetic_option.overflow_behavior",
+     "name": "Overflow Behavior"
+    },
+    {
+     "id": "aftereffects.effects.compound_arithmetic_option.clip",
+     "name": "Clip"
+    },
+    {
+     "id": "aftereffects.effects.compound_arithmetic_option.wrap",
+     "name": "Wrap"
+    },
+    {
+     "id": "aftereffects.effects.compound_arithmetic_option.scale",
+     "name": "Scale"
+    },
+    {
+     "id": "aftereffects.effects.compound_arithmetic_option.stretch_second_source_to_fit",
+     "name": "Stretch Second Source To Fit"
+    },
+    {
+     "id": "aftereffects.effects.compound_arithmetic_option.blend_with_original",
+     "name": "Blend With Original"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.invert",
+   "name": "Invert",
+   "matchName": "ADBE Invert",
+   "category": "Channel",
+   "controls": [
+    {
+     "id": "aftereffects.effects.invert_option.channel",
+     "name": "Channel"
+    },
+    {
+     "id": "aftereffects.effects.invert_option.rgb_red_green_blue",
+     "name": "RGB/Red/Green/Blue"
+    },
+    {
+     "id": "aftereffects.effects.invert_option.hls_hue_lightness_saturation",
+     "name": "HLS/Hue/Lightness/Saturation"
+    },
+    {
+     "id": "aftereffects.effects.invert_option.alpha",
+     "name": "Alpha"
+    },
+    {
+     "id": "aftereffects.effects.invert_option.blend_with_original",
+     "name": "Blend With Original"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.minimax",
+   "name": "Minimax",
+   "matchName": "ADBE Minimax",
+   "category": "Channel",
+   "controls": [
+    {
+     "id": "aftereffects.effects.minimax_option.operation",
+     "name": "Operation"
+    },
+    {
+     "id": "aftereffects.effects.minimax_option.direction",
+     "name": "Direction"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.remove_color_matting",
+   "name": "Remove Color Matting",
+   "matchName": "ADBE Remove Color Matting",
+   "category": "Channel",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.set_channels",
+   "name": "Set Channels",
+   "matchName": "ADBE Set Channels",
+   "category": "Channel",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.set_matte",
+   "name": "Set Matte",
+   "matchName": "ADBE Set Matte3",
+   "category": "Channel",
+   "controls": [
+    {
+     "id": "aftereffects.effects.set_matte_option.take_matte_from_layer",
+     "name": "Take Matte From Layer"
+    },
+    {
+     "id": "aftereffects.effects.set_matte_option.invert_matte",
+     "name": "Invert Matte"
+    },
+    {
+     "id": "aftereffects.effects.set_matte_option.stretch_matte_to_fit",
+     "name": "Stretch Matte To Fit"
+    },
+    {
+     "id": "aftereffects.effects.set_matte_option.composite_matte_with_original",
+     "name": "Composite Matte With Original"
+    },
+    {
+     "id": "aftereffects.effects.set_matte_option.premultiply_matte_layer",
+     "name": "Premultiply Matte Layer"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.shift_channels",
+   "name": "Shift Channels",
+   "matchName": "ADBE Shift Channels",
+   "category": "Channel",
+   "controls": [
+    {
+     "id": "aftereffects.effects.shift_channels_option.take_channel_from",
+     "name": "Take Channel From"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.solid_composite",
+   "name": "Solid Composite",
+   "matchName": "ADBE Solid Composite",
+   "category": "Channel",
+   "controls": [
+    {
+     "id": "aftereffects.effects.solid_composite_option.source_opacity",
+     "name": "Source Opacity"
+    },
+    {
+     "id": "aftereffects.effects.solid_composite_option.color",
+     "name": "Color"
+    },
+    {
+     "id": "aftereffects.effects.solid_composite_option.opacity",
+     "name": "Opacity"
+    },
+    {
+     "id": "aftereffects.effects.solid_composite_option.blending_mode",
+     "name": "Blending Mode"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.cineware",
+   "name": "Cineware",
+   "matchName": "CINEMA 4D Effect",
+   "category": "CINEMA 4D",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.auto_color",
+   "name": "Auto Color",
+   "matchName": "ADBE AutoColor",
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.auto_contrast",
+   "name": "Auto Contrast",
+   "matchName": "ADBE AutoContrast",
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.auto_levels",
+   "name": "Auto Levels",
+   "matchName": "ADBE AutoLevels",
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.black_and_white",
+   "name": "Black & White",
+   "matchName": "ADBE Black&White",
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.brightness_and_contrast",
+   "name": "Brightness & Contrast",
+   "matchName": "ADBE Brightness & Contrast 2",
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.broadcast_colors",
+   "name": "Broadcast Colors",
+   "matchName": "ADBE Broadcast Colors",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.broadcast_colors_option.broadcast_locale",
+     "name": "Broadcast Locale"
+    },
+    {
+     "id": "aftereffects.effects.broadcast_colors_option.luminance",
+     "name": "Luminance"
+    },
+    {
+     "id": "aftereffects.effects.broadcast_colors_option.reduce_saturation",
+     "name": "Reduce Saturation"
+    },
+    {
+     "id": "aftereffects.effects.broadcast_colors_option.maximum_signal_amplitude_ire",
+     "name": "Maximum Signal Amplitude (IRE)"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.cc_color_neutralizer",
+   "name": "CC Color Neutralizer",
+   "matchName": "CS Color Neutralizer",
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_color_offset",
+   "name": "CC Color Offset",
+   "matchName": "CC Color Offset",
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_kernel",
+   "name": "CC Kernel",
+   "matchName": "CS Kernel",
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_toner",
+   "name": "CC Toner",
+   "matchName": "CC Toner",
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.change_color",
+   "name": "Change Color",
+   "matchName": "ADBE Change Color",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.change_color_option.view",
+     "name": "View"
+    },
+    {
+     "id": "aftereffects.effects.change_color_option.hue_transform",
+     "name": "Hue Transform"
+    },
+    {
+     "id": "aftereffects.effects.change_color_option.lightness_transform",
+     "name": "Lightness Transform"
+    },
+    {
+     "id": "aftereffects.effects.change_color_option.saturation_transform",
+     "name": "Saturation Transform"
+    },
+    {
+     "id": "aftereffects.effects.change_color_option.color_to_change",
+     "name": "Color To Change"
+    },
+    {
+     "id": "aftereffects.effects.change_color_option.matching_tolerance",
+     "name": "Matching Tolerance"
+    },
+    {
+     "id": "aftereffects.effects.change_color_option.matching_softness",
+     "name": "Matching Softness"
+    },
+    {
+     "id": "aftereffects.effects.change_color_option.match_colors",
+     "name": "Match Colors"
+    },
+    {
+     "id": "aftereffects.effects.change_color_option.invert_color_correction_mask",
+     "name": "Invert Color Correction Mask"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.change_to_color",
+   "name": "Change to Color",
+   "matchName": "ADBE Change To Color",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.change_to_color_option.from",
+     "name": "From"
+    },
+    {
+     "id": "aftereffects.effects.change_to_color_option.change",
+     "name": "Change"
+    },
+    {
+     "id": "aftereffects.effects.change_to_color_option.change_by",
+     "name": "Change By"
+    },
+    {
+     "id": "aftereffects.effects.change_to_color_option.tolerance",
+     "name": "Tolerance"
+    },
+    {
+     "id": "aftereffects.effects.change_to_color_option.softness",
+     "name": "Softness"
+    },
+    {
+     "id": "aftereffects.effects.change_to_color_option.view_correction_matte",
+     "name": "View Correction Matte"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.channel_mixer",
+   "name": "Channel Mixer",
+   "matchName": "ADBE CHANNEL MIXER",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.channel_mixer_option.monochrome",
+     "name": "Monochrome"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.color_balance",
+   "name": "Color Balance",
+   "matchName": "ADBE Color Balance 2",
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.color_balance_hls",
+   "name": "Color Balance (HLS)",
+   "matchName": "ADBE Color Balance (HLS)",
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.color_link",
+   "name": "Color Link",
+   "matchName": "ADBE Color Link",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.color_link_option.source_layer",
+     "name": "Source Layer"
+    },
+    {
+     "id": "aftereffects.effects.color_link_option.sample",
+     "name": "Sample"
+    },
+    {
+     "id": "aftereffects.effects.color_link_option.clip",
+     "name": "Clip"
+    },
+    {
+     "id": "aftereffects.effects.color_link_option.stencil_original_alpha",
+     "name": "Stencil Original Alpha"
+    },
+    {
+     "id": "aftereffects.effects.color_link_option.opacity",
+     "name": "Opacity"
+    },
+    {
+     "id": "aftereffects.effects.color_link_option.blending_mode",
+     "name": "Blending Mode"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.color_stabilizer",
+   "name": "Color Stabilizer",
+   "matchName": "ADBE Deflicker",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.color_stabilizer_option.set_frame",
+     "name": "Set Frame",
+     "settable": false,
+     "reason": "A button in the Effect Controls panel that samples the current frame; scripts cannot press it."
+    },
+    {
+     "id": "aftereffects.effects.color_stabilizer_option.brightness",
+     "name": "Brightness"
+    },
+    {
+     "id": "aftereffects.effects.color_stabilizer_option.levels",
+     "name": "Levels"
+    },
+    {
+     "id": "aftereffects.effects.color_stabilizer_option.curves",
+     "name": "Curves"
+    },
+    {
+     "id": "aftereffects.effects.color_stabilizer_option.black_point",
+     "name": "Black Point"
+    },
+    {
+     "id": "aftereffects.effects.color_stabilizer_option.mid_point",
+     "name": "Mid Point"
+    },
+    {
+     "id": "aftereffects.effects.color_stabilizer_option.white_point",
+     "name": "White Point"
+    },
+    {
+     "id": "aftereffects.effects.color_stabilizer_option.sample_size",
+     "name": "Sample Size"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.colorama",
+   "name": "Colorama",
+   "matchName": "APC Colorama",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.colorama_option.get_phase_from",
+     "name": "Get Phase From"
+    },
+    {
+     "id": "aftereffects.effects.colorama_option.add_phase",
+     "name": "Add Phase"
+    },
+    {
+     "id": "aftereffects.effects.colorama_option.add_phase_from",
+     "name": "Add Phase From"
+    },
+    {
+     "id": "aftereffects.effects.colorama_option.add_mode",
+     "name": "Add Mode"
+    },
+    {
+     "id": "aftereffects.effects.colorama_option.wrap",
+     "name": "Wrap"
+    },
+    {
+     "id": "aftereffects.effects.colorama_option.clamp",
+     "name": "Clamp"
+    },
+    {
+     "id": "aftereffects.effects.colorama_option.average",
+     "name": "Average"
+    },
+    {
+     "id": "aftereffects.effects.colorama_option.screen",
+     "name": "Screen"
+    },
+    {
+     "id": "aftereffects.effects.colorama_option.phase_shift",
+     "name": "Phase Shift"
+    },
+    {
+     "id": "aftereffects.effects.colorama_option.output_cycle",
+     "name": "Output Cycle"
+    },
+    {
+     "id": "aftereffects.effects.colorama_option.cycle_repetitions",
+     "name": "Cycle Repetitions"
+    },
+    {
+     "id": "aftereffects.effects.colorama_option.interpolate_palette",
+     "name": "Interpolate Palette"
+    },
+    {
+     "id": "aftereffects.effects.colorama_option.modify",
+     "name": "Modify"
+    },
+    {
+     "id": "aftereffects.effects.colorama_option.change_empty_pixels",
+     "name": "Change Empty Pixels"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.curves",
+   "name": "Curves",
+   "matchName": "ADBE CurvesCustom",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.curves_option.the",
+     "name": "The",
+     "settable": false,
+     "reason": "Not a control: a fragment of the help text. The curves themselves are a custom-data property that scripts cannot read or set."
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.equalize",
+   "name": "Equalize",
+   "matchName": "ADBE Equalize",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.equalize_option.amount_to_equalize",
+     "name": "Amount To Equalize"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.exposure",
+   "name": "Exposure",
+   "matchName": "ADBE Exposure2",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.exposure_option.offset",
+     "name": "Offset"
+    },
+    {
+     "id": "aftereffects.effects.exposure_option.gamma_correction",
+     "name": "Gamma Correction"
+    },
+    {
+     "id": "aftereffects.effects.exposure_option.bypass_linear_light_conversion",
+     "name": "Bypass Linear Light Conversion"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.gamma_pedestal_gain",
+   "name": "Gamma/Pedestal/Gain",
+   "matchName": "ADBE Gamma/Pedestal/Gain2",
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.hue_saturation",
+   "name": "Hue/Saturation",
+   "matchName": "ADBE HUE SATURATION",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.hue_saturation_option.channel_control",
+     "name": "Channel Control"
+    },
+    {
+     "id": "aftereffects.effects.hue_saturation_option.channel_range",
+     "name": "Channel Range"
+    },
+    {
+     "id": "aftereffects.effects.hue_saturation_option.master_hue",
+     "name": "Master Hue"
+    },
+    {
+     "id": "aftereffects.effects.hue_saturation_option.master_saturation_master_lightness",
+     "name": "Master Saturation, Master Lightness"
+    },
+    {
+     "id": "aftereffects.effects.hue_saturation_option.colorize",
+     "name": "Colorize"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.leave_color",
+   "name": "Leave Color",
+   "matchName": "ADBE Leave Color",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.leave_color_option.amount_to_decolor",
+     "name": "Amount To Decolor"
+    },
+    {
+     "id": "aftereffects.effects.leave_color_option.tolerance",
+     "name": "Tolerance"
+    },
+    {
+     "id": "aftereffects.effects.leave_color_option.edge_softness",
+     "name": "Edge Softness"
+    },
+    {
+     "id": "aftereffects.effects.leave_color_option.match_colors",
+     "name": "Match Colors"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.levels",
+   "name": "Levels",
+   "matchName": "ADBE Easy Levels2",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.levels_option.channel",
+     "name": "Channel"
+    },
+    {
+     "id": "aftereffects.effects.levels_option.histogram",
+     "name": "Histogram",
+     "settable": false,
+     "reason": "The histogram is a display in the Effect Controls panel, not a value."
+    },
+    {
+     "id": "aftereffects.effects.levels_option.input_black_and_output_black",
+     "name": "Input Black and Output Black"
+    },
+    {
+     "id": "aftereffects.effects.levels_option.input_white_and_output_white",
+     "name": "Input White and Output White"
+    },
+    {
+     "id": "aftereffects.effects.levels_option.gamma",
+     "name": "Gamma"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.levels_individual_controls",
+   "name": "Levels (Individual Controls)",
+   "matchName": "ADBE Pro Levels2",
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.lumetri_color",
+   "name": "Lumetri Color",
+   "matchName": "ADBE Lumetri",
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.ocio_cdl_transform",
+   "name": "OCIO CDL Transform",
+   "matchName": null,
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.ocio_color_space_transform",
+   "name": "OCIO Color Space Transform",
+   "matchName": null,
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.ocio_display_transform",
+   "name": "OCIO Display Transform",
+   "matchName": null,
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.ocio_file_transform",
+   "name": "OCIO File Transform",
+   "matchName": null,
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.ocio_look_transform",
+   "name": "OCIO Look Transform",
+   "matchName": null,
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.photo_filter",
+   "name": "Photo Filter",
+   "matchName": "ADBE PhotoFilterPS",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.photo_filter_option.individual_colors",
+     "name": "Individual Colors"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.ps_arbitrary_map",
+   "name": "PS Arbitrary Map",
+   "matchName": "ADBE PS Arbitrary Map",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.ps_arbitrary_map_option.phase",
+     "name": "Phase"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.selective_color",
+   "name": "Selective Color",
+   "matchName": "ADBE SelectiveColor",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.selective_color_option.relative",
+     "name": "Relative"
+    },
+    {
+     "id": "aftereffects.effects.selective_color_option.absolute",
+     "name": "Absolute"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.shadow_highlight",
+   "name": "Shadow/Highlight",
+   "matchName": "ADBE ShadowHighlight",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.shadow_highlight_option.auto_amounts",
+     "name": "Auto Amounts"
+    },
+    {
+     "id": "aftereffects.effects.shadow_highlight_option.shadow_amount",
+     "name": "Shadow Amount"
+    },
+    {
+     "id": "aftereffects.effects.shadow_highlight_option.highlight_amount",
+     "name": "Highlight Amount"
+    },
+    {
+     "id": "aftereffects.effects.shadow_highlight_option.temporal_smoothing",
+     "name": "Temporal Smoothing"
+    },
+    {
+     "id": "aftereffects.effects.shadow_highlight_option.scene_detect",
+     "name": "Scene Detect"
+    },
+    {
+     "id": "aftereffects.effects.shadow_highlight_option.blend_with_original",
+     "name": "Blend With Original"
+    },
+    {
+     "id": "aftereffects.effects.shadow_highlight_option.shadow_radius_and_highlight_radius",
+     "name": "Shadow Radius and Highlight Radius"
+    },
+    {
+     "id": "aftereffects.effects.shadow_highlight_option.color_correction",
+     "name": "Color Correction"
+    },
+    {
+     "id": "aftereffects.effects.shadow_highlight_option.midtone_contrast",
+     "name": "Midtone Contrast"
+    },
+    {
+     "id": "aftereffects.effects.shadow_highlight_option.black_clip_white_clip",
+     "name": "Black Clip, White Clip"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.tint",
+   "name": "Tint",
+   "matchName": "ADBE Tint",
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.tritone",
+   "name": "Tritone",
+   "matchName": "ADBE Tritone",
+   "category": "Color Correction",
+   "controls": [
+    {
+     "id": "aftereffects.effects.tritone_option.blend_with_original",
+     "name": "Blend With Original"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.vibrance",
+   "name": "Vibrance",
+   "matchName": "ADBE Vibrance",
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.video_limiter",
+   "name": "Video Limiter",
+   "matchName": null,
+   "category": "Color Correction",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.bezier_warp",
+   "name": "Bezier Warp",
+   "matchName": "ADBE BEZMESH",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.bulge",
+   "name": "Bulge",
+   "matchName": "ADBE Bulge",
+   "category": "Distort",
+   "controls": [
+    {
+     "id": "aftereffects.effects.bulge_option.horizontal_radius_and_vertical_radius",
+     "name": "Horizontal Radius and Vertical Radius"
+    },
+    {
+     "id": "aftereffects.effects.bulge_option.bulge_height",
+     "name": "Bulge Height"
+    },
+    {
+     "id": "aftereffects.effects.bulge_option.taper_radius",
+     "name": "Taper Radius"
+    },
+    {
+     "id": "aftereffects.effects.bulge_option.antialiasing",
+     "name": "Antialiasing"
+    },
+    {
+     "id": "aftereffects.effects.bulge_option.pin_all_edges",
+     "name": "Pin All Edges"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.cc_bend_it",
+   "name": "CC Bend It",
+   "matchName": "CC Bend It",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_bender",
+   "name": "CC Bender",
+   "matchName": "CC Bender",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_blobbylize",
+   "name": "CC Blobbylize",
+   "matchName": "CC Blobbylize",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_flo_motion",
+   "name": "CC Flo Motion",
+   "matchName": "CC Flo Motion",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_griddler",
+   "name": "CC Griddler",
+   "matchName": "CC Griddler",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_lens",
+   "name": "CC Lens",
+   "matchName": "CC Lens",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_page_turn",
+   "name": "CC Page Turn",
+   "matchName": "CC Page Turn",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_power_pin",
+   "name": "CC Power Pin",
+   "matchName": "CC Power Pin",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_ripple_pulse",
+   "name": "CC Ripple Pulse",
+   "matchName": "CC Ripple Pulse",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_slant",
+   "name": "CC Slant",
+   "matchName": "CC Slant",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_smear",
+   "name": "CC Smear",
+   "matchName": "CC Smear",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_split",
+   "name": "CC Split",
+   "matchName": "CC Split",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_split_2",
+   "name": "CC Split 2",
+   "matchName": "CC Split 2",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_tiler",
+   "name": "CC Tiler",
+   "matchName": "CC Tiler",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.corner_pin",
+   "name": "Corner Pin",
+   "matchName": "ADBE Corner Pin",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.detail_preserving_upscale",
+   "name": "Detail-preserving Upscale",
+   "matchName": "ADBE Upscale",
+   "category": "Distort",
+   "controls": [
+    {
+     "id": "aftereffects.effects.detail_preserving_upscale_option.scale",
+     "name": "Scale"
+    },
+    {
+     "id": "aftereffects.effects.detail_preserving_upscale_option.reduce_noise",
+     "name": "Reduce Noise"
+    },
+    {
+     "id": "aftereffects.effects.detail_preserving_upscale_option.detail",
+     "name": "Detail"
+    },
+    {
+     "id": "aftereffects.effects.detail_preserving_upscale_option.alpha",
+     "name": "Alpha"
+    },
+    {
+     "id": "aftereffects.effects.detail_preserving_upscale_option.bilinear",
+     "name": "Bilinear"
+    },
+    {
+     "id": "aftereffects.effects.detail_preserving_upscale_option.bicubic",
+     "name": "Bicubic"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.displacement_map",
+   "name": "Displacement Map",
+   "matchName": "ADBE Displacement Map",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.liquify",
+   "name": "Liquify",
+   "matchName": "ADBE LIQUIFY",
+   "category": "Distort",
+   "controls": [
+    {
+     "id": "aftereffects.effects.liquify_option.freeze_area_mask",
+     "name": "Freeze Area Mask"
+    },
+    {
+     "id": "aftereffects.effects.liquify_option.mask_opacity",
+     "name": "Mask Opacity"
+    },
+    {
+     "id": "aftereffects.effects.liquify_option.mask_feather",
+     "name": "Mask Feather"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.magnify",
+   "name": "Magnify",
+   "matchName": "ADBE Magnify",
+   "category": "Distort",
+   "controls": [
+    {
+     "id": "aftereffects.effects.magnify_option.shape",
+     "name": "Shape"
+    },
+    {
+     "id": "aftereffects.effects.magnify_option.center",
+     "name": "Center"
+    },
+    {
+     "id": "aftereffects.effects.magnify_option.magnification",
+     "name": "Magnification"
+    },
+    {
+     "id": "aftereffects.effects.magnify_option.link",
+     "name": "Link"
+    },
+    {
+     "id": "aftereffects.effects.magnify_option.size_to_magnification",
+     "name": "Size To Magnification"
+    },
+    {
+     "id": "aftereffects.effects.magnify_option.size_and_feather_to_magnification",
+     "name": "Size & Feather To Magnification"
+    },
+    {
+     "id": "aftereffects.effects.magnify_option.size",
+     "name": "Size"
+    },
+    {
+     "id": "aftereffects.effects.magnify_option.feather",
+     "name": "Feather"
+    },
+    {
+     "id": "aftereffects.effects.magnify_option.opacity",
+     "name": "Opacity"
+    },
+    {
+     "id": "aftereffects.effects.magnify_option.scaling",
+     "name": "Scaling"
+    },
+    {
+     "id": "aftereffects.effects.magnify_option.standard",
+     "name": "Standard"
+    },
+    {
+     "id": "aftereffects.effects.magnify_option.soft",
+     "name": "Soft"
+    },
+    {
+     "id": "aftereffects.effects.magnify_option.scatter",
+     "name": "Scatter"
+    },
+    {
+     "id": "aftereffects.effects.magnify_option.blending_mode",
+     "name": "Blending Mode"
+    },
+    {
+     "id": "aftereffects.effects.magnify_option.resize_layer",
+     "name": "Resize Layer"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.mesh_warp",
+   "name": "Mesh Warp",
+   "matchName": "ADBE MESH WARP",
+   "category": "Distort",
+   "controls": [
+    {
+     "id": "aftereffects.effects.mesh_warp_option.rows_columns",
+     "name": "Rows, Columns"
+    },
+    {
+     "id": "aftereffects.effects.mesh_warp_option.quality",
+     "name": "Quality"
+    },
+    {
+     "id": "aftereffects.effects.mesh_warp_option.distortion_mesh",
+     "name": "Distortion Mesh",
+     "settable": false,
+     "reason": "The mesh is custom data edited by dragging in the Composition panel; scripts cannot set it."
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.mirror",
+   "name": "Mirror",
+   "matchName": "ADBE Mirror",
+   "category": "Distort",
+   "controls": [
+    {
+     "id": "aftereffects.effects.mirror_option.reflection_center",
+     "name": "Reflection Center"
+    },
+    {
+     "id": "aftereffects.effects.mirror_option.reflection_angle",
+     "name": "Reflection Angle"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.offset",
+   "name": "Offset",
+   "matchName": "ADBE Offset",
+   "category": "Distort",
+   "controls": [
+    {
+     "id": "aftereffects.effects.offset_option.shift_center_to",
+     "name": "Shift Center To"
+    },
+    {
+     "id": "aftereffects.effects.offset_option.blend_with_original",
+     "name": "Blend With Original"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.optics_compensation",
+   "name": "Optics Compensation",
+   "matchName": "ADBE Optics Compensation",
+   "category": "Distort",
+   "controls": [
+    {
+     "id": "aftereffects.effects.optics_compensation_option.field_of_view_fov",
+     "name": "Field Of View (FOV)"
+    },
+    {
+     "id": "aftereffects.effects.optics_compensation_option.reverse_lens_distortion",
+     "name": "Reverse Lens Distortion"
+    },
+    {
+     "id": "aftereffects.effects.optics_compensation_option.fov_orientation",
+     "name": "FOV Orientation"
+    },
+    {
+     "id": "aftereffects.effects.optics_compensation_option.view_center",
+     "name": "View Center"
+    },
+    {
+     "id": "aftereffects.effects.optics_compensation_option.optimal_pixels",
+     "name": "Optimal Pixels"
+    },
+    {
+     "id": "aftereffects.effects.optics_compensation_option.resize",
+     "name": "Resize"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.polar_coordinates",
+   "name": "Polar Coordinates",
+   "matchName": "ADBE Polar Coordinates",
+   "category": "Distort",
+   "controls": [
+    {
+     "id": "aftereffects.effects.polar_coordinates_option.type_of_conversion",
+     "name": "Type of Conversion"
+    },
+    {
+     "id": "aftereffects.effects.polar_coordinates_option.polar",
+     "name": "Polar"
+    },
+    {
+     "id": "aftereffects.effects.polar_coordinates_option.polar_to_rect",
+     "name": "Polar To Rect"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.reshape",
+   "name": "Reshape",
+   "matchName": "ADBE RESHAPE",
+   "category": "Distort",
+   "controls": [
+    {
+     "id": "aftereffects.effects.reshape_option.source_mask",
+     "name": "Source Mask"
+    },
+    {
+     "id": "aftereffects.effects.reshape_option.destination_mask",
+     "name": "Destination Mask"
+    },
+    {
+     "id": "aftereffects.effects.reshape_option.boundary_mask",
+     "name": "Boundary Mask"
+    },
+    {
+     "id": "aftereffects.effects.reshape_option.percent",
+     "name": "Percent"
+    },
+    {
+     "id": "aftereffects.effects.reshape_option.elasticity",
+     "name": "Elasticity"
+    },
+    {
+     "id": "aftereffects.effects.reshape_option.correspondence_pairs",
+     "name": "Correspondence Pairs",
+     "settable": false,
+     "reason": "Correspondence points are placed on the masks interactively in the Composition panel; no property holds them."
+    },
+    {
+     "id": "aftereffects.effects.reshape_option.interpolation_method",
+     "name": "Interpolation Method"
+    },
+    {
+     "id": "aftereffects.effects.reshape_option.discrete",
+     "name": "Discrete"
+    },
+    {
+     "id": "aftereffects.effects.reshape_option.linear",
+     "name": "Linear"
+    },
+    {
+     "id": "aftereffects.effects.reshape_option.smooth",
+     "name": "Smooth"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.ripple",
+   "name": "Ripple",
+   "matchName": "ADBE Ripple",
+   "category": "Distort",
+   "controls": [
+    {
+     "id": "aftereffects.effects.ripple_option.radius",
+     "name": "Radius"
+    },
+    {
+     "id": "aftereffects.effects.ripple_option.center_of_ripple",
+     "name": "Center Of Ripple"
+    },
+    {
+     "id": "aftereffects.effects.ripple_option.type_of_conversion",
+     "name": "Type Of Conversion"
+    },
+    {
+     "id": "aftereffects.effects.ripple_option.wave_speed",
+     "name": "Wave Speed"
+    },
+    {
+     "id": "aftereffects.effects.ripple_option.wave_width",
+     "name": "Wave Width"
+    },
+    {
+     "id": "aftereffects.effects.ripple_option.wave_height",
+     "name": "Wave Height"
+    },
+    {
+     "id": "aftereffects.effects.ripple_option.ripple_phase",
+     "name": "Ripple Phase"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.rolling_shutter_repair",
+   "name": "Rolling Shutter Repair",
+   "matchName": "ADBE Rolling Shutter",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.smear",
+   "name": "Smear",
+   "matchName": "ADBE SCHMEAR",
+   "category": "Distort",
+   "controls": [
+    {
+     "id": "aftereffects.effects.smear_option.source_mask",
+     "name": "Source Mask"
+    },
+    {
+     "id": "aftereffects.effects.smear_option.boundary_mask",
+     "name": "Boundary Mask"
+    },
+    {
+     "id": "aftereffects.effects.smear_option.mask_offset",
+     "name": "Mask Offset"
+    },
+    {
+     "id": "aftereffects.effects.smear_option.mask_rotation",
+     "name": "Mask Rotation"
+    },
+    {
+     "id": "aftereffects.effects.smear_option.mask_scale",
+     "name": "Mask Scale"
+    },
+    {
+     "id": "aftereffects.effects.smear_option.percent",
+     "name": "Percent"
+    },
+    {
+     "id": "aftereffects.effects.smear_option.elasticity",
+     "name": "Elasticity"
+    },
+    {
+     "id": "aftereffects.effects.smear_option.interpolation_method",
+     "name": "Interpolation Method"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.spherize",
+   "name": "Spherize",
+   "matchName": "ADBE Spherize",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.transform",
+   "name": "Transform",
+   "matchName": "ADBE Geometry2",
+   "category": "Distort",
+   "controls": [
+    {
+     "id": "aftereffects.effects.transform_option.skew_axis",
+     "name": "Skew Axis"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.turbulent_displace",
+   "name": "Turbulent Displace",
+   "matchName": "ADBE Turbulent Displace",
+   "category": "Distort",
+   "controls": [
+    {
+     "id": "aftereffects.effects.turbulent_displace_option.displacement",
+     "name": "Displacement"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_displace_option.amount",
+     "name": "Amount"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_displace_option.size",
+     "name": "Size"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_displace_option.offset_turbulence",
+     "name": "Offset (Turbulence)"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_displace_option.complexity",
+     "name": "Complexity"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_displace_option.evolution",
+     "name": "Evolution"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_displace_option.evolution_options",
+     "name": "Evolution Options"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_displace_option.cycle_evolution",
+     "name": "Cycle Evolution"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_displace_option.cycle",
+     "name": "Cycle"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_displace_option.random_seed",
+     "name": "Random Seed"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_displace_option.pinning",
+     "name": "Pinning"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_displace_option.resize_layer",
+     "name": "Resize Layer"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.twirl",
+   "name": "Twirl",
+   "matchName": "ADBE Twirl",
+   "category": "Distort",
+   "controls": [
+    {
+     "id": "aftereffects.effects.twirl_option.angle",
+     "name": "Angle"
+    },
+    {
+     "id": "aftereffects.effects.twirl_option.twirl_radius",
+     "name": "Twirl Radius"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.warp",
+   "name": "Warp",
+   "matchName": "ADBE WRPMESH",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.warp_stabilizer",
+   "name": "Warp Stabilizer",
+   "matchName": "ADBE SubspaceStabilizer",
+   "category": "Distort",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.wave_warp",
+   "name": "Wave Warp",
+   "matchName": "ADBE Wave Warp",
+   "category": "Distort",
+   "controls": [
+    {
+     "id": "aftereffects.effects.wave_warp_option.wave_type",
+     "name": "Wave Type"
+    },
+    {
+     "id": "aftereffects.effects.wave_warp_option.wave_height",
+     "name": "Wave Height"
+    },
+    {
+     "id": "aftereffects.effects.wave_warp_option.wave_width",
+     "name": "Wave Width"
+    },
+    {
+     "id": "aftereffects.effects.wave_warp_option.direction",
+     "name": "Direction"
+    },
+    {
+     "id": "aftereffects.effects.wave_warp_option.wave_speed",
+     "name": "Wave Speed"
+    },
+    {
+     "id": "aftereffects.effects.wave_warp_option.pinning",
+     "name": "Pinning"
+    },
+    {
+     "id": "aftereffects.effects.wave_warp_option.phase",
+     "name": "Phase"
+    },
+    {
+     "id": "aftereffects.effects.wave_warp_option.antialiasing",
+     "name": "Antialiasing"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.n3d_point_control",
+   "name": "3D Point Control",
+   "matchName": "ADBE Point3D Control",
+   "category": "Expression Controls",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.angle_control",
+   "name": "Angle Control",
+   "matchName": "ADBE Angle Control",
+   "category": "Expression Controls",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.checkbox_control",
+   "name": "Checkbox Control",
+   "matchName": "ADBE Checkbox Control",
+   "category": "Expression Controls",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.color_control",
+   "name": "Color Control",
+   "matchName": "ADBE Color Control",
+   "category": "Expression Controls",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.dropdown_menu_control",
+   "name": "Dropdown Menu Control",
+   "matchName": "ADBE Dropdown Control",
+   "category": "Expression Controls",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.layer_control",
+   "name": "Layer Control",
+   "matchName": "ADBE Layer Control",
+   "category": "Expression Controls",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.point_control",
+   "name": "Point Control",
+   "matchName": "ADBE Point Control",
+   "category": "Expression Controls",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.slider_control",
+   "name": "Slider Control",
+   "matchName": "ADBE Slider Control",
+   "category": "Expression Controls",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.n4_color_gradient",
+   "name": "4-Color Gradient",
+   "matchName": "ADBE 4ColorGradient",
+   "category": "Generate",
+   "controls": [
+    {
+     "id": "aftereffects.effects.n4_color_gradient_option.blend",
+     "name": "Blend"
+    },
+    {
+     "id": "aftereffects.effects.n4_color_gradient_option.jitter",
+     "name": "Jitter"
+    },
+    {
+     "id": "aftereffects.effects.n4_color_gradient_option.opacity",
+     "name": "Opacity"
+    },
+    {
+     "id": "aftereffects.effects.n4_color_gradient_option.blending_mode",
+     "name": "Blending Mode"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.advanced_lightning",
+   "name": "Advanced Lightning",
+   "matchName": "ADBE Lightning 2",
+   "category": "Generate",
+   "controls": [
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.lightning_type",
+     "name": "Lightning Type"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.origin",
+     "name": "Origin"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.direction_outer_radius",
+     "name": "Direction, Outer Radius"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.outer_radius",
+     "name": "Outer Radius"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.direction",
+     "name": "Direction"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.conductivity_state",
+     "name": "Conductivity State"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.core_settings",
+     "name": "Core Settings"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.glow_settings",
+     "name": "Glow Settings"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.alpha_obstacle",
+     "name": "Alpha Obstacle"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.turbulence",
+     "name": "Turbulence"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.forking",
+     "name": "Forking"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.decay",
+     "name": "Decay"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.decay_main_core",
+     "name": "Decay Main Core"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.composite_on_original",
+     "name": "Composite On Original"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.complexity",
+     "name": "Complexity"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.min_forkdistance",
+     "name": "Min. Forkdistance"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.termination_threshold",
+     "name": "Termination Threshold"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.main_core_collision_only",
+     "name": "Main Core Collision Only"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.fractal_type",
+     "name": "Fractal Type"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.core_drain",
+     "name": "Core Drain"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.fork_strength",
+     "name": "Fork Strength"
+    },
+    {
+     "id": "aftereffects.effects.advanced_lightning_option.fork_variation",
+     "name": "Fork Variation"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.audio_spectrum",
+   "name": "Audio Spectrum",
+   "matchName": "ADBE AudSpect",
+   "category": "Generate",
+   "controls": [
+    {
+     "id": "aftereffects.effects.audio_spectrum_option.audio_layer",
+     "name": "Audio Layer"
+    },
+    {
+     "id": "aftereffects.effects.audio_spectrum_option.start_point_end_point",
+     "name": "Start Point, End Point"
+    },
+    {
+     "id": "aftereffects.effects.audio_spectrum_option.path",
+     "name": "Path"
+    },
+    {
+     "id": "aftereffects.effects.audio_spectrum_option.start_frequency_end_frequency",
+     "name": "Start Frequency, End Frequency"
+    },
+    {
+     "id": "aftereffects.effects.audio_spectrum_option.frequency_bands",
+     "name": "Frequency Bands"
+    },
+    {
+     "id": "aftereffects.effects.audio_spectrum_option.maximum_height",
+     "name": "Maximum Height"
+    },
+    {
+     "id": "aftereffects.effects.audio_spectrum_option.audio_duration",
+     "name": "Audio Duration"
+    },
+    {
+     "id": "aftereffects.effects.audio_spectrum_option.audio_offset",
+     "name": "Audio Offset"
+    },
+    {
+     "id": "aftereffects.effects.audio_spectrum_option.softness",
+     "name": "Softness"
+    },
+    {
+     "id": "aftereffects.effects.audio_spectrum_option.inside_color_outside_color",
+     "name": "Inside Color, Outside Color"
+    },
+    {
+     "id": "aftereffects.effects.audio_spectrum_option.blend_overlapping_colors",
+     "name": "Blend Overlapping Colors"
+    },
+    {
+     "id": "aftereffects.effects.audio_spectrum_option.dynamic_hue_phase",
+     "name": "Dynamic Hue Phase"
+    },
+    {
+     "id": "aftereffects.effects.audio_spectrum_option.color_symmetry",
+     "name": "Color Symmetry"
+    },
+    {
+     "id": "aftereffects.effects.audio_spectrum_option.display_options",
+     "name": "Display Options"
+    },
+    {
+     "id": "aftereffects.effects.audio_spectrum_option.side_options",
+     "name": "Side Options"
+    },
+    {
+     "id": "aftereffects.effects.audio_spectrum_option.duration_averaging",
+     "name": "Duration Averaging"
+    },
+    {
+     "id": "aftereffects.effects.audio_spectrum_option.composite_on_original",
+     "name": "Composite On Original"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.audio_waveform",
+   "name": "Audio Waveform",
+   "matchName": "ADBE AudWave",
+   "category": "Generate",
+   "controls": [
+    {
+     "id": "aftereffects.effects.audio_waveform_option.audio_layer",
+     "name": "Audio Layer"
+    },
+    {
+     "id": "aftereffects.effects.audio_waveform_option.start_point_end_point",
+     "name": "Start Point, End Point"
+    },
+    {
+     "id": "aftereffects.effects.audio_waveform_option.path",
+     "name": "Path"
+    },
+    {
+     "id": "aftereffects.effects.audio_waveform_option.displayed_samples",
+     "name": "Displayed Samples"
+    },
+    {
+     "id": "aftereffects.effects.audio_waveform_option.maximum_height",
+     "name": "Maximum Height"
+    },
+    {
+     "id": "aftereffects.effects.audio_waveform_option.audio_duration",
+     "name": "Audio Duration"
+    },
+    {
+     "id": "aftereffects.effects.audio_waveform_option.audio_offset",
+     "name": "Audio Offset"
+    },
+    {
+     "id": "aftereffects.effects.audio_waveform_option.thickness",
+     "name": "Thickness"
+    },
+    {
+     "id": "aftereffects.effects.audio_waveform_option.softness",
+     "name": "Softness"
+    },
+    {
+     "id": "aftereffects.effects.audio_waveform_option.inside_color_outside_color",
+     "name": "Inside Color, Outside Color"
+    },
+    {
+     "id": "aftereffects.effects.audio_waveform_option.waveform_options",
+     "name": "Waveform Options"
+    },
+    {
+     "id": "aftereffects.effects.audio_waveform_option.display_options",
+     "name": "Display Options"
+    },
+    {
+     "id": "aftereffects.effects.audio_waveform_option.composite_on_original",
+     "name": "Composite On Original"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.beam",
+   "name": "Beam",
+   "matchName": "ADBE Laser",
+   "category": "Generate",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_glue_gun",
+   "name": "CC Glue Gun",
+   "matchName": "CC Glue Gun",
+   "category": "Generate",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_light_burst_2_5",
+   "name": "CC Light Burst 2.5",
+   "matchName": "CC Light Burst 2.5",
+   "category": "Generate",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_light_rays",
+   "name": "CC Light Rays",
+   "matchName": "CC Light Rays",
+   "category": "Generate",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_light_sweep",
+   "name": "CC Light Sweep",
+   "matchName": "CC Light Sweep",
+   "category": "Generate",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_threads",
+   "name": "CC Threads",
+   "matchName": "CS Threads",
+   "category": "Generate",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cell_pattern",
+   "name": "Cell Pattern",
+   "matchName": "ADBE Cell Pattern",
+   "category": "Generate",
+   "controls": [
+    {
+     "id": "aftereffects.effects.cell_pattern_option.invert",
+     "name": "Invert"
+    },
+    {
+     "id": "aftereffects.effects.cell_pattern_option.contrast_sharpness",
+     "name": "Contrast/Sharpness"
+    },
+    {
+     "id": "aftereffects.effects.cell_pattern_option.overflow",
+     "name": "Overflow"
+    },
+    {
+     "id": "aftereffects.effects.cell_pattern_option.clip",
+     "name": "Clip"
+    },
+    {
+     "id": "aftereffects.effects.cell_pattern_option.soft_clamp",
+     "name": "Soft Clamp"
+    },
+    {
+     "id": "aftereffects.effects.cell_pattern_option.wrap_back",
+     "name": "Wrap Back"
+    },
+    {
+     "id": "aftereffects.effects.cell_pattern_option.disperse",
+     "name": "Disperse"
+    },
+    {
+     "id": "aftereffects.effects.cell_pattern_option.size",
+     "name": "Size"
+    },
+    {
+     "id": "aftereffects.effects.cell_pattern_option.offset",
+     "name": "Offset"
+    },
+    {
+     "id": "aftereffects.effects.cell_pattern_option.tiling_options",
+     "name": "Tiling Options"
+    },
+    {
+     "id": "aftereffects.effects.cell_pattern_option.evolution",
+     "name": "Evolution"
+    },
+    {
+     "id": "aftereffects.effects.cell_pattern_option.evolution_options",
+     "name": "Evolution Options"
+    },
+    {
+     "id": "aftereffects.effects.cell_pattern_option.cycle_evolution",
+     "name": "Cycle Evolution"
+    },
+    {
+     "id": "aftereffects.effects.cell_pattern_option.cycle",
+     "name": "Cycle"
+    },
+    {
+     "id": "aftereffects.effects.cell_pattern_option.random_seed",
+     "name": "Random Seed"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.checkerboard",
+   "name": "Checkerboard",
+   "matchName": "ADBE Checkerboard",
+   "category": "Generate",
+   "controls": [
+    {
+     "id": "aftereffects.effects.checkerboard_option.anchor",
+     "name": "Anchor"
+    },
+    {
+     "id": "aftereffects.effects.checkerboard_option.size_from",
+     "name": "Size From"
+    },
+    {
+     "id": "aftereffects.effects.checkerboard_option.corner_point",
+     "name": "Corner Point"
+    },
+    {
+     "id": "aftereffects.effects.checkerboard_option.width_slider",
+     "name": "Width Slider"
+    },
+    {
+     "id": "aftereffects.effects.checkerboard_option.width_and_height_sliders",
+     "name": "Width & Height Sliders"
+    },
+    {
+     "id": "aftereffects.effects.checkerboard_option.feather",
+     "name": "Feather"
+    },
+    {
+     "id": "aftereffects.effects.checkerboard_option.color",
+     "name": "Color"
+    },
+    {
+     "id": "aftereffects.effects.checkerboard_option.opacity",
+     "name": "Opacity"
+    },
+    {
+     "id": "aftereffects.effects.checkerboard_option.blending_mode",
+     "name": "Blending Mode"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.circle",
+   "name": "Circle",
+   "matchName": "ADBE Circle",
+   "category": "Generate",
+   "controls": [
+    {
+     "id": "aftereffects.effects.circle_option.edge",
+     "name": "Edge"
+    },
+    {
+     "id": "aftereffects.effects.circle_option.edge_radius",
+     "name": "Edge Radius"
+    },
+    {
+     "id": "aftereffects.effects.circle_option.thickness",
+     "name": "Thickness"
+    },
+    {
+     "id": "aftereffects.effects.circle_option.thickness_radius",
+     "name": "Thickness * Radius"
+    },
+    {
+     "id": "aftereffects.effects.circle_option.thickness_and_feather_radius",
+     "name": "Thickness & Feather * Radius"
+    },
+    {
+     "id": "aftereffects.effects.circle_option.feather",
+     "name": "Feather"
+    },
+    {
+     "id": "aftereffects.effects.circle_option.blending_mode",
+     "name": "Blending Mode"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.ellipse",
+   "name": "Ellipse",
+   "matchName": "ADBE ELLIPSE",
+   "category": "Generate",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.eyedropper_fill",
+   "name": "Eyedropper Fill",
+   "matchName": "ADBE Eyedropper Fill",
+   "category": "Generate",
+   "controls": [
+    {
+     "id": "aftereffects.effects.eyedropper_fill_option.sample_point",
+     "name": "Sample Point"
+    },
+    {
+     "id": "aftereffects.effects.eyedropper_fill_option.sample_radius",
+     "name": "Sample Radius"
+    },
+    {
+     "id": "aftereffects.effects.eyedropper_fill_option.average_pixel_color",
+     "name": "Average Pixel Color"
+    },
+    {
+     "id": "aftereffects.effects.eyedropper_fill_option.empty",
+     "name": "Empty"
+    },
+    {
+     "id": "aftereffects.effects.eyedropper_fill_option.all",
+     "name": "All"
+    },
+    {
+     "id": "aftereffects.effects.eyedropper_fill_option.all_premultiplied",
+     "name": "All Premultiplied"
+    },
+    {
+     "id": "aftereffects.effects.eyedropper_fill_option.including_alpha",
+     "name": "Including Alpha"
+    },
+    {
+     "id": "aftereffects.effects.eyedropper_fill_option.maintain_original_alpha",
+     "name": "Maintain Original Alpha"
+    },
+    {
+     "id": "aftereffects.effects.eyedropper_fill_option.blend_with_original",
+     "name": "Blend With Original"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.fill",
+   "name": "Fill",
+   "matchName": "ADBE Fill",
+   "category": "Generate",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.fractal",
+   "name": "Fractal",
+   "matchName": "ADBE Fractal",
+   "category": "Generate",
+   "controls": [
+    {
+     "id": "aftereffects.effects.fractal_option.set_choice",
+     "name": "Set Choice"
+    },
+    {
+     "id": "aftereffects.effects.fractal_option.mandelbrot_julia",
+     "name": "Mandelbrot, Julia"
+    },
+    {
+     "id": "aftereffects.effects.fractal_option.color",
+     "name": "Color"
+    },
+    {
+     "id": "aftereffects.effects.fractal_option.overlay",
+     "name": "Overlay"
+    },
+    {
+     "id": "aftereffects.effects.fractal_option.transparency",
+     "name": "Transparency"
+    },
+    {
+     "id": "aftereffects.effects.fractal_option.palette",
+     "name": "Palette"
+    },
+    {
+     "id": "aftereffects.effects.fractal_option.hue",
+     "name": "Hue"
+    },
+    {
+     "id": "aftereffects.effects.fractal_option.edge_highlight",
+     "name": "Edge Highlight"
+    },
+    {
+     "id": "aftereffects.effects.fractal_option.high_quality_settings",
+     "name": "High Quality Settings"
+    },
+    {
+     "id": "aftereffects.effects.fractal_option.oversample_method",
+     "name": "Oversample Method"
+    },
+    {
+     "id": "aftereffects.effects.fractal_option.oversample_factor",
+     "name": "Oversample Factor"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.gradient_ramp",
+   "name": "Gradient Ramp",
+   "matchName": "ADBE Ramp",
+   "category": "Generate",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.grid",
+   "name": "Grid",
+   "matchName": "ADBE Grid",
+   "category": "Generate",
+   "controls": [
+    {
+     "id": "aftereffects.effects.grid_option.anchor",
+     "name": "Anchor"
+    },
+    {
+     "id": "aftereffects.effects.grid_option.size_from",
+     "name": "Size From"
+    },
+    {
+     "id": "aftereffects.effects.grid_option.corner_point",
+     "name": "Corner Point"
+    },
+    {
+     "id": "aftereffects.effects.grid_option.width_slider",
+     "name": "Width Slider"
+    },
+    {
+     "id": "aftereffects.effects.grid_option.width_and_height_sliders",
+     "name": "Width & Height Sliders"
+    },
+    {
+     "id": "aftereffects.effects.grid_option.border",
+     "name": "Border"
+    },
+    {
+     "id": "aftereffects.effects.grid_option.feather",
+     "name": "Feather"
+    },
+    {
+     "id": "aftereffects.effects.grid_option.invert_grid",
+     "name": "Invert Grid"
+    },
+    {
+     "id": "aftereffects.effects.grid_option.color",
+     "name": "Color"
+    },
+    {
+     "id": "aftereffects.effects.grid_option.opacity",
+     "name": "Opacity"
+    },
+    {
+     "id": "aftereffects.effects.grid_option.blending_mode",
+     "name": "Blending Mode"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.lens_flare",
+   "name": "Lens Flare",
+   "matchName": "ADBE Lens Flare",
+   "category": "Generate",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.paint_bucket",
+   "name": "Paint Bucket",
+   "matchName": "ADBE Paint Bucket",
+   "category": "Generate",
+   "controls": [
+    {
+     "id": "aftereffects.effects.paint_bucket_option.fill_point",
+     "name": "Fill Point"
+    },
+    {
+     "id": "aftereffects.effects.paint_bucket_option.fill_selector",
+     "name": "Fill Selector"
+    },
+    {
+     "id": "aftereffects.effects.paint_bucket_option.alpha",
+     "name": "Alpha"
+    },
+    {
+     "id": "aftereffects.effects.paint_bucket_option.straight_color",
+     "name": "Straight Color"
+    },
+    {
+     "id": "aftereffects.effects.paint_bucket_option.transparency",
+     "name": "Transparency"
+    },
+    {
+     "id": "aftereffects.effects.paint_bucket_option.opacity",
+     "name": "Opacity"
+    },
+    {
+     "id": "aftereffects.effects.paint_bucket_option.alpha_channel",
+     "name": "Alpha Channel"
+    },
+    {
+     "id": "aftereffects.effects.paint_bucket_option.tolerance",
+     "name": "Tolerance"
+    },
+    {
+     "id": "aftereffects.effects.paint_bucket_option.view_threshold",
+     "name": "View Threshold"
+    },
+    {
+     "id": "aftereffects.effects.paint_bucket_option.stroke",
+     "name": "Stroke"
+    },
+    {
+     "id": "aftereffects.effects.paint_bucket_option.antialias",
+     "name": "Antialias"
+    },
+    {
+     "id": "aftereffects.effects.paint_bucket_option.feather",
+     "name": "Feather"
+    },
+    {
+     "id": "aftereffects.effects.paint_bucket_option.spread",
+     "name": "Spread"
+    },
+    {
+     "id": "aftereffects.effects.paint_bucket_option.choke",
+     "name": "Choke"
+    },
+    {
+     "id": "aftereffects.effects.paint_bucket_option.blending_mode",
+     "name": "Blending Mode"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.radio_waves",
+   "name": "Radio Waves",
+   "matchName": "APC Radio Waves",
+   "category": "Generate",
+   "controls": [
+    {
+     "id": "aftereffects.effects.radio_waves_option.producer_point",
+     "name": "Producer Point"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.parameters_are_set_at",
+     "name": "Parameters Are Set At"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.render_quality",
+     "name": "Render Quality"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.wave_type",
+     "name": "Wave Type"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.polygon",
+     "name": "Polygon"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.sides",
+     "name": "Sides"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.curve_size",
+     "name": "Curve Size"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.curvyness",
+     "name": "Curvyness"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.star",
+     "name": "Star"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.star_depth",
+     "name": "Star Depth"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.mask",
+     "name": "Mask"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.source_layer",
+     "name": "Source Layer"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.source_center",
+     "name": "Source Center"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.value_channel",
+     "name": "Value Channel"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.invert_input",
+     "name": "Invert Input"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.value_threshold",
+     "name": "Value Threshold"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.pre_blur",
+     "name": "Pre-Blur"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.tolerance",
+     "name": "Tolerance"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.contour",
+     "name": "Contour"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.frequency",
+     "name": "Frequency"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.expansion",
+     "name": "Expansion"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.orientation",
+     "name": "Orientation"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.direction",
+     "name": "Direction"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.velocity",
+     "name": "Velocity"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.spin",
+     "name": "Spin"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.lifespan_sec",
+     "name": "Lifespan (sec)"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.reflection",
+     "name": "Reflection"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.profile",
+     "name": "Profile"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.color",
+     "name": "Color"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.opacity",
+     "name": "Opacity"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.fade_in_time",
+     "name": "Fade-in Time"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.fade_out_time",
+     "name": "Fade-out Time"
+    },
+    {
+     "id": "aftereffects.effects.radio_waves_option.start_width",
+     "name": "Start Width"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.scribble",
+   "name": "Scribble",
+   "matchName": "ADBE Scribble Fill",
+   "category": "Generate",
+   "controls": [
+    {
+     "id": "aftereffects.effects.scribble_option.mask",
+     "name": "Mask"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.fill_type",
+     "name": "Fill Type"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.edge_options",
+     "name": "Edge Options"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.edge_width",
+     "name": "Edge Width"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.end_cap",
+     "name": "End Cap"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.join",
+     "name": "Join"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.miter_limit",
+     "name": "Miter Limit"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.start_end_apply_to",
+     "name": "Start/End Apply To"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.angle",
+     "name": "Angle"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.stroke_width",
+     "name": "Stroke Width"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.stroke_options",
+     "name": "Stroke Options"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.curviness",
+     "name": "Curviness"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.curviness_variation",
+     "name": "Curviness Variation"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.spacing_and_spacing_variation",
+     "name": "Spacing and Spacing Variation"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.path_overlap",
+     "name": "Path Overlap"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.start_end",
+     "name": "Start, End"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.fill_paths_sequentially",
+     "name": "Fill Paths Sequentially"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.wiggle_type",
+     "name": "Wiggle Type"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.wiggles_second",
+     "name": "Wiggles/Second"
+    },
+    {
+     "id": "aftereffects.effects.scribble_option.composite",
+     "name": "Composite"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.stroke",
+   "name": "Stroke",
+   "matchName": "ADBE Stroke",
+   "category": "Generate",
+   "controls": [
+    {
+     "id": "aftereffects.effects.stroke_option.brush_hardness",
+     "name": "Brush Hardness"
+    },
+    {
+     "id": "aftereffects.effects.stroke_option.spacing",
+     "name": "Spacing"
+    },
+    {
+     "id": "aftereffects.effects.stroke_option.paint_style",
+     "name": "Paint Style"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.vegas",
+   "name": "Vegas",
+   "matchName": "APC Vegas",
+   "category": "Generate",
+   "controls": [
+    {
+     "id": "aftereffects.effects.vegas_option.stroke",
+     "name": "Stroke"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.image_contours",
+     "name": "Image Contours"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.input_layer",
+     "name": "Input Layer"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.invert_input",
+     "name": "Invert Input"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.channel",
+     "name": "Channel"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.threshold",
+     "name": "Threshold"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.pre_blur",
+     "name": "Pre-Blur"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.tolerance",
+     "name": "Tolerance"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.render",
+     "name": "Render"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.shorter_contours_have",
+     "name": "Shorter Contours Have"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.mask_path",
+     "name": "Mask/Path"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.segments",
+     "name": "Segments"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.length",
+     "name": "Length"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.segment_distribution",
+     "name": "Segment Distribution"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.rotation",
+     "name": "Rotation"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.random_phase",
+     "name": "Random Phase"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.blend_mode",
+     "name": "Blend Mode"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.color",
+     "name": "Color"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.width",
+     "name": "Width"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.hardness",
+     "name": "Hardness"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.start_end_opacity",
+     "name": "Start, End Opacity"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.mid_point_opacity",
+     "name": "Mid-point Opacity"
+    },
+    {
+     "id": "aftereffects.effects.vegas_option.mid_point_position",
+     "name": "Mid-point Position"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.write_on",
+   "name": "Write-on",
+   "matchName": "ADBE Write-on",
+   "category": "Generate",
+   "controls": [
+    {
+     "id": "aftereffects.effects.write_on_option.brush_position",
+     "name": "Brush Position"
+    },
+    {
+     "id": "aftereffects.effects.write_on_option.stroke_length_secs",
+     "name": "Stroke Length (secs)"
+    },
+    {
+     "id": "aftereffects.effects.write_on_option.brush_spacing_secs",
+     "name": "Brush Spacing (secs)"
+    },
+    {
+     "id": "aftereffects.effects.write_on_option.paint_style",
+     "name": "Paint Style"
+    },
+    {
+     "id": "aftereffects.effects.write_on_option.on_original_image",
+     "name": "On Original Image"
+    },
+    {
+     "id": "aftereffects.effects.write_on_option.on_transparent",
+     "name": "On Transparent"
+    },
+    {
+     "id": "aftereffects.effects.write_on_option.reveal_original_image",
+     "name": "Reveal Original Image"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.vr_blur",
+   "name": "VR Blur",
+   "matchName": null,
+   "category": "Immersive Video",
+   "controls": [
+    {
+     "id": "aftereffects.effects.vr_blur_option.vr_blur_settings",
+     "name": "VR Blur settings"
+    },
+    {
+     "id": "aftereffects.effects.vr_blur_option.blurriness",
+     "name": "Blurriness"
+    },
+    {
+     "id": "aftereffects.effects.vr_blur_option.stereoscopic_side",
+     "name": "Stereoscopic Side"
+    },
+    {
+     "id": "aftereffects.effects.vr_blur_option.horizontal_and_vertical_field_of_view",
+     "name": "Horizontal and Vertical Field of View"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.vr_chromatic_aberrations",
+   "name": "VR Chromatic Aberrations",
+   "matchName": null,
+   "category": "Immersive Video",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.vr_color_gradients",
+   "name": "VR Color Gradients",
+   "matchName": null,
+   "category": "Immersive Video",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.vr_converter",
+   "name": "VR Converter",
+   "matchName": null,
+   "category": "Immersive Video",
+   "controls": [
+    {
+     "id": "aftereffects.effects.vr_converter_option.cube",
+     "name": "Cube"
+    },
+    {
+     "id": "aftereffects.effects.vr_converter_option.equirectangular_16",
+     "name": "Equirectangular 16"
+    },
+    {
+     "id": "aftereffects.effects.vr_converter_option.sphere",
+     "name": "Sphere"
+    },
+    {
+     "id": "aftereffects.effects.vr_converter_option.equirectangular_2",
+     "name": "Equirectangular 2"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.vr_de_noise",
+   "name": "VR De-Noise",
+   "matchName": null,
+   "category": "Immersive Video",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.vr_digital_glitch",
+   "name": "VR Digital Glitch",
+   "matchName": null,
+   "category": "Immersive Video",
+   "controls": [
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.frame_layout",
+     "name": "Frame Layout"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.point_of_interest",
+     "name": "Point of Interest"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.poi_scale_point_of_interest_scale",
+     "name": "POI Scale (Point of Interest scale)"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.master_amplitude",
+     "name": "Master Amplitude"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.distortion",
+     "name": "Distortion"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.color_distortion",
+     "name": "Color Distortion"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.geometry_distortion_x",
+     "name": "Geometry Distortion X"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.geometry_distortion_y",
+     "name": "Geometry Distortion Y"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.geometry_distortion_z",
+     "name": "Geometry Distortion Z"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.distortion_complexity",
+     "name": "Distortion Complexity"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.distortion_rate",
+     "name": "Distortion Rate"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.distortion_evolution",
+     "name": "Distortion Evolution"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.color_evolution",
+     "name": "Color Evolution"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.transform",
+     "name": "Transform"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.scale_x",
+     "name": "Scale X"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.scale_y",
+     "name": "Scale Y"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.scale_z",
+     "name": "Scale Z"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.translate_y",
+     "name": "Translate Y"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.translate_z",
+     "name": "Translate Z"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.sub_settings",
+     "name": "Sub settings"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.sub_influence",
+     "name": "Sub Influence"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.sub_scaling",
+     "name": "Sub Scaling"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.noise",
+     "name": "Noise"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.noise_strength",
+     "name": "Noise Strength"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.noise_quantity",
+     "name": "Noise Quantity"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.noise_scale",
+     "name": "Noise Scale"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.noise_evolution",
+     "name": "Noise Evolution"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.quantity_settings",
+     "name": "Quantity settings"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.color_noise",
+     "name": "Color Noise"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.random_speed",
+     "name": "Random Speed"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.stereoscopic_side_by_side",
+     "name": "Stereoscopic Side-by-Side"
+    },
+    {
+     "id": "aftereffects.effects.vr_digital_glitch_option.horizontal_and_vertical_field_of_view",
+     "name": "Horizontal and Vertical Field of View"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.vr_fractal_noise",
+   "name": "VR Fractal Noise",
+   "matchName": null,
+   "category": "Immersive Video",
+   "controls": [
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.frame_layout",
+     "name": "Frame Layout"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.fractal_type",
+     "name": "Fractal Type"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.contrast",
+     "name": "Contrast"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.brightness",
+     "name": "Brightness"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.invert",
+     "name": "Invert"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.complexity",
+     "name": "Complexity"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.evolution",
+     "name": "Evolution"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.transform",
+     "name": "Transform"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.scale",
+     "name": "Scale"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.tilt_x_axis",
+     "name": "Tilt (X axis)"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.roll_z_axis",
+     "name": "Roll (Z axis)"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.sub_settings",
+     "name": "Sub settings"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.sub_influence",
+     "name": "Sub Influence"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.sub_scaling",
+     "name": "Sub Scaling"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.sub_tilt_x_axis",
+     "name": "Sub Tilt (X axis)"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.sub_pan_y_axis",
+     "name": "Sub Pan (Y axis)"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.sub_roll_z_axis",
+     "name": "Sub Roll (Z axis)"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.random_speed",
+     "name": "Random Speed"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.opacity",
+     "name": "Opacity"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.blend_mode",
+     "name": "Blend Mode"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.stereoscopic_side_by_side",
+     "name": "Stereoscopic Side-by-Side"
+    },
+    {
+     "id": "aftereffects.effects.vr_fractal_noise_option.horizontal_and_vertical_field_of_view",
+     "name": "Horizontal and Vertical Field of View"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.vr_glow",
+   "name": "VR Glow",
+   "matchName": null,
+   "category": "Immersive Video",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.vr_plane_to_sphere",
+   "name": "VR Plane to Sphere",
+   "matchName": null,
+   "category": "Immersive Video",
+   "controls": [
+    {
+     "id": "aftereffects.effects.vr_plane_to_sphere_option.frame_layout",
+     "name": "Frame layout"
+    },
+    {
+     "id": "aftereffects.effects.vr_plane_to_sphere_option.scale_degrees",
+     "name": "Scale (Degrees)"
+    },
+    {
+     "id": "aftereffects.effects.vr_plane_to_sphere_option.stereo_disparity_degrees",
+     "name": "Stereo Disparity (Degrees)"
+    },
+    {
+     "id": "aftereffects.effects.vr_plane_to_sphere_option.feather",
+     "name": "Feather"
+    },
+    {
+     "id": "aftereffects.effects.vr_plane_to_sphere_option.rotate_source",
+     "name": "Rotate Source"
+    },
+    {
+     "id": "aftereffects.effects.vr_plane_to_sphere_option.rotate_projection",
+     "name": "Rotate Projection"
+    },
+    {
+     "id": "aftereffects.effects.vr_plane_to_sphere_option.stereoscopic_side",
+     "name": "Stereoscopic Side"
+    },
+    {
+     "id": "aftereffects.effects.vr_plane_to_sphere_option.horizontal_and_vertical_field_of_view",
+     "name": "Horizontal and Vertical Field of View"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.vr_rotate_sphere",
+   "name": "VR Rotate Sphere",
+   "matchName": null,
+   "category": "Immersive Video",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.vr_sharpen",
+   "name": "VR Sharpen",
+   "matchName": null,
+   "category": "Immersive Video",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.vr_sphere_to_plane",
+   "name": "VR Sphere To Plane",
+   "matchName": null,
+   "category": "Immersive Video",
+   "controls": [
+    {
+     "id": "aftereffects.effects.vr_sphere_to_plane_option.projection_tilt_y",
+     "name": "Projection Tilt (Y"
+    },
+    {
+     "id": "aftereffects.effects.vr_sphere_to_plane_option.projection_tilt_x",
+     "name": "Projection Tilt (X"
+    },
+    {
+     "id": "aftereffects.effects.vr_sphere_to_plane_option.projection_tilt_z",
+     "name": "Projection Tilt (Z"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.advanced_spill_suppressor",
+   "name": "Advanced Spill Suppressor",
+   "matchName": "ADBE Spill2",
+   "category": "Keying",
+   "controls": [
+    {
+     "id": "aftereffects.effects.advanced_spill_suppressor_option.standard",
+     "name": "Standard"
+    },
+    {
+     "id": "aftereffects.effects.advanced_spill_suppressor_option.ultra",
+     "name": "Ultra"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.cc_simple_wire_removal",
+   "name": "CC Simple Wire Removal",
+   "matchName": "CC Simple Wire Removal",
+   "category": "Keying",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.color_difference_key",
+   "name": "Color Difference Key",
+   "matchName": "ADBE Color Difference Key",
+   "category": "Keying",
+   "controls": [
+    {
+     "id": "aftereffects.effects.color_difference_key_option.thumbnail_eyedropper",
+     "name": "Thumbnail eyedropper",
+     "settable": false,
+     "reason": "An eyedropper button in the Effect Controls panel; it samples the image interactively. Set Key Color instead."
+    },
+    {
+     "id": "aftereffects.effects.color_difference_key_option.key_color_eyedropper",
+     "name": "Key Color eyedropper",
+     "settable": false,
+     "reason": "An eyedropper button in the Effect Controls panel; it samples the image interactively. Set Key Color instead."
+    },
+    {
+     "id": "aftereffects.effects.color_difference_key_option.key_color_swatch",
+     "name": "Key Color swatch"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.color_range",
+   "name": "Color Range",
+   "matchName": "ADBE Color Range",
+   "category": "Keying",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.difference_matte",
+   "name": "Difference Matte",
+   "matchName": "ADBE Difference Matte2",
+   "category": "Keying",
+   "controls": [
+    {
+     "id": "aftereffects.effects.difference_matte_option.center",
+     "name": "Center"
+    },
+    {
+     "id": "aftereffects.effects.difference_matte_option.stretch_to_fit",
+     "name": "Stretch To Fit"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.extract",
+   "name": "Extract",
+   "matchName": "ADBE Extract",
+   "category": "Keying",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.inner_outer_key",
+   "name": "Inner/Outer Key",
+   "matchName": "ADBE ATG Extract",
+   "category": "Keying",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.key_cleaner",
+   "name": "Key Cleaner",
+   "matchName": "ADBE KeyCleaner",
+   "category": "Keying",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.keylight_1_2",
+   "name": "Keylight (1.2)",
+   "matchName": "Keylight 906",
+   "category": "Keying",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.linear_color_key",
+   "name": "Linear Color Key",
+   "matchName": "ADBE Linear Color Key2",
+   "category": "Keying",
+   "controls": [
+    {
+     "id": "aftereffects.effects.linear_color_key_option.source_only",
+     "name": "Source Only"
+    },
+    {
+     "id": "aftereffects.effects.linear_color_key_option.matte_only",
+     "name": "Matte Only"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.unmult",
+   "name": "Unmult",
+   "matchName": null,
+   "category": "Keying",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.matte_choker",
+   "name": "Matte Choker",
+   "matchName": "ADBE Matte Choker",
+   "category": "Matte",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.mocha_shape",
+   "name": "Mocha shape",
+   "matchName": "ISL MochaShapeImporter",
+   "category": "Matte",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.refine_hard_matte",
+   "name": "Refine Hard Matte",
+   "matchName": "ADBE RefineRBMatte",
+   "category": "Matte",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.refine_soft_matte",
+   "name": "Refine Soft Matte",
+   "matchName": "ADBE RefineMatte2",
+   "category": "Matte",
+   "controls": [
+    {
+     "id": "aftereffects.effects.refine_soft_matte_option.calculate_edge_details",
+     "name": "Calculate Edge Details"
+    },
+    {
+     "id": "aftereffects.effects.refine_soft_matte_option.additional_edge_radius",
+     "name": "Additional Edge Radius"
+    },
+    {
+     "id": "aftereffects.effects.refine_soft_matte_option.view_edge_region",
+     "name": "View Edge Region"
+    },
+    {
+     "id": "aftereffects.effects.refine_soft_matte_option.smooth",
+     "name": "Smooth"
+    },
+    {
+     "id": "aftereffects.effects.refine_soft_matte_option.feather",
+     "name": "Feather"
+    },
+    {
+     "id": "aftereffects.effects.refine_soft_matte_option.contrast",
+     "name": "Contrast"
+    },
+    {
+     "id": "aftereffects.effects.refine_soft_matte_option.shift_edge",
+     "name": "Shift Edge"
+    },
+    {
+     "id": "aftereffects.effects.refine_soft_matte_option.chatter_reduction",
+     "name": "Chatter Reduction"
+    },
+    {
+     "id": "aftereffects.effects.refine_soft_matte_option.decontaminate_edge_colors",
+     "name": "Decontaminate Edge Colors"
+    },
+    {
+     "id": "aftereffects.effects.refine_soft_matte_option.decontamination",
+     "name": "Decontamination"
+    },
+    {
+     "id": "aftereffects.effects.refine_soft_matte_option.amount",
+     "name": "Amount"
+    },
+    {
+     "id": "aftereffects.effects.refine_soft_matte_option.extend_where_smoothed",
+     "name": "Extend Where Smoothed"
+    },
+    {
+     "id": "aftereffects.effects.refine_soft_matte_option.increase_radius",
+     "name": "Increase Radius"
+    },
+    {
+     "id": "aftereffects.effects.refine_soft_matte_option.view_map",
+     "name": "View Map"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.simple_choker",
+   "name": "Simple Choker",
+   "matchName": "ADBE Simple Choker",
+   "category": "Matte",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.add_grain",
+   "name": "Add Grain",
+   "matchName": "VISINF Grain Implant",
+   "category": "Noise & Grain",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.curl_noise",
+   "name": "Curl Noise",
+   "matchName": null,
+   "category": "Noise & Grain",
+   "controls": [
+    {
+     "id": "aftereffects.effects.curl_noise_option.loop_evolution",
+     "name": "Loop Evolution"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.smoke_and_fire",
+     "name": "Smoke and Fire"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.input_noise",
+     "name": "Input Noise"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.internal",
+     "name": "Internal"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.other_layer",
+     "name": "Other Layer"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.source_mapping",
+     "name": "Source Mapping"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.mirror_at_edge",
+     "name": "Mirror at Edge"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.softness",
+     "name": "Softness"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.transform",
+     "name": "Transform"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.curl_generation",
+     "name": "Curl Generation"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.evolution",
+     "name": "Evolution"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.turbulence_speed",
+     "name": "Turbulence Speed"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.noise_speed",
+     "name": "Noise Speed"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.swirl",
+     "name": "Swirl"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.density",
+     "name": "Density"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.smoothness",
+     "name": "Smoothness"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.flow_options",
+     "name": "Flow Options"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.sample_count",
+     "name": "Sample Count"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.sample_radius",
+     "name": "Sample Radius"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.flow_softness",
+     "name": "Flow Softness"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.edge_definition",
+     "name": "Edge Definition"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.flow_falloff",
+     "name": "Flow Falloff"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.output",
+     "name": "Output"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.view",
+     "name": "View"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.final_render",
+     "name": "Final Render"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.contrast",
+     "name": "Contrast"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.brightness",
+     "name": "Brightness"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.clip_hdr_results",
+     "name": "Clip HDR Results"
+    },
+    {
+     "id": "aftereffects.effects.curl_noise_option.channel",
+     "name": "Channel"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.dust_and_scratches",
+   "name": "Dust & Scratches",
+   "matchName": "ADBE Dust & Scratches",
+   "category": "Noise & Grain",
+   "controls": [
+    {
+     "id": "aftereffects.effects.dust_and_scratches_option.radius",
+     "name": "Radius"
+    },
+    {
+     "id": "aftereffects.effects.dust_and_scratches_option.threshold",
+     "name": "Threshold"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.fractal_noise",
+   "name": "Fractal Noise",
+   "matchName": "ADBE Fractal Noise",
+   "category": "Noise & Grain",
+   "controls": [
+    {
+     "id": "aftereffects.effects.fractal_noise_option.fractal_type",
+     "name": "Fractal Type"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.noise_type",
+     "name": "Noise Type"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.invert",
+     "name": "Invert"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.contrast",
+     "name": "Contrast"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.overflow",
+     "name": "Overflow"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.clip",
+     "name": "Clip"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.soft_clamp",
+     "name": "Soft Clamp"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.wrap_back",
+     "name": "Wrap Back"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.allow_hdr_results",
+     "name": "Allow HDR Results"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.transform",
+     "name": "Transform"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.complexity",
+     "name": "Complexity"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.sub_settings",
+     "name": "Sub Settings"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.sub_influence",
+     "name": "Sub Influence"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.sub_scaling_sub_rotation_and_sub_offset",
+     "name": "Sub Scaling , Sub Rotation , and Sub Offset"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.center_subscale",
+     "name": "Center Subscale"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.evolution",
+     "name": "Evolution"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.evolution_options",
+     "name": "Evolution Options"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.cycle_evolution",
+     "name": "Cycle Evolution"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.cycle_in_revolutions",
+     "name": "Cycle (in Revolutions)"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.random_seed",
+     "name": "Random Seed"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.opacity",
+     "name": "Opacity"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.blending_mode",
+     "name": "Blending Mode"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.hue",
+     "name": "Hue"
+    },
+    {
+     "id": "aftereffects.effects.fractal_noise_option.saturation",
+     "name": "Saturation"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.match_grain",
+   "name": "Match Grain",
+   "matchName": "VISINF Grain Duplication",
+   "category": "Noise & Grain",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.median",
+   "name": "Median",
+   "matchName": null,
+   "category": "Noise & Grain",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.median_legacy",
+   "name": "Median (Legacy)",
+   "matchName": "ADBE Median",
+   "category": "Noise & Grain",
+   "controls": [
+    {
+     "id": "aftereffects.effects.median_legacy_option.radius",
+     "name": "Radius"
+    },
+    {
+     "id": "aftereffects.effects.median_legacy_option.operate_on_alpha_channel",
+     "name": "Operate on Alpha Channel"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.noise",
+   "name": "Noise",
+   "matchName": "ADBE Noise",
+   "category": "Noise & Grain",
+   "controls": [
+    {
+     "id": "aftereffects.effects.noise_option.amount_of_noise",
+     "name": "Amount of Noise"
+    },
+    {
+     "id": "aftereffects.effects.noise_option.noise_type",
+     "name": "Noise Type"
+    },
+    {
+     "id": "aftereffects.effects.noise_option.clipping",
+     "name": "Clipping"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.noise_alpha",
+   "name": "Noise Alpha",
+   "matchName": "ADBE Noise Alpha2",
+   "category": "Noise & Grain",
+   "controls": [
+    {
+     "id": "aftereffects.effects.noise_alpha_option.noise",
+     "name": "Noise"
+    },
+    {
+     "id": "aftereffects.effects.noise_alpha_option.amount",
+     "name": "Amount"
+    },
+    {
+     "id": "aftereffects.effects.noise_alpha_option.add",
+     "name": "Add"
+    },
+    {
+     "id": "aftereffects.effects.noise_alpha_option.clamp",
+     "name": "Clamp"
+    },
+    {
+     "id": "aftereffects.effects.noise_alpha_option.scale",
+     "name": "Scale"
+    },
+    {
+     "id": "aftereffects.effects.noise_alpha_option.edges",
+     "name": "Edges"
+    },
+    {
+     "id": "aftereffects.effects.noise_alpha_option.overflow",
+     "name": "Overflow"
+    },
+    {
+     "id": "aftereffects.effects.noise_alpha_option.clip",
+     "name": "Clip"
+    },
+    {
+     "id": "aftereffects.effects.noise_alpha_option.wrap_back",
+     "name": "Wrap Back"
+    },
+    {
+     "id": "aftereffects.effects.noise_alpha_option.wrap",
+     "name": "Wrap"
+    },
+    {
+     "id": "aftereffects.effects.noise_alpha_option.random_seed",
+     "name": "Random Seed"
+    },
+    {
+     "id": "aftereffects.effects.noise_alpha_option.noise_options_animation",
+     "name": "Noise Options (Animation)"
+    },
+    {
+     "id": "aftereffects.effects.noise_alpha_option.cycle_noise",
+     "name": "Cycle Noise"
+    },
+    {
+     "id": "aftereffects.effects.noise_alpha_option.cycle_in_revolutions",
+     "name": "Cycle (in Revolutions)"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.noise_hls",
+   "name": "Noise HLS",
+   "matchName": "ADBE Noise HLS2",
+   "category": "Noise & Grain",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.noise_hls_auto",
+   "name": "Noise HLS Auto",
+   "matchName": "ADBE Noise HLS Auto2",
+   "category": "Noise & Grain",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.remove_grain",
+   "name": "Remove Grain",
+   "matchName": "VISINF Grain Removal",
+   "category": "Noise & Grain",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.turbulent_noise",
+   "name": "Turbulent Noise",
+   "matchName": "ADBE AIF Perlin Noise 3D",
+   "category": "Noise & Grain",
+   "controls": [
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.fractal_type",
+     "name": "Fractal Type"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.noise_type",
+     "name": "Noise Type"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.invert",
+     "name": "Invert"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.contrast",
+     "name": "Contrast"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.overflow",
+     "name": "Overflow"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.clip",
+     "name": "Clip"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.soft_clamp",
+     "name": "Soft Clamp"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.wrap_back",
+     "name": "Wrap Back"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.allow_hdr_results",
+     "name": "Allow HDR Results"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.transform",
+     "name": "Transform"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.complexity",
+     "name": "Complexity"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.sub_settings",
+     "name": "Sub Settings"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.sub_influence",
+     "name": "Sub Influence"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.sub_scaling",
+     "name": "Sub Scaling"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.evolution",
+     "name": "Evolution"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.evolution_options",
+     "name": "Evolution Options"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.turbulence_factor",
+     "name": "Turbulence Factor"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.random_seed",
+     "name": "Random Seed"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.opacity",
+     "name": "Opacity"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.blending_mode",
+     "name": "Blending Mode"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.hue",
+     "name": "Hue"
+    },
+    {
+     "id": "aftereffects.effects.turbulent_noise_option.saturation",
+     "name": "Saturation"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.obsolete_basic_3d",
+   "name": "Basic 3D",
+   "matchName": "ADBE Basic 3D",
+   "category": "Obsolete",
+   "controls": [
+    {
+     "id": "aftereffects.effects.obsolete_basic_3d_option.swivel",
+     "name": "Swivel"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_basic_3d_option.tilt",
+     "name": "Tilt"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_basic_3d_option.distance_to_image",
+     "name": "Distance To Image"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_basic_3d_option.specular_highlight",
+     "name": "Specular Highlight"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_basic_3d_option.preview",
+     "name": "Preview"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.obsolete_basic_text",
+   "name": "Basic Text",
+   "matchName": "ADBE Basic Text2",
+   "category": "Obsolete",
+   "controls": [
+    {
+     "id": "aftereffects.effects.obsolete_basic_text_option.position",
+     "name": "Position"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.obsolete_color_key",
+   "name": "Color Key",
+   "matchName": "ADBE Color Key",
+   "category": "Obsolete",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.obsolete_gaussian_blur_legacy",
+   "name": "Gaussian Blur (Legacy)",
+   "matchName": "ADBE Gaussian Blur",
+   "category": "Obsolete",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.obsolete_lightning",
+   "name": "Lightning",
+   "matchName": "ADBE Lightning",
+   "category": "Obsolete",
+   "controls": [
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.start_point_end_point",
+     "name": "Start Point, End Point"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.segments",
+     "name": "Segments"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.amplitude",
+     "name": "Amplitude"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.detail_level_detail_amplitude",
+     "name": "Detail Level, Detail Amplitude"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.branching",
+     "name": "Branching"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.rebranching",
+     "name": "Rebranching"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.branch_angle",
+     "name": "Branch Angle"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.branch_seg_length",
+     "name": "Branch Seg. Length"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.branch_segments",
+     "name": "Branch Segments"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.branch_width",
+     "name": "Branch Width"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.speed",
+     "name": "Speed"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.stability",
+     "name": "Stability"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.fixed_endpoint",
+     "name": "Fixed Endpoint"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.width_width_variation",
+     "name": "Width, Width Variation"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.core_width",
+     "name": "Core Width"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.outside_color_inside_color",
+     "name": "Outside Color, Inside Color"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.pull_force_pull_direction",
+     "name": "Pull Force, Pull Direction"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.random_seed",
+     "name": "Random Seed"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.blending_mode",
+     "name": "Blending Mode"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_lightning_option.rerun_at_each_frame",
+     "name": "Rerun At Each Frame"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.obsolete_luma_key",
+   "name": "Luma Key",
+   "matchName": "ADBE Luma Key",
+   "category": "Obsolete",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.obsolete_path_text",
+   "name": "Path Text",
+   "matchName": "ADBE Path Text",
+   "category": "Obsolete",
+   "controls": [
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.shape_type",
+     "name": "Shape Type"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.bezier",
+     "name": "Bezier"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.circle",
+     "name": "Circle"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.loop",
+     "name": "Loop"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.line",
+     "name": "Line"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.control_points",
+     "name": "Control Points"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.n1_circle_point",
+     "name": "1/Circle Point"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.vertex_1_circle_center",
+     "name": "Vertex 1/Circle Center"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.tangent_2",
+     "name": "Tangent 2"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.vertex_2",
+     "name": "Vertex 2"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.custom_path",
+     "name": "Custom Path"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.fill_and_stroke",
+     "name": "Fill and Stroke"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.fill_only",
+     "name": "Fill Only"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.stroke_only",
+     "name": "Stroke Only"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.fill_over_stroke",
+     "name": "Fill Over Stroke"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.stroke_over_fill",
+     "name": "Stroke Over Fill"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.fill_color",
+     "name": "Fill Color"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.stroke_color",
+     "name": "Stroke color"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.stroke_width",
+     "name": "Stroke width"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.kerning",
+     "name": "Kerning"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.kerning_pair",
+     "name": "Kerning Pair"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.kerning_value",
+     "name": "Kerning Value"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.orientation",
+     "name": "Orientation"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.character_rotation",
+     "name": "Character Rotation"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.perpendicular_to_path",
+     "name": "Perpendicular To Path"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.vertical_writing",
+     "name": "Vertical Writing"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.rotate_roman_characters",
+     "name": "Rotate Roman Characters"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.horizontal_shear",
+     "name": "Horizontal Shear"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.horizontal_scale_vertical_scale",
+     "name": "Horizontal Scale, Vertical Scale"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.alignment",
+     "name": "Alignment"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.left",
+     "name": "Left"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.right",
+     "name": "Right"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.center",
+     "name": "Center"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.force",
+     "name": "Force"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.left_margin_right_margin",
+     "name": "Left Margin, Right Margin"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.line_spacing",
+     "name": "Line Spacing"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.baseline_shift",
+     "name": "Baseline Shift"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.visible_characters",
+     "name": "Visible Characters"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.fade_time",
+     "name": "Fade Time"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.for",
+     "name": "For"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.mode",
+     "name": "Mode"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.jitter_settings",
+     "name": "Jitter Settings"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.jitter_max",
+     "name": "Jitter Max"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.kerning_jitter_max",
+     "name": "Kerning Jitter Max"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.rotation_jitter_max",
+     "name": "Rotation Jitter Max"
+    },
+    {
+     "id": "aftereffects.effects.obsolete_path_text_option.scale_jitter_max",
+     "name": "Scale Jitter Max"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.obsolete_reduce_interlace_flicker",
+   "name": "Reduce Interlace Flicker",
+   "matchName": "ADBE Reduce Interlace Flicker",
+   "category": "Obsolete",
+   "controls": [
+    {
+     "id": "aftereffects.effects.obsolete_reduce_interlace_flicker_option.softness",
+     "name": "Softness"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.obsolete_spill_suppressor",
+   "name": "Spill Suppressor",
+   "matchName": "ADBE Spill Suppressor",
+   "category": "Obsolete",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.n3d_camera_tracker",
+   "name": "3D Camera Tracker",
+   "matchName": "ADBE 3D Tracker",
+   "category": "Perspective",
+   "controls": [
+    {
+     "id": "aftereffects.effects.n3d_camera_tracker_option.analyze",
+     "name": "Analyze",
+     "settable": false,
+     "reason": "A button in the 3D Camera Tracker effect controls, not a property value; scripts cannot press it. A button or read-out in the effect controls; scripts cannot press it."
+    },
+    {
+     "id": "aftereffects.effects.n3d_camera_tracker_option.shot_type",
+     "name": "Shot Type"
+    },
+    {
+     "id": "aftereffects.effects.n3d_camera_tracker_option.fixed_angle_of_view",
+     "name": "Fixed Angle of View"
+    },
+    {
+     "id": "aftereffects.effects.n3d_camera_tracker_option.variable_zoom",
+     "name": "Variable Zoom"
+    },
+    {
+     "id": "aftereffects.effects.n3d_camera_tracker_option.horizontal_angle_of_view",
+     "name": "Horizontal Angle of View"
+    },
+    {
+     "id": "aftereffects.effects.n3d_camera_tracker_option.show_track_points",
+     "name": "Show Track Points"
+    },
+    {
+     "id": "aftereffects.effects.n3d_camera_tracker_option.render_track_points",
+     "name": "Render Track Points"
+    },
+    {
+     "id": "aftereffects.effects.n3d_camera_tracker_option.track_point_size",
+     "name": "Track Point Size"
+    },
+    {
+     "id": "aftereffects.effects.n3d_camera_tracker_option.target_size",
+     "name": "Target Size"
+    },
+    {
+     "id": "aftereffects.effects.n3d_camera_tracker_option.create_camera",
+     "name": "Create Camera",
+     "settable": false,
+     "reason": "A button in the 3D Camera Tracker effect controls, not a property value; scripts cannot press it. A button or read-out in the effect controls; scripts cannot press it."
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.n3d_glasses",
+   "name": "3D Glasses",
+   "matchName": "ADBE 3D Glasses2",
+   "category": "Perspective",
+   "controls": [
+    {
+     "id": "aftereffects.effects.n3d_glasses_option.left_view_right_view",
+     "name": "Left View, Right View"
+    },
+    {
+     "id": "aftereffects.effects.n3d_glasses_option.convergence_offset_scene_convergence",
+     "name": "Convergence Offset (Scene Convergence)"
+    },
+    {
+     "id": "aftereffects.effects.n3d_glasses_option.vertical_alignment",
+     "name": "Vertical Alignment"
+    },
+    {
+     "id": "aftereffects.effects.n3d_glasses_option.units",
+     "name": "Units"
+    },
+    {
+     "id": "aftereffects.effects.n3d_glasses_option.swap_left_right",
+     "name": "Swap Left-Right"
+    },
+    {
+     "id": "aftereffects.effects.n3d_glasses_option.n3d_view",
+     "name": "3D View"
+    },
+    {
+     "id": "aftereffects.effects.n3d_glasses_option.stereo_pair",
+     "name": "Stereo Pair"
+    },
+    {
+     "id": "aftereffects.effects.n3d_glasses_option.over_under",
+     "name": "Over Under"
+    },
+    {
+     "id": "aftereffects.effects.n3d_glasses_option.interlace_upper_l_lower_r",
+     "name": "Interlace Upper L Lower R"
+    },
+    {
+     "id": "aftereffects.effects.n3d_glasses_option.red_green_lr",
+     "name": "Red Green LR"
+    },
+    {
+     "id": "aftereffects.effects.n3d_glasses_option.red_blue_lr",
+     "name": "Red Blue LR"
+    },
+    {
+     "id": "aftereffects.effects.n3d_glasses_option.balanced_red_green_lr",
+     "name": "Balanced Red Green LR"
+    },
+    {
+     "id": "aftereffects.effects.n3d_glasses_option.balanced_red_blue_lr",
+     "name": "Balanced Red Blue LR"
+    },
+    {
+     "id": "aftereffects.effects.n3d_glasses_option.balanced_colored_red_blue",
+     "name": "Balanced Colored Red Blue"
+    },
+    {
+     "id": "aftereffects.effects.n3d_glasses_option.balance",
+     "name": "Balance"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.bevel_alpha",
+   "name": "Bevel Alpha",
+   "matchName": "ADBE Bevel Alpha",
+   "category": "Perspective",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.bevel_edges",
+   "name": "Bevel Edges",
+   "matchName": "ADBE Bevel Edges",
+   "category": "Perspective",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_cylinder",
+   "name": "CC Cylinder",
+   "matchName": "CC Cylinder",
+   "category": "Perspective",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_environment",
+   "name": "CC Environment",
+   "matchName": "CC Environment",
+   "category": "Perspective",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_sphere",
+   "name": "CC Sphere",
+   "matchName": "CC Sphere",
+   "category": "Perspective",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_spotlight",
+   "name": "CC Spotlight",
+   "matchName": "CC Spotlight",
+   "category": "Perspective",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.drop_shadow",
+   "name": "Drop Shadow",
+   "matchName": "ADBE Drop Shadow",
+   "category": "Perspective",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.radial_shadow",
+   "name": "Radial Shadow",
+   "matchName": "ADBE Radial Shadow",
+   "category": "Perspective",
+   "controls": [
+    {
+     "id": "aftereffects.effects.radial_shadow_option.shadow_color",
+     "name": "Shadow Color"
+    },
+    {
+     "id": "aftereffects.effects.radial_shadow_option.opacity",
+     "name": "Opacity"
+    },
+    {
+     "id": "aftereffects.effects.radial_shadow_option.light_source",
+     "name": "Light Source"
+    },
+    {
+     "id": "aftereffects.effects.radial_shadow_option.projection_distance",
+     "name": "Projection Distance"
+    },
+    {
+     "id": "aftereffects.effects.radial_shadow_option.softness",
+     "name": "Softness"
+    },
+    {
+     "id": "aftereffects.effects.radial_shadow_option.regular",
+     "name": "Regular"
+    },
+    {
+     "id": "aftereffects.effects.radial_shadow_option.glass_edge",
+     "name": "Glass Edge"
+    },
+    {
+     "id": "aftereffects.effects.radial_shadow_option.color_influence",
+     "name": "Color Influence"
+    },
+    {
+     "id": "aftereffects.effects.radial_shadow_option.shadow_only",
+     "name": "Shadow Only"
+    },
+    {
+     "id": "aftereffects.effects.radial_shadow_option.resize_layer",
+     "name": "Resize Layer"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.card_dance",
+   "name": "Card Dance",
+   "matchName": "APC CardDanceCam",
+   "category": "Simulation",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.caustics",
+   "name": "Caustics",
+   "matchName": "APC Caustics",
+   "category": "Simulation",
+   "controls": [
+    {
+     "id": "aftereffects.effects.caustics_option.bottom",
+     "name": "Bottom"
+    },
+    {
+     "id": "aftereffects.effects.caustics_option.scaling",
+     "name": "Scaling"
+    },
+    {
+     "id": "aftereffects.effects.caustics_option.repeat_mode",
+     "name": "Repeat Mode"
+    },
+    {
+     "id": "aftereffects.effects.caustics_option.blur",
+     "name": "Blur"
+    },
+    {
+     "id": "aftereffects.effects.caustics_option.water_surface",
+     "name": "Water Surface"
+    },
+    {
+     "id": "aftereffects.effects.caustics_option.wave_height",
+     "name": "Wave Height"
+    },
+    {
+     "id": "aftereffects.effects.caustics_option.smoothing",
+     "name": "Smoothing"
+    },
+    {
+     "id": "aftereffects.effects.caustics_option.water_depth",
+     "name": "Water Depth"
+    },
+    {
+     "id": "aftereffects.effects.caustics_option.refractive_index",
+     "name": "Refractive Index"
+    },
+    {
+     "id": "aftereffects.effects.caustics_option.surface_color",
+     "name": "Surface Color"
+    },
+    {
+     "id": "aftereffects.effects.caustics_option.surface_opacity",
+     "name": "Surface Opacity"
+    },
+    {
+     "id": "aftereffects.effects.caustics_option.caustics_strength",
+     "name": "Caustics Strength"
+    },
+    {
+     "id": "aftereffects.effects.caustics_option.sky",
+     "name": "Sky"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.cc_ball_action",
+   "name": "CC Ball Action",
+   "matchName": "CC Ball Action",
+   "category": "Simulation",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_bubbles",
+   "name": "CC Bubbles",
+   "matchName": "CC Bubbles",
+   "category": "Simulation",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_drizzle",
+   "name": "CC Drizzle",
+   "matchName": "CC Drizzle",
+   "category": "Simulation",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_hair",
+   "name": "CC Hair",
+   "matchName": "CC Hair",
+   "category": "Simulation",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_mr_mercury",
+   "name": "CC Mr. Mercury",
+   "matchName": "CC Mr. Mercury",
+   "category": "Simulation",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_particle_systems_ii",
+   "name": "CC Particle Systems II",
+   "matchName": "CC Particle Systems II",
+   "category": "Simulation",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_particle_world",
+   "name": "CC Particle World",
+   "matchName": "CC Particle World",
+   "category": "Simulation",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_pixel_polly",
+   "name": "CC Pixel Polly",
+   "matchName": "CC Pixel Polly",
+   "category": "Simulation",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_rainfall",
+   "name": "CC Rainfall",
+   "matchName": "CSRainfall",
+   "category": "Simulation",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_scatterize",
+   "name": "CC Scatterize",
+   "matchName": "CC Scatterize",
+   "category": "Simulation",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_snowfall",
+   "name": "CC Snowfall",
+   "matchName": "CSSnowfall",
+   "category": "Simulation",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_star_burst",
+   "name": "CC Star Burst",
+   "matchName": "CC Star Burst",
+   "category": "Simulation",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.foam",
+   "name": "Foam",
+   "matchName": "APC Foam",
+   "category": "Simulation",
+   "controls": [
+    {
+     "id": "aftereffects.effects.foam_option.draft",
+     "name": "Draft"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.draft_plus_flow_map",
+     "name": "Draft + Flow Map"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.rendered",
+     "name": "Rendered"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.wireframe_front_view",
+     "name": "Wireframe Front View"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.wireframe",
+     "name": "Wireframe"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.wireframe_front_view_plus_forces",
+     "name": "Wireframe Front View + Forces"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.wireframe_plus_forces",
+     "name": "Wireframe + Forces"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.height_map",
+     "name": "Height Map"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.wireframe_preview",
+     "name": "Wireframe Preview"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.producer_point",
+     "name": "Producer Point"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.producer_x_size_producer_y_size",
+     "name": "Producer X Size, Producer Y Size"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.producer_orientation",
+     "name": "Producer Orientation"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.zoom_producer_point",
+     "name": "Zoom Producer Point"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.production_rate",
+     "name": "Production Rate"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.size",
+     "name": "Size"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.size_variance",
+     "name": "Size Variance"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.lifespan",
+     "name": "Lifespan"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.bubble_growth_speed",
+     "name": "Bubble Growth Speed"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.strength",
+     "name": "Strength"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.initial_speed",
+     "name": "Initial Speed"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.initial_direction",
+     "name": "Initial Direction"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.wind_speed",
+     "name": "Wind Speed"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.wind_direction",
+     "name": "Wind Direction"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.turbulence",
+     "name": "Turbulence"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.wobble_amount",
+     "name": "Wobble Amount"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.repulsion",
+     "name": "Repulsion"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.pop_velocity",
+     "name": "Pop Velocity"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.viscosity",
+     "name": "Viscosity"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.stickiness",
+     "name": "Stickiness"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.rotation_speed",
+     "name": "Rotation Speed"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.tumble_axis",
+     "name": "Tumble Axis"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.randomness",
+     "name": "Randomness"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.mass_variance",
+     "name": "Mass Variance"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.gravity",
+     "name": "Gravity"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.gravity_direction",
+     "name": "Gravity Direction"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.gravity_inclination",
+     "name": "Gravity Inclination"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.zoom",
+     "name": "Zoom"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.universe_size",
+     "name": "Universe Size"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.blend_mode",
+     "name": "Blend Mode"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.bubble_texture",
+     "name": "Bubble Texture"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.bubble_texture_layer",
+     "name": "Bubble Texture Layer"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.bubble_orientation",
+     "name": "Bubble Orientation"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.environment_map",
+     "name": "Environment Map"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.reflection_strength",
+     "name": "Reflection Strength"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.reflection_convergence",
+     "name": "Reflection Convergence"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.flow_map",
+     "name": "Flow Map"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.flow_map_steepness",
+     "name": "Flow Map Steepness"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.flow_map_fits",
+     "name": "Flow Map Fits"
+    },
+    {
+     "id": "aftereffects.effects.foam_option.simulation_quality",
+     "name": "Simulation Quality"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.particle_playground",
+   "name": "Particle Playground",
+   "matchName": "ADBE Playgnd",
+   "category": "Simulation",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.shatter",
+   "name": "Shatter",
+   "matchName": "APC Shatter",
+   "category": "Simulation",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.wave_world",
+   "name": "Wave World",
+   "matchName": "APC Wave World",
+   "category": "Simulation",
+   "controls": [
+    {
+     "id": "aftereffects.effects.wave_world_option.horizontal_rotation",
+     "name": "Horizontal Rotation"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.vertical_rotation",
+     "name": "Vertical Rotation"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.vertical_scale",
+     "name": "Vertical Scale"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.brightness",
+     "name": "Brightness"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.contrast",
+     "name": "Contrast"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.gamma_adjustment",
+     "name": "Gamma Adjustment"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.render_dry_areas_as",
+     "name": "Render Dry Areas As"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.transparency",
+     "name": "Transparency"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.resolution",
+     "name": "Resolution"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.grid_res_downsamples",
+     "name": "Grid Res Downsamples"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.wave_speed",
+     "name": "Wave Speed"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.damping",
+     "name": "Damping"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.wave_speed_damping",
+     "name": "Wave Speed, Damping"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.reflect_edges",
+     "name": "Reflect Edges"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.pre_roll_seconds",
+     "name": "Pre-roll (seconds)"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.ground",
+     "name": "Ground"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.steepness",
+     "name": "Steepness"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.height",
+     "name": "Height"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.wave_strength",
+     "name": "Wave Strength"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.type",
+     "name": "Type"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.position",
+     "name": "Position"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.height_length",
+     "name": "Height/Length"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.width",
+     "name": "Width"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.angle",
+     "name": "Angle"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.amplitude",
+     "name": "Amplitude"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.frequency",
+     "name": "Frequency"
+    },
+    {
+     "id": "aftereffects.effects.wave_world_option.phase",
+     "name": "Phase"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.brush_strokes",
+   "name": "Brush Strokes",
+   "matchName": "ADBE Brush Strokes",
+   "category": "Stylize",
+   "controls": [
+    {
+     "id": "aftereffects.effects.brush_strokes_option.stroke_angle",
+     "name": "Stroke Angle"
+    },
+    {
+     "id": "aftereffects.effects.brush_strokes_option.brush_size",
+     "name": "Brush Size"
+    },
+    {
+     "id": "aftereffects.effects.brush_strokes_option.stroke_length",
+     "name": "Stroke Length"
+    },
+    {
+     "id": "aftereffects.effects.brush_strokes_option.stroke_density",
+     "name": "Stroke Density"
+    },
+    {
+     "id": "aftereffects.effects.brush_strokes_option.stroke_randomness",
+     "name": "Stroke Randomness"
+    },
+    {
+     "id": "aftereffects.effects.brush_strokes_option.paint_surface",
+     "name": "Paint Surface"
+    },
+    {
+     "id": "aftereffects.effects.brush_strokes_option.paint_on_original_image",
+     "name": "Paint On Original Image"
+    },
+    {
+     "id": "aftereffects.effects.brush_strokes_option.paint_on_transparent",
+     "name": "Paint On Transparent"
+    },
+    {
+     "id": "aftereffects.effects.brush_strokes_option.paint_on_white_or_paint_on_black",
+     "name": "Paint On White or Paint On Black"
+    },
+    {
+     "id": "aftereffects.effects.brush_strokes_option.blend_with_original",
+     "name": "Blend With Original"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.cartoon",
+   "name": "Cartoon",
+   "matchName": "ADBE Cartoonify",
+   "category": "Stylize",
+   "controls": [
+    {
+     "id": "aftereffects.effects.cartoon_option.render",
+     "name": "Render"
+    },
+    {
+     "id": "aftereffects.effects.cartoon_option.detail_radius",
+     "name": "Detail Radius"
+    },
+    {
+     "id": "aftereffects.effects.cartoon_option.detail_threshold",
+     "name": "Detail Threshold"
+    },
+    {
+     "id": "aftereffects.effects.cartoon_option.fill",
+     "name": "Fill"
+    },
+    {
+     "id": "aftereffects.effects.cartoon_option.edge",
+     "name": "Edge"
+    },
+    {
+     "id": "aftereffects.effects.cartoon_option.threshold",
+     "name": "Threshold"
+    },
+    {
+     "id": "aftereffects.effects.cartoon_option.width",
+     "name": "Width"
+    },
+    {
+     "id": "aftereffects.effects.cartoon_option.softness",
+     "name": "Softness"
+    },
+    {
+     "id": "aftereffects.effects.cartoon_option.opacity",
+     "name": "Opacity"
+    },
+    {
+     "id": "aftereffects.effects.cartoon_option.advanced",
+     "name": "Advanced"
+    },
+    {
+     "id": "aftereffects.effects.cartoon_option.edge_enhancement",
+     "name": "Edge Enhancement"
+    },
+    {
+     "id": "aftereffects.effects.cartoon_option.edge_black_level",
+     "name": "Edge Black Level"
+    },
+    {
+     "id": "aftereffects.effects.cartoon_option.edge_contrast",
+     "name": "Edge Contrast"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.cc_block_load",
+   "name": "CC Block Load",
+   "matchName": "CS BlockLoad",
+   "category": "Stylize",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_burn_film",
+   "name": "CC Burn Film",
+   "matchName": "CC Burn Film",
+   "category": "Stylize",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_glass",
+   "name": "CC Glass",
+   "matchName": "CC Glass",
+   "category": "Stylize",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_hextile",
+   "name": "CC HexTile",
+   "matchName": "CS HexTile",
+   "category": "Stylize",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_kaleida",
+   "name": "CC Kaleida",
+   "matchName": "CC Kaleida",
+   "category": "Stylize",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_mr_smoothie",
+   "name": "CC Mr. Smoothie",
+   "matchName": "CC Mr. Smoothie",
+   "category": "Stylize",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_plastic",
+   "name": "CC Plastic",
+   "matchName": "CC Plastic",
+   "category": "Stylize",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_repetile",
+   "name": "CC RepeTile",
+   "matchName": "CC RepeTile",
+   "category": "Stylize",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_threshold",
+   "name": "CC Threshold",
+   "matchName": "CC Threshold",
+   "category": "Stylize",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_threshold_rgb",
+   "name": "CC Threshold RGB",
+   "matchName": "CC Threshold RGB",
+   "category": "Stylize",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_vignette",
+   "name": "CC Vignette",
+   "matchName": "CS Vignette",
+   "category": "Stylize",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.color_emboss",
+   "name": "Color Emboss",
+   "matchName": "ADBE Color Emboss",
+   "category": "Stylize",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.emboss",
+   "name": "Emboss",
+   "matchName": "ADBE Emboss",
+   "category": "Stylize",
+   "controls": [
+    {
+     "id": "aftereffects.effects.emboss_option.direction",
+     "name": "Direction"
+    },
+    {
+     "id": "aftereffects.effects.emboss_option.relief",
+     "name": "Relief"
+    },
+    {
+     "id": "aftereffects.effects.emboss_option.contrast",
+     "name": "Contrast"
+    },
+    {
+     "id": "aftereffects.effects.emboss_option.blend_with_original",
+     "name": "Blend With Original"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.find_edges",
+   "name": "Find Edges",
+   "matchName": "ADBE Find Edges",
+   "category": "Stylize",
+   "controls": [
+    {
+     "id": "aftereffects.effects.find_edges_option.invert",
+     "name": "Invert"
+    },
+    {
+     "id": "aftereffects.effects.find_edges_option.blend_with_original",
+     "name": "Blend With Original"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.glow",
+   "name": "Glow",
+   "matchName": "ADBE Glo2",
+   "category": "Stylize",
+   "controls": [
+    {
+     "id": "aftereffects.effects.glow_option.glow_based_on",
+     "name": "Glow Based On"
+    },
+    {
+     "id": "aftereffects.effects.glow_option.glow_threshold",
+     "name": "Glow Threshold"
+    },
+    {
+     "id": "aftereffects.effects.glow_option.glow_radius",
+     "name": "Glow Radius"
+    },
+    {
+     "id": "aftereffects.effects.glow_option.glow_intensity",
+     "name": "Glow Intensity"
+    },
+    {
+     "id": "aftereffects.effects.glow_option.composite_original",
+     "name": "Composite Original"
+    },
+    {
+     "id": "aftereffects.effects.glow_option.glow_colors",
+     "name": "Glow Colors"
+    },
+    {
+     "id": "aftereffects.effects.glow_option.color_looping",
+     "name": "Color Looping"
+    },
+    {
+     "id": "aftereffects.effects.glow_option.color_loops",
+     "name": "Color Loops"
+    },
+    {
+     "id": "aftereffects.effects.glow_option.color_phase",
+     "name": "Color Phase"
+    },
+    {
+     "id": "aftereffects.effects.glow_option.a_and_b_midpoint",
+     "name": "A & B Midpoint"
+    },
+    {
+     "id": "aftereffects.effects.glow_option.color_a_color_b",
+     "name": "Color A , Color B"
+    },
+    {
+     "id": "aftereffects.effects.glow_option.glow_dimensions",
+     "name": "Glow Dimensions"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.mosaic",
+   "name": "Mosaic",
+   "matchName": "ADBE Mosaic",
+   "category": "Stylize",
+   "controls": [
+    {
+     "id": "aftereffects.effects.mosaic_option.horizontal_blocks_vertical_blocks",
+     "name": "Horizontal Blocks , Vertical Blocks"
+    },
+    {
+     "id": "aftereffects.effects.mosaic_option.sharp_colors",
+     "name": "Sharp Colors"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.motion_tile",
+   "name": "Motion Tile",
+   "matchName": "ADBE Tile",
+   "category": "Stylize",
+   "controls": [
+    {
+     "id": "aftereffects.effects.motion_tile_option.tile_center",
+     "name": "Tile Center"
+    },
+    {
+     "id": "aftereffects.effects.motion_tile_option.tile_width_tile_height",
+     "name": "Tile Width , Tile Height"
+    },
+    {
+     "id": "aftereffects.effects.motion_tile_option.output_width_output_height",
+     "name": "Output Width , Output Height"
+    },
+    {
+     "id": "aftereffects.effects.motion_tile_option.mirror_edges",
+     "name": "Mirror Edges"
+    },
+    {
+     "id": "aftereffects.effects.motion_tile_option.phase",
+     "name": "Phase"
+    },
+    {
+     "id": "aftereffects.effects.motion_tile_option.horizontal_phase_shift",
+     "name": "Horizontal Phase Shift"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.posterize",
+   "name": "Posterize",
+   "matchName": "ADBE Posterize",
+   "category": "Stylize",
+   "controls": [
+    {
+     "id": "aftereffects.effects.posterize_option.level",
+     "name": "Level"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.roughen_edges",
+   "name": "Roughen Edges",
+   "matchName": "ADBE Roughen Edges",
+   "category": "Stylize",
+   "controls": [
+    {
+     "id": "aftereffects.effects.roughen_edges_option.edge_type",
+     "name": "Edge Type"
+    },
+    {
+     "id": "aftereffects.effects.roughen_edges_option.edge_color",
+     "name": "Edge Color"
+    },
+    {
+     "id": "aftereffects.effects.roughen_edges_option.border",
+     "name": "Border"
+    },
+    {
+     "id": "aftereffects.effects.roughen_edges_option.edge_sharpness",
+     "name": "Edge Sharpness"
+    },
+    {
+     "id": "aftereffects.effects.roughen_edges_option.fractal_influence",
+     "name": "Fractal Influence"
+    },
+    {
+     "id": "aftereffects.effects.roughen_edges_option.scale",
+     "name": "Scale"
+    },
+    {
+     "id": "aftereffects.effects.roughen_edges_option.stretch_width_or_height",
+     "name": "Stretch Width or Height"
+    },
+    {
+     "id": "aftereffects.effects.roughen_edges_option.offset_turbulence",
+     "name": "Offset (Turbulence)"
+    },
+    {
+     "id": "aftereffects.effects.roughen_edges_option.complexity",
+     "name": "Complexity"
+    },
+    {
+     "id": "aftereffects.effects.roughen_edges_option.evolution",
+     "name": "Evolution"
+    },
+    {
+     "id": "aftereffects.effects.roughen_edges_option.evolution_option_s",
+     "name": "Evolution Option s"
+    },
+    {
+     "id": "aftereffects.effects.roughen_edges_option.cycle_evolution",
+     "name": "Cycle Evolution"
+    },
+    {
+     "id": "aftereffects.effects.roughen_edges_option.cycle",
+     "name": "Cycle"
+    },
+    {
+     "id": "aftereffects.effects.roughen_edges_option.random_seed",
+     "name": "Random Seed"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.scatter",
+   "name": "Scatter",
+   "matchName": "ADBE Scatter",
+   "category": "Stylize",
+   "controls": [
+    {
+     "id": "aftereffects.effects.scatter_option.grain",
+     "name": "Grain"
+    },
+    {
+     "id": "aftereffects.effects.scatter_option.scatter_randomness",
+     "name": "Scatter Randomness"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.strobe_light",
+   "name": "Strobe Light",
+   "matchName": "ADBE Strobe",
+   "category": "Stylize",
+   "controls": [
+    {
+     "id": "aftereffects.effects.strobe_light_option.strobe_color",
+     "name": "Strobe Color"
+    },
+    {
+     "id": "aftereffects.effects.strobe_light_option.blend_with_original",
+     "name": "Blend With Original"
+    },
+    {
+     "id": "aftereffects.effects.strobe_light_option.strobe_duration_secs",
+     "name": "Strobe Duration (secs)"
+    },
+    {
+     "id": "aftereffects.effects.strobe_light_option.strobe_period_secs",
+     "name": "Strobe Period (secs)"
+    },
+    {
+     "id": "aftereffects.effects.strobe_light_option.random_strobe_probability",
+     "name": "Random Strobe Probability"
+    },
+    {
+     "id": "aftereffects.effects.strobe_light_option.strobe",
+     "name": "Strobe"
+    },
+    {
+     "id": "aftereffects.effects.strobe_light_option.strobe_operator",
+     "name": "Strobe Operator"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.texturize",
+   "name": "Texturize",
+   "matchName": "ADBE Texturize",
+   "category": "Stylize",
+   "controls": [
+    {
+     "id": "aftereffects.effects.texturize_option.texture_layer",
+     "name": "Texture Layer"
+    },
+    {
+     "id": "aftereffects.effects.texturize_option.light_direction",
+     "name": "Light Direction"
+    },
+    {
+     "id": "aftereffects.effects.texturize_option.texture_contrast",
+     "name": "Texture Contrast"
+    },
+    {
+     "id": "aftereffects.effects.texturize_option.texture_placement",
+     "name": "Texture Placement"
+    },
+    {
+     "id": "aftereffects.effects.texturize_option.tile_texture",
+     "name": "Tile Texture"
+    },
+    {
+     "id": "aftereffects.effects.texturize_option.center_texture",
+     "name": "Center Texture"
+    },
+    {
+     "id": "aftereffects.effects.texturize_option.stretch_texture_to_fit",
+     "name": "Stretch Texture To Fit"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.threshold",
+   "name": "Threshold",
+   "matchName": "ADBE Threshold2",
+   "category": "Stylize",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.numbers",
+   "name": "Numbers",
+   "matchName": "ADBE Numbers2",
+   "category": "Text",
+   "controls": [
+    {
+     "id": "aftereffects.effects.numbers_option.number_leading_zeros",
+     "name": "Number [Leading Zeros]"
+    },
+    {
+     "id": "aftereffects.effects.numbers_option.time",
+     "name": "Time"
+    },
+    {
+     "id": "aftereffects.effects.numbers_option.hexadecimal",
+     "name": "Hexadecimal"
+    },
+    {
+     "id": "aftereffects.effects.numbers_option.random_values",
+     "name": "Random Values"
+    },
+    {
+     "id": "aftereffects.effects.numbers_option.value_offset_random_max",
+     "name": "Value/Offset/Random Max"
+    },
+    {
+     "id": "aftereffects.effects.numbers_option.decimal_places",
+     "name": "Decimal Places"
+    },
+    {
+     "id": "aftereffects.effects.numbers_option.current_time_date",
+     "name": "Current Time/Date"
+    },
+    {
+     "id": "aftereffects.effects.numbers_option.position",
+     "name": "Position"
+    },
+    {
+     "id": "aftereffects.effects.numbers_option.display_options",
+     "name": "Display Options"
+    },
+    {
+     "id": "aftereffects.effects.numbers_option.proportional_spacing",
+     "name": "Proportional Spacing"
+    },
+    {
+     "id": "aftereffects.effects.numbers_option.composite_on_original",
+     "name": "Composite On Original"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.timecode",
+   "name": "Timecode",
+   "matchName": "ADBE Timecode",
+   "category": "Text",
+   "controls": [
+    {
+     "id": "aftereffects.effects.timecode_option.display_format",
+     "name": "Display Format"
+    },
+    {
+     "id": "aftereffects.effects.timecode_option.time_source",
+     "name": "Time Source"
+    },
+    {
+     "id": "aftereffects.effects.timecode_option.layer_source",
+     "name": "Layer Source"
+    },
+    {
+     "id": "aftereffects.effects.timecode_option.composition",
+     "name": "Composition"
+    },
+    {
+     "id": "aftereffects.effects.timecode_option.custom",
+     "name": "Custom"
+    },
+    {
+     "id": "aftereffects.effects.timecode_option.time_units",
+     "name": "Time Units"
+    },
+    {
+     "id": "aftereffects.effects.timecode_option.drop_frame",
+     "name": "Drop Frame"
+    },
+    {
+     "id": "aftereffects.effects.timecode_option.starting_frame",
+     "name": "Starting Frame"
+    },
+    {
+     "id": "aftereffects.effects.timecode_option.text_position",
+     "name": "Text Position"
+    },
+    {
+     "id": "aftereffects.effects.timecode_option.text_size",
+     "name": "Text Size"
+    },
+    {
+     "id": "aftereffects.effects.timecode_option.text_color",
+     "name": "Text Color"
+    },
+    {
+     "id": "aftereffects.effects.timecode_option.show_box",
+     "name": "Show Box"
+    },
+    {
+     "id": "aftereffects.effects.timecode_option.box_color",
+     "name": "Box Color"
+    },
+    {
+     "id": "aftereffects.effects.timecode_option.opacity",
+     "name": "Opacity"
+    },
+    {
+     "id": "aftereffects.effects.timecode_option.composite_on_original",
+     "name": "Composite on Original"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.cc_force_motion_blur",
+   "name": "CC Force Motion Blur",
+   "matchName": "CC Force Motion Blur",
+   "category": "Time",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_wide_time",
+   "name": "CC Wide Time",
+   "matchName": "CC Wide Time",
+   "category": "Time",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.echo",
+   "name": "Echo",
+   "matchName": "ADBE Echo",
+   "category": "Time",
+   "controls": [
+    {
+     "id": "aftereffects.effects.echo_option.echo_time_seconds",
+     "name": "Echo Time (seconds)"
+    },
+    {
+     "id": "aftereffects.effects.echo_option.number_of_echoes",
+     "name": "Number of Echoes"
+    },
+    {
+     "id": "aftereffects.effects.echo_option.starting_intensity",
+     "name": "Starting Intensity"
+    },
+    {
+     "id": "aftereffects.effects.echo_option.decay",
+     "name": "Decay"
+    },
+    {
+     "id": "aftereffects.effects.echo_option.echo_operator",
+     "name": "Echo Operator"
+    },
+    {
+     "id": "aftereffects.effects.echo_option.add",
+     "name": "Add"
+    },
+    {
+     "id": "aftereffects.effects.echo_option.maximum",
+     "name": "Maximum"
+    },
+    {
+     "id": "aftereffects.effects.echo_option.minimum",
+     "name": "Minimum"
+    },
+    {
+     "id": "aftereffects.effects.echo_option.screen",
+     "name": "Screen"
+    },
+    {
+     "id": "aftereffects.effects.echo_option.composite_in_back",
+     "name": "Composite In Back"
+    },
+    {
+     "id": "aftereffects.effects.echo_option.composite_in_front",
+     "name": "Composite In Front"
+    },
+    {
+     "id": "aftereffects.effects.echo_option.blend",
+     "name": "Blend"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.pixel_motion_blur",
+   "name": "Pixel Motion Blur",
+   "matchName": "ADBE OFMotionBlur",
+   "category": "Time",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.posterize_time",
+   "name": "Posterize Time",
+   "matchName": "ADBE Posterize Time",
+   "category": "Time",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.time_difference",
+   "name": "Time Difference",
+   "matchName": "ADBE Difference",
+   "category": "Time",
+   "controls": [
+    {
+     "id": "aftereffects.effects.time_difference_option.target",
+     "name": "Target"
+    },
+    {
+     "id": "aftereffects.effects.time_difference_option.time_offset",
+     "name": "Time Offset"
+    },
+    {
+     "id": "aftereffects.effects.time_difference_option.contrast",
+     "name": "Contrast"
+    },
+    {
+     "id": "aftereffects.effects.time_difference_option.absolute_difference",
+     "name": "Absolute Difference"
+    },
+    {
+     "id": "aftereffects.effects.time_difference_option.alpha_channel",
+     "name": "Alpha Channel"
+    },
+    {
+     "id": "aftereffects.effects.time_difference_option.blend",
+     "name": "Blend"
+    },
+    {
+     "id": "aftereffects.effects.time_difference_option.max",
+     "name": "Max"
+    },
+    {
+     "id": "aftereffects.effects.time_difference_option.full_on",
+     "name": "Full On"
+    },
+    {
+     "id": "aftereffects.effects.time_difference_option.lightness_of_result",
+     "name": "Lightness Of Result"
+    },
+    {
+     "id": "aftereffects.effects.time_difference_option.max_of_result",
+     "name": "Max Of Result"
+    },
+    {
+     "id": "aftereffects.effects.time_difference_option.alpha_difference",
+     "name": "Alpha Difference"
+    },
+    {
+     "id": "aftereffects.effects.time_difference_option.alpha_difference_only",
+     "name": "Alpha Difference Only"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.time_displacement",
+   "name": "Time Displacement",
+   "matchName": "ADBE Time Displacement",
+   "category": "Time",
+   "controls": [
+    {
+     "id": "aftereffects.effects.time_displacement_option.displacement_map_layer",
+     "name": "Displacement map layer"
+    },
+    {
+     "id": "aftereffects.effects.time_displacement_option.time_displacement_layer",
+     "name": "Time Displacement Layer"
+    },
+    {
+     "id": "aftereffects.effects.time_displacement_option.max_displacement_time_sec",
+     "name": "Max Displacement Time (sec)"
+    },
+    {
+     "id": "aftereffects.effects.time_displacement_option.time_resolution_fps",
+     "name": "Time Resolution (fps)"
+    },
+    {
+     "id": "aftereffects.effects.time_displacement_option.stretch_map_to_fit",
+     "name": "Stretch Map To Fit"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.timewarp",
+   "name": "Timewarp",
+   "matchName": "ADBE Timewarp",
+   "category": "Time",
+   "controls": [
+    {
+     "id": "aftereffects.effects.timewarp_option.method",
+     "name": "Method"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.whole_frames",
+     "name": "Whole Frames"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.frame_mix",
+     "name": "Frame Mix"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.pixel_motion",
+     "name": "Pixel Motion"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.vector_details",
+     "name": "Vector Details"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.smoothing",
+     "name": "Smoothing"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.build_from_one_image",
+     "name": "Build From One Image"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.correct_luminance_changes",
+     "name": "Correct Luminance Changes"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.filtering",
+     "name": "Filtering"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.error_threshold",
+     "name": "Error Threshold"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.block_size",
+     "name": "Block Size"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.weighting",
+     "name": "Weighting"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.shutter_angle",
+     "name": "Shutter Angle"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.shutter_samples",
+     "name": "Shutter Samples"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.matte_layer",
+     "name": "Matte Layer"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.matte_channel",
+     "name": "Matte Channel"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.warp_layer",
+     "name": "Warp Layer"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.show",
+     "name": "Show"
+    },
+    {
+     "id": "aftereffects.effects.timewarp_option.source_crops",
+     "name": "Source Crops"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.block_dissolve",
+   "name": "Block Dissolve",
+   "matchName": "ADBE Block Dissolve",
+   "category": "Transition",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.card_wipe",
+   "name": "Card Wipe",
+   "matchName": "APC CardWipeCam",
+   "category": "Transition",
+   "controls": [
+    {
+     "id": "aftereffects.effects.card_wipe_option.transition_width",
+     "name": "Transition Width"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.back_layer",
+     "name": "Back Layer"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.rows_and_columns",
+     "name": "Rows & Columns"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.rows",
+     "name": "Rows"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.columns",
+     "name": "Columns"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.card_scale",
+     "name": "Card Scale"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.flip_axis",
+     "name": "Flip Axis"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.flip_direction",
+     "name": "Flip Direction"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.flip_order",
+     "name": "Flip Order"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.gradient_layer",
+     "name": "Gradient Layer"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.timing_randomness",
+     "name": "Timing Randomness"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.camera_system",
+     "name": "Camera System"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.x_rotation_y_rotation_z_rotation",
+     "name": "X Rotation, Y Rotation, Z Rotation"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.x_y_position",
+     "name": "X, Y Position"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.z_position",
+     "name": "Z Position"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.focal_length",
+     "name": "Focal Length"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.transform_order",
+     "name": "Transform Order"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.lower_left_corner_lower_right_corner",
+     "name": "Lower Left Corner, Lower Right Corner"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.auto_focal_length",
+     "name": "Auto Focal Length"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.position_jitter",
+     "name": "Position Jitter"
+    },
+    {
+     "id": "aftereffects.effects.card_wipe_option.rotation_jitter",
+     "name": "Rotation Jitter"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.cc_glass_wipe",
+   "name": "CC Glass Wipe",
+   "matchName": "CC Glass Wipe",
+   "category": "Transition",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_grid_wipe",
+   "name": "CC Grid Wipe",
+   "matchName": "CC Grid Wipe",
+   "category": "Transition",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_image_wipe",
+   "name": "CC Image Wipe",
+   "matchName": "CC Image Wipe",
+   "category": "Transition",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_jaws",
+   "name": "CC Jaws",
+   "matchName": "CC Jaws",
+   "category": "Transition",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_light_wipe",
+   "name": "CC Light Wipe",
+   "matchName": "CC Light Wipe",
+   "category": "Transition",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_line_sweep",
+   "name": "CC Line Sweep",
+   "matchName": "CS LineSweep",
+   "category": "Transition",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_radial_scalewipe",
+   "name": "CC Radial ScaleWipe",
+   "matchName": "CC Radial ScaleWipe",
+   "category": "Transition",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_scale_wipe",
+   "name": "CC Scale Wipe",
+   "matchName": "CC Scale Wipe",
+   "category": "Transition",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_twister",
+   "name": "CC Twister",
+   "matchName": "CC Twister",
+   "category": "Transition",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_warpomatic",
+   "name": "CC WarpoMatic",
+   "matchName": "CC WarpoMatic",
+   "category": "Transition",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.gradient_wipe",
+   "name": "Gradient Wipe",
+   "matchName": "ADBE Gradient Wipe",
+   "category": "Transition",
+   "controls": [
+    {
+     "id": "aftereffects.effects.gradient_wipe_option.transition_softness",
+     "name": "Transition Softness"
+    },
+    {
+     "id": "aftereffects.effects.gradient_wipe_option.gradient_placement",
+     "name": "Gradient Placement"
+    },
+    {
+     "id": "aftereffects.effects.gradient_wipe_option.tile_gradient",
+     "name": "Tile Gradient"
+    },
+    {
+     "id": "aftereffects.effects.gradient_wipe_option.center_gradient",
+     "name": "Center Gradient"
+    },
+    {
+     "id": "aftereffects.effects.gradient_wipe_option.stretch_gradient_to_fit",
+     "name": "Stretch Gradient To Fit"
+    },
+    {
+     "id": "aftereffects.effects.gradient_wipe_option.invert_gradient",
+     "name": "Invert Gradient"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.iris_wipe",
+   "name": "Iris Wipe",
+   "matchName": "ADBE IRIS_WIPE",
+   "category": "Transition",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.linear_wipe",
+   "name": "Linear Wipe",
+   "matchName": "ADBE Linear Wipe",
+   "category": "Transition",
+   "controls": [
+    {
+     "id": "aftereffects.effects.linear_wipe_option.wipe_angle",
+     "name": "Wipe Angle"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.radial_wipe",
+   "name": "Radial Wipe",
+   "matchName": "ADBE Radial Wipe",
+   "category": "Transition",
+   "controls": [
+    {
+     "id": "aftereffects.effects.radial_wipe_option.start_angle",
+     "name": "Start Angle"
+    },
+    {
+     "id": "aftereffects.effects.radial_wipe_option.wipe",
+     "name": "Wipe"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.venetian_blinds",
+   "name": "Venetian Blinds",
+   "matchName": "ADBE Venetian Blinds",
+   "category": "Transition",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.apply_color_lut",
+   "name": "Apply Color LUT",
+   "matchName": "ADBE Apply Color LUT2",
+   "category": "Utility",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cc_overbrights",
+   "name": "CC Overbrights",
+   "matchName": "CC Overbrights",
+   "category": "Utility",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.cineon_converter",
+   "name": "Cineon Converter",
+   "matchName": "ADBE Cineon Converter2",
+   "category": "Utility",
+   "controls": [
+    {
+     "id": "aftereffects.effects.cineon_converter_option.conversion_type",
+     "name": "Conversion Type"
+    },
+    {
+     "id": "aftereffects.effects.cineon_converter_option.n10_bit_black_point",
+     "name": "10 Bit Black Point"
+    },
+    {
+     "id": "aftereffects.effects.cineon_converter_option.internal_black_point",
+     "name": "Internal Black Point"
+    },
+    {
+     "id": "aftereffects.effects.cineon_converter_option.n10_bit_white_point",
+     "name": "10 Bit White Point"
+    },
+    {
+     "id": "aftereffects.effects.cineon_converter_option.internal_white_point",
+     "name": "Internal White Point"
+    },
+    {
+     "id": "aftereffects.effects.cineon_converter_option.gamma",
+     "name": "Gamma"
+    },
+    {
+     "id": "aftereffects.effects.cineon_converter_option.highlight_rolloff",
+     "name": "Highlight Rolloff"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.color_profile_converter",
+   "name": "Color Profile Converter",
+   "matchName": "ADBE ProfileToProfile",
+   "category": "Utility",
+   "controls": [
+    {
+     "id": "aftereffects.effects.color_profile_converter_option.perceptual",
+     "name": "Perceptual"
+    },
+    {
+     "id": "aftereffects.effects.color_profile_converter_option.saturation",
+     "name": "Saturation"
+    },
+    {
+     "id": "aftereffects.effects.color_profile_converter_option.relative_colorimetric",
+     "name": "Relative Colorimetric"
+    },
+    {
+     "id": "aftereffects.effects.color_profile_converter_option.absolute_colorimetric",
+     "name": "Absolute Colorimetric"
+    },
+    {
+     "id": "aftereffects.effects.color_profile_converter_option.off",
+     "name": "Off"
+    }
+   ]
+  },
+  {
+   "id": "aftereffects.effects.grow_bounds",
+   "name": "Grow Bounds",
+   "matchName": "ADBE GROW BOUNDS",
+   "category": "Utility",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.hdr_compander",
+   "name": "HDR Compander",
+   "matchName": "ADBE Compander",
+   "category": "Utility",
+   "controls": []
+  },
+  {
+   "id": "aftereffects.effects.hdr_highlight_compression",
+   "name": "HDR Highlight Compression",
+   "matchName": "ADBE HDR ToneMap",
+   "category": "Utility",
+   "controls": []
+  }
+ ]
+}
