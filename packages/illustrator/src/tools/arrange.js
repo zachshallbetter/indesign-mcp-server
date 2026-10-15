@@ -9,6 +9,7 @@ import { ARTBOARD_SCHEMA, TARGET_SCHEMA, targetSpec } from '../args.js';
 const ORIGINS = { center: 'CENTER', topLeft: 'TOPLEFT', top: 'TOP', topRight: 'TOPRIGHT', left: 'LEFT', right: 'RIGHT', bottomLeft: 'BOTTOMLEFT', bottom: 'BOTTOM', bottomRight: 'BOTTOMRIGHT' };
 const ORIGIN_SCHEMA = { type: 'string', enum: Object.keys(ORIGINS), description: 'Point to transform around. Default center' };
 const ORDER = { front: 'BRINGTOFRONT', forward: 'BRINGFORWARD', backward: 'SENDBACKWARD', back: 'SENDTOBACK' };
+const ALIGN_EDGES = ['left', 'center', 'right', 'top', 'middle', 'bottom', 'center_middle'];
 const TYPES = ['PathItem', 'CompoundPathItem', 'GroupItem', 'TextFrame', 'PlacedItem', 'RasterItem', 'SymbolItem', 'MeshItem', 'PluginItem', 'GraphItem'];
 
 /** Selecting by script: deselect everything, then select the targets. */
@@ -277,14 +278,16 @@ __result__ = { reflected: items.length };`));
     },
     {
         name: 'align_items',
-        description: 'Align items to each other (their combined bounds) or to an artboard',
+        description: 'Align items to each other (their combined bounds), to an artboard, or to a key object that stays still (Object > Align, Align panel). center_middle centres both ways in one step',
         inputSchema: {
             type: 'object',
             properties: {
                 target: TARGET_SCHEMA,
-                edge: { type: 'string', enum: ['left', 'center', 'right', 'top', 'middle', 'bottom'] },
-                to: { type: 'string', enum: ['selection', 'artboard'], description: 'Default selection', default: 'selection' },
+                edge: { type: 'string', enum: ALIGN_EDGES },
+                to: { type: 'string', enum: ['selection', 'artboard', 'key_object'], description: 'Default selection', default: 'selection' },
                 artboardIndex: ARTBOARD_SCHEMA,
+                keyObjectId: { type: 'string', description: 'With to: key_object, the id of the item the others align to' },
+                usePreviewBounds: { type: 'boolean', description: 'Measure including strokes and effects (Use Preview Bounds). Default true', default: true },
             },
             required: ['target', 'edge'],
         },
@@ -296,24 +299,38 @@ __result__ = { reflected: items.length };`));
             'illustrator.transformations.align_top',
             'illustrator.transformations.align_vcenter',
             'illustrator.transformations.align_bottom',
+            'illustrator.transformations.align_hv_center',
+            'illustrator.transformations.align_single_action',
             'illustrator.transformations.align_to_selection',
             'illustrator.transformations.align_to_artboard',
+            'illustrator.transformations.align_to_key_object',
+            'illustrator.transformations.align_option.key_object',
+            'illustrator.transformations.align_option.use_preview_bounds',
         ],
         handler: (a) => {
-            const edge = enumOf(a.edge, ['left', 'center', 'right', 'top', 'middle', 'bottom'], { name: 'edge' });
+            const edge = enumOf(a.edge, ALIGN_EDGES, { name: 'edge' });
+            const to = enumOf(a.to ?? 'selection', ['selection', 'artboard', 'key_object'], { name: 'to' });
+            if (to === 'key_object' && !a.keyObjectId) throw new Error('to: key_object needs keyObjectId');
+            const bounds = (a.usePreviewBounds ?? true) ? 'visibleBounds' : 'geometricBounds';
             return run('Align items', script(`
 var items = __targets(doc, ${targetSpec(a.target)});
 var L, T, R, B, g, i;
-${a.to === 'artboard' ? `var ab = __artboard(doc, ${index(a.artboardIndex ?? 0, { name: 'artboardIndex' })}); L = ab.left; T = ab.top; R = ab.right; B = ab.bottom;` : `
+${{
+        artboard: `var ab = __artboard(doc, ${index(a.artboardIndex ?? 0, { name: 'artboardIndex' })}); L = ab.left; T = ab.top; R = ab.right; B = ab.bottom;`,
+        key_object: `var key = doc.getPageItemFromUuid(${str(a.keyObjectId)});
+if (!key) throw new Error("Key object " + ${str(a.keyObjectId)} + " not found");
+g = key.${bounds}; L = g[0]; T = g[1]; R = g[2]; B = g[3];`,
+        selection: `
 L = Infinity; T = -Infinity; R = -Infinity; B = Infinity;
-for (i = 0; i < items.length; i++) { g = items[i].visibleBounds; if (g[0] < L) L = g[0]; if (g[1] > T) T = g[1]; if (g[2] > R) R = g[2]; if (g[3] < B) B = g[3]; }`}
+for (i = 0; i < items.length; i++) { g = items[i].${bounds}; if (g[0] < L) L = g[0]; if (g[1] > T) T = g[1]; if (g[2] > R) R = g[2]; if (g[3] < B) B = g[3]; }`,
+    }[to]}
 for (i = 0; i < items.length; i++) {
-  g = items[i].visibleBounds;
+  g = items[i].${bounds};
   var dx = 0, dy = 0;
-  ${{ left: 'dx = L - g[0];', right: 'dx = R - g[2];', center: 'dx = (L + R) / 2 - (g[0] + g[2]) / 2;', top: 'dy = T - g[1];', bottom: 'dy = B - g[3];', middle: 'dy = (T + B) / 2 - (g[1] + g[3]) / 2;' }[edge]}
+  ${{ left: 'dx = L - g[0];', right: 'dx = R - g[2];', center: 'dx = (L + R) / 2 - (g[0] + g[2]) / 2;', top: 'dy = T - g[1];', bottom: 'dy = B - g[3];', middle: 'dy = (T + B) / 2 - (g[1] + g[3]) / 2;', center_middle: 'dx = (L + R) / 2 - (g[0] + g[2]) / 2; dy = (T + B) / 2 - (g[1] + g[3]) / 2;' }[edge]}
   items[i].translate(dx, dy);
 }
-__result__ = { aligned: items.length, edge: ${str(edge)} };`));
+__result__ = { aligned: items.length, edge: ${str(edge)}, to: ${str(to)} };`));
         },
     },
     {
