@@ -18,6 +18,8 @@ import { tools as vectorTools } from './tools/vector.js';
 import { tools as exportTools } from './tools/export.js';
 import { tools as historyTools } from './tools/history.js';
 import { tools as videoTools } from './tools/video.js';
+import { tools as fileTools } from './tools/files.js';
+import { tools as printTools } from './tools/print.js';
 import { tools as applicationTools } from './tools/application.js';
 import { tools as interfaceTools } from './tools/interface.js';
 import { tools as cameraRawTools } from './tools/cameraraw.js';
@@ -61,6 +63,8 @@ const AREAS = [
     ['export', exportTools],
     ['history', historyTools],
     ['video', videoTools],
+    ['files', fileTools],
+    ['print', printTools],
     ['application', applicationTools],
     ['interface', interfaceTools],
     ['camera raw', cameraRawTools],
