@@ -91,6 +91,7 @@ export const tools = [
             'illustrator.effects.drop_shadow_option.darkness',
             'illustrator.effects.ps_gaussian_blur',
             'illustrator.appearance.expand_appearance',
+            'illustrator.appearance.appearance_menu.add_new_effect',
         ],
         handler: (a) => {
             const effect = EFFECTS[enumOf(a.effect, Object.keys(EFFECTS), { name: 'effect' })];
@@ -274,7 +275,7 @@ __result__ = { updated: ${json(entries.map(([n]) => n))} };`, { needsDocument: f
         name: 'select_tool',
         description: 'Switch Illustrator to a tool, ready for the user to draw with it. Name it as Illustrator does, e.g. "Pen Tool", "Shape Builder Tool", "Width Tool"',
         inputSchema: { type: 'object', properties: { tool: { type: 'string', description: 'Tool name' } }, required: ['tool'] },
-        features: ['illustrator.ui.toolbar'],
+        features: ['illustrator.ui.toolbar', 'illustrator.appearance.live_paint_bucket_tool', 'illustrator.appearance.live_paint_selection_tool'],
         handler: (a) => {
             const want = String(a.tool ?? '').toLowerCase().replace(/^adobe\s+/, '').replace(/\s+tool$/, '').trim();
             const match = TOOLS.find((t) => t.toLowerCase().replace(/^adobe\s+/, '').replace(/\s+tool$/, '') === want);
