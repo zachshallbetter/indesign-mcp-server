@@ -50,7 +50,24 @@ export const tools = [
             required: ['layers'],
         },
         auditArgs: { shape: 'ellipse', bounds: { x: 10, y: 10, width: 200, height: 100 } },
-        features: [],
+        features: [
+            'aftereffects.masks_shapes.new_mask',
+            'aftereffects.masks_shapes.mask_shape_dialog',
+            'aftereffects.masks_shapes.mask_path',
+            'aftereffects.masks_shapes.closed_path',
+            'aftereffects.masks_shapes.mask_mode_none',
+            'aftereffects.masks_shapes.mask_mode_add',
+            'aftereffects.masks_shapes.mask_mode_subtract',
+            'aftereffects.masks_shapes.mask_mode_intersect',
+            'aftereffects.masks_shapes.mask_mode_lighten',
+            'aftereffects.masks_shapes.mask_mode_darken',
+            'aftereffects.masks_shapes.mask_mode_difference',
+            'aftereffects.masks_shapes.mask_feather',
+            'aftereffects.masks_shapes.mask_opacity',
+            'aftereffects.masks_shapes.mask_expansion',
+            'aftereffects.masks_shapes.mask_inverted',
+            'aftereffects.masks_shapes.rename_mask',
+        ],
         handler: (a) => {
             const kind = enumOf(a.shape ?? 'rectangle', ['rectangle', 'ellipse', 'path'], { name: 'shape' });
             const s = shapeOf(kind, a.bounds, a.points);

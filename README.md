@@ -10,7 +10,7 @@ client configuration.
 
 | Package | What it drives | npm |
 |---|---|---|
-| [adobe-mcp-indesign](packages/indesign) | Adobe InDesign: documents, pages, text, styles, tables, books, PDF and EPUB export (137 tools) | [`adobe-mcp-indesign`](https://www.npmjs.com/package/adobe-mcp-indesign) |
+| [adobe-mcp-indesign](packages/indesign) | Adobe InDesign: documents, pages, text, styles, tables, books, PDF and EPUB export (423 tools) | [`adobe-mcp-indesign`](https://www.npmjs.com/package/adobe-mcp-indesign) |
 | [adobe-mcp-illustrator](packages/illustrator) | Adobe Illustrator: documents, artboards, layers, shapes and paths, typography, colour and swatches, effects and 3D, symbols, patterns, Image Trace, images and links, variables and data sets, actions, export, prepress and printing (308 tools) | `adobe-mcp-illustrator` |
 | [adobe-mcp-photoshop](packages/photoshop) | Adobe Photoshop: documents, image and canvas size, layers, selections, adjustments and filters, type, export and history (55 tools) | `adobe-mcp-photoshop` |
 | [adobe-mcp-aftereffects](packages/aftereffects) | Adobe After Effects: projects, compositions, layers, keyframes and expressions, effects, text, masks and rendering (44 tools) | `adobe-mcp-aftereffects` |

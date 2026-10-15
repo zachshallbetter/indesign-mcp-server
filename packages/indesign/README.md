@@ -7,7 +7,7 @@
 [![MCP](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-blue.svg)](https://modelcontextprotocol.io/)
 [![GitHub stars](https://img.shields.io/github/stars/zachshallbetter/adobe-mcp?style=social)](https://github.com/zachshallbetter/adobe-mcp/stargazers)
 
-**Turn Adobe InDesign into an AI design automation platform** — 135+ MCP tools for documents, layout, styles, images, books, and PDF export. Drive InDesign from Claude, Cursor, Warp, or any MCP client using natural language.
+**Turn Adobe InDesign into an AI design automation platform** — 420+ MCP tools for documents, layout, typography, styles, tables, images, long documents, interactive documents, prepress, and PDF and EPUB export. Drive InDesign from Claude, Cursor, Warp, or any MCP client using natural language.
 
 ## Why this exists
 
@@ -32,6 +32,19 @@ Design ops still means repeating the same layout chores by hand. This server exp
 - **Layout** — spreads, master spreads, layers, groups, page items, guides and grids
 - **Export** — PDF, JPEG/PNG images, EPUB (reflowable or fixed layout), package for print
 - **Books** — multi-document books, sync, repaginate, cross-references
+
+### Module areas
+
+Each area covers the panels and dialogs of one part of InDesign, mapped feature by feature to the capability atlas:
+
+- **Typography** — character and paragraph formatting, OpenType, bullets and numbering, GREP styles, tabs, CJK composition
+- **Styles** — paragraph, character, object, table, cell and TOC styles, style groups, Quick Apply, nested styles
+- **Text frames, tables and long documents** — text frame options, wrap, notes and track changes, threading; table and cell options; tables of contents, footnotes, index, conditional text, hyperlinks, cross-references, text variables and books
+- **Frames, paths and layout** — shapes, strokes, anchored objects, libraries, transformations, pathfinder, alternate and liquid layouts, flex layouts, linked content, guides and grids
+- **Colour, effects and images** — swatches, gradients, mixed inks, colour settings and proofing, effects and transparency, links and import options
+- **Output** — PDF, EPUB and HTML export with every option, Word and Excel import, printing, preflight, separations, booklets and packaging
+- **Interactive documents, XML, data merge** — buttons and forms, object states, animation, media; XML structure, tags and import/export; data merge, find and change, dictionaries and languages
+- **Documents, pages and preferences** — document presets, pages and spreads, parent pages, layers, selection, undo history, and every Preferences pane
 
 ### Platform
 

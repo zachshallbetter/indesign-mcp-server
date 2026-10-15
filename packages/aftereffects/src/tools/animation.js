@@ -32,7 +32,7 @@ export const tools = [
         inputSchema: { type: 'object', properties: { ...TARGET, time: { type: 'number', description: 'Also read the value at this time (seconds)' } }, required: ['layers', 'property'] },
         hints: { readOnly: true },
         auditArgs: { property: 'position', time: 1 },
-        features: [],
+        features: ['aftereffects.animation.property_keyframes_object'],
         handler: (a) => run('Get property', script(`${PROP_INFO}
 var c = __comp(${compSpec(a.comp)}), ls = __layers(c, ${layerSpec(a.layers)}), path = ${propertyPath(a.property)}, out = [];
 for (var i = 0; i < ls.length; i++) {
@@ -52,7 +52,15 @@ __result__ = { properties: out };`)),
             required: ['layers', 'property', 'value'],
         },
         auditArgs: { property: 'opacity', value: 50 },
-        features: [],
+        features: [
+            'aftereffects.layers.edit_value',
+            'aftereffects.animation.add_property_keyframe',
+            'aftereffects.text.source_text',
+            'aftereffects.three_d.stereo_rig_option.stereo_scene_depth',
+            'aftereffects.three_d.stereo_rig_option.converge_cameras',
+            'aftereffects.three_d.stereo_rig_option.converge_to',
+            'aftereffects.three_d.stereo_rig_option.configuration',
+        ],
         handler: (a) => {
             const v = propertyValue(a.value);
             return run('Set property', script(`${PROP_INFO}
@@ -92,7 +100,16 @@ __result__ = { properties: out };`, { undo: 'Set property' }));
             required: ['layers', 'property', 'keyframes'],
         },
         auditArgs: { property: 'position', keyframes: [{ time: 0, value: [100, 100] }, { time: 1, value: [500, 300], interpolation: 'bezier', easeInfluence: 33.33 }] },
-        features: [],
+        features: [
+            'aftereffects.animation.add_property_keyframe',
+            'aftereffects.animation.stopwatch',
+            'aftereffects.animation.keyframe_interpolation_dialog',
+            'aftereffects.animation.interpolation_linear',
+            'aftereffects.animation.interpolation_bezier',
+            'aftereffects.animation.interpolation_hold',
+            'aftereffects.animation.keyframe_velocity_dialog',
+            'aftereffects.animation.easy_ease',
+        ],
         handler: (a) => {
             if (!Array.isArray(a.keyframes) || !a.keyframes.length) throw new Error("'keyframes' must list at least one keyframe");
             const keys = a.keyframes.map((k, i) => {
@@ -138,7 +155,7 @@ __result__ = { properties: out };`, { undo: 'Set keyframes' }));
         },
         auditArgs: { property: 'scale' },
         hints: { destructive: true },
-        features: [],
+        features: ['aftereffects.animation.delete_keyframes'],
         handler: (a) => run('Remove keyframes', script(`${PROP_INFO}
 var c = __comp(${compSpec(a.comp)}), ls = __layers(c, ${layerSpec(a.layers)}), path = ${propertyPath(a.property)}, out = [];
 var from = ${a.from !== undefined ? num(a.from, { name: 'from' }) : '-1e9'}, to = ${a.to !== undefined ? num(a.to, { name: 'to' }) : '1e9'};
@@ -158,7 +175,13 @@ __result__ = { properties: out };`, { undo: 'Remove keyframes' })),
             required: ['layers', 'property', 'expression'],
         },
         auditArgs: { property: 'rotation', expression: 'time * 90' },
-        features: [],
+        features: [
+            'aftereffects.expressions.expressions',
+            'aftereffects.expressions.add_expression',
+            'aftereffects.expressions.remove_expression',
+            'aftereffects.expressions.enable_expression_switch',
+            'aftereffects.expressions.expression_errors',
+        ],
         handler: (a) => run('Set expression', script(`
 var c = __comp(${compSpec(a.comp)}), ls = __layers(c, ${layerSpec(a.layers)}), path = ${propertyPath(a.property)}, out = [];
 for (var i = 0; i < ls.length; i++) {

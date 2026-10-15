@@ -50,7 +50,17 @@ export const tools = [
             required: ['name', 'width', 'height', 'duration', 'frameRate'],
         },
         auditArgs: { backgroundColor: '#101820' },
-        features: [],
+        features: [
+            'aftereffects.compositions.new_composition',
+            'aftereffects.compositions.comp_frame_size',
+            'aftereffects.compositions.comp_pixel_aspect_ratio',
+            'aftereffects.compositions.comp_duration',
+            'aftereffects.compositions.comp_frame_rate',
+            'aftereffects.compositions.comp_background_color',
+            'aftereffects.compositions.enable_motion_blur',
+            'aftereffects.compositions.shutter_angle',
+            'aftereffects.compositions.work_area',
+        ],
         handler: (a) => run('Create composition', script(`
 var c = proj.items.addComp(${str(a.name)}, ${index(a.width, { name: 'width', max: 30000 })}, ${index(a.height, { name: 'height', max: 30000 })}, ${num(a.pixelAspect ?? 1, { min: 0.01, max: 100, name: 'pixelAspect' })}, ${num(a.duration, { min: 0.01, max: 10800, name: 'duration' })}, ${num(a.frameRate, { min: 1, max: 999, name: 'frameRate' })});
 ${settingLines({ ...a, name: undefined, width: undefined, height: undefined, pixelAspect: undefined, duration: undefined, frameRate: undefined }).join('\n')}
@@ -64,7 +74,17 @@ __result__ = __itemInfo(c);`, { undo: 'Create composition' })),
         inputSchema: { type: 'object', properties: { comp: COMP_SCHEMA, ...SETTINGS }, required: [] },
         hints: { idempotent: true },
         auditArgs: { backgroundColor: 'rgb(0,0,0)', workAreaStart: 0 },
-        features: [],
+        features: [
+            'aftereffects.compositions.composition_settings',
+            'aftereffects.compositions.comp_frame_size',
+            'aftereffects.compositions.comp_pixel_aspect_ratio',
+            'aftereffects.compositions.comp_duration',
+            'aftereffects.compositions.comp_frame_rate',
+            'aftereffects.compositions.comp_background_color',
+            'aftereffects.compositions.enable_motion_blur',
+            'aftereffects.compositions.shutter_angle',
+            'aftereffects.compositions.work_area',
+        ],
         handler: (a) => {
             const lines = settingLines(a);
             if (!lines.length) throw new Error('Give at least one setting');
@@ -79,7 +99,7 @@ __result__ = info;`, { undo: 'Composition settings' }));
         name: 'duplicate_comp',
         description: 'Duplicate a composition (Edit > Duplicate), optionally renaming the copy',
         inputSchema: { type: 'object', properties: { comp: COMP_SCHEMA, name: { type: 'string' } } },
-        features: [],
+        features: ['aftereffects.compositions.duplicate_composition'],
         handler: (a) => run('Duplicate composition', script(`
 var c = __comp(${compSpec(a.comp)}).duplicate();
 ${a.name ? `c.name = ${str(a.name)};` : ''}
@@ -98,7 +118,11 @@ __result__ = __itemInfo(c);`, { undo: 'Duplicate composition' })),
             },
             required: ['layers', 'name'],
         },
-        features: [],
+        features: [
+            'aftereffects.compositions.precompose',
+            'aftereffects.compositions.precompose_move_attributes',
+            'aftereffects.compositions.precompose_leave_attributes',
+        ],
         handler: (a) => run('Pre-compose', script(`
 var c = __comp(${compSpec(a.comp)}), ls = __layers(c, ${layerSpec(a.layers)}), idx = [];
 for (var i = 0; i < ls.length; i++) idx.push(ls[i].index);
@@ -110,7 +134,7 @@ __result__ = __itemInfo(nc);`, { undo: 'Pre-compose' })),
         description: 'Open a composition in the Composition panel and make it the active one',
         inputSchema: { type: 'object', properties: { comp: COMP_SCHEMA } },
         hints: { idempotent: true },
-        features: [],
+        features: ['aftereffects.projects.open_project_item'],
         handler: (a) => run('Open composition', script(`
 var c = __comp(${compSpec(a.comp)});
 c.openInViewer();
@@ -131,7 +155,14 @@ __result__ = __itemInfo(c);`)),
             },
             required: ['time'],
         },
-        features: [],
+        features: [
+            'aftereffects.compositions.add_composition_marker',
+            'aftereffects.compositions.marker_value_object',
+            'aftereffects.compositions.marker_comment',
+            'aftereffects.compositions.marker_duration',
+            'aftereffects.compositions.marker_chapter',
+            'aftereffects.compositions.marker_web_link',
+        ],
         handler: (a) => run('Add marker', script(`
 var c = __comp(${compSpec(a.comp)});
 var m = new MarkerValue(${str(a.comment ?? '')});
@@ -151,7 +182,7 @@ __result__ = { comp: c.name, markers: c.markerProperty.numKeys };`, { undo: 'Add
         },
         auditArgs: { outputFile: `${process.env.HOME ?? '/tmp'}/Documents/frame.png` },
         hints: { idempotent: true },
-        features: [],
+        features: ['aftereffects.render_export.save_frame_to_png'],
         handler: (a) => {
             const out = paths.validate(a.outputFile);
             if (path.extname(out).toLowerCase() !== '.png') throw new Error('outputFile must end in .png');

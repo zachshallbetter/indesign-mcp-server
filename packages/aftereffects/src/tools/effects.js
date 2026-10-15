@@ -14,7 +14,7 @@ export const tools = [
         description: 'List the effects installed in After Effects with their display name, match name and category, filtered by a search string. Match names are what apply_effect takes most reliably',
         inputSchema: { type: 'object', properties: { query: { type: 'string' }, limit: { type: 'integer', minimum: 1, maximum: 2000, default: 100 } } },
         hints: { readOnly: true },
-        features: [],
+        features: ['aftereffects.effects.installed_effects_list'],
         handler: (a) => run('List effects', script(`
 var q = ${str(String(a.query ?? '').toLowerCase())}, max = ${index(a.limit ?? 100, { name: 'limit', max: 2000 })}, out = [], total = 0;
 for (var i = 0; i < app.effects.length; i++) {
@@ -40,7 +40,7 @@ __result__ = { total: total, effects: out };`)),
             required: ['layers', 'effect'],
         },
         auditArgs: { effect: 'ADBE Gaussian Blur 2', properties: { Blurriness: 12 } },
-        features: [],
+        features: ['aftereffects.effects.apply_effect', 'aftereffects.three_d.depth_data_extraction'],
         handler: (a) => {
             const props = Object.entries(a.properties ?? {}).map(([k, v]) => [String(k), JSON.parse(propertyValue(v, `properties.${k}`))]);
             return run('Apply effect', script(`
@@ -65,7 +65,7 @@ __result__ = { applied: out };`, { undo: 'Apply effect' }));
         description: 'List the effects on layers, in order, with each effect\'s properties and values',
         inputSchema: { type: 'object', properties: { comp: COMP_SCHEMA, layers: LAYERS_SCHEMA }, required: ['layers'] },
         hints: { readOnly: true },
-        features: [],
+        features: ['aftereffects.effects.effect_controls_panel'],
         handler: (a) => run('List layer effects', script(`
 var c = __comp(${compSpec(a.comp)}), ls = __layers(c, ${layerSpec(a.layers)}), out = [];
 for (var i = 0; i < ls.length; i++) {
@@ -98,7 +98,7 @@ __result__ = { layers: out };`)),
             required: ['layers'],
         },
         hints: { destructive: true },
-        features: [],
+        features: ['aftereffects.effects.delete_effect', 'aftereffects.effects.remove_all_effects', 'aftereffects.effects.effect_enabled'],
         handler: (a) => run('Remove effects', script(`
 var c = __comp(${compSpec(a.comp)}), ls = __layers(c, ${layerSpec(a.layers)}), names = ${json((a.effects ?? []).map(String))}, done = 0;
 for (var i = 0; i < ls.length; i++) {
@@ -118,7 +118,7 @@ __result__ = { ${a.enabled !== undefined ? 'changed' : 'removed'}: done };`, { u
         description: 'Apply an animation preset (.ffx) to layers (Animation > Apply Animation Preset)',
         inputSchema: { type: 'object', properties: { comp: COMP_SCHEMA, layers: LAYERS_SCHEMA, presetFile: { type: 'string', description: 'Absolute .ffx path' } }, required: ['layers', 'presetFile'] },
         auditArgs: { presetFile: `${process.env.HOME ?? '/tmp'}/Documents/preset.ffx` },
-        features: [],
+        features: ['aftereffects.effects.apply_animation_preset', 'aftereffects.effects.animation_preset'],
         handler: (a) => {
             const p = paths.validate(a.presetFile);
             return run('Apply preset', script(`
