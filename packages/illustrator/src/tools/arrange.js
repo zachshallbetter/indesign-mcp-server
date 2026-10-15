@@ -18,6 +18,29 @@ function __select(doc, items) {
   for (var i = 0; i < items.length; i++) items[i].selected = true;
 }`;
 
+/** Select > Same, by the attribute each command matches. */
+const SAME = {
+    fill_color: 'Find Fill Color menu item',
+    stroke_color: 'Find Stroke Color menu item',
+    fill_stroke: 'Find Fill & Stroke menu item',
+    stroke_weight: 'Find Stroke Weight menu item',
+    opacity: 'Find Opacity menu item',
+    blending_mode: 'Find Blending Mode menu item',
+    appearance: 'Find Appearance menu item',
+    appearance_attribute: 'Find Appearance Attributes menu item',
+    graphic_style: 'Find Style menu item',
+    shape: 'Find Live Shape menu item',
+    symbol_instance: 'Find Symbol Instance menu item',
+    link_block_series: 'Find Link Block Series menu item',
+    font_family: 'Find Text Font Family menu item',
+    font_family_style: 'Find Text Font Family Style menu item',
+    font_family_style_size: 'Find Text Font Family Style Size menu item',
+    font_size: 'Find Text Font Size menu item',
+    text_fill_color: 'Find Text Fill Color menu item',
+    text_stroke_color: 'Find Text Stroke Color menu item',
+    text_fill_stroke: 'Find Text Fill Stroke Color menu item',
+};
+
 export const tools = [
     {
         name: 'list_items',
@@ -75,6 +98,46 @@ __result__ = { selected: doc.selection.length };`)),
         handler: () => run('Deselect', script(`
 doc.selection = null;
 __result__ = { selected: 0 };`)),
+    },
+    {
+        name: 'select_same',
+        description: 'Select every object that shares an attribute with the targets (Select > Same), e.g. all objects with the same fill colour. The targets are selected first and set the attribute',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                target: TARGET_SCHEMA,
+                attribute: { type: 'string', enum: Object.keys(SAME) },
+            },
+            required: ['target', 'attribute'],
+        },
+        features: Object.keys(SAME).map((k) => `illustrator.selection.same_${k}`),
+        menuCommands: Object.values(SAME),
+        handler: (a) => run('Select same', script(`${SELECT}
+var items = __targets(doc, ${targetSpec(a.target)});
+__select(doc, items);
+app.executeMenuCommand(${str(SAME[enumOf(a.attribute, Object.keys(SAME), { name: 'attribute' })])});
+var sel = doc.selection, out = [];
+for (var j = 0; sel && j < sel.length && j < 500; j++) out.push(__itemInfo(doc, sel[j]));
+__result__ = { attribute: ${str(a.attribute)}, selected: sel ? sel.length : 0, items: out };`)),
+    },
+    {
+        name: 'select_all',
+        description: 'Select all unlocked, visible objects in the document, or on one artboard (Select > All, All on Active Artboard)',
+        inputSchema: {
+            type: 'object',
+            properties: { artboardIndex: { type: 'integer', minimum: 0, description: 'Only this artboard (0-based). Default the whole document' } },
+        },
+        features: ['illustrator.selection.select_all', 'illustrator.selection.select_all_artboard'],
+        menuCommands: ['selectall', 'selectallinartboard'],
+        handler: (a) => run('Select all', script(`
+${a.artboardIndex !== undefined ? `
+var ab = ${index(a.artboardIndex, { name: 'artboardIndex' })};
+if (ab >= doc.artboards.length) throw new Error("Artboard " + ab + " does not exist; the document has " + doc.artboards.length);
+doc.artboards.setActiveArtboardIndex(ab);
+app.executeMenuCommand("selectallinartboard");` : 'app.executeMenuCommand("selectall");'}
+var sel = doc.selection, out = [];
+for (var j = 0; sel && j < sel.length && j < 500; j++) out.push(__itemInfo(doc, sel[j]));
+__result__ = { selected: sel ? sel.length : 0, items: out };`)),
     },
     {
         name: 'delete_items',

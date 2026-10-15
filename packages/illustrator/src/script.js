@@ -146,6 +146,7 @@ function __colorInfo(c) {
     case "RGBColor": return { kind: "rgb", value: [c.red, c.green, c.blue] };
     case "CMYKColor": return { kind: "cmyk", value: [c.cyan, c.magenta, c.yellow, c.black] };
     case "GrayColor": return { kind: "gray", value: [c.gray] };
+    case "LabColor": return { kind: "lab", value: [c.l, c.a, c.b] };
     case "SpotColor": return { kind: "spot", name: c.spot.name, tint: c.tint };
     case "GradientColor": return { kind: "gradient", name: c.gradient.name };
     case "PatternColor": return { kind: "pattern", name: c.pattern.name };

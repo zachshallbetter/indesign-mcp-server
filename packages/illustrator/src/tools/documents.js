@@ -412,6 +412,7 @@ __result__ = { name: l.name };`)),
             required: ['layer'],
         },
         features: [
+            'illustrator.prepress.nonprintable_artwork',
             'illustrator.layers.layer_options',
             'illustrator.layers.layer_option.name',
             'illustrator.layers.layer_option.show',

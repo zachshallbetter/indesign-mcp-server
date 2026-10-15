@@ -15,7 +15,7 @@ const BLEND = ['NORMAL', 'MULTIPLY', 'SCREEN', 'OVERLAY', 'SOFTLIGHT', 'HARDLIGH
  * the targets: plain paths, the paths of compound paths, and paths nested in
  * groups. Text frames are reported separately.
  */
-const EACH_PATH = `
+export const EACH_PATH = `
 function __eachPath(it, fn, counts) {
   if (it.typename === "PathItem") { fn(it); counts.paths++; return; }
   if (it.typename === "CompoundPathItem") { for (var i = 0; i < it.pathItems.length; i++) { fn(it.pathItems[i]); counts.paths++; } return; }
@@ -23,12 +23,28 @@ function __eachPath(it, fn, counts) {
   counts.skipped.push(it.typename);
 }`;
 
+const TINT_SCHEMA = { type: 'number', minimum: 0, maximum: 100, description: 'Tint percent of a spot or global swatch. Default 100' };
+
+/** JSX that sets the tint of the colour in `c`, which must come from a spot or global swatch. */
+function tintLine(tint) {
+    if (tint === undefined) return '';
+    return `if (c.typename !== "SpotColor") throw new Error("tint needs a spot or global swatch as the colour"); c.tint = ${num(tint, { min: 0, max: 100, name: 'tint' })};`;
+}
+
+/** "lab(l,a,b)" as [l, a, b], or null. */
+function labValues(value) {
+    const m = /^lab\(\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\)$/i.exec(String(value ?? '').trim());
+    if (!m) return null;
+    return [num(m[1], { min: 0, max: 100, name: 'color L' }), num(m[2], { min: -128, max: 127, name: 'color a' }), num(m[3], { min: -128, max: 127, name: 'color b' })].map(Number);
+}
+
 export const tools = [
     {
         name: 'set_fill',
         description: 'Set the fill of paths, compound paths, groups (every path inside) and text frames. "none" removes the fill',
-        inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, color: COLOR_SCHEMA }, required: ['target', 'color'] },
+        inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, color: COLOR_SCHEMA, tint: TINT_SCHEMA }, required: ['target', 'color'] },
         features: [
+            'illustrator.color.color_tints',
             'illustrator.appearance.fill',
             'illustrator.appearance.remove_fill_stroke',
             'illustrator.color.no_color',
@@ -39,6 +55,7 @@ export const tools = [
             const none = JSON.parse(spec).kind === 'none';
             return run('Set fill', script(`${EACH_PATH}
 var items = __targets(doc, ${targetSpec(a.target)}), counts = { paths: 0, text: 0, skipped: [] }, c = __color(doc, ${spec});
+${tintLine(a.tint)}
 for (var i = 0; i < items.length; i++) {
   if (items[i].typename === "TextFrame") { items[i].textRange.characterAttributes.fillColor = c; counts.text++; continue; }
   __eachPath(items[i], function (p) { ${none ? 'p.filled = false;' : 'p.filled = true; p.fillColor = c;'} }, counts);
@@ -54,6 +71,7 @@ __result__ = counts;`));
             properties: {
                 target: TARGET_SCHEMA,
                 color: COLOR_SCHEMA,
+                tint: TINT_SCHEMA,
                 weight: { type: 'number', minimum: 0, description: 'Points' },
                 cap: { type: 'string', enum: Object.keys(CAPS) },
                 join: { type: 'string', enum: Object.keys(JOINS) },
@@ -65,6 +83,7 @@ __result__ = counts;`));
         },
         features: [
             'illustrator.appearance.stroke',
+            'illustrator.color.color_tints',
             'illustrator.appearance.stroke_panel',
             'illustrator.appearance.stroke_option.weight',
             'illustrator.appearance.stroke_option.cap',
@@ -78,8 +97,8 @@ __result__ = counts;`));
             const lines = [];
             if (a.color !== undefined) {
                 const spec = colorSpec(a.color, 'color');
-                lines.push(JSON.parse(spec).kind === 'none' ? 'p.stroked = false;' : `p.stroked = true; p.strokeColor = __color(doc, ${spec});`);
-            }
+                lines.push(JSON.parse(spec).kind === 'none' ? 'p.stroked = false;' : 'p.stroked = true; p.strokeColor = c;');
+            } else if (a.tint !== undefined) throw new Error("'tint' needs a color");
             if (a.weight !== undefined) lines.push(`p.strokeWidth = __len(doc, ${num(a.weight, { min: 0, max: 1000, name: 'weight' })});`);
             if (a.cap) lines.push(`p.strokeCap = StrokeCap.${CAPS[enumOf(a.cap, Object.keys(CAPS), { name: 'cap' })]};`);
             if (a.join) lines.push(`p.strokeJoin = StrokeJoin.${JOINS[enumOf(a.join, Object.keys(JOINS), { name: 'join' })]};`);
@@ -92,6 +111,7 @@ __result__ = counts;`));
             if (!lines.length) throw new Error('Give at least one of color, weight, cap, join, miterLimit, dashes, dashOffset');
             return run('Set stroke', script(`${EACH_PATH}
 var items = __targets(doc, ${targetSpec(a.target)}), counts = { paths: 0, skipped: [] };
+${a.color !== undefined ? `var c = __color(doc, ${colorSpec(a.color, 'color')});\n${tintLine(a.tint)}` : ''}
 for (var i = 0; i < items.length; i++) __eachPath(items[i], function (p) {
   ${lines.join('\n  ')}
 }, counts);
@@ -172,26 +192,41 @@ __result__ = out;`)),
     // Swatches
     {
         name: 'list_swatches',
-        description: 'List the document\'s swatches with their colour values',
+        description: 'List the document\'s swatches with their kind (process, global, spot), colour values and swatch group',
         inputSchema: { type: 'object', properties: {} },
-        features: ['illustrator.color.swatches_panel', 'illustrator.color.swatch_object'],
+        features: ['illustrator.color.swatches_panel', 'illustrator.color.swatch_object', 'illustrator.color.swatch_group', 'illustrator.color.global_process_color'],
         handler: () => run('List swatches', script(`
+var groupOf = {}, groups = [];
+for (var g = 0; g < doc.swatchGroups.length; g++) {
+  var sg = doc.swatchGroups[g], members = sg.getAllSwatches(), names = [];
+  for (var m = 0; m < members.length; m++) { names.push(members[m].name); if (g > 0) groupOf[members[m].name] = sg.name; }
+  if (g > 0) groups.push({ name: sg.name, swatches: names });
+}
 var out = [];
 for (var i = 0; i < doc.swatches.length; i++) {
-  var s = doc.swatches[i];
-  out.push({ name: s.name, color: __colorInfo(s.color) });
+  var s = doc.swatches[i], c = s.color, kind = "process";
+  if (c.typename === "SpotColor") kind = c.spot.colorType === ColorModel.PROCESS ? "global" : (c.spot.colorType === ColorModel.REGISTRATION ? "registration" : "spot");
+  else if (c.typename === "GradientColor") kind = "gradient";
+  else if (c.typename === "PatternColor") kind = "pattern";
+  else if (c.typename === "NoColor") kind = "none";
+  var info = { name: s.name, kind: kind, color: __colorInfo(c) };
+  if (kind === "global" || kind === "spot") info.value = __colorInfo(c.spot.color);
+  if (groupOf[s.name]) info.group = groupOf[s.name];
+  out.push(info);
 }
-__result__ = { colorMode: String(doc.documentColorSpace).replace("DocumentColorSpace.", ""), swatches: out };`)),
+__result__ = { colorMode: String(doc.documentColorSpace).replace("DocumentColorSpace.", ""), swatches: out, groups: groups };`)),
     },
     {
         name: 'create_swatch',
-        description: 'Add a process swatch, or a spot colour (for an ink such as a Pantone colour or a varnish plate). The colour must be rgb(), cmyk(), gray() or #RRGGBB',
+        description: 'Add a swatch: a process colour, a global process colour (editing it updates every object that uses it), or a spot colour (an ink such as a Pantone colour or a varnish plate). Optionally put it in a swatch group',
         inputSchema: {
             type: 'object',
             properties: {
                 name: { type: 'string' },
-                color: { ...COLOR_SCHEMA, description: '"cmyk(c,m,y,k)", "rgb(r,g,b)", "#RRGGBB" or "gray(g)"' },
+                color: { ...COLOR_SCHEMA, description: '"cmyk(c,m,y,k)", "rgb(r,g,b)", "#RRGGBB" or "gray(g)"; a spot colour can also be "lab(L,a,b)"' },
                 spot: { type: 'boolean', description: 'Create a spot colour. Default false', default: false },
+                global: { type: 'boolean', description: 'Create a global process colour. Default false', default: false },
+                group: { type: 'string', description: 'Swatch group to put it in, created if needed' },
             },
             required: ['name', 'color'],
         },
@@ -202,29 +237,46 @@ __result__ = { colorMode: String(doc.documentColorSpace).replace("DocumentColorS
             'illustrator.color.process_swatches',
             'illustrator.color.spot_swatches',
             'illustrator.color.spot_color',
+            'illustrator.color.global_process_color',
+            'illustrator.color.lab_color',
+            'illustrator.color.lab_spot_values',
             'illustrator.color.rgb_color',
             'illustrator.color.cmyk_color',
             'illustrator.color.gray_color',
+            'illustrator.color.swatch_group',
+            'illustrator.color.group_swatches',
         ],
         handler: (a) => {
-            const spec = colorSpec(a.color, 'color');
-            if (['swatch', 'none'].includes(JSON.parse(spec).kind)) throw new Error("'color' must be a colour value, not a swatch name or none");
-            return run('Create swatch', script(a.spot ? `
+            if (a.spot && a.global) throw new Error("Choose spot or global, not both");
+            const lab = labValues(a.color);
+            if (lab && !a.spot) throw new Error('A lab() colour can only define a spot colour (spot: true)');
+            const spec = lab ? null : colorSpec(a.color, 'color');
+            if (spec && ['swatch', 'none'].includes(JSON.parse(spec).kind)) throw new Error("'color' must be a colour value, not a swatch name or none");
+            const colorExpr = lab ? `(function () { var l = new LabColor(); l.l = ${lab[0]}; l.a = ${lab[1]}; l.b = ${lab[2]}; return l; })()` : `__color(doc, ${spec})`;
+            const grouping = a.group ? `
+var grp = null;
+for (var g = 0; g < doc.swatchGroups.length; g++) if (doc.swatchGroups[g].name === ${str(a.group)}) grp = doc.swatchGroups[g];
+if (!grp) { grp = doc.swatchGroups.add(); grp.name = ${str(a.group)}; }` : '';
+            const body = (a.spot || a.global) ? `
 var existing = null;
 try { existing = doc.spots.getByName(${str(a.name)}); } catch (e) { existing = null; }
-if (existing) throw new Error("A spot colour named " + ${str(a.name)} + " already exists");
+if (existing) throw new Error("A swatch named " + ${str(a.name)} + " already exists");
 var sp = doc.spots.add();
 sp.name = ${str(a.name)};
-sp.color = __color(doc, ${spec});
-sp.colorType = ColorModel.SPOT;
-__result__ = { name: sp.name, spot: true, color: __colorInfo(sp.color) };` : `
+${lab ? 'sp.spotKind = SpotColorKind.SPOTLAB;' : ''}
+sp.color = ${colorExpr};
+sp.colorType = ColorModel.${a.spot ? 'SPOT' : 'PROCESS'};${grouping}
+${a.group ? 'grp.addSpot(sp);' : ''}
+__result__ = { name: sp.name, kind: ${str(a.spot ? 'spot' : 'global')}, color: __colorInfo(sp.color), group: ${a.group ? 'grp.name' : 'null'} };` : `
 var existing = null;
 try { existing = doc.swatches.getByName(${str(a.name)}); } catch (e) { existing = null; }
 if (existing) throw new Error("A swatch named " + ${str(a.name)} + " already exists");
 var sw = doc.swatches.add();
 sw.name = ${str(a.name)};
-sw.color = __color(doc, ${spec});
-__result__ = { name: sw.name, spot: false, color: __colorInfo(sw.color) };`));
+sw.color = ${colorExpr};${grouping}
+${a.group ? 'grp.addSwatch(sw);' : ''}
+__result__ = { name: sw.name, kind: "process", color: __colorInfo(sw.color), group: ${a.group ? 'grp.name' : 'null'} };`;
+            return run('Create swatch', script(body));
         },
     },
     {

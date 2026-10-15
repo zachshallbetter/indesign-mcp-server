@@ -9,6 +9,8 @@ import { tools as artworkTools } from './tools/artwork.js';
 import { tools as appearanceTools } from './tools/appearance.js';
 import { tools as arrangeTools } from './tools/arrange.js';
 import { tools as outputTools } from './tools/output.js';
+import { tools as colorTools } from './tools/color.js';
+import { tools as prepressTools } from './tools/prepress.js';
 import { tools as effectTools } from './tools/effects.js';
 import { tools as blendTools } from './tools/blends.js';
 import { tools as utilityTools, helpTool } from './tools/utility.js';
@@ -29,7 +31,7 @@ Conventions:
 
 Illustrator gives no result from menu commands: execute_menu_command reports the selection and document afterwards, and an unknown command name does nothing. A command that opens a dialog waits for the user; if a call times out, a dialog is probably open in Illustrator.
 
-A call that fails returns isError with a message: read it and fix the arguments rather than retrying unchanged. A result with "warnings" names arguments that were ignored. Annotations mark destructive tools (delete_*, close_document, set_text_contents, convert_text_to_outlines, execute_illustrator_code); confirm with the user before using them on unsaved work.
+A call that fails returns isError with a message: read it and fix the arguments rather than retrying unchanged. A result with "warnings" names arguments that were ignored. Annotations mark destructive tools (delete_*, close_document, set_text_contents, convert_text_to_outlines, execute_illustrator_code); confirm with the user before using them on unsaved work. print_document sends a job to a real printer unless outputFile is given: confirm the printer and options with the user first.
 
 help({ tool }) describes any tool's parameters.`;
 
@@ -37,10 +39,12 @@ const AREAS = [
     ['documents', documentTools],
     ['artwork', artworkTools],
     ['appearance', appearanceTools],
+    ['color', colorTools],
     ['arrange', arrangeTools],
     ['effects', effectTools],
     ['blends', blendTools],
     ['output', outputTools],
+    ['prepress', prepressTools],
     ['utility', utilityTools],
 ];
 
@@ -52,18 +56,19 @@ toolTable.push(help);
 const annotations = createAnnotations({
     readOnly: [
         'help', 'illustrator_status', 'find_menu_commands', 'get_document_info', 'list_documents', 'list_artboards',
-        'list_layers', 'list_items', 'get_selection', 'get_appearance', 'list_swatches', 'list_fonts', 'get_preferences',
+        'list_layers', 'list_items', 'get_selection', 'get_appearance', 'list_swatches', 'list_fonts', 'get_preferences', 'list_print_settings',
     ],
     destructive: [
         'close_document', 'delete_artboard', 'delete_layer', 'delete_items', 'set_text_contents',
         'convert_text_to_outlines', 'ungroup_items', 'pathfinder', 'make_compound_path', 'execute_illustrator_code',
-        'execute_menu_command', 'save_document', 'set_preferences', 'release_blend', 'expand_blend',
+        'execute_menu_command', 'save_document', 'set_preferences', 'release_blend', 'expand_blend', 'delete_swatches', 'edit_colors',
     ],
     idempotent: [
         'save_document', 'set_artboard', 'set_active_artboard', 'set_active_layer', 'set_layer_properties',
         'select_items', 'deselect_all', 'set_fill', 'set_stroke', 'set_opacity', 'set_text_style', 'set_text_contents',
-        'arrange_items', 'align_items', 'set_preferences', 'select_tool', 'set_blend_options', 'export_png', 'export_jpeg', 'export_svg', 'export_web_svg', 'export_for_screens', 'export_pdf', 'move_items_to_layer',
+        'arrange_items', 'align_items', 'set_preferences', 'select_tool', 'set_blend_options', 'set_overprint', 'select_same', 'select_all', 'export_png', 'export_jpeg', 'export_svg', 'export_web_svg', 'export_for_screens', 'export_pdf', 'move_items_to_layer',
     ],
+    openWorld: ['print_document'],
     words: { svg: 'SVG', png: 'PNG', jpeg: 'JPEG', pdf: 'PDF', illustrator: 'Illustrator' },
 });
 
