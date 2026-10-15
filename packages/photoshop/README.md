@@ -42,6 +42,7 @@ Settings > Privacy & Security > Automation).
   `"hsb(h,s,b)"` or `"lab(L,a,b)"`.
 - **Adjustments, filters, fills and strokes** change pixel layers, inside the
   selection when there is one.
+- **Timeline times** are `{ seconds, frames }` at the timeline's frame rate.
 - **Fonts** are PostScript names; `list_fonts` finds them.
 - **Files** must be inside your home folder or a directory in
   `PHOTOSHOP_ALLOWED_DIRS`.
@@ -57,6 +58,7 @@ Settings > Privacy & Security > Automation).
 | Adjustments and filters | `adjust_layers` (brightness/contrast, levels, curves, colour balance, photo filter, shadows/highlights, posterize, threshold, desaturate, invert, equalize, auto levels, auto contrast), `apply_filter` (blurs, sharpening, high pass, noise, median, dust and scratches, maximum, minimum, distortions, offset, clouds and more) |
 | Type | `create_text_layer` (point or paragraph type), `set_text` (text, formatting, position, warp), `list_fonts` |
 | Export | `export_image` (Save for Web: PNG, PNG-8, JPEG, GIF, optionally resized), `export_layers` (one file per layer or group) |
+| Video and animation | `get_timeline`, `create_timeline` (video timeline or frame animation, or convert), `set_timeline` (Timeline panel, frame rate, playhead, Animation Options), `run_timeline_command` (Move & Trim, split, work area, keyframes, onion skins, video layer frames), `edit_frame_animation` (new, delete, copy, paste, reverse and tween frames, frames to and from layers), `add_video_layer`, `import_video_frames`, `set_clip_timing` (in and out points, duration), `add_video_transition`, `render_video` |
 | History | `list_history`, `undo` (back, forward, or to a state), `make_snapshot` |
 | Utility | `photoshop_status`, `play_action`, `execute_photoshop_code`, `help` |
 
