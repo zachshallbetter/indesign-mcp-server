@@ -480,7 +480,7 @@ __result__ = { transition: ${str(a.type ?? 'cross_fade')}, layers: [layers[0].id
         },
         hints: { idempotent: true },
         auditArgs: { name: 'audit.mp4' },
-        features: ['photoshop.video.render_video'],
+        features: ['photoshop.video.render_video', 'photoshop.import_export.video_export_formats'],
         handler: (a) => {
             const folder = paths.validate(a.outputFolder);
             const format = RENDER_FORMATS[enumOf(a.format ?? 'h264', Object.keys(RENDER_FORMATS), { name: 'format' })];
