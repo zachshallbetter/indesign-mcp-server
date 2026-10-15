@@ -11,7 +11,7 @@ export const tools = [
         description: 'Check that After Effects is reachable: platform, how the server addresses After Effects, whether it is running, its version and project. Use this first when a call fails to connect',
         inputSchema: { type: 'object', properties: { probe: { type: 'boolean', description: 'Ask After Effects for its version and project (starts it if it is not running). Default true', default: true } } },
         hints: { readOnly: true },
-        features: [],
+        features: ['aftereffects.application.application_object'],
         handler: async (a) => {
             const status = await executor.status();
             if (a.probe === false) return formatResponse(status, 'Status');
@@ -36,7 +36,7 @@ export const tools = [
         },
         auditArgs: { name: 'Select All', id: undefined },
         hints: { destructive: true },
-        features: [],
+        features: ['aftereffects.automation.execute_menu_command'],
         handler: (a) => {
             if ((a.name === undefined) === (a.id === undefined)) throw new Error('Give name or id');
             return run('Menu command', script(`
@@ -51,7 +51,7 @@ __result__ = { command: id };`, { undo: 'Menu command' }));
         description: 'Run your own ExtendScript in After Effects and return its last expression. It runs unrestricted: it can change or delete anything and read or write files. Prefer the specific tools',
         inputSchema: { type: 'object', properties: { code: { type: 'string', description: 'ExtendScript (ES3) source' } }, required: ['code'] },
         hints: { destructive: true },
-        features: [],
+        features: ['aftereffects.automation.run_script_file', 'aftereffects.automation.command_line_scripts'],
         handler: async (a) => {
             if (typeof a.code !== 'string' || !a.code.trim()) throw new Error("'code' is empty");
             const r = await executor.runStructured(a.code);

@@ -26,7 +26,7 @@ export const tools = [
         description: 'List the render settings and output module templates (Edit > Templates) available for queueing',
         inputSchema: { type: 'object', properties: {} },
         hints: { readOnly: true },
-        features: [],
+        features: ['aftereffects.render_export.render_settings_templates', 'aftereffects.render_export.output_module_templates'],
         handler: () => run('List render templates', script(`
 var c = proj.items.addComp("__templates", 4, 4, 1, 1, 1), rq = proj.renderQueue.items.add(c);
 try { __result__ = { renderSettings: rq.templates, outputModules: rq.outputModule(1).templates }; }
@@ -48,7 +48,14 @@ finally { rq.remove(); c.remove(); }`, { undo: 'List render templates' })),
             required: ['outputFile'],
         },
         auditArgs: { outputFile: `${process.env.HOME ?? '/tmp'}/Documents/render.mov`, renderSettings: 'Best Settings', outputModule: 'High Quality' },
-        features: [],
+        features: [
+            'aftereffects.render_export.add_to_render_queue',
+            'aftereffects.render_export.render_item',
+            'aftereffects.render_export.render_settings_templates',
+            'aftereffects.render_export.output_module_templates',
+            'aftereffects.render_export.output_to',
+            'aftereffects.render_export.render_settings',
+        ],
         handler: (a) => {
             const out = paths.validate(a.outputFile);
             return run('Queue render', script(`${QUEUE}
@@ -70,7 +77,7 @@ __result__ = __queue();`, { undo: 'Queue render' }));
             properties: { mediaEncoder: { type: 'boolean', description: 'Queue in Adobe Media Encoder instead. Default false', default: false }, startEncoding: { type: 'boolean', description: 'Media Encoder: start encoding at once. Default true', default: true } },
         },
         hints: { openWorld: false },
-        features: [],
+        features: ['aftereffects.render_export.render', 'aftereffects.render_export.queue_in_ame'],
         handler: (a) => run('Render', script(`${QUEUE}
 var rq = proj.renderQueue;
 if (rq.numItems === 0) throw new Error("The Render Queue is empty: queue_render first");
@@ -89,7 +96,7 @@ __result__ = __queue();`)),
             required: ['action'],
         },
         hints: { destructive: true },
-        features: [],
+        features: ['aftereffects.render_export.render_item', 'aftereffects.render_export.render_item_status', 'aftereffects.render_export.remove_render_item'],
         handler: (a) => {
             const action = enumOf(a.action, ['list', 'remove', 'enable', 'disable', 'clear'], { name: 'action' });
             if (['remove', 'enable', 'disable'].includes(action) && !(Array.isArray(a.items) && a.items.length)) throw new Error(`'${action}' needs items`);
