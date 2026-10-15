@@ -9,6 +9,7 @@ import { tools as imageTools } from './tools/image.js';
 import { tools as layerTools } from './tools/layers.js';
 import { tools as selectionTools } from './tools/selection.js';
 import { tools as adjustTools } from './tools/adjust.js';
+import { tools as filterTools } from './tools/filters.js';
 import { tools as textTools } from './tools/text.js';
 import { tools as exportTools } from './tools/export.js';
 import { tools as historyTools } from './tools/history.js';
@@ -41,6 +42,7 @@ const AREAS = [
     ['layers', layerTools],
     ['selection', selectionTools],
     ['adjustments', adjustTools],
+    ['filters', filterTools],
     ['type', textTools],
     ['export', exportTools],
     ['history', historyTools],
