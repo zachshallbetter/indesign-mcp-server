@@ -13,6 +13,21 @@ compiled from:
   https://github.com/ten-A/AiMenuObject
   Copyright (c) 2019 Ten Agata. MIT licence.
 
+src/tools/path-edit.js plays Simplify and the Pathfinder compound shape
+commands as generated Actions, with the event names and parameter codes
+recorded in:
+
+  Extend_Script_experimentals, simplify.jsx
+  https://github.com/ten-A/Extend_Script_experimentals
+  Ten Agata. MIT licence.
+
+  Greyprint, Illustrator/Greyprint Actions.aia
+  https://github.com/bjango/Greyprint
+
+  AiSmartPathfinderPalette, jsx/fx/AiSmartPathfinderPalette.jsx
+  https://github.com/swwwitch/illustrator-scripts
+  Masahiro Takano (@swwwitch).
+
 src/blend.js writes Blend Options as a generated Action, in the format and
 with the parameter codes used by:
 

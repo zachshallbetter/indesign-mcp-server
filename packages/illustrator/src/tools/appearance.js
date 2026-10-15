@@ -41,7 +41,7 @@ function labValues(value) {
 export const tools = [
     {
         name: 'set_fill',
-        description: 'Set the fill of paths, compound paths, groups (every path inside) and text frames. "none" removes the fill',
+        description: 'Set the fill of paths, compound paths, groups (every path inside) and text frames. "none" removes the fill; a gradient swatch name fills with the gradient',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, color: COLOR_SCHEMA, tint: TINT_SCHEMA }, required: ['target', 'color'] },
         features: [
             'illustrator.color.color_tints',
@@ -49,6 +49,7 @@ export const tools = [
             'illustrator.appearance.remove_fill_stroke',
             'illustrator.color.no_color',
             'illustrator.typography.character.character_fill_color',
+            'illustrator.appearance.color_mode_button',
         ],
         handler: (a) => {
             const spec = colorSpec(a.color, 'color');
@@ -65,7 +66,7 @@ __result__ = counts;`));
     },
     {
         name: 'set_stroke',
-        description: 'Set the stroke of paths, compound paths and groups: colour, weight, caps, joins and dashes',
+        description: 'Set the stroke of paths, compound paths and groups: colour, weight, caps, joins and dashes. A gradient swatch name as the colour puts the gradient on the stroke',
         inputSchema: {
             type: 'object',
             properties: {
@@ -92,6 +93,8 @@ __result__ = counts;`));
             'illustrator.appearance.stroke_option.dashed_line',
             'illustrator.appearance.remove_fill_stroke',
             'illustrator.color.no_color',
+            'illustrator.appearance.color_mode_button',
+            'illustrator.appearance.gradient_on_stroke',
         ],
         handler: (a) => {
             const lines = [];

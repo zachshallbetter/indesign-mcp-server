@@ -7,15 +7,26 @@ import { executor } from './executor.js';
 import { tools as documentTools } from './tools/documents.js';
 import { tools as documentSetupTools } from './tools/document-setup.js';
 import { tools as artworkTools } from './tools/artwork.js';
+import { tools as shapeTools } from './tools/shapes.js';
 import { tools as appearanceTools } from './tools/appearance.js';
 import { tools as arrangeTools } from './tools/arrange.js';
+import { tools as selectTools } from './tools/select.js';
 import { tools as outputTools } from './tools/output.js';
 import { tools as colorTools } from './tools/color.js';
 import { tools as prepressTools } from './tools/prepress.js';
 import { tools as variableTools } from './tools/variables.js';
 import { tools as pathTools } from './tools/paths.js';
+import { tools as pathEditTools } from './tools/path-edit.js';
 import { tools as effectTools } from './tools/effects.js';
 import { tools as blendTools } from './tools/blends.js';
+import { tools as assetTools } from './tools/assets.js';
+import { tools as layerTools } from './tools/layers.js';
+import { tools as patternTools } from './tools/patterns.js';
+import { tools as transformTools } from './tools/transform.js';
+import { tools as styleTools } from './tools/styles.js';
+import { tools as imageTools } from './tools/images.js';
+import { tools as traceTools } from './tools/trace.js';
+import { tools as symbolTools } from './tools/symbols.js';
 import { tools as utilityTools, helpTool } from './tools/utility.js';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
@@ -41,14 +52,25 @@ help({ tool }) describes any tool's parameters.`;
 const AREAS = [
     ['documents', documentTools],
     ['document-setup', documentSetupTools],
+    ['layers', layerTools],
     ['artwork', artworkTools],
+    ['shapes', shapeTools],
     ['appearance', appearanceTools],
+    ['styles', styleTools],
     ['color', colorTools],
     ['arrange', arrangeTools],
+    ['transform', transformTools],
+    ['select', selectTools],
     ['paths', pathTools],
+    ['path-edit', pathEditTools],
     ['effects', effectTools],
     ['blends', blendTools],
+    ['patterns', patternTools],
+    ['images', imageTools],
+    ['trace', traceTools],
+    ['symbols', symbolTools],
     ['output', outputTools],
+    ['assets', assetTools],
     ['prepress', prepressTools],
     ['variables', variableTools],
     ['utility', utilityTools],
