@@ -45,20 +45,17 @@ test('mode conversion takes Indexed Color and Bitmap options', async () => {
     await assert.rejects(mcp.handleToolCall('change_mode', { mode: 'bitmap', bitmap: { method: 'custom_pattern' } }), /patternName/);
 });
 
-test('colour table, pixel aspect ratio, histogram and colour sampling', async () => {
-    const [table, par, hist, sample] = await scriptsFor([
+test('colour table, pixel aspect ratio and histogram', async () => {
+    const [table, par, hist] = await scriptsFor([
         ['set_color_table', { colors: ['#000000', '#FFFFFF', 'rgb(255,0,0)'] }],
         ['set_pixel_aspect_ratio', { ratio: 0.91, toggleCorrection: true }],
         ['get_histogram', { channel: 'Red' }],
-        ['sample_color', { x: 5, y: 7 }],
     ]);
     assert.match(table, /r\.putProperty\(__c\("Clr "\), __c\("ClrT"\)\);/);
     assert.match(table, /list\.putObject\(__c\("RGBC"\), e\);/);
     assert.match(par, /doc\.pixelAspectRatio = 0\.91;/);
     assert.match(par, /app\.runMenuItem\(app\.stringIDToTypeID\("toggleProofVideo"\)\);/);
     assert.match(hist, /src = doc\.channels\.getByName\("Red"\);/);
-    assert.match(sample, /doc\.colorSamplers\.add\(\[new UnitValue\(5, "px"\), new UnitValue\(7, "px"\)\]\)/);
-    assert.match(sample, /sampler\.remove\(\);/);
     const mcp = await server();
     await assert.rejects(mcp.handleToolCall('set_color_table', { colors: [] }), /1 to 256/);
     await assert.rejects(mcp.handleToolCall('set_pixel_aspect_ratio', {}), /Give ratio/);

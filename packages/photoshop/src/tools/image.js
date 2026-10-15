@@ -389,36 +389,4 @@ var levels = [];
 for (var k = 0; k < hist.length; k++) levels.push(hist[k]);
 __result__ = { channel: label, pixels: total, mean: total ? sum / total : null, median: median, levels: levels };`)),
     },
-    {
-        name: 'sample_color',
-        description: 'Read the colour of the visible image at a point, as the Eyedropper and Color Sampler tools do (a temporary colour sampler, removed afterwards): hex, RGB, HSB, CMYK, Lab and gray values',
-        inputSchema: {
-            type: 'object',
-            properties: {
-                x: { type: 'number', minimum: 0, description: 'Pixels from the left' },
-                y: { type: 'number', minimum: 0, description: 'Pixels from the top' },
-            },
-            required: ['x', 'y'],
-        },
-        hints: { readOnly: true, idempotent: true },
-        features: ['photoshop.image.sample_color'],
-        handler: (a) => {
-            const x = num(a.x, { min: 0, max: 300000, name: 'x' }), y = num(a.y, { min: 0, max: 300000, name: 'y' });
-            return run('Sample color', script(`
-if (${x} >= __px(doc.width) || ${y} >= __px(doc.height)) throw new Error("The point is outside the canvas");
-var sampler = doc.colorSamplers.add([new UnitValue(${x}, "px"), new UnitValue(${y}, "px")]);
-var out = { x: ${x}, y: ${y}, hex: null, rgb: null, hsb: null, cmyk: null, lab: null, gray: null };
-try {
-  var c = sampler.color, info = __colorInfo(c);
-  if (info) { out.hex = info.hex; out.rgb = info.rgb; }
-  try { out.hsb = [c.hsb.hue, c.hsb.saturation, c.hsb.brightness]; } catch (e1) {}
-  try { out.cmyk = [c.cmyk.cyan, c.cmyk.magenta, c.cmyk.yellow, c.cmyk.black]; } catch (e2) {}
-  try { out.lab = [c.lab.L, c.lab.A, c.lab.B]; } catch (e3) {}
-  try { out.gray = c.gray.gray; } catch (e4) {}
-} finally {
-  sampler.remove();
-}
-__result__ = out;`));
-        },
-    },
 ];
