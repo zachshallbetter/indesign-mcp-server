@@ -259,7 +259,7 @@ __result__ = { items: out };`));
             'indesign.automation.menu_actions',
             'indesign.automation.find_key_strings',
         ],
-        hints: { readOnly: false, destructive: false, idempotent: false },
+        hints: { destructive: true },
         auditArgs: { action: 'invoke', id: 18695 },
         handler: (a) => {
             const action = pick(a.action, { search: 'search', get: 'get', invoke: 'invoke', find_key_strings: 'find_key_strings', translate_key_string: 'translate_key_string' }, 'action');

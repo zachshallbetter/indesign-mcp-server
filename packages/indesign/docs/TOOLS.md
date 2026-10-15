@@ -5933,7 +5933,7 @@ Read or write the script labels scripts use to find objects: get, set or clear a
 
 Look up and invoke InDesign menu actions: search the menu actions by name or area (id, title, area, enabled, checked), read one by id, invoke one by id when it is enabled and opens no dialog, or convert between localised UI strings and language-independent $ID/ key strings (Application.menuActions, findKeyStrings, translateKeyString)
 
-*modifies document*
+***destructive***
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
