@@ -73,6 +73,9 @@ Settings > Privacy & Security > Automation).
 | Recolouring and gradients | `adjust_colors` (by script: saturate, adjust colour balance, complement, web-safe, printable; on items or a colour group), `overprint_black`, `apply_gradient` (Gradient tool placement, one gradient across several objects, predefined gradients) |
 | Colour management | `get_color_settings` (settings files, document profile), `load_color_settings`, `set_color_view` (Proof Setup, Proof Colors, gradient annotator) |
 | Selecting and arranging | `list_items`, `get_selection`, `select_items`, `select_same`, `select_all`, `deselect_all`, `delete_items`, `duplicate_items`, `move_items`, `scale_items`, `rotate_items`, `reflect_items`, `align_items`, `arrange_items`, `group_items`, `ungroup_items` |
+| Combining | `make_clipping_mask`, `make_compound_path`, `pathfinder` (also hard mix, soft mix and trap) |
+| Paths | `path_operation` (outline stroke, join, add anchor points, reverse direction, divide objects below, release compound path, make pixel perfect, expand appearance), `average_points` (and join), `clean_up`, `split_into_grid`, `split_path`, `set_path_options` (fill rule, guides, pixel alignment), `get_path_info` (area, length, anchors) |
+| Effects | `apply_effect` (drop shadow, inner and outer glow, feather, scribble, round corners, convert to shape, free distort, pucker & bloat, roughen, transform, tweak, twist, zig zag, the fifteen warps, offset path, outline object and stroke, crop marks, rasterize, Gaussian blur, NTSC colors), `apply_svg_filter`, `apply_last_effect`, `set_raster_effect_settings` |
 | Selecting and arranging | `list_items`, `get_selection`, `select_items`, `select_same`, `select_all`, `deselect_all`, `delete_items`, `duplicate_items`, `move_items`, `scale_items`, `rotate_items`, `reflect_items`, `align_items` (to selection, artboard or key object), `arrange_items`, `group_items`, `ungroup_items` |
 | Transforming | `transform_each` (random, copies), `shear_items`, `apply_matrix`, `repeat_transform` (Transform Again), `resize_items` (width and height, relative or absolute), `get_bounds` (geometric, visible, control), `nudge_items`, `set_transform_options` (reference point, scale corners, bounding box), `reset_bounding_box`, `distribute_items` (edges, centres, spacing, exact gap), `distort_items` (free and perspective distort) |
 | Envelopes and objects on a path | `make_envelope` (with top object), `edit_envelope` (release, expand, edit contents), `expand_objects_on_path` |
@@ -122,6 +125,14 @@ Settings > Privacy & Security > Automation).
   `applyEffect`, nor the preference keys behind `set_preferences`; the server
   uses only parameters and keys that published scripts rely on, recorded with
   their sources in the capability atlas. `pathfinder` can fall back to
+  Illustrator's menu commands with `method: "menu"`. The Photoshop effects
+  (Effect Gallery, Artistic, Sketch, Texture and the rest) are not offered:
+  each command opens a dialog, and their LiveEffect parameters are stored as
+  encoded binary that no published script sets. NTSC Colors, which has no
+  dialog, is the exception.
+- **Blend options through a temporary Action.** The object model cannot set a
+  blend's steps or orientation, so `make_blend` and `set_blend_options` write a
+  one-step Action, play it on the blend and unload it again.
   Illustrator's menu commands with `method: "menu"`.
 - **Commands through a temporary Action.** The object model cannot set a
   blend's steps or orientation, run Simplify, or make a Pathfinder compound
