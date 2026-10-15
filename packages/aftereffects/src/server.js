@@ -13,6 +13,8 @@ import { tools as effectTools } from './tools/effects.js';
 import { tools as effectControlTools } from './tools/effect-controls.js';
 import { tools as textTools } from './tools/text.js';
 import { tools as maskTools } from './tools/masks.js';
+import { tools as shapeTools } from './tools/shapes.js';
+import { tools as paintTools } from './tools/paint.js';
 import { tools as renderTools } from './tools/render.js';
 import { tools as threeDTools } from './tools/threed.js';
 import { tools as trackingTools } from './tools/tracking.js';
@@ -33,7 +35,7 @@ Conventions:
 - Positions are pixels from the composition's top-left; times are seconds; colours are "#RRGGBB" or "rgb(r,g,b)".
 - File paths must be absolute and inside the user's home folder or AFTEREFFECTS_ALLOWED_DIRS.
 
-Each call is one undo step in After Effects, and dialogs are suppressed while it runs. A call that fails returns isError with a message: read it and fix the arguments rather than retrying unchanged. Annotations mark destructive tools (delete_layers, manage_items, open_project, execute_aftereffects_code); confirm with the user before using them on unsaved work. render_queue blocks until rendering finishes.
+Each call is one undo step in After Effects, and dialogs are suppressed while it runs. A call that fails returns isError with a message: read it and fix the arguments rather than retrying unchanged. Annotations mark destructive tools (delete_layers, manage_items, manage_masks, arrange_shape_content, open_project, execute_aftereffects_code); confirm with the user before using them on unsaved work. render_queue blocks until rendering finishes.
 
 help({ tool }) describes any tool's parameters.`;
 
@@ -47,6 +49,8 @@ const AREAS = [
     ['effect controls', effectControlTools],
     ['text', textTools],
     ['masks', maskTools],
+    ['shapes', shapeTools],
+    ['paint', paintTools],
     ['render', renderTools],
     ['three_d', threeDTools],
     ['tracking', trackingTools],
