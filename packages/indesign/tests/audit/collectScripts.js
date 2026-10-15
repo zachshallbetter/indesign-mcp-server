@@ -9,6 +9,10 @@ import { fileURLToPath } from 'node:url';
 import { ScriptExecutor } from '../../src/core/scriptExecutor.js';
 import { InDesignMCPServer } from '../../src/core/InDesignMCPServer.js';
 import { allToolDefinitions } from '../../src/types/index.js';
+import { moduleTools } from '../../src/tools/index.js';
+
+// Module tools can carry valid audit arguments (auditArgs) for formats the generic samples cannot meet.
+const AUDIT_ARGS = new Map(moduleTools.map((t) => [t.name, t.auditArgs]));
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
@@ -66,6 +70,7 @@ export async function collectToolScripts({ filter = null } = {}) {
             if (filter && !filter.test(tool.name)) continue;
             const args = {};
             for (const [k, v] of Object.entries(tool.inputSchema?.properties || {})) args[k] = sample(k, v);
+            Object.assign(args, AUDIT_ARGS.get(tool.name) ?? {});
             captured = [];
             const entry = { tool, args, scripts: captured };
             try {
