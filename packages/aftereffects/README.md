@@ -61,6 +61,8 @@ Network, which file operations need.
 | Masks | `add_mask` (rectangle, ellipse or path, with mode, feather, opacity, expansion) |
 | 3D | `set_camera_options` (zoom, F-Stop, depth of field, iris, highlights, Point of Interest), `set_light_options` (type, colour, intensity, cone, falloff, shadows, environment source), `set_material_options` (shadows, lights, reflections, transparency; environment layer), `set_geometry_options` (bevel, extrusion, curvature), `set_comp_3d_settings` (3D renderer, Draft 3D), `set_3d_view` (View > Switch 3D View, Reset, Look at, Create Camera from 3D View), `run_camera_command` (focus links, orbit null, stereo rig, cameras and lights from 3D models), `set_camera_tool` |
 | Render | `list_render_templates`, `queue_render`, `render_queue` (in After Effects or Adobe Media Encoder), `manage_render_queue` |
+| Tracking | `start_tracking` (Track Motion, Track Mask, Track this Property, Mocha, Tracker panel, Motion Tracking workspace), `apply_warp_stabilizer`, `apply_camera_tracker` (3D Camera Tracker), `get_tracking_data` (track points, face measurements), `set_track_point` |
+| Colour | `get_color_management` (and colour profiles), `set_color_management` (bit depth, working space, gamma, linearize, blending), `set_display_color` (display colour management, Simulate Output, Lumetri Scopes), `apply_color_effect` (grading, broadcast-safe, output simulation on an adjustment layer) |
 | Utility | `aftereffects_status`, `run_menu_command`, `execute_aftereffects_code`, `help` |
 
 `help({ tool })` describes any tool's parameters.
