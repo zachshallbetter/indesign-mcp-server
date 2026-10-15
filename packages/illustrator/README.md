@@ -52,8 +52,8 @@ Settings > Privacy & Security > Automation).
 | Area | Tools |
 |---|---|
 | Documents | `get_document_info`, `list_documents`, `create_document`, `open_document`, `save_document` (.ai or .eps, each artboard to its own file), `close_document` |
-| Artboards | `list_artboards`, `add_artboard`, `set_artboard`, `delete_artboard`, `set_active_artboard`, `fit_artboard_to_artwork`, `rearrange_artboards` |
-| Layers | `list_layers`, `create_layer`, `set_layer_properties`, `set_active_layer`, `delete_layer`, `move_items_to_layer` |
+| Artboards | `list_artboards`, `add_artboard`, `set_artboard` (orientation, scale artwork with it), `delete_artboard`, `set_active_artboard`, `fit_artboard_to_artwork` (selected art or artwork bounds), `rearrange_artboards`, `copy_artboard` (duplicate, cut, copy to another document), `delete_empty_artboards`, `align_artboards`, `reorder_artboards`, `convert_to_artboards`, `set_artboard_display` (centre mark, cross hairs, video safe areas and rulers, ruler origin, border, Show / Hide Artboards), `view_artboard` |
+| Layers | `list_layers`, `create_layer`, `set_layer_properties` (Layer Options, knockout), `set_active_layer`, `delete_layer`, `move_items_to_layer` (or Send to Current Layer), `organize_layers` (merge, flatten, collect in new layer, release to layers, reverse order), `set_other_layers` (hide, lock or outline others), `select_layer_artwork`, `paste_artwork` (Paste in Front or Back) |
 | Shapes and paths | `create_rectangle`, `create_ellipse`, `create_polygon`, `create_star`, `create_line`, `create_path` |
 | Text | `create_text`, `set_text_style`, `set_text_contents`, `convert_text_to_outlines`, `list_fonts` |
 | Appearance | `set_fill`, `set_stroke` (both with a tint for spot and global swatches), `set_opacity`, `get_appearance`, `create_gradient` |
