@@ -11,6 +11,7 @@ import { tools as selectionTools } from './tools/selection.js';
 import { tools as adjustTools } from './tools/adjust.js';
 import { tools as paintTools } from './tools/paint.js';
 import { tools as textTools } from './tools/text.js';
+import { tools as vectorTools } from './tools/vector.js';
 import { tools as exportTools } from './tools/export.js';
 import { tools as historyTools } from './tools/history.js';
 import { tools as videoTools } from './tools/video.js';
@@ -44,6 +45,7 @@ const AREAS = [
     ['adjustments', adjustTools],
     ['painting', paintTools],
     ['type', textTools],
+    ['vector', vectorTools],
     ['export', exportTools],
     ['history', historyTools],
     ['video', videoTools],
