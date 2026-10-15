@@ -66,6 +66,7 @@ Settings > Privacy & Security > Automation).
 | Preferences and tools | `get_preferences`, `set_preferences`, `select_tool` |
 | Placing and export | `place_image`, `export_png`, `export_jpeg`, `export_svg` (Save As SVG), `export_web_svg` (Export As SVG: styling, IDs, minify, responsive), `export_for_screens`, `export_pdf` (preset plus PDF/X, bleed, marks, colour conversion, output intent, Acrobat layers) |
 | Variables and data sets | `list_variables`, `create_variable`, `bind_variable`, `delete_variables`, `create_data_sets` (from records: text, image files, visibility), `show_data_set`, `delete_data_sets`, `export_data_sets` (each data set to PNG or JPEG), `import_variables`, `export_variables`, `set_variables_locked` |
+| Actions and automation | `list_actions` (sets in the Actions panel, or the steps in an .aia file), `play_action`, `load_actions` (Load or Replace Actions; rename actions, remove them or their steps, and switch steps or their dialogs on or off before loading), `create_action_set` (new actions from saved steps), `unload_actions` (an action, a set, or Clear Actions), `run_batch` (Batch by script: a folder of files or every data set, to a destination), `run_script_file`, `import_csv_data` (a CSV data source as data sets), `get_item_data` and `set_item_data` (tags and notes) |
 | Prepress and printing | `set_overprint`, `create_trim_marks`, `list_print_settings`, `print_document` (to a printer or a PostScript file; preset plus each Print dialog page) |
 | Utility | `illustrator_status`, `execute_menu_command`, `find_menu_commands`, `execute_illustrator_code`, `help` |
 
@@ -98,6 +99,12 @@ Settings > Privacy & Security > Automation).
   dialog, so the server does what each dialog describes through the object
   model instead. Simplify, Smooth and Offset Path have no such route and are
   not offered (`apply_effect` with `offset_path` and `expand` covers Offset Path).
+- **Actions edited as files.** Illustrator can play, load and unload an action
+  but cannot list or change a loaded one. `list_actions` reads the sets from
+  Illustrator's preferences, as AiCommandPalette does, and `load_actions` and
+  `create_action_set` make their changes to the .aia file before loading it.
+  `run_batch` does what the Batch dialog does, one call per file, so a long
+  batch does not time out.
 - **Data sets from records.** Illustrator captures a data set from the artwork as
   it is, so `create_data_sets` sets each record's values on the bound objects and
   then captures it, the way published variable scripts do.
