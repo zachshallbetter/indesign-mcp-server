@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.5.0
+
+### Added
+- 286 tools in 28 module areas (`src/tools/`), bringing the server to 423 tools. Each area covers one part of InDesign and claims the capability-atlas features it performs: typography (character and paragraph formatting, OpenType, bullets and numbering), styles, text frames and stories, tables, long documents, import and export formats, effects and transparency, printing and prepress, colour, XML, interactive documents, images and links, frames and objects, layout tools, transformations and paths, documents, pages and spreads, layers, selection, undo history, preferences, data merge, find and change, dictionaries and languages, scripting and automation, and InCopy.
+- Module tools run with dialogs suppressed and measurements in millimetres, both restored afterwards; positions are page-relative.
+- Every generated script is checked against the InDesign object model by the static audit (`tests/audit/scripts.audit.js`), and each area has its own tests in `tests/modules/`.
+- The help tool lists the module areas as categories.
+
+### Changed
+- `docs/TOOLS.md` lists every tool, including the module areas.
+
 ## 2.4.0
 
 ### Renamed
