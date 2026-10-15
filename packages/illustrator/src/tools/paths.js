@@ -4,8 +4,8 @@
  * Commands that run without a dialog go through executeMenuCommand on the
  * targets. Average, Clean Up and Split Into Grid open a dialog, so they are
  * done through the object model instead, the way the dialogs describe them.
- * Simplify, Smooth and Offset Path also open a dialog and are not offered;
- * apply_effect's offset_path with expand covers Offset Path.
+ * Smooth and Offset Path also open a dialog and are not offered; Simplify is
+ * in path-edit.js, and apply_effect's offset_path with expand covers Offset Path.
  */
 import { str, num, index, bool, enumOf } from 'adobe-mcp-core';
 import { script } from '../script.js';
@@ -199,6 +199,7 @@ __result__ = removed;`));
         },
         features: [
             'illustrator.geometry.split_into_grid',
+            'illustrator.geometry.split_into_grid_variant',
             'illustrator.geometry.split_grid_option.rows_number',
             'illustrator.geometry.split_grid_option.columns_number',
             'illustrator.geometry.split_grid_option.gutter',

@@ -15,6 +15,7 @@ import { tools as colorTools } from './tools/color.js';
 import { tools as prepressTools } from './tools/prepress.js';
 import { tools as variableTools } from './tools/variables.js';
 import { tools as pathTools } from './tools/paths.js';
+import { tools as pathEditTools } from './tools/path-edit.js';
 import { tools as effectTools } from './tools/effects.js';
 import { tools as blendTools } from './tools/blends.js';
 import { tools as patternTools } from './tools/patterns.js';
@@ -56,6 +57,7 @@ const AREAS = [
     ['transform', transformTools],
     ['select', selectTools],
     ['paths', pathTools],
+    ['path-edit', pathEditTools],
     ['effects', effectTools],
     ['blends', blendTools],
     ['patterns', patternTools],

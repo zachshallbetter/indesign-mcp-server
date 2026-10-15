@@ -68,6 +68,7 @@ Settings > Privacy & Security > Automation).
 | Selection | `select_by_type` (Select > Object: text, point and area type, clipping masks, stray points, brush strokes, not pixel-aligned, same layers, direction handles), `change_selection` (reselect, inverse, next object above or below), `select_nested_items` (inside groups, or the group above), `select_similar_items` (stroke weight and opacity within a tolerance, blending mode), `toggle_global_edit`, `lock_items` and `hide_items` (the targets, artwork above, or everything else), `unlock_all`, `show_all`, `set_isolation_mode` |
 | Combining | `make_clipping_mask`, `make_compound_path`, `pathfinder` |
 | Paths | `path_operation` (outline stroke, join, add anchor points, reverse direction, divide objects below, release compound path, make pixel perfect, expand appearance), `average_points` (and join), `clean_up`, `split_into_grid`, `split_path`, `set_path_options` (fill rule, guides, pixel alignment), `get_path_info` (area, length, anchors) |
+| Path editing | `edit_anchor_points` (remove, convert to corner or smooth, set anchor and handles), `copy_items` (to another document or the clipboard), `simplify_path` (curve precision, angle threshold, straight lines), `compound_shape` (make with a shape mode, release, expand), `repeat_pathfinder`, `intertwine` (make, release) |
 | Effects | `apply_effect` (drop shadow, offset path, round corners, roughen, transform, Gaussian blur) |
 | Blends | `make_blend`, `set_blend_options` (steps, orientation), `release_blend`, `expand_blend`, `reverse_blend` |
 | Patterns and repeats | `create_pattern` (Object > Pattern > Make), `apply_pattern` (fill or stroke), `rename_pattern`, `edit_pattern` (enter or leave pattern editing mode), `transform_pattern` (move, scale, rotate, reflect or shear the pattern only), `make_repeat` (radial, grid or mirror, with options), `set_repeat_options`, `release_repeat` |
@@ -102,13 +103,16 @@ Settings > Privacy & Security > Automation).
   uses only parameters and keys that published scripts rely on, recorded with
   their sources in the capability atlas. `pathfinder` can fall back to
   Illustrator's menu commands with `method: "menu"`.
-- **Blend options through a temporary Action.** The object model cannot set a
-  blend's steps or orientation, so `make_blend` and `set_blend_options` write a
-  one-step Action, play it on the blend and unload it again.
+- **Commands through a temporary Action.** The object model cannot set a
+  blend's steps or orientation, run Simplify, or make a Pathfinder compound
+  shape, so `make_blend`, `set_blend_options`, `simplify_path` and
+  `compound_shape` write a one-step Action, play it with its dialog closed and
+  unload it again. The Action parameters are the ones published scripts and
+  recorded action sets use.
 - **Dialogs done by script.** Average, Clean Up and Split Into Grid open a
   dialog, so the server does what each dialog describes through the object
-  model instead. Simplify, Smooth and Offset Path have no such route and are
-  not offered (`apply_effect` with `offset_path` and `expand` covers Offset Path).
+  model instead. Smooth and Offset Path have no such route and are not offered
+  (`apply_effect` with `offset_path` and `expand` covers Offset Path).
 - **Data sets from records.** Illustrator captures a data set from the artwork as
   it is, so `create_data_sets` sets each record's values on the bound objects and
   then captures it, the way published variable scripts do.
