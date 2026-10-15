@@ -1,0 +1,64 @@
+name: Registry status
+
+# Changes the status of a server in the MCP Registry: deprecate a renamed or
+# retired server, delete a broken version, or restore one. Run it from the
+# Actions tab or with:
+#   gh workflow run registry-status.yml -f server=io.github.zachshallbetter/<name> \
+#     -f status=deprecated -f message="..." [-f version=1.2.3]
+# Signs in with GitHub OIDC, like the release workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      server:
+        description: Full server name, e.g. io.github.zachshallbetter/indesign-mcp-server
+        required: true
+        type: string
+      status:
+        description: New status
+        required: true
+        type: choice
+        options: [deprecated, active, deleted]
+      message:
+        description: Why (shown to registry users)
+        required: false
+        type: string
+      version:
+        description: One version; leave empty for every version
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  MCP_PUBLISHER_VERSION: v1.8.1
+
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install mcp-publisher
+        run: |
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/download/${MCP_PUBLISHER_VERSION}/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
+          ./mcp-publisher --help >/dev/null
+
+      - name: Change the status
+        env:
+          SERVER: ${{ inputs.server }}
+          STATUS: ${{ inputs.status }}
+          MESSAGE: ${{ inputs.message }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          case "$SERVER" in
+            io.github.zachshallbetter/*) ;;
+            *) echo "Only io.github.zachshallbetter/* servers" >&2; exit 1 ;;
+          esac
+          ./mcp-publisher login github-oidc
+          args=(--status "$STATUS")
+          if [ -n "$MESSAGE" ]; then args+=(--message "$MESSAGE"); fi
+          if [ -n "$VERSION" ]; then
+            ./mcp-publisher status "${args[@]}" "$SERVER" "$VERSION"
+          else
+            ./mcp-publisher status "${args[@]}" --all-versions "$SERVER"
+          fi

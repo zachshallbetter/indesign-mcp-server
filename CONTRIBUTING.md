@@ -51,3 +51,11 @@ every check and test, publishes the package to npm, and publishes its
 
 When a server needs a new `adobe-mcp-core`, release the core first, then the
 server with its dependency updated.
+
+To deprecate, delete or restore a server in the MCP Registry (for example after
+a rename), run the Registry status workflow:
+
+```bash
+gh workflow run registry-status.yml -f server=io.github.zachshallbetter/<name> \
+  -f status=deprecated -f message="Renamed to ..."
+```
