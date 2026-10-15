@@ -52,6 +52,7 @@ Settings > Privacy & Security > Automation).
 | Area | Tools |
 |---|---|
 | Documents | `get_document_info`, `list_documents`, `create_document`, `open_document`, `save_document` (.ai or .eps, each artboard to its own file), `close_document` |
+| Document commands | `new_from_template`, `save_document_copy`, `revert_document`, `close_all_documents`, `list_document_presets`, `create_document_from_preset` (name, size, orientation, units, colour mode, raster effects, preview mode, transparency grid, bleed), `get_document_setup`, `set_document_setup` (colour mode, ruler origin, large canvas, Edit Artboards), `open_document_with_options` (legacy files, recent files, open as a library), `get_file_info`, `set_file_info` (File Info and XMP), `use_clipboard` (cut, copy, paste, paste in place, on all artboards, without formatting), `switch_document` |
 | Artboards | `list_artboards`, `add_artboard`, `set_artboard`, `delete_artboard`, `set_active_artboard`, `fit_artboard_to_artwork`, `rearrange_artboards` |
 | Layers | `list_layers`, `create_layer`, `set_layer_properties`, `set_active_layer`, `delete_layer`, `move_items_to_layer` |
 | Shapes and paths | `create_rectangle`, `create_ellipse`, `create_polygon`, `create_star`, `create_line`, `create_path` |

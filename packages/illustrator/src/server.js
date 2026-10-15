@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { createMcpServer, createAnnotations } from 'adobe-mcp-core';
 import { executor } from './executor.js';
 import { tools as documentTools } from './tools/documents.js';
+import { tools as documentSetupTools } from './tools/document-setup.js';
 import { tools as artworkTools } from './tools/artwork.js';
 import { tools as appearanceTools } from './tools/appearance.js';
 import { tools as arrangeTools } from './tools/arrange.js';
@@ -39,6 +40,7 @@ help({ tool }) describes any tool's parameters.`;
 
 const AREAS = [
     ['documents', documentTools],
+    ['document-setup', documentSetupTools],
     ['artwork', artworkTools],
     ['appearance', appearanceTools],
     ['color', colorTools],
