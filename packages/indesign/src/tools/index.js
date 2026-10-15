@@ -20,6 +20,7 @@ import { tools as colorTools } from './color.js';
 import { tools as framesTools } from './frames.js';
 import { tools as layoutTools } from './layout.js';
 import { tools as imagesTools } from './images.js';
+import { tools as preferencesTools } from './preferences.js';
 import { tools as pathTools } from './paths.js';
 import { tools as documentTools } from './documents.js';
 import { tools as pageTools } from './pages.js';
@@ -51,6 +52,7 @@ export const AREAS = [
     ['layers', layerTools, { name: 'Layers', description: 'Layer Options, Layers panel commands, moving items between layers, and the objects on each layer' }],
     ['selection', selectionTools, { name: 'Selection and clipboard', description: 'Select commands, selection tools, cut, copy and paste variants, duplicating and Step and Repeat, and clipboard and drag-and-drop preferences' }],
     ['history', historyTools, { name: 'Undo and history', description: 'Undo, redo, stepping through and listing the document history' }],
+    ['preferences', preferencesTools, { name: 'Preferences', description: 'Read and change the Preferences panes for the application or the active document: General, Interface, Type, Advanced Type, Composition, Units & Increments, Display Performance, GPU, File Handling, Clipboard, Guides & Pasteboard, Spelling, Autocorrect, Dictionary, Japanese layout and Generative AI' }],
 ];
 
 /** Every module tool, with its area. */
