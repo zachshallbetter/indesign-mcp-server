@@ -18,6 +18,7 @@ import { tools as textTools } from './tools/text.js';
 import { tools as maskTools } from './tools/masks.js';
 import { tools as renderTools } from './tools/render.js';
 import { tools as threeDTools } from './tools/threed.js';
+import { tools as essentialTools } from './tools/essential.js';
 import { tools as trackingTools } from './tools/tracking.js';
 import { tools as colorTools } from './tools/color.js';
 import { tools as utilityTools, helpTool } from './tools/utility.js';
@@ -35,6 +36,7 @@ Conventions:
 - Properties are a shortcut (position, scale, rotation, opacity, anchor_point, source_text, ...) or a path of match names or names, e.g. ["ADBE Effect Parade", "Gaussian Blur", "Blurriness"].
 - Positions are pixels from the composition's top-left; times are seconds; colours are "#RRGGBB" or "rgb(r,g,b)".
 - File paths must be absolute and inside the user's home folder or AFTEREFFECTS_ALLOWED_DIRS.
+- Render Queue items are 1-based indexes (manage_render_queue lists them); get_render_item shows the setting names set_render_settings and set_output_module accept.
 
 Each call is one undo step in After Effects, and dialogs are suppressed while it runs. A call that fails returns isError with a message: read it and fix the arguments rather than retrying unchanged. Annotations mark destructive tools (delete_layers, manage_items, open_project, execute_aftereffects_code); confirm with the user before using them on unsaved work. render_queue blocks until rendering finishes.
 
@@ -55,6 +57,7 @@ const AREAS = [
     ['masks', maskTools],
     ['render', renderTools],
     ['three_d', threeDTools],
+    ['essential_graphics', essentialTools],
     ['tracking', trackingTools],
     ['color', colorTools],
     ['utility', utilityTools],
