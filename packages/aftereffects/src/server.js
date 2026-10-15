@@ -8,6 +8,9 @@ import { tools as projectTools } from './tools/project.js';
 import { tools as footageTools } from './tools/footage.js';
 import { tools as compTools } from './tools/comps.js';
 import { tools as layerTools } from './tools/layers.js';
+import { tools as layerEditTools } from './tools/layer-edits.js';
+import { tools as compEditTools } from './tools/comp-edits.js';
+import { tools as timeTools } from './tools/time.js';
 import { tools as animationTools } from './tools/animation.js';
 import { tools as effectTools } from './tools/effects.js';
 import { tools as effectControlTools } from './tools/effect-controls.js';
@@ -43,7 +46,10 @@ const AREAS = [
     ['project', projectTools],
     ['footage', footageTools],
     ['compositions', compTools],
+    ['compositions', compEditTools],
     ['layers', layerTools],
+    ['layers', layerEditTools],
+    ['time', timeTools],
     ['animation', animationTools],
     ['effects', effectTools],
     ['effect controls', effectControlTools],

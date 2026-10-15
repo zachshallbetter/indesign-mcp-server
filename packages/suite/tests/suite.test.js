@@ -34,14 +34,16 @@ test('suite tool names carry the app once', () => {
     assert.equal(suiteToolName('photoshop', 'photoshop_status'), 'photoshop_status');
     assert.equal(suiteToolName('photoshop', 'execute_photoshop_code'), 'photoshop_execute_code');
     assert.equal(suiteToolName('aftereffects', 'execute_aftereffects_code'), 'aftereffects_execute_code');
+    assert.equal(suiteToolName('premiere', 'premiere_status'), 'premiere_status');
+    assert.equal(suiteToolName('premiere', 'execute_premiere_code'), 'premiere_execute_code');
 });
 
 test('apps are chosen by --apps, then ADOBE_MCP_APPS, else all', () => {
-    assert.deepEqual(selectedApps([], {}), ['indesign', 'illustrator', 'photoshop', 'aftereffects']);
+    assert.deepEqual(selectedApps([], {}), ['indesign', 'illustrator', 'photoshop', 'aftereffects', 'premiere']);
     assert.deepEqual(selectedApps(['--apps', 'illustrator'], { ADOBE_MCP_APPS: 'indesign' }), ['illustrator']);
     assert.deepEqual(selectedApps(['--apps=InDesign, illustrator'], {}), ['indesign', 'illustrator']);
     assert.deepEqual(selectedApps([], { ADOBE_MCP_APPS: 'indesign' }), ['indesign']);
-    assert.throws(() => selectedApps(['--apps', 'premiere'], {}), /Unknown app\(s\): premiere/);
+    assert.throws(() => selectedApps(['--apps', 'lightroom'], {}), /Unknown app\(s\): lightroom/);
 });
 
 test('the combined server has every app tool once, plus the cross-app tools', async () => {
@@ -66,6 +68,17 @@ test('Photoshop joins the suite with its tools prefixed', async () => {
     assert.equal(ps.length, suite.apps.photoshop.tools.length);
     assert.ok(ps.every((t) => /^Photoshop: /.test(t.description)));
     assert.ok(suite.tools.some((t) => t.name === 'photoshop_list_layers'));
+});
+
+test('Premiere Pro joins the suite with its tools prefixed, and loading it opens no port', async () => {
+    const suite = await createSuiteServer({ apps: ['premiere', 'illustrator'] });
+    const pr = suite.tools.filter((t) => t.name.startsWith('premiere_'));
+    assert.equal(pr.length, suite.apps.premiere.tools.length);
+    assert.ok(pr.every((t) => /^Premiere Pro: /.test(t.description)));
+    assert.ok(suite.tools.some((t) => t.name === 'premiere_insert_clip'));
+    assert.ok(suite.tools.some((t) => t.name === 'premiere_execute_code'));
+    const { executor } = await import('adobe-mcp-premiere');
+    assert.equal((await executor.status()).mode, 'stopped', 'the plugin port opens on the first Premiere Pro call');
 });
 
 test('one app alone offers no cross-app tools', async () => {

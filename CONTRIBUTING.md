@@ -11,12 +11,21 @@ Each package has its own guide for adding tools:
   `src/server.js`. Tests for an area can go in their own `tests/<area>.test.js`,
   using `tests/helpers.js`. `npm test -w packages/illustrator` checks the
   definitions, the feature ids and every generated script.
+- Premiere Pro: tools live in `packages/premiere/src/tools/<area>.js` with the
+  same fields. Their scripts are UXP JavaScript (async, `ppro` and `transact`
+  in scope), not ExtendScript; edits go through `transact` so they are built
+  inside the project lock. A tool that needs a Premiere Pro newer than 25.6
+  declares it (`since`), or checks for the member first and lists it in
+  `guarded`; the audit enforces this against
+  `tests/fixtures/premiere-uxp-api.json`.
 
 ## Adding an application
 
 A new application gets its own package, `packages/<app>`, published as
 `adobe-mcp-<app>` (for example `adobe-mcp-photoshop`), with the core as its only
-runtime dependency. The InDesign server was published as `indesign-mcp-server` up
+runtime dependency. Premiere Pro is the exception: it also needs `ws`, because
+its scripts reach Premiere Pro through a UXP plugin that connects to the server
+over a WebSocket. The InDesign server was published as `indesign-mcp-server` up
 to 2.3.0; that package is deprecated in favour of `adobe-mcp-indesign`.
 
 ## The suite

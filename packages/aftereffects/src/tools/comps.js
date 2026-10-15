@@ -3,11 +3,13 @@
  * markers, and save a frame as PNG.
  */
 import path from 'node:path';
-import { str, num, index, bool, jsxPath } from 'adobe-mcp-core';
+import { str, num, index, bool, enumOf, jsxPath } from 'adobe-mcp-core';
 import { script } from '../script.js';
 import { run } from '../executor.js';
 import { COMP_SCHEMA, LAYERS_SCHEMA, COLOR_SCHEMA, compSpec, layerSpec, colorValue } from '../args.js';
 import { paths } from './project.js';
+
+const RESOLUTIONS = { full: 1, half: 2, third: 3, quarter: 4 };
 
 const SETTINGS = {
     name: { type: 'string' },
@@ -21,6 +23,18 @@ const SETTINGS = {
     shutterAngle: { type: 'number', minimum: 0, maximum: 720 },
     workAreaStart: { type: 'number', minimum: 0, description: 'Seconds' },
     workAreaDuration: { type: 'number', minimum: 0.01, description: 'Seconds' },
+    resolution: { type: 'string', enum: Object.keys(RESOLUTIONS), description: 'Resolution: full, half, third or quarter' },
+    resolutionFactor: { type: 'array', items: { type: 'integer', minimum: 1, maximum: 99 }, minItems: 2, maxItems: 2, description: 'Custom resolution: render every [x, y]th pixel' },
+    startTimecode: { type: 'number', minimum: -86400, maximum: 86400, description: 'Start Timecode: the time shown for the first frame, in seconds' },
+    startFrame: { type: 'integer', minimum: -1000000, maximum: 1000000, description: 'Start Frame: the number shown for the first frame, when the project counts frames' },
+    dropFrame: { type: 'boolean', description: 'Drop Frame timecode (29.97 and 59.94 fps); false is Non-Drop Frame' },
+    preserveNestedResolution: { type: 'boolean', description: 'Preserve resolution when nested' },
+    preserveNestedFrameRate: { type: 'boolean', description: 'Preserve frame rate when nested or in render queue' },
+    shutterPhase: { type: 'number', minimum: -360, maximum: 360, description: 'Motion blur Shutter Phase, degrees' },
+    samplesPerFrame: { type: 'integer', minimum: 2, maximum: 64, description: 'Motion blur Samples Per Frame' },
+    adaptiveSampleLimit: { type: 'integer', minimum: 16, maximum: 256, description: 'Motion blur Adaptive Sample Limit' },
+    frameBlending: { type: 'boolean', description: 'Timeline switch: Enable Frame Blending for the composition' },
+    hideShyLayers: { type: 'boolean', description: 'Timeline switch: Hide Shy Layers' },
 };
 
 /** Statements that apply SETTINGS to composition `c` (name and size included). */
@@ -37,6 +51,25 @@ function settingLines(a) {
     if (a.shutterAngle !== undefined) lines.push(`c.shutterAngle = ${num(a.shutterAngle, { min: 0, max: 720, name: 'shutterAngle' })};`);
     if (a.workAreaStart !== undefined) lines.push(`c.workAreaStart = ${num(a.workAreaStart, { min: 0, name: 'workAreaStart' })};`);
     if (a.workAreaDuration !== undefined) lines.push(`c.workAreaDuration = ${num(a.workAreaDuration, { min: 0.01, name: 'workAreaDuration' })};`);
+    if (a.resolution !== undefined) {
+        const f = RESOLUTIONS[enumOf(a.resolution, Object.keys(RESOLUTIONS), { name: 'resolution' })];
+        lines.push(`c.resolutionFactor = [${f}, ${f}];`);
+    }
+    if (a.resolutionFactor !== undefined) {
+        if (!Array.isArray(a.resolutionFactor) || a.resolutionFactor.length !== 2) throw new Error("'resolutionFactor' is [x, y]");
+        lines.push(`c.resolutionFactor = [${a.resolutionFactor.map((v) => num(v, { min: 1, max: 99, name: 'resolutionFactor' })).join(', ')}];`);
+    }
+    if (a.startTimecode !== undefined) lines.push(`c.displayStartTime = ${num(a.startTimecode, { min: -86400, max: 86400, name: 'startTimecode' })};`);
+    if (a.startFrame !== undefined) {
+        if (!Number.isInteger(a.startFrame)) throw new Error("'startFrame' must be a whole frame number");
+        lines.push(`c.displayStartFrame = ${num(a.startFrame, { min: -1000000, max: 1000000, name: 'startFrame' })};`);
+    }
+    if (a.shutterPhase !== undefined) lines.push(`c.shutterPhase = ${num(a.shutterPhase, { min: -360, max: 360, name: 'shutterPhase' })};`);
+    if (a.samplesPerFrame !== undefined) lines.push(`c.motionBlurSamplesPerFrame = ${num(a.samplesPerFrame, { min: 2, max: 64, name: 'samplesPerFrame' })};`);
+    if (a.adaptiveSampleLimit !== undefined) lines.push(`c.motionBlurAdaptiveSampleLimit = ${num(a.adaptiveSampleLimit, { min: 16, max: 256, name: 'adaptiveSampleLimit' })};`);
+    for (const k of ['dropFrame', 'frameBlending', 'hideShyLayers']) if (a[k] !== undefined) lines.push(`c.${k} = ${bool(a[k])};`);
+    if (a.preserveNestedResolution !== undefined) lines.push(`c.preserveNestedResolution = ${bool(a.preserveNestedResolution)};`);
+    if (a.preserveNestedFrameRate !== undefined) lines.push(`c.preserveNestedFrameRate = ${bool(a.preserveNestedFrameRate)};`);
     return lines;
 }
 
@@ -49,7 +82,7 @@ export const tools = [
             properties: { ...SETTINGS, folder: { type: 'integer', description: 'Folder id' } },
             required: ['name', 'width', 'height', 'duration', 'frameRate'],
         },
-        auditArgs: { backgroundColor: '#101820' },
+        auditArgs: { backgroundColor: '#101820', adaptiveSampleLimit: 64 },
         features: [
             'aftereffects.compositions.new_composition',
             'aftereffects.compositions.comp_frame_size',
@@ -70,11 +103,22 @@ __result__ = __itemInfo(c);`, { undo: 'Create composition' })),
     },
     {
         name: 'set_comp_settings',
-        description: 'Change a composition\'s settings (Composition > Composition Settings): name, size, pixel aspect, duration, frame rate, background, motion blur and work area',
+        description: 'Change a composition\'s settings (Composition > Composition Settings): name, size, pixel aspect, duration, frame rate, resolution, start timecode or frame, drop-frame timecode, background, motion blur (shutter angle and phase, samples), nesting options and work area; and its Timeline switches Enable Frame Blending and Hide Shy Layers',
         inputSchema: { type: 'object', properties: { comp: COMP_SCHEMA, ...SETTINGS }, required: [] },
         hints: { idempotent: true },
-        auditArgs: { backgroundColor: 'rgb(0,0,0)', workAreaStart: 0 },
+        auditArgs: { backgroundColor: 'rgb(0,0,0)', workAreaStart: 0, adaptiveSampleLimit: 64 },
         features: [
+            'aftereffects.compositions.comp_item_object',
+            'aftereffects.compositions.comp_resolution',
+            'aftereffects.compositions.comp_start_timecode',
+            'aftereffects.compositions.preserve_resolution_when_nested',
+            'aftereffects.compositions.shutter_phase',
+            'aftereffects.compositions.samples_per_frame',
+            'aftereffects.compositions.adaptive_sample_limit',
+            'aftereffects.time.drop_frame_timecode',
+            'aftereffects.time.preserve_frame_rate_when_nested',
+            'aftereffects.time.enable_frame_blending_comp',
+            'aftereffects.layers.hide_shy_layers',
             'aftereffects.compositions.composition_settings',
             'aftereffects.compositions.comp_frame_size',
             'aftereffects.compositions.comp_pixel_aspect_ratio',
@@ -92,6 +136,7 @@ __result__ = __itemInfo(c);`, { undo: 'Create composition' })),
 var c = __comp(${compSpec(a.comp)});
 ${lines.join('\n')}
 var info = __itemInfo(c); info.workAreaStart = c.workAreaStart; info.workAreaDuration = c.workAreaDuration; info.motionBlur = c.motionBlur;
+info.resolutionFactor = c.resolutionFactor; info.displayStartTime = c.displayStartTime; info.dropFrame = c.dropFrame; info.frameBlending = c.frameBlending; info.hideShyLayers = c.hideShyLayers;
 __result__ = info;`, { undo: 'Composition settings' }));
         },
     },

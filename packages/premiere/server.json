@@ -1,0 +1,50 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.zachshallbetter/adobe-mcp-premiere",
+  "title": "Premiere Pro MCP Server",
+  "description": "Drive Adobe Premiere Pro from any MCP client: projects, sequences, timeline edits, effects, export.",
+  "repository": {
+    "url": "https://github.com/zachshallbetter/adobe-mcp",
+    "source": "github",
+    "subfolder": "packages/premiere"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "adobe-mcp-premiere",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "PREMIERE_WS_PORT",
+          "description": "Port on 127.0.0.1 the Premiere Pro plugin connects to. Default 3011; set the same port in the plugin panel",
+          "isRequired": false
+        },
+        {
+          "name": "BRIDGE_TOKEN",
+          "description": "Shared secret the plugin must send to connect (enter it in the plugin panel). PREMIERE_BRIDGE_TOKEN overrides it",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "PREMIERE_ALLOWED_DIRS",
+          "description": "Extra directories allowed for file operations (':' on macOS, ';' on Windows)",
+          "isRequired": false
+        },
+        {
+          "name": "PREMIERE_SCRIPT_TIMEOUT_MS",
+          "description": "How long to wait for Premiere Pro before reporting that a dialog may be open. Default 120000",
+          "isRequired": false
+        },
+        {
+          "name": "PREMIERE_CONNECT_WAIT_MS",
+          "description": "How long a call waits for the plugin to connect before failing. Default 4000",
+          "isRequired": false
+        }
+      ]
+    }
+  ]
+}
