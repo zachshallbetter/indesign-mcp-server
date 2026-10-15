@@ -56,6 +56,12 @@
     "applescript"
   ],
   "author": "Zach Shallbetter",
+  "contributors": [
+    {
+      "name": "Lukas Drechsel-Burkhard",
+      "url": "https://github.com/lucdesign"
+    }
+  ],
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.1",

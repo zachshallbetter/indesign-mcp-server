@@ -283,9 +283,13 @@ See `examples/basic-flyer.md` and `examples/mcp-config.json` for a first-run wor
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
+## Credits
+
+This server began as [lucdesign/indesign-mcp-server](https://github.com/lucdesign/indesign-mcp-server) by Lukas Drechsel-Burkhard, released under the MIT License. This project builds on that work; the original copyright notice is kept in [LICENSE](./LICENSE).
+
 ## License
 
-MIT — see [LICENSE](./LICENSE).
+MIT. See [LICENSE](./LICENSE).
 
 ## Documentation
 
