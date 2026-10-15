@@ -23,6 +23,7 @@ import {
 } from '../handlers/index.js';
 import { ScriptExecutor } from './scriptExecutor.js';
 import { PARAM_ALIASES, normalizeValues } from '../handlers/aliases.js';
+import { moduleTools } from '../tools/index.js';
 import { readFileSync } from 'node:fs';
 
 const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
@@ -233,6 +234,9 @@ export const TOOL_HANDLERS = {
 
     // Help System
     help: (args) => HelpHandlers.getHelp(args),
+
+    // Tools written as modules (src/tools)
+    ...Object.fromEntries(moduleTools.map((t) => [t.name, t.handler])),
 };
 
 export class InDesignMCPServer {
