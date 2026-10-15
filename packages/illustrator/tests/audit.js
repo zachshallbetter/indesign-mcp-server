@@ -43,7 +43,6 @@ const OVERRIDES = {
     create_path: { points: [[0, 0], [100, 0], { x: 100, y: 100, in: [90, 80], out: [110, 120] }], closed: true },
     export_png: { artboards: '1-2', scale: undefined, maxWidth: 1200, matteColor: '#FFFFFF' },
     export_svg: { artboards: '1', outputFile: path.join(docs, 'audit.svg'), profile: 'tiny_1.2', fontSubsetting: 'glyphs_used', encoding: 'utf16' },
-    export_for_screens: { artboards: '1', scales: [1, 2], resolutions: undefined, formats: ['png', 'png8', 'jpg', 'svg', 'pdf'], pngBackground: 'black' },
     export_jpeg: { artboards: '1-2', matteColor: '#F0F0F0' },
     export_web_svg: { artboards: '1,3', outputFile: path.join(docs, 'audit.svg') },
     export_pdf: {

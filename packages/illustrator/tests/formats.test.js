@@ -152,21 +152,18 @@ test('export_png, export_jpeg and export_for_screens take the remaining PNG and 
     const [png, jpeg, screens] = await scriptsFor([
         ['export_png', { outputFolder: folder, maxWidth: 800, maxHeight: 600, matteColor: '#000000', saveAsHtml: true }],
         ['export_jpeg', { outputFolder: folder, saveAsHtml: true }],
-        ['export_for_screens', { outputFolder: folder, formats: ['png', 'jpg'], resolutions: [72, 300], pngBackground: 'black', interlaced: true, embedIccProfile: true }],
+        ['export_for_screens', { outputFolder: folder, formats: ['png', 'jpg'], scaleBy: 'resolution', scales: [72, 300], advanced: { png: { transparency: false, backgroundBlack: true, interlaced: true }, jpeg: { embedProfile: true } } }],
     ]);
     assert.match(png, /o\.horizontalScale = Math\.min\(Math\.min\(800 \/ w, 600 \/ h\) \* 100, 7760\);/);
     assert.match(png, /o\.matte = true;\nvar mc = new RGBColor\(\); mc\.red = 0;/);
     assert.match(png, /o\.saveAsHTML = true;/);
     assert.match(jpeg, /o\.saveAsHTML = true;/);
-    assert.match(screens, /opts\.transparency = false; opts\.backgroundBlack = true;/);
-    assert.match(screens, /opts\.interlaced = true;/);
-    assert.match(screens, /opts\.embedICCProfile = true;/);
-    assert.match(screens, /opts\.scaleType = ExportForScreensScaleType\.SCALEBYRESOLUTION;/);
-    assert.match(screens, /scales = \[72,300\]/);
+    assert.match(screens, /o\.transparency = false; o\.interlaced = true; o\.backgroundBlack = true;/);
+    assert.match(screens, /o\.embedICCProfile = true;/);
+    assert.match(screens, /ExportForScreensScaleType\.SCALEBYRESOLUTION/);
     await refused('export_png', { outputFolder: folder, scale: 200, maxWidth: 100 }, /not both/);
     await refused('export_png', { outputFolder: folder, matteColor: 'red' }, /hex colour/);
-    await refused('export_for_screens', { outputFolder: folder, scales: [1], resolutions: [72] }, /not both/);
-    await refused('export_for_screens', { outputFolder: folder, pngBackground: 'grey' }, /Allowed: transparent, white, black/);
+    await refused('export_for_screens', { outputFolder: folder, scaleBy: 'dpi' }, /Allowed: factor, width, height, resolution/);
 });
 
 test('export_svg writes the remaining SVG options', async () => {
