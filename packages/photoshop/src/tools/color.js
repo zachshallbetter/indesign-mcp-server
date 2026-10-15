@@ -91,7 +91,7 @@ __result__ = { color: __describe(c), original: original, setAs: ${json(setAs)} }
             required: ['points'],
         },
         auditArgs: { points: [{ x: 10, y: 20 }] },
-        features: ['photoshop.color.eyedropper_tool', 'photoshop.color.color_sampler_tool'],
+        features: ['photoshop.color.eyedropper_tool', 'photoshop.color.color_sampler_tool', 'photoshop.image.sample_color'],
         handler: (a) => {
             if (!Array.isArray(a.points) || !a.points.length || a.points.length > 10) throw new Error("'points' takes 1 to 10 { x, y } positions");
             const pts = a.points.map((p, i) => [Number(num(p?.x, { min: 0, max: 300000, name: `points[${i}].x` })), Number(num(p?.y, { min: 0, max: 300000, name: `points[${i}].y` }))]);

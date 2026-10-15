@@ -11,11 +11,17 @@ import { tools as selectionTools } from './tools/selection.js';
 import { tools as adjustTools } from './tools/adjust.js';
 import { tools as adjustmentLayerTools } from './tools/adjustment-layers.js';
 import { tools as colorTools } from './tools/color.js';
+import { tools as filterTools } from './tools/filters.js';
+import { tools as paintTools } from './tools/paint.js';
 import { tools as textTools } from './tools/text.js';
 import { tools as vectorTools } from './tools/vector.js';
 import { tools as exportTools } from './tools/export.js';
 import { tools as historyTools } from './tools/history.js';
 import { tools as videoTools } from './tools/video.js';
+import { tools as applicationTools } from './tools/application.js';
+import { tools as interfaceTools } from './tools/interface.js';
+import { tools as cameraRawTools } from './tools/cameraraw.js';
+import { tools as generativeTools } from './tools/generative.js';
 import { tools as utilityTools, helpTool } from './tools/utility.js';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
@@ -34,7 +40,9 @@ Conventions:
 - Fonts are PostScript names (list_fonts).
 - File paths must be absolute and inside the user's home folder or PHOTOSHOP_ALLOWED_DIRS.
 
-Every script runs with Photoshop's dialogs off and in pixel units, and restores the user's settings afterwards. A call that fails returns isError with a message: read it and fix the arguments rather than retrying unchanged. Annotations mark destructive tools (delete_layers, flatten_image, crop_image, close_document, execute_photoshop_code); confirm with the user before using them on unsaved work. undo steps back through the history.
+Every script runs with Photoshop's dialogs off and in pixel units, and restores the user's settings afterwards. A call that fails returns isError with a message: read it and fix the arguments rather than retrying unchanged. Annotations mark destructive tools (delete_layers, flatten_image, crop_image, close_document, quit_photoshop, purge_photoshop_caches, execute_photoshop_code); confirm with the user before using them on unsaved work. undo steps back through the history.
+
+Generative tools (generative_fill, generate_image, harmonize_layer) need Photoshop signed in to an Adobe account and an internet connection, and use generative credits.
 
 help({ tool }) describes any tool's parameters.`;
 
@@ -46,11 +54,17 @@ const AREAS = [
     ['adjustments', adjustTools],
     ['adjustment layers', adjustmentLayerTools],
     ['color', colorTools],
+    ['filters', filterTools],
+    ['painting', paintTools],
     ['type', textTools],
     ['vector', vectorTools],
     ['export', exportTools],
     ['history', historyTools],
     ['video', videoTools],
+    ['application', applicationTools],
+    ['interface', interfaceTools],
+    ['camera raw', cameraRawTools],
+    ['generative', generativeTools],
     ['utility', utilityTools],
 ];
 

@@ -10,6 +10,7 @@ import { run } from '../executor.js';
 import { COLOR_SCHEMA, TARGET_SCHEMA, colorSpec, targetSpec } from '../args.js';
 import { AM_HELPERS, amCall, t } from '../am.js';
 import { TYPES, PHOTO_FILTERS, PHOTO_FILTER_OPTION } from '../adjustment-types.js';
+import { MORE_FILTERS, PRESERVE, choice, preserveShape } from './filters.js';
 
 const n = (min, max, description) => ({ type: 'number', minimum: min, maximum: max, ...(description ? { description } : {}) });
 const triple = (description) => ({ type: 'array', items: { type: 'number', minimum: -100, maximum: 100 }, minItems: 3, maxItems: 3, description });
@@ -97,7 +98,11 @@ const DISTRIBUTION = { uniform: 'UNIFORM', gaussian: 'GAUSSIAN' };
 export const FILTERS = {
     gaussian_blur: { features: ['photoshop.filters.gaussian_blur', 'photoshop.filters.gaussian_blur_option.radius'], options: { radius: [n(0.1, 1000), 2] }, call: (v) => `l.applyGaussianBlur(${v('radius')})` },
     motion_blur: { features: ['photoshop.filters.motion_blur', 'photoshop.filters.motion_blur_option.angle', 'photoshop.filters.motion_blur_option.distance'], options: { angle: [n(-360, 360), 0], distance: [n(1, 2000), 10] }, call: (v) => `l.applyMotionBlur(${v('angle')}, ${v('distance')})` },
-    smart_blur: { features: ['photoshop.filters.smart_blur', 'photoshop.filters.smart_blur_option.radius', 'photoshop.filters.smart_blur_option.threshold'], options: { radius: [n(0.1, 100), 3], threshold: [n(0.1, 100), 25] }, call: (v) => `l.applySmartBlur(${v('radius')}, ${v('threshold')}, SmartBlurQuality.MEDIUM, SmartBlurMode.NORMAL)` },
+    smart_blur: {
+        features: ['photoshop.filters.smart_blur', 'photoshop.filters.smart_blur_option.radius', 'photoshop.filters.smart_blur_option.threshold', 'photoshop.filters.smart_blur_option.quality', 'photoshop.filters.smart_blur_option.mode', 'photoshop.filters.smart_blur_option.edge_only', 'photoshop.filters.smart_blur_option.overlay_edge'],
+        options: { radius: [n(0.1, 100), 3], threshold: [n(0.1, 100), 25], quality: choice({ low: 'SmartBlurQuality.LOW', medium: 'SmartBlurQuality.MEDIUM', high: 'SmartBlurQuality.HIGH' }, 'medium', 'Quality'), mode: choice({ normal: 'SmartBlurMode.NORMAL', edge_only: 'SmartBlurMode.EDGEONLY', overlay_edge: 'SmartBlurMode.OVERLAYEDGE' }, 'normal', 'Mode') },
+        call: (v) => `l.applySmartBlur(${v('radius')}, ${v('threshold')}, ${v('quality')}, ${v('mode')})`,
+    },
     blur: { features: ['photoshop.filters.blur'], options: {}, call: () => 'l.applyBlur()' },
     blur_more: { features: ['photoshop.filters.blur_more'], options: {}, call: () => 'l.applyBlurMore()' },
     average: { features: ['photoshop.filters.average'], options: {}, call: () => 'l.applyAverage()' },
@@ -110,8 +115,8 @@ export const FILTERS = {
     median: { features: ['photoshop.filters.median', 'photoshop.filters.median_option.radius'], options: { radius: [n(1, 500), 1] }, call: (v) => `l.applyMedianNoise(${v('radius')})` },
     despeckle: { features: ['photoshop.filters.despeckle'], options: {}, call: () => 'l.applyDespeckle()' },
     dust_and_scratches: { features: ['photoshop.filters.dust_and_scratches', 'photoshop.filters.dust_and_scratches_option.radius', 'photoshop.filters.dust_and_scratches_option.threshold'], options: { radius: [n(1, 500), 1], threshold: [n(0, 255), 0] }, call: (v) => `l.applyDustAndScratches(${v('radius')}, ${v('threshold')})` },
-    maximum: { features: ['photoshop.filters.maximum', 'photoshop.filters.maximum_option.radius'], options: { radius: [n(1, 500), 1] }, call: (v) => `l.applyMaximum(${v('radius')})` },
-    minimum: { features: ['photoshop.filters.minimum', 'photoshop.filters.minimum_option.radius'], options: { radius: [n(1, 500), 1] }, call: (v) => `l.applyMinimum(${v('radius')})` },
+    maximum: { features: ['photoshop.filters.maximum', 'photoshop.filters.maximum_option.radius', 'photoshop.filters.maximum_option.squareness', 'photoshop.filters.maximum_option.roundness'], options: { radius: [n(1, 500), 1], preserve: PRESERVE }, call: (v) => (v('preserve') ? preserveShape('maximum', v) : `l.applyMaximum(${v('radius')})`) },
+    minimum: { features: ['photoshop.filters.minimum', 'photoshop.filters.minimum_option.radius', 'photoshop.filters.minimum_option.squareness', 'photoshop.filters.minimum_option.roundness'], options: { radius: [n(1, 500), 1], preserve: PRESERVE }, call: (v) => (v('preserve') ? preserveShape('minimum', v) : `l.applyMinimum(${v('radius')})`) },
     pinch: { features: ['photoshop.filters.pinch', 'photoshop.filters.pinch_option.amount'], options: { amount: [n(-100, 100), 50] }, call: (v) => `l.applyPinch(${v('amount')})` },
     twirl: { features: ['photoshop.filters.twirl', 'photoshop.filters.twirl_option.angle'], options: { angle: [n(-999, 999), 50] }, call: (v) => `l.applyTwirl(${v('angle')})` },
     ocean_ripple: { features: ['photoshop.filters.ocean_ripple', 'photoshop.filters.ocean_ripple_option.ripple_size', 'photoshop.filters.ocean_ripple_option.ripple_magnitude'], options: { size: [n(1, 15), 9], magnitude: [n(0, 20), 9] }, call: (v) => `l.applyOceanRipple(${v('size')}, ${v('magnitude')})` },
@@ -120,6 +125,7 @@ export const FILTERS = {
     clouds: { features: ['photoshop.filters.clouds'], options: {}, call: () => 'l.applyClouds()' },
     difference_clouds: { features: ['photoshop.filters.difference_clouds'], options: {}, call: () => 'l.applyDifferenceClouds()' },
     ntsc_colors: { features: ['photoshop.filters.ntsc_colors'], options: {}, call: () => 'l.applyNTSC()' },
+    ...MORE_FILTERS,
 };
 
 const OFFSET_AREAS = { wrap_around: 'WRAPAROUND', repeat_edge: 'REPEATEDGEPIXELS', set_to_background: 'SETTOBACKGROUND' };
@@ -197,7 +203,7 @@ export const tools = [
     layerTool({
         name: 'apply_filter',
         label: 'filter',
-        description: 'Apply a filter from the Filter menu to pixel layers (inside the selection, if there is one).',
+        description: 'Apply a filter from the Filter menu to pixel layers (inside the selection, if there is one). The Filter Gallery filters (Artistic, Brush Strokes, Sketch, Texture, glowing_edges), shape_blur, mezzotint, diffuse and extrude have no options here: they use the settings last used in their dialog or the Filter Gallery. Filters without an object-model method act through the active layer, which ends on the last target.',
         table: FILTERS,
     }),
 ];

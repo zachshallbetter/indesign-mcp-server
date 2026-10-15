@@ -153,7 +153,7 @@ export const tools = [
             required: ['type'],
         },
         auditArgs: { above: undefined, options: { color: '#336699' } },
-        features: ['photoshop.adjustments.create_new_fill_or_adjustment_layer', ...typeFeatures(FILL_TYPES), ...GRADIENT_FEATURES],
+        features: ['photoshop.adjustments.create_new_fill_or_adjustment_layer', 'photoshop.layers.new_fill_layer', ...typeFeatures(FILL_TYPES), ...GRADIENT_FEATURES],
         handler: (a) => {
             const type = enumOf(a.type, Object.keys(FILL_TYPES), { name: 'type' });
             const entries = typeEntries(FILL_TYPES[type], a.options, type);
