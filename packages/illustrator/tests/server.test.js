@@ -433,3 +433,35 @@ test('export_data_sets displays each data set, exports its artboards and restore
     const mcp = (await import('../src/server.js')).createServer();
     await assert.rejects(mcp.handleToolCall('export_data_sets', { outputFolder: `${home}/Documents/out`, quality: 50 }), /applies to jpeg/);
 });
+
+test('path operations run Object > Path commands on exactly the targets', async () => {
+    const { PATH_OPERATIONS } = await import('../src/tools/paths.js');
+    const calls = Object.keys(PATH_OPERATIONS).map((operation) => ['path_operation', { target: { ids: ['1'] }, operation }]);
+    const sent = await scriptsFor(calls);
+    Object.values(PATH_OPERATIONS).forEach((command, i) => assert.ok(sent[i].includes(`app.executeMenuCommand("${command}");`), command));
+    assert.match(sent[Object.keys(PATH_OPERATIONS).indexOf('divide_objects_below')], /give a single target/);
+    const mcp = (await import('../src/server.js')).createServer();
+    await assert.rejects(mcp.handleToolCall('path_operation', { target: { selection: true }, operation: 'simplify' }), /Allowed: outline_stroke/);
+});
+
+test('average, clean up, grid and split are done through the object model', async () => {
+    const [h, both, clean, grid, split] = await scriptsFor([
+        ['average_points', { target: { selection: true }, axis: 'horizontal' }],
+        ['average_points', { target: { selection: true }, axis: 'both', join: true }],
+        ['clean_up', { emptyText: false }],
+        ['split_into_grid', { target: { selection: true }, rows: 2, columns: 3, gutter: 10, rowGutter: 4, addGuides: true }],
+        ['split_path', { target: { ids: ['9'] }, pointIndex: 1 }],
+    ]);
+    assert.match(h, /dx = 0, dy = ay - q2\.anchor\[1\]/, 'horizontal: same y');
+    assert.match(both, /dx = ax - q2\.anchor\[0\], dy = ay - q2\.anchor\[1\]/);
+    assert.match(both, /app\.executeMenuCommand\("join"\);/);
+    assert.doesNotMatch(h, /executeMenuCommand/);
+    assert.match(clean, /p\.clipping \|\| p\.guides \|\| !__editable\(p\)/, 'clipping paths and guides are unpainted on purpose');
+    assert.doesNotMatch(clean, /textFrames/);
+    assert.match(grid, /rows = 2, cols = 3, rg = __len\(doc, 4\), cg = __len\(doc, 10\)/);
+    assert.match(grid, /gd\.guides = true/);
+    assert.match(split, /pts\.slice\(i\)\.concat\(pts\.slice\(0, i \+ 1\)\)/, 'a closed path opens at the point');
+    const mcp = (await import('../src/server.js')).createServer();
+    await assert.rejects(mcp.handleToolCall('clean_up', { strayPoints: false, unpaintedObjects: false, emptyText: false }), /at least one/);
+    await assert.rejects(mcp.handleToolCall('set_path_options', { target: { selection: true } }), /at least one/);
+});

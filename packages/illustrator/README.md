@@ -60,6 +60,7 @@ Settings > Privacy & Security > Automation).
 | Colour | `list_swatches`, `create_swatch` (process, global, spot, spot from Lab values), `create_swatch_group`, `delete_swatches`, `add_used_colors`, `edit_colors` (convert to CMYK, RGB or grayscale, invert, blend) |
 | Selecting and arranging | `list_items`, `get_selection`, `select_items`, `select_same`, `select_all`, `deselect_all`, `delete_items`, `duplicate_items`, `move_items`, `scale_items`, `rotate_items`, `reflect_items`, `align_items`, `arrange_items`, `group_items`, `ungroup_items` |
 | Combining | `make_clipping_mask`, `make_compound_path`, `pathfinder` |
+| Paths | `path_operation` (outline stroke, join, add anchor points, reverse direction, divide objects below, release compound path, make pixel perfect, expand appearance), `average_points` (and join), `clean_up`, `split_into_grid`, `split_path`, `set_path_options` (fill rule, guides, pixel alignment), `get_path_info` (area, length, anchors) |
 | Effects | `apply_effect` (drop shadow, offset path, round corners, roughen, transform, Gaussian blur) |
 | Blends | `make_blend`, `set_blend_options` (steps, orientation), `release_blend`, `expand_blend`, `reverse_blend` |
 | Preferences and tools | `get_preferences`, `set_preferences`, `select_tool` |
@@ -93,6 +94,10 @@ Settings > Privacy & Security > Automation).
 - **Blend options through a temporary Action.** The object model cannot set a
   blend's steps or orientation, so `make_blend` and `set_blend_options` write a
   one-step Action, play it on the blend and unload it again.
+- **Dialogs done by script.** Average, Clean Up and Split Into Grid open a
+  dialog, so the server does what each dialog describes through the object
+  model instead. Simplify, Smooth and Offset Path have no such route and are
+  not offered (`apply_effect` with `offset_path` and `expand` covers Offset Path).
 - **Data sets from records.** Illustrator captures a data set from the artwork as
   it is, so `create_data_sets` sets each record's values on the bound objects and
   then captures it, the way published variable scripts do.
