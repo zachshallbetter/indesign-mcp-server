@@ -192,6 +192,7 @@ __result__ = { created: out.length, ids: out };`)),
         features: [
             'illustrator.transformations.move',
             'illustrator.transformations.move_objects',
+            'illustrator.symbols.transform_symbols',
             'illustrator.transformations.position_size',
         ],
         handler: (a) => {
@@ -229,6 +230,7 @@ __result__ = out;`));
         features: [
             'illustrator.transformations.scale',
             'illustrator.transformations.scale_multiple',
+            'illustrator.symbols.transform_symbols',
             'illustrator.transformations.transform_panel_option.scale_strokes_and_effects',
             'illustrator.transformations.transform_dialog_option.transform_objects',
             'illustrator.transformations.transform_dialog_option.transform_patterns',
@@ -248,6 +250,7 @@ __result__ = { scaled: items.length };`));
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, angle: { type: 'number' }, origin: ORIGIN_SCHEMA }, required: ['target', 'angle'] },
         features: [
             'illustrator.transformations.rotate',
+            'illustrator.symbols.transform_symbols',
             'illustrator.transformations.transform_dialog_option.transform_objects',
             'illustrator.transformations.transform_dialog_option.transform_patterns',
         ],
