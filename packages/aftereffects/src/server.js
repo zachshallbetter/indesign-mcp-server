@@ -21,6 +21,11 @@ import { tools as threeDTools } from './tools/threed.js';
 import { tools as essentialTools } from './tools/essential.js';
 import { tools as trackingTools } from './tools/tracking.js';
 import { tools as colorTools } from './tools/color.js';
+import { tools as applicationTools } from './tools/application.js';
+import { tools as interfaceTools } from './tools/interface.js';
+import { tools as audioTools } from './tools/audio.js';
+import { tools as automationTools } from './tools/automation.js';
+import { tools as collaborationTools } from './tools/collaboration.js';
 import { tools as utilityTools, helpTool } from './tools/utility.js';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
@@ -60,6 +65,11 @@ const AREAS = [
     ['essential_graphics', essentialTools],
     ['tracking', trackingTools],
     ['color', colorTools],
+    ['application', applicationTools],
+    ['interface', interfaceTools],
+    ['audio', audioTools],
+    ['automation', automationTools],
+    ['collaboration', collaborationTools],
     ['utility', utilityTools],
 ];
 

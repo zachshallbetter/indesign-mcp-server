@@ -151,6 +151,7 @@ __result__ = __layerInfo(l);`, { undo: 'Add layer' }));
             'aftereffects.layers.blending_mode_menu',
             ...BLEND_FEATURES,
             'aftereffects.layers.layer_label_color',
+            'aftereffects.application.label_menu',
             'aftereffects.layers.set_in_out_numerically',
             'aftereffects.time.time_stretch',
             'aftereffects.time.time_reverse_layer',
