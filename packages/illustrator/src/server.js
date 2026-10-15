@@ -18,6 +18,7 @@ import { tools as pathTools } from './tools/paths.js';
 import { tools as pathEditTools } from './tools/path-edit.js';
 import { tools as effectTools } from './tools/effects.js';
 import { tools as blendTools } from './tools/blends.js';
+import { tools as layerTools } from './tools/layers.js';
 import { tools as patternTools } from './tools/patterns.js';
 import { tools as transformTools } from './tools/transform.js';
 import { tools as styleTools } from './tools/styles.js';
@@ -48,6 +49,7 @@ help({ tool }) describes any tool's parameters.`;
 
 const AREAS = [
     ['documents', documentTools],
+    ['layers', layerTools],
     ['artwork', artworkTools],
     ['shapes', shapeTools],
     ['appearance', appearanceTools],
