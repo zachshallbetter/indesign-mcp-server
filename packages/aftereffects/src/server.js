@@ -5,8 +5,12 @@ import { readFileSync } from 'node:fs';
 import { createMcpServer, createAnnotations } from 'adobe-mcp-core';
 import { executor } from './executor.js';
 import { tools as projectTools } from './tools/project.js';
+import { tools as footageTools } from './tools/footage.js';
 import { tools as compTools } from './tools/comps.js';
 import { tools as layerTools } from './tools/layers.js';
+import { tools as layerEditTools } from './tools/layer-edits.js';
+import { tools as compEditTools } from './tools/comp-edits.js';
+import { tools as timeTools } from './tools/time.js';
 import { tools as animationTools } from './tools/animation.js';
 import { tools as effectTools } from './tools/effects.js';
 import { tools as effectControlTools } from './tools/effect-controls.js';
@@ -14,6 +18,7 @@ import { tools as textTools } from './tools/text.js';
 import { tools as maskTools } from './tools/masks.js';
 import { tools as renderTools } from './tools/render.js';
 import { tools as threeDTools } from './tools/threed.js';
+import { tools as essentialTools } from './tools/essential.js';
 import { tools as trackingTools } from './tools/tracking.js';
 import { tools as colorTools } from './tools/color.js';
 import { tools as applicationTools } from './tools/application.js';
@@ -36,6 +41,7 @@ Conventions:
 - Properties are a shortcut (position, scale, rotation, opacity, anchor_point, source_text, ...) or a path of match names or names, e.g. ["ADBE Effect Parade", "Gaussian Blur", "Blurriness"].
 - Positions are pixels from the composition's top-left; times are seconds; colours are "#RRGGBB" or "rgb(r,g,b)".
 - File paths must be absolute and inside the user's home folder or AFTEREFFECTS_ALLOWED_DIRS.
+- Render Queue items are 1-based indexes (manage_render_queue lists them); get_render_item shows the setting names set_render_settings and set_output_module accept.
 
 Each call is one undo step in After Effects, and dialogs are suppressed while it runs. A call that fails returns isError with a message: read it and fix the arguments rather than retrying unchanged. Annotations mark destructive tools (delete_layers, manage_items, open_project, execute_aftereffects_code); confirm with the user before using them on unsaved work. render_queue blocks until rendering finishes.
 
@@ -43,8 +49,12 @@ help({ tool }) describes any tool's parameters.`;
 
 const AREAS = [
     ['project', projectTools],
+    ['footage', footageTools],
     ['compositions', compTools],
+    ['compositions', compEditTools],
     ['layers', layerTools],
+    ['layers', layerEditTools],
+    ['time', timeTools],
     ['animation', animationTools],
     ['effects', effectTools],
     ['effect controls', effectControlTools],
@@ -52,6 +62,7 @@ const AREAS = [
     ['masks', maskTools],
     ['render', renderTools],
     ['three_d', threeDTools],
+    ['essential_graphics', essentialTools],
     ['tracking', trackingTools],
     ['color', colorTools],
     ['application', applicationTools],

@@ -20,6 +20,8 @@ const BLEND_FEATURES = BLEND.map((b) => `aftereffects.layers.blending_mode_${b =
 const MATTES = { alpha: 'ALPHA', alpha_inverted: 'ALPHA_INVERTED', luma: 'LUMA', luma_inverted: 'LUMA_INVERTED', none: 'NO_TRACK_MATTE' };
 const QUALITY = { best: 'BEST', draft: 'DRAFT', wireframe: 'WIREFRAME' };
 const LIGHTS = { parallel: 'PARALLEL', spot: 'SPOT', point: 'POINT', ambient: 'AMBIENT' };
+const SAMPLING = { bilinear: 'BILINEAR', bicubic: 'BICUBIC' };
+const AUTO_ORIENT = { off: 'NO_AUTO_ORIENT', along_path: 'ALONG_PATH', towards_camera: 'CAMERA_OR_POINT_OF_INTEREST', characters_toward_camera: 'CHARACTERS_TOWARD_CAMERA' };
 
 const RESULT = `
 var out = [];
@@ -96,7 +98,7 @@ __result__ = __layerInfo(l);`, { undo: 'Add layer' }));
     },
     {
         name: 'set_layer_properties',
-        description: 'Set layer switches and timing: name, enabled (video), audio, solo, shy, lock, 3D, motion blur, adjustment layer, quality, blending mode, label, in and out points, start time, stretch',
+        description: 'Set layer switches and timing: name, comment, enabled (video), audio, solo, shy, lock, 3D, motion blur, adjustment layer, effects (Effect switch), Collapse Transformations / Continuously Rasterize, Preserve Underlying Transparency, quality and sampling (Bilinear, Bicubic), blending mode (or step to the next or previous one), Auto-Orient, label, in and out points, start time, stretch',
         inputSchema: {
             type: 'object',
             properties: {
@@ -107,6 +109,13 @@ __result__ = __layerInfo(l);`, { undo: 'Add layer' }));
                 threeD: { type: 'boolean' }, motionBlur: { type: 'boolean' }, adjustmentLayer: { type: 'boolean' }, guideLayer: { type: 'boolean' },
                 quality: { type: 'string', enum: Object.keys(QUALITY) },
                 blendingMode: { type: 'string', enum: BLEND.map((b) => b.toLowerCase()) },
+                cycleBlendingMode: { type: 'string', enum: ['next', 'previous'], description: 'Step to the next or previous blending mode in the menu (Shift+= and Shift+-)' },
+                comment: { type: 'string', description: 'Text for the Comments column' },
+                effectsActive: { type: 'boolean', description: 'Effect switch: render the layer\'s effects' },
+                collapseTransformation: { type: 'boolean', description: 'Collapse Transformations (pre-compositions) or Continuously Rasterize (vector layers)' },
+                preserveTransparency: { type: 'boolean', description: 'Preserve Underlying Transparency' },
+                sampling: { type: 'string', enum: Object.keys(SAMPLING), description: 'Layer > Quality sampling at Best quality' },
+                autoOrient: { type: 'string', enum: Object.keys(AUTO_ORIENT), description: 'Layer > Transform > Auto-Orient: off, along_path, towards_camera (3D layers; cameras and lights toward their point of interest), characters_toward_camera (3D text)' },
                 label: { type: 'integer', minimum: 0, maximum: 16 },
                 inPoint: { type: 'number', description: 'Seconds' }, outPoint: { type: 'number', description: 'Seconds' },
                 startTime: { type: 'number', description: 'Seconds' },
@@ -116,6 +125,16 @@ __result__ = __layerInfo(l);`, { undo: 'Add layer' }));
         },
         hints: { idempotent: true },
         features: [
+            'aftereffects.layers.avlayer_object',
+            'aftereffects.layers.layer_comment',
+            'aftereffects.layers.effect_switch',
+            'aftereffects.layers.collapse_transformations_switch',
+            'aftereffects.layers.preserve_underlying_transparency',
+            'aftereffects.layers.sampling_bilinear',
+            'aftereffects.layers.sampling_bicubic',
+            'aftereffects.layers.cycle_blending_modes',
+            'aftereffects.layers.auto_orient',
+            'aftereffects.layers.orient_along_path',
             'aftereffects.layers.rename_layer',
             'aftereffects.layers.video_switch',
             'aftereffects.layers.audio_switch',
@@ -144,6 +163,15 @@ __result__ = __layerInfo(l);`, { undo: 'Add layer' }));
             for (const k of ['threeD', 'motionBlur', 'adjustmentLayer', 'guideLayer']) if (a[k] !== undefined) L.push(`if (l instanceof AVLayer) l.${k === 'threeD' ? 'threeDLayer' : k} = ${bool(a[k])};`);
             if (a.quality !== undefined) L.push(`if (l instanceof AVLayer) l.quality = LayerQuality.${QUALITY[enumOf(a.quality, Object.keys(QUALITY), { name: 'quality' })]};`);
             if (a.blendingMode !== undefined) L.push(`if (l instanceof AVLayer) l.blendingMode = BlendingMode.${enumOf(String(a.blendingMode).toUpperCase(), BLEND, { name: 'blendingMode' })};`);
+            if (a.cycleBlendingMode !== undefined) {
+                const step = enumOf(a.cycleBlendingMode, ['next', 'previous'], { name: 'cycleBlendingMode' }) === 'next' ? 1 : -1;
+                L.push(`if (l instanceof AVLayer) { var bm = [${BLEND.map((b) => `BlendingMode.${b}`).join(', ')}], bi = 0; for (var b = 0; b < bm.length; b++) if (bm[b] === l.blendingMode) bi = b; l.blendingMode = bm[(bi + ${step} + bm.length) % bm.length]; }`);
+            }
+            if (a.comment !== undefined) L.push(`l.comment = ${str(a.comment)};`);
+            for (const k of ['effectsActive', 'preserveTransparency']) if (a[k] !== undefined) L.push(`if (l instanceof AVLayer) l.${k} = ${bool(a[k])};`);
+            if (a.collapseTransformation !== undefined) L.push(`if (l instanceof AVLayer && l.canSetCollapseTransformation) l.collapseTransformation = ${bool(a.collapseTransformation)};`);
+            if (a.sampling !== undefined) L.push(`if (l instanceof AVLayer) l.samplingQuality = LayerSamplingQuality.${SAMPLING[enumOf(a.sampling, Object.keys(SAMPLING), { name: 'sampling' })]};`);
+            if (a.autoOrient !== undefined) L.push(`l.autoOrient = AutoOrientType.${AUTO_ORIENT[enumOf(a.autoOrient, Object.keys(AUTO_ORIENT), { name: 'autoOrient' })]};`);
             if (a.label !== undefined) L.push(`l.label = ${index(a.label, { name: 'label', max: 16 })};`);
             if (a.startTime !== undefined) L.push(`l.startTime = ${num(a.startTime, { name: 'startTime' })};`);
             if (a.stretch !== undefined) L.push(`l.stretch = ${num(a.stretch, { min: -10000, max: 10000, name: 'stretch' })};`);
@@ -216,18 +244,26 @@ ${RESULT}`, { undo: 'Set transform' }));
     },
     {
         name: 'parent_layers',
-        description: 'Parent layers to another layer (or remove the parent), keeping their current position on screen',
+        description: 'Parent layers to another layer (or remove the parent), keeping their current position on screen, or with jump (Alt/Option while parenting): the child takes the parent\'s transform and jumps to it',
         inputSchema: {
             type: 'object',
-            properties: { comp: COMP_SCHEMA, layers: LAYERS_SCHEMA, parent: { type: 'integer', minimum: 1, description: 'Parent layer index; omit to remove the parent' } },
+            properties: {
+                comp: COMP_SCHEMA,
+                layers: LAYERS_SCHEMA,
+                parent: { type: 'integer', minimum: 1, description: 'Parent layer index; omit to remove the parent' },
+                jump: { type: 'boolean', description: 'Parent with jump: keep the child\'s transform values relative to the new parent instead of its place on screen. Default false' },
+            },
             required: ['layers'],
         },
         hints: { idempotent: true },
-        features: ['aftereffects.layers.parent_layer'],
+        features: ['aftereffects.layers.parent_layer', 'aftereffects.layers.parent_with_jump'],
         handler: (a) => run('Parent layers', script(`
 var c = __comp(${compSpec(a.comp)}), ls = __layers(c, ${layerSpec(a.layers)});
 var parent = ${a.parent !== undefined ? `c.layer(${index(a.parent, { name: 'parent', max: 10000 })})` : 'null'};
-for (var i = 0; i < ls.length; i++) { if (parent === ls[i]) throw new Error("A layer cannot be its own parent"); ls[i].parent = parent; }
+for (var i = 0; i < ls.length; i++) {
+  if (parent && parent.index === ls[i].index) throw new Error("A layer cannot be its own parent");
+  ${a.jump ? 'if (parent) ls[i].setParentWithJump(parent); else ls[i].setParentWithJump();' : 'ls[i].parent = parent;'}
+}
 ${RESULT}`, { undo: 'Parent layers' })),
     },
     {
@@ -280,6 +316,7 @@ ${RESULT}`, { undo: 'Track matte' }));
             'aftereffects.layers.send_layer_to_back',
             'aftereffects.layers.bring_layer_forward',
             'aftereffects.layers.send_layer_backward',
+            'aftereffects.layers.reorder_layers_by_dragging',
         ],
         handler: (a) => {
             const order = enumOf(a.order, ['top', 'bottom', 'before', 'after'], { name: 'order' });

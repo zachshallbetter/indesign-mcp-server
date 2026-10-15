@@ -1,0 +1,65 @@
+{
+  "name": "adobe-mcp-premiere",
+  "version": "0.1.0",
+  "description": "MCP server for Adobe Premiere Pro: projects, bins, sequences, timeline editing, markers, effects, transitions, transcripts, metadata and export through a UXP plugin",
+  "mcpName": "io.github.zachshallbetter/adobe-mcp-premiere",
+  "type": "module",
+  "main": "src/module.js",
+  "bin": {
+    "adobe-mcp-premiere": "src/index.js"
+  },
+  "files": [
+    "src/",
+    "uxp/",
+    "LICENSE",
+    "NOTICE",
+    "README.md",
+    "server.json"
+  ],
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test tests/*.test.js",
+    "audit": "node tests/audit.js",
+    "check": "node scripts/check-syntax.js",
+    "fixtures": "node scripts/generate-fixtures.js",
+    "prepublishOnly": "npm run check && npm test"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "premiere-pro",
+    "premiere",
+    "adobe",
+    "video-editing",
+    "uxp",
+    "macos",
+    "windows"
+  ],
+  "author": "Zach Shallbetter",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zachshallbetter/adobe-mcp.git",
+    "directory": "packages/premiere"
+  },
+  "bugs": {
+    "url": "https://github.com/zachshallbetter/adobe-mcp/issues"
+  },
+  "homepage": "https://github.com/zachshallbetter/adobe-mcp/tree/main/packages/premiere#readme",
+  "dependencies": {
+    "adobe-mcp-core": "0.2.0",
+    "ws": "^8.21.3"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "acorn": "^8.19.0",
+    "acorn-walk": "^8.3.5"
+  },
+  "exports": {
+    ".": "./src/module.js",
+    "./package.json": "./package.json"
+  }
+}

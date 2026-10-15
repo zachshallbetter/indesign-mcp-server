@@ -19,8 +19,9 @@ const types = path.dirname(require.resolve('types-for-adobe/package.json'));
 
 // Fields of the spec objects the server passes into its scripts: __comp(spec) reads
 // id and name; __layers(spec) reads indexes, names and selected; keyframe lists
-// carry t, v, i and e.
-const HELPER_FIELDS = ['id', 'name', 'indexes', 'names', 'selected', 't', 'v', 'i', 'e'];
+// carry t, v, i and e. Project.usedFonts entries carry usedAt, declared in an inline
+// type the typings scan does not see.
+const HELPER_FIELDS = ['id', 'name', 'indexes', 'names', 'selected', 't', 'v', 'i', 'e', 'usedAt'];
 
 const AE_TYPINGS = path.join(types, 'AfterEffects/26.0/index.d.ts');
 

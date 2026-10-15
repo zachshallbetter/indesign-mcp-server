@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MCP Bridge</title>
+  <style>
+    body { font-size: 12px; padding: 8px; }
+    label { display: block; margin-top: 8px; }
+    input { width: 100%; }
+    #status { margin: 0 0 4px; }
+    button { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <p id="status">Starting...</p>
+  <form id="settings">
+    <label for="port">Server port (PREMIERE_WS_PORT)</label>
+    <input id="port" type="number" min="1" max="65535" value="3011">
+    <label for="token">Token (BRIDGE_TOKEN, if the server has one)</label>
+    <input id="token" type="password" autocomplete="off">
+    <button id="connect" type="submit">Connect</button>
+  </form>
+  <script src="index.js"></script>
+</body>
+</html>
