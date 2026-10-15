@@ -19,7 +19,12 @@ export const tools = [
         name: 'get_document_info',
         description: 'Describe the active document: name, file, colour mode, artboards with their sizes, layers, item counts and selection',
         inputSchema: { type: 'object', properties: {} },
-        features: ['illustrator.documents.document_object'],
+        features: [
+            'illustrator.documents.document_object',
+            'illustrator.documents.document_info_panel',
+            'illustrator.documents.document_color_space',
+            'illustrator.documents.document_saved_state',
+        ],
         handler: () => run('Document info', script(`
 var abs = [];
 for (var i = 0; i < doc.artboards.length; i++) {
@@ -43,7 +48,7 @@ __result__ = {
         name: 'list_documents',
         description: 'List the open documents and which one is active',
         inputSchema: { type: 'object', properties: {} },
-        features: ['illustrator.documents.document_object'],
+        features: ['illustrator.documents.document_object', 'illustrator.documents.document_saved_state'],
         handler: () => run('List documents', script(`
 var out = [];
 for (var i = 0; i < app.documents.length; i++) {
@@ -68,7 +73,19 @@ __result__ = out;`, { needsDocument: false })),
             },
             required: ['colorMode'],
         },
-        features: ['illustrator.documents.new', 'illustrator.documents.newdoc.color_mode'],
+        features: [
+            'illustrator.documents.new',
+            'illustrator.documents.new_no_dialog',
+            'illustrator.documents.document_object',
+            'illustrator.documents.document_color_space',
+            'illustrator.documents.newdoc.color_mode',
+            'illustrator.documents.newdoc.width',
+            'illustrator.documents.newdoc.height',
+            'illustrator.documents.newdoc.artboards',
+            'illustrator.documents.newdoc.artboard_layout',
+            'illustrator.documents.newdoc.artboard_spacing',
+            'illustrator.documents.newdoc.artboard_rows_or_columns',
+        ],
         handler: (a) => run('Create document', script(`
 var d = app.documents.add(DocumentColorSpace.${enumOf(a.colorMode, COLOR_MODES, { name: 'colorMode' })}, ${num(a.width ?? 612, { min: 1, max: 16383, name: 'width' })}, ${num(a.height ?? 792, { min: 1, max: 16383, name: 'height' })}, ${index(a.artboards ?? 1, { name: 'artboards', max: 1000 })}, DocumentArtboardLayout.${enumOf(a.artboardLayout ?? 'GridByRow', LAYOUTS, { name: 'artboardLayout' })}, ${num(a.artboardSpacing ?? 20, { min: 0, max: 10000, name: 'artboardSpacing' })}, ${index(a.columns ?? Math.max(1, Math.ceil(Math.sqrt(a.artboards ?? 1))), { name: 'columns', max: 1000 })});
 __result__ = { name: d.name, colorMode: ${str(a.colorMode)}, artboards: d.artboards.length };`, { needsDocument: false })),
@@ -77,7 +94,13 @@ __result__ = { name: d.name, colorMode: ${str(a.colorMode)}, artboards: d.artboa
         name: 'open_document',
         description: 'Open an .ai, .pdf, .eps or .svg file',
         inputSchema: { type: 'object', properties: { filePath: { type: 'string', description: 'Absolute path' } }, required: ['filePath'] },
-        features: ['illustrator.documents.open'],
+        features: [
+            'illustrator.documents.open',
+            'illustrator.import_export.open_ai',
+            'illustrator.import_export.open_pdf',
+            'illustrator.import_export.open_eps',
+            'illustrator.import_export.open_svg',
+        ],
         handler: (a) => {
             const p = paths.validate(a.filePath);
             return run('Open document', script(`
@@ -99,7 +122,14 @@ __result__ = { name: d.name, artboards: d.artboards.length };`, { needsDocument:
                 embedLinkedFiles: { type: 'boolean', description: 'Embed linked images. Default false', default: false },
             },
         },
-        features: ['illustrator.documents.save', 'illustrator.import_export.save_ai'],
+        features: [
+            'illustrator.documents.save',
+            'illustrator.documents.save_as',
+            'illustrator.import_export.save_ai',
+            'illustrator.import_export.ai_option.version',
+            'illustrator.import_export.ai_option.create_pdf_compatible_file',
+            'illustrator.import_export.ai_option.include_linked_files',
+        ],
         handler: (a) => {
             if (!a.filePath) {
                 return run('Save document', script(`
@@ -133,7 +163,7 @@ __result__ = { closed: n };`)),
         name: 'list_artboards',
         description: 'List artboards with their position and size in points. x and y are measured from artboard 0\'s top-left corner',
         inputSchema: { type: 'object', properties: {} },
-        features: ['illustrator.artboards.artboards_panel'],
+        features: ['illustrator.artboards.artboards_panel', 'illustrator.artboards.artboard_object'],
         handler: () => run('List artboards', script(`
 var a0 = __artboard(doc, 0), f = __sf(doc), out = [];
 for (var i = 0; i < doc.artboards.length; i++) {
@@ -154,7 +184,7 @@ __result__ = { active: doc.artboards.getActiveArtboardIndex(), artboards: out };
             },
             required: ['x', 'y', 'width', 'height'],
         },
-        features: ['illustrator.artboards.add_artboard'],
+        features: ['illustrator.artboards.add_artboard', 'illustrator.artboards.artboard_object'],
         handler: (a) => run('Add artboard', script(`
 var a0 = __artboard(doc, 0), p = __toDoc(doc, a0, ${num(a.x, { name: 'x' })}, ${num(a.y, { name: 'y' })});
 var ab = doc.artboards.add([p[0], p[1], p[0] + __len(doc, ${num(a.width, { min: 1, name: 'width' })}), p[1] - __len(doc, ${num(a.height, { min: 1, name: 'height' })})]);
@@ -173,7 +203,13 @@ __result__ = { index: doc.artboards.length - 1, name: ab.name };`)),
             },
             required: ['artboardIndex'],
         },
-        features: ['illustrator.artboards.artboard_options'],
+        features: [
+            'illustrator.artboards.artboard_options',
+            'illustrator.artboards.artboard_object',
+            'illustrator.artboards.rename_artboard',
+            'illustrator.artboards.resize_artboard',
+            'illustrator.artboards.artboard_move',
+        ],
         handler: (a) => {
             const geo = ['x', 'y', 'width', 'height'].some((k) => a[k] !== undefined);
             return run('Set artboard', script(`
@@ -205,7 +241,7 @@ __result__ = { deleted: i, remaining: doc.artboards.length };`)),
         name: 'set_active_artboard',
         description: 'Make an artboard active (the one Illustrator\'s artboard commands and menu commands act on)',
         inputSchema: { type: 'object', properties: { artboardIndex: ARTBOARD_SCHEMA }, required: ['artboardIndex'] },
-        features: ['illustrator.artboards.artboards_panel'],
+        features: ['illustrator.artboards.artboards_panel', 'illustrator.artboards.select_artboards'],
         handler: (a) => run('Set active artboard', script(`
 var i = ${index(a.artboardIndex, { name: 'artboardIndex' })};
 __artboard(doc, i);
@@ -250,7 +286,11 @@ __result__ = { artboards: doc.artboards.length };`)),
         name: 'list_layers',
         description: 'List top-level layers and their sublayers, with visibility, lock state and item counts',
         inputSchema: { type: 'object', properties: {} },
-        features: ['illustrator.layers.layers_panel'],
+        features: [
+            'illustrator.layers.layers_panel',
+            'illustrator.layers.layer_object',
+            'illustrator.layers.sublayer_object',
+        ],
         handler: () => run('List layers', script(`
 function info(l) {
   var subs = [];
@@ -275,7 +315,16 @@ __result__ = { active: doc.activeLayer.name, layers: out };`)),
             },
             required: ['name'],
         },
-        features: ['illustrator.layers.new_layer', 'illustrator.layers.new_sublayer'],
+        features: [
+            'illustrator.layers.new_layer',
+            'illustrator.layers.new_sublayer',
+            'illustrator.layers.layer_object',
+            'illustrator.layers.sublayer_object',
+            'illustrator.layers.layer_option.name',
+            'illustrator.layers.layer_option.show',
+            'illustrator.layers.layer_option.lock',
+            'illustrator.layers.layer_option.print',
+        ],
         handler: (a) => run('Create layer', script(`
 var parent = ${a.parentLayer ? `__layer(doc, ${str(a.parentLayer)})` : 'doc'};
 var l = parent.layers.add();
@@ -301,7 +350,17 @@ __result__ = { name: l.name };`)),
             },
             required: ['layer'],
         },
-        features: ['illustrator.layers.layer_options'],
+        features: [
+            'illustrator.layers.layer_options',
+            'illustrator.layers.layer_option.name',
+            'illustrator.layers.layer_option.show',
+            'illustrator.layers.layer_option.lock',
+            'illustrator.layers.layer_option.print',
+            'illustrator.layers.layer_opacity_blend',
+            'illustrator.layers.hide_show_layers',
+            'illustrator.layers.lock_unlock_layers',
+            'illustrator.layers.layer_zorder',
+        ],
         handler: (a) => run('Set layer properties', script(`
 var l = __layer(doc, ${str(a.layer)});
 ${a.newName !== undefined ? `l.name = ${str(a.newName)};` : ''}

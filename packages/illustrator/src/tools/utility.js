@@ -15,7 +15,7 @@ export const tools = [
         name: 'illustrator_status',
         description: 'Check that Illustrator is reachable: platform, how the server addresses Illustrator, whether it is running, its version and open documents. Use this first when a call fails to connect',
         inputSchema: { type: 'object', properties: { probe: { type: 'boolean', description: 'Ask Illustrator for its version and documents (starts Illustrator if it is not running). Default true', default: true } } },
-        features: ['illustrator.automation.scripting_languages'],
+        features: ['illustrator.application.app_object'],
         handler: async (a) => {
             const status = await executor.status();
             if (a.probe === false) return formatResponse(status, 'Status');

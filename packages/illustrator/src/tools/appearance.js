@@ -28,7 +28,12 @@ export const tools = [
         name: 'set_fill',
         description: 'Set the fill of paths, compound paths, groups (every path inside) and text frames. "none" removes the fill',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, color: COLOR_SCHEMA }, required: ['target', 'color'] },
-        features: ['illustrator.appearance.fill'],
+        features: [
+            'illustrator.appearance.fill',
+            'illustrator.appearance.remove_fill_stroke',
+            'illustrator.color.no_color',
+            'illustrator.typography.character.character_fill_color',
+        ],
         handler: (a) => {
             const spec = colorSpec(a.color, 'color');
             const none = JSON.parse(spec).kind === 'none';
@@ -58,7 +63,17 @@ __result__ = counts;`));
             },
             required: ['target'],
         },
-        features: ['illustrator.appearance.stroke', 'illustrator.appearance.stroke_panel'],
+        features: [
+            'illustrator.appearance.stroke',
+            'illustrator.appearance.stroke_panel',
+            'illustrator.appearance.stroke_option.weight',
+            'illustrator.appearance.stroke_option.cap',
+            'illustrator.appearance.stroke_option.corner',
+            'illustrator.appearance.stroke_option.limit',
+            'illustrator.appearance.stroke_option.dashed_line',
+            'illustrator.appearance.remove_fill_stroke',
+            'illustrator.color.no_color',
+        ],
         handler: (a) => {
             const lines = [];
             if (a.color !== undefined) {
@@ -95,7 +110,27 @@ __result__ = counts;`));
             },
             required: ['target'],
         },
-        features: ['illustrator.appearance.transparency_panel'],
+        features: [
+            'illustrator.appearance.transparency_panel',
+            'illustrator.appearance.opacity',
+            'illustrator.appearance.blending_mode',
+            'illustrator.appearance.blend_mode.normal',
+            'illustrator.appearance.blend_mode.darken',
+            'illustrator.appearance.blend_mode.multiply',
+            'illustrator.appearance.blend_mode.color_burn',
+            'illustrator.appearance.blend_mode.lighten',
+            'illustrator.appearance.blend_mode.screen',
+            'illustrator.appearance.blend_mode.color_dodge',
+            'illustrator.appearance.blend_mode.overlay',
+            'illustrator.appearance.blend_mode.soft_light',
+            'illustrator.appearance.blend_mode.hard_light',
+            'illustrator.appearance.blend_mode.difference',
+            'illustrator.appearance.blend_mode.exclusion',
+            'illustrator.appearance.blend_mode.hue',
+            'illustrator.appearance.blend_mode.saturation',
+            'illustrator.appearance.blend_mode.color',
+            'illustrator.appearance.blend_mode.luminosity',
+        ],
         handler: (a) => run('Set opacity', script(`
 var items = __targets(doc, ${targetSpec(a.target)});
 for (var i = 0; i < items.length; i++) {
@@ -108,7 +143,13 @@ __result__ = { updated: items.length };`)),
         name: 'get_appearance',
         description: 'Read the fill, stroke, opacity and blending mode of items',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA }, required: ['target'] },
-        features: ['illustrator.appearance.appearance_panel'],
+        features: [
+            'illustrator.appearance.appearance_panel',
+            'illustrator.appearance.fill',
+            'illustrator.appearance.stroke',
+            'illustrator.appearance.opacity',
+            'illustrator.appearance.blending_mode',
+        ],
         handler: (a) => run('Get appearance', script(`
 var items = __targets(doc, ${targetSpec(a.target)}), out = [];
 for (var i = 0; i < items.length; i++) {
@@ -133,7 +174,7 @@ __result__ = out;`)),
         name: 'list_swatches',
         description: 'List the document\'s swatches with their colour values',
         inputSchema: { type: 'object', properties: {} },
-        features: ['illustrator.color.swatches_panel'],
+        features: ['illustrator.color.swatches_panel', 'illustrator.color.swatch_object'],
         handler: () => run('List swatches', script(`
 var out = [];
 for (var i = 0; i < doc.swatches.length; i++) {
@@ -154,7 +195,17 @@ __result__ = { colorMode: String(doc.documentColorSpace).replace("DocumentColorS
             },
             required: ['name', 'color'],
         },
-        features: ['illustrator.color.new_swatch', 'illustrator.color.spot_color'],
+        features: [
+            'illustrator.color.new_swatch',
+            'illustrator.color.swatch_object',
+            'illustrator.color.add_colors_to_swatches',
+            'illustrator.color.process_swatches',
+            'illustrator.color.spot_swatches',
+            'illustrator.color.spot_color',
+            'illustrator.color.rgb_color',
+            'illustrator.color.cmyk_color',
+            'illustrator.color.gray_color',
+        ],
         handler: (a) => {
             const spec = colorSpec(a.color, 'color');
             if (['swatch', 'none'].includes(JSON.parse(spec).kind)) throw new Error("'color' must be a colour value, not a swatch name or none");
@@ -201,7 +252,15 @@ __result__ = { name: sw.name, spot: false, color: __colorInfo(sw.color) };`));
             },
             required: ['name', 'stops'],
         },
-        features: ['illustrator.color.gradient_panel', 'illustrator.color.gradient_swatches'],
+        features: [
+            'illustrator.color.gradient_panel',
+            'illustrator.color.gradient_swatches',
+            'illustrator.color.gradient_object',
+            'illustrator.color.gradient_stop',
+            'illustrator.color.linear_gradient',
+            'illustrator.color.radial_gradient',
+            'illustrator.color.gradient_angle_origin',
+        ],
         handler: (a) => {
             if (!Array.isArray(a.stops) || a.stops.length < 2) throw new Error("'stops' needs at least two stops");
             const stops = a.stops.map((s, i) => `{ c: ${colorSpec(s.color, `stops[${i}].color`)}, p: ${num(s.position, { min: 0, max: 100, name: `stops[${i}].position` })}, o: ${num(s.opacity ?? 100, { min: 0, max: 100, name: `stops[${i}].opacity` })} }`);
