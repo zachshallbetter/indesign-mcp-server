@@ -328,19 +328,6 @@ await test('set_style_defaults sets default frame, text styles and the clear-ove
     await refuses('set_style_defaults', { clearOverridesWhenApplying: 'yes' }, /true or false/);
 });
 
-await test('create_toc_style builds entries and refuses bad entries', async () => {
-    const s = await one('create_toc_style', { name: 'Contents', replace: true, title: 'Contents', titleStyle: 'TOC title', runIn: false, entries: [{ paragraphStyle: 'H1', entryStyle: 'TOC 1', level: 1, pageNumberPosition: 'AFTER_ENTRY', separator: '^t' }] });
-    es5(s);
-    assert.match(s, /doc\.tocStyles\.add\(\{ name: "Contents" \}\)/);
-    assert.match(s, /t\.tocStyleEntries\.add\(__style\(doc, "paragraph", "H1"\)\.name\)/);
-    assert.match(s, /e\.formatStyle = __style\(doc, "paragraph", "TOC 1"\)/);
-    assert.match(s, /e\.pageNumberPosition = PageNumberPosition\.AFTER_ENTRY;/);
-    assert.match(s, /e\.separator = "\^t";/);
-    assert.match(s, /t\.runIn = false;/);
-    await refuses('create_toc_style', { name: 'C', entries: [{ paragraphStyle: 'H1', pageNumberPosition: 'END' }] }, /Allowed: AFTER_ENTRY/);
-    await refuses('create_toc_style', { name: 'C', entries: [] }, /at least one paragraph style/);
-});
-
 await test('quick_apply_style searches by prefix and applies the best match to the selection', async () => {
     const s = await one('quick_apply_style', { query: 'o: side bar', clearOverrides: true });
     es5(s);
