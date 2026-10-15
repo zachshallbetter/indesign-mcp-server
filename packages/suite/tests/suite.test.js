@@ -31,15 +31,17 @@ test('suite tool names carry the app once', () => {
     assert.equal(suiteToolName('indesign', 'execute_indesign_code'), 'indesign_execute_code');
     assert.equal(suiteToolName('illustrator', 'execute_illustrator_code'), 'illustrator_execute_code');
     assert.equal(suiteToolName('illustrator', 'help'), 'illustrator_help');
+    assert.equal(suiteToolName('photoshop', 'photoshop_status'), 'photoshop_status');
+    assert.equal(suiteToolName('photoshop', 'execute_photoshop_code'), 'photoshop_execute_code');
     assert.equal(suiteToolName('aftereffects', 'execute_aftereffects_code'), 'aftereffects_execute_code');
 });
 
 test('apps are chosen by --apps, then ADOBE_MCP_APPS, else all', () => {
-    assert.deepEqual(selectedApps([], {}), ['indesign', 'illustrator', 'aftereffects']);
+    assert.deepEqual(selectedApps([], {}), ['indesign', 'illustrator', 'photoshop', 'aftereffects']);
     assert.deepEqual(selectedApps(['--apps', 'illustrator'], { ADOBE_MCP_APPS: 'indesign' }), ['illustrator']);
     assert.deepEqual(selectedApps(['--apps=InDesign, illustrator'], {}), ['indesign', 'illustrator']);
     assert.deepEqual(selectedApps([], { ADOBE_MCP_APPS: 'indesign' }), ['indesign']);
-    assert.throws(() => selectedApps(['--apps', 'photoshop'], {}), /Unknown app\(s\): photoshop/);
+    assert.throws(() => selectedApps(['--apps', 'premiere'], {}), /Unknown app\(s\): premiere/);
 });
 
 test('the combined server has every app tool once, plus the cross-app tools', async () => {
@@ -56,6 +58,14 @@ test('the combined server has every app tool once, plus the cross-app tools', as
         if (t.name.startsWith('indesign_')) assert.match(t.description, /^InDesign: /);
         if (t.name.startsWith('illustrator_')) assert.match(t.description, /^Illustrator: /);
     }
+});
+
+test('Photoshop joins the suite with its tools prefixed', async () => {
+    const suite = await createSuiteServer({ apps: ['photoshop', 'illustrator'] });
+    const ps = suite.tools.filter((t) => t.name.startsWith('photoshop_'));
+    assert.equal(ps.length, suite.apps.photoshop.tools.length);
+    assert.ok(ps.every((t) => /^Photoshop: /.test(t.description)));
+    assert.ok(suite.tools.some((t) => t.name === 'photoshop_list_layers'));
 });
 
 test('one app alone offers no cross-app tools', async () => {

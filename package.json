@@ -6,6 +6,7 @@
     "packages/core",
     "packages/indesign",
     "packages/illustrator",
+    "packages/photoshop",
     "packages/aftereffects",
     "packages/suite"
   ],

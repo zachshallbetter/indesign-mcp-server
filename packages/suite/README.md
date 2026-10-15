@@ -1,12 +1,13 @@
 # Adobe MCP Suite
 
-One MCP server for Adobe InDesign and Illustrator together, with tools that
-work across them. Use it when you work in both applications; to drive only one,
+One MCP server for Adobe InDesign, Illustrator, Photoshop and After Effects
+together, with tools that work across them. Use it when you work in both applications; to drive only one,
 install that application's server instead
-([adobe-mcp-indesign](../indesign), [adobe-mcp-illustrator](../illustrator)).
+([adobe-mcp-indesign](../indesign), [adobe-mcp-illustrator](../illustrator),
+[adobe-mcp-photoshop](../photoshop), [adobe-mcp-aftereffects](../aftereffects)).
 
-Requires Node.js 18 or later, and InDesign and/or Illustrator 2023 or later on
-macOS or Windows.
+Requires Node.js 18 or later, and InDesign, Illustrator, Photoshop and/or After
+Effects 2023 or later on macOS or Windows.
 
 ## Install
 
@@ -39,8 +40,9 @@ name in front: `indesign_create_text_frame`, `illustrator_create_rectangle`,
 `indesign_export_pdf`. A tool that already names its application keeps it once:
 `indesign_status`, `illustrator_execute_code`. Each application keeps its own
 units and conventions (InDesign: millimetres from the page's top-left;
-Illustrator: points from the artboard's top-left), and the server's
-instructions describe both.
+Illustrator: points from the artboard's top-left; Photoshop: pixels from the
+document's top-left; After Effects: pixels from the composition's top-left and
+seconds), and the server's instructions describe each.
 
 Tools across applications, offered when both are loaded:
 
