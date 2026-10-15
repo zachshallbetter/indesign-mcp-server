@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { createMcpServer, createAnnotations } from 'adobe-mcp-core';
 import { executor } from './executor.js';
 import { tools as projectTools } from './tools/project.js';
+import { tools as footageTools } from './tools/footage.js';
 import { tools as compTools } from './tools/comps.js';
 import { tools as layerTools } from './tools/layers.js';
 import { tools as animationTools } from './tools/animation.js';
@@ -35,6 +36,7 @@ help({ tool }) describes any tool's parameters.`;
 
 const AREAS = [
     ['project', projectTools],
+    ['footage', footageTools],
     ['compositions', compTools],
     ['layers', layerTools],
     ['animation', animationTools],
