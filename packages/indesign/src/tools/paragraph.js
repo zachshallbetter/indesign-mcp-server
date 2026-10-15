@@ -76,7 +76,7 @@ export function textSpec(target) {
  * styles and character styles, and a property setter that names the property
  * when InDesign refuses a value.
  */
-const TEXT_HELPERS = String.raw`
+export const TEXT_HELPERS = String.raw`
 var __textOf = function (item, whole) {
   var n = item.constructor.name;
   if (n === "Story") return item;

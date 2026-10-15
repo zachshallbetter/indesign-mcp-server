@@ -12,6 +12,7 @@ import { tools as paragraphTools } from './paragraph.js';
 import { tools as effectsTools } from './effects.js';
 import { tools as stylesTools } from './styles.js';
 import { tools as formatsTools } from './formats.js';
+import { tools as prepressTools } from './prepress.js';
 
 /** [area id, tools, help category { name, description }] */
 export const AREAS = [
@@ -23,6 +24,7 @@ export const AREAS = [
     ['effects', effectsTools, { name: 'Effects and transparency', description: 'Opacity, blending and effects on items, global light, blend space and transparency flattening' }],
     ['styles', stylesTools, { name: 'Styles & Colors', description: 'Paragraph, character, object, table and cell styles: create, edit, group, apply, clear overrides, nested and GREP styles, load and defaults; swatches and colors' }],
     ['formats', formatsTools, { name: 'Import and export formats', description: 'Export PDF, interactive PDF, EPUB, HTML, JPEG, PNG, EPS and text with every option; place Word, Excel and text with import options; object export options, articles, and library, preflight, swatch and snippet files' }],
+    ['prepress', prepressTools, { name: 'Printing and prepress', description: 'Print and Print Booklet with every option or a preset, to a printer or PostScript file; print and trap presets; preflight profiles, rules and options; inks, separations and overprint preview; print attributes; package report and options' }],
 ];
 
 /** Every module tool, with its area. */
