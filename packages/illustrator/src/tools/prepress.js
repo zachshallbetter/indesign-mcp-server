@@ -1,5 +1,5 @@
 /**
- * Prepress: overprint, trim marks, and printing.
+ * Prepress: overprint, trapping, flattening, trim marks, previews and printing.
  *
  * print_document fills a PrintOptions object page by page, the way the Print
  * dialog is laid out (General, Media, Placement, Marks and Bleed, Output,
@@ -13,6 +13,8 @@ import { run } from '../executor.js';
 import { TARGET_SCHEMA, targetSpec, artboardRange } from '../args.js';
 import { EACH_PATH } from './appearance.js';
 import { paths } from './documents.js';
+import { playActionStatements } from '../blend.js';
+import { flattenAction, FLATTEN_SET, FLATTEN_ACTION } from '../flatten.js';
 
 const LAYERS = { visible_printable: 'VISIBLEPRINTABLELAYERS', visible: 'VISIBLELAYERS', all: 'ALLLAYERS' };
 const BOUNDS = { artboard: 'ARTBOARDBOUNDS', artwork: 'ARTWORKBOUNDS', crop: 'CROPBOUNDS' };
@@ -29,6 +31,16 @@ const FONT_DOWNLOAD = { none: 'DOWNLOADNONE', subset: 'DOWNLOADSUBSET', complete
 const FONT_SUBSTITUTION = { oblique: 'SUBSTITUTEOBLIQUE', tint: 'SUBSTITUTETINT', device: 'SUBSTITUTEDEVICE' };
 const PROFILES = { source: 'SOURCEPROFILE', printer: 'PRINTERPROFILE', custom: 'CUSTOMPROFILE' };
 const INTENTS = { perceptual: 'PERCEPTUALINTENT', saturation: 'SATURATIONINTENT', relative_colorimetric: 'RELATIVECOLORIMETRIC', absolute_colorimetric: 'ABSOLUTECOLORIMETRIC' };
+const INK_STATUS = { print: 'ENABLEINK', skip: 'DISABLEINK', convert: 'CONVERTINK' };
+
+/** Views and panels toggled by toggle_prepress_view, with their menu commands. */
+const VIEWS = {
+    overprint_preview: 'ink',
+    print_tiling: 'pagetiling',
+    separations_preview: 'Adobe Separation Preview Panel',
+    flattener_preview: 'Adobe Flattening Preview',
+    attributes: 'internal palettes posing as plug-in menus-attributes',
+};
 
 const RANGE = { type: 'string', description: 'Artboards, 1-based: "1", "1-3,5". Default all' };
 
@@ -86,6 +98,20 @@ const PAGES = {
             mode: { type: 'string', enum: Object.keys(MODES) },
             convertSpotColors: { type: 'boolean', description: 'Convert all spot colours to process' },
             overprintBlack: { type: 'boolean' },
+            inks: {
+                type: 'array',
+                description: 'Document Ink Options: per ink (by name, e.g. "Process Cyan" or a spot colour), whether it prints, and its screen frequency and angle. Inks not listed keep the document\'s settings',
+                items: {
+                    type: 'object',
+                    properties: {
+                        name: { type: 'string' },
+                        status: { type: 'string', enum: Object.keys(INK_STATUS), description: 'print, skip (do not print), or convert (to process)' },
+                        frequency: { type: 'number', minimum: 1, maximum: 1000, description: 'Lines per inch' },
+                        angle: { type: 'number', minimum: -360, maximum: 360, description: 'Degrees' },
+                    },
+                    required: ['name'],
+                },
+            },
         },
     },
     graphics: {
@@ -139,6 +165,27 @@ function page(a, key) {
     const unknown = Object.keys(value).filter((k) => !known.includes(k));
     if (unknown.length) throw new Error(`'${key}' has no option ${unknown.join(', ')}. Options: ${known.join(', ')}`);
     return value;
+}
+
+/** Statements that adjust the document's inks and hand them to the separation options. */
+function inkLines(inks) {
+    if (!Array.isArray(inks) || !inks.length) throw new Error("'output.inks' must list at least one ink");
+    const lines = [
+        'var __inks = doc.inkList;',
+        'var __ink = function (name) { var all = []; for (var i = 0; i < __inks.length; i++) { if (__inks[i].name === name) return __inks[i].inkInfo; all.push(__inks[i].name); } throw new Error("Ink not found: " + name + ". Inks: " + all.join(", ")); };',
+    ];
+    inks.forEach((ink, i) => {
+        if (!ink || typeof ink !== 'object' || typeof ink.name !== 'string' || !ink.name) throw new Error(`output.inks[${i}] needs a name`);
+        const unknown = Object.keys(ink).filter((k) => !['name', 'status', 'frequency', 'angle'].includes(k));
+        if (unknown.length) throw new Error(`output.inks[${i}] has no option ${unknown.join(', ')}. Options: name, status, frequency, angle`);
+        if (ink.status === undefined && ink.frequency === undefined && ink.angle === undefined) throw new Error(`output.inks[${i}]: give status, frequency or angle`);
+        const ref = `__ink(${str(ink.name)})`;
+        if (ink.status !== undefined) lines.push(`${ref}.printingStatus = InkPrintStatus.${INK_STATUS[enumOf(ink.status, Object.keys(INK_STATUS), { name: `output.inks[${i}].status` })]};`);
+        if (ink.frequency !== undefined) lines.push(`${ref}.frequency = ${num(ink.frequency, { min: 1, max: 1000, name: `output.inks[${i}].frequency` })};`);
+        if (ink.angle !== undefined) lines.push(`${ref}.angle = ${num(ink.angle, { min: -360, max: 360, name: `output.inks[${i}].angle` })};`);
+    });
+    lines.push('o.colorSeparationOptions.inkList = __inks;');
+    return lines.join('\n');
 }
 
 /** PrintOptions statements for the options given; the preset supplies the rest. */
@@ -197,6 +244,7 @@ function printOptionLines(a) {
         if (out.mode !== undefined) set('colorSeparationOptions', 'colorSeparationMode', `PrintColorSeparationMode.${pick(out.mode, MODES, 'output.mode')}`);
         if (out.convertSpotColors !== undefined) set('colorSeparationOptions', 'convertSpotColors', bool(out.convertSpotColors));
         if (out.overprintBlack !== undefined) set('colorSeparationOptions', 'overPrintBlack', bool(out.overprintBlack));
+        if (out.inks !== undefined) lines.push(inkLines(out.inks));
     }
     const gr = page(a, 'graphics');
     if (gr) {
@@ -283,6 +331,94 @@ app.executeMenuCommand("TrimMark v25");
 var sel = doc.selection, out = [];
 if (sel && sel.length) for (var j = 0; j < sel.length; j++) out.push(__itemInfo(doc, sel[j]));
 __result__ = { marks: out };`)),
+    },
+    {
+        name: 'make_trap_stroke',
+        description: 'Trap paths by hand (spread traps): give each filled path an overprinting stroke in its own fill colour, so the colour spreads into the inks around it by half the stroke weight. Paths with gradient, pattern or no fill are skipped',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                target: TARGET_SCHEMA,
+                weight: { type: 'number', minimum: 0.01, maximum: 72, description: 'Stroke weight in points; the trap is half of it. Default 0.5' },
+                round: { type: 'boolean', description: 'Round caps and joins. Default true' },
+            },
+            required: ['target'],
+        },
+        features: ['illustrator.prepress.trapping'],
+        hints: { destructive: false, idempotent: true },
+        handler: (a) => run('Make trap stroke', script(`${EACH_PATH}
+var items = __targets(doc, ${targetSpec(a.target)}), counts = { paths: 0, trapped: 0, noSolidFill: 0, skipped: [] };
+var solid = { RGBColor: 1, CMYKColor: 1, GrayColor: 1, SpotColor: 1, LabColor: 1 };
+for (var i = 0; i < items.length; i++) __eachPath(items[i], function (p) {
+  if (!p.filled || !solid[p.fillColor.typename]) { counts.noSolidFill++; return; }
+  p.stroked = true;
+  p.strokeColor = p.fillColor;
+  p.strokeWidth = ${num(a.weight ?? 0.5, { min: 0.01, max: 72, name: 'weight' })};
+  ${(a.round ?? true) ? 'p.strokeCap = StrokeCap.ROUNDENDCAP; p.strokeJoin = StrokeJoin.ROUNDENDJOIN;' : ''}
+  p.strokeOverprint = true;
+  counts.trapped++;
+}, counts);
+__result__ = counts;`)),
+    },
+    {
+        name: 'flatten_transparency',
+        description: 'Flatten transparency in the targets permanently (Object > Flatten Transparency), without the dialog: transparent artwork becomes opaque vector and raster pieces. Resolution is the one setting offered; the dialog\'s other settings stay at the values published scripts record for this command',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                target: TARGET_SCHEMA,
+                resolution: { type: 'number', minimum: 72, maximum: 2400, description: 'Resolution for rasterised parts, ppi. Default 300' },
+            },
+            required: ['target'],
+        },
+        features: ['illustrator.prepress.flatten_transparency'],
+        hints: { destructive: true, idempotent: false },
+        auditArgs: { resolution: 300 },
+        handler: (a) => {
+            const resolution = num(a.resolution ?? 300, { min: 72, max: 2400, name: 'resolution' });
+            return run('Flatten transparency', script(`
+var items = __targets(doc, ${targetSpec(a.target)});
+doc.selection = null;
+for (var k = 0; k < items.length; k++) items[k].selected = true;
+${playActionStatements(str(flattenAction(resolution)), FLATTEN_SET, FLATTEN_ACTION)}
+var sel = doc.selection, out = [];
+if (sel && sel.length) for (var j = 0; j < sel.length; j++) out.push(__itemInfo(doc, sel[j]));
+__result__ = { flattened: items.length, resolution: ${resolution}, selection: out };`));
+        },
+    },
+    {
+        name: 'toggle_prepress_view',
+        description: 'Toggle a prepress view or panel: overprint_preview (View > Overprint Preview), print_tiling (View > Show/Hide Print Tiling), separations_preview, flattener_preview or attributes (Window menu panels). Illustrator does not report whether Overprint Preview or a panel is showing, so those simply switch; print_tiling can be set with show',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                view: { type: 'string', enum: Object.keys(VIEWS) },
+                show: { type: 'boolean', description: 'print_tiling only: show (true) or hide (false) instead of switching' },
+            },
+            required: ['view'],
+        },
+        features: [
+            'illustrator.prepress.overprint_preview',
+            'illustrator.prepress.separations_preview_option.overprint_preview',
+            'illustrator.prepress.show_print_tiling',
+            'illustrator.prepress.separations_preview',
+            'illustrator.prepress.flattener_preview',
+            'illustrator.prepress.attributes_panel',
+        ],
+        menuCommands: Object.values(VIEWS),
+        hints: { destructive: false, idempotent: false },
+        auditArgs: { view: 'print_tiling', show: true },
+        handler: (a) => {
+            const view = enumOf(a.view, Object.keys(VIEWS), { name: 'view' });
+            if (a.show !== undefined && view !== 'print_tiling') throw new Error("'show' applies to print_tiling only; the other views can only be switched");
+            const command = str(VIEWS[view]);
+            return run('Toggle prepress view', script(view === 'print_tiling' ? `
+var before = doc.printTiles;
+if (${a.show === undefined ? 'true' : `before !== ${bool(a.show)}`}) app.executeMenuCommand(${command});
+__result__ = { view: "print_tiling", showing: doc.printTiles, changed: doc.printTiles !== before };` : `
+app.executeMenuCommand(${command});
+__result__ = { view: ${str(view)}, toggled: true };`));
+        },
     },
     {
         name: 'list_print_settings',
@@ -372,6 +508,7 @@ __result__ = {
             'illustrator.prepress.print_output.mode',
             'illustrator.prepress.print_output.convert_all_spot_colors_to_process',
             'illustrator.prepress.print_output.overprint_black',
+            'illustrator.prepress.print_output.document_ink_options',
             'illustrator.prepress.color_separations',
             'illustrator.prepress.composite_print',
             'illustrator.prepress.print_graphics.postscript',

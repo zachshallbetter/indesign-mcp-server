@@ -20,6 +20,17 @@ with the parameter codes used by:
   https://github.com/swwwitch/illustrator-scripts
   Masahiro Takano (@swwwitch). MIT licence.
 
+src/flatten.js writes Flatten Transparency as a generated Action, with
+the event and parameter codes recorded in:
+
+  FlattenOpacityPro, jsx/color/FlattenOpacityPro.jsx
+  https://github.com/swwwitch/illustrator-scripts
+  Masahiro Takano (@swwwitch). MIT licence.
+
+  AI_PS_Library, libraries/AI_PS_Library.js
+  https://github.com/alexander-ladygin/illustrator-scripts
+  Copyright (c) 2018 Alexander Ladygin. MIT licence.
+
 These licences require this notice to be kept with copies of the data:
 
   Permission is hereby granted, free of charge, to any person obtaining a copy

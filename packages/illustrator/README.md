@@ -60,13 +60,15 @@ Settings > Privacy & Security > Automation).
 | Colour | `list_swatches`, `create_swatch` (process, global, spot, spot from Lab values), `create_swatch_group`, `delete_swatches`, `add_used_colors`, `edit_colors` (convert to CMYK, RGB or grayscale, invert, blend) |
 | Selecting and arranging | `list_items`, `get_selection`, `select_items`, `select_same`, `select_all`, `deselect_all`, `delete_items`, `duplicate_items`, `move_items`, `scale_items`, `rotate_items`, `reflect_items`, `align_items`, `arrange_items`, `group_items`, `ungroup_items` |
 | Combining | `make_clipping_mask`, `make_compound_path`, `pathfinder` |
+| Clipping masks | `release_clipping_mask`, `edit_clipping_mask` (Edit Mask, Edit Contents), `add_to_clipping_mask` (into a clip group, or around a path as Draw Inside does), `remove_from_clipping_mask` |
+| Graphs and meshes | `list_graphs`, `apply_graph_data` (load a variable library, display a data set), `list_meshes` |
 | Paths | `path_operation` (outline stroke, join, add anchor points, reverse direction, divide objects below, release compound path, make pixel perfect, expand appearance), `average_points` (and join), `clean_up`, `split_into_grid`, `split_path`, `set_path_options` (fill rule, guides, pixel alignment), `get_path_info` (area, length, anchors) |
 | Effects | `apply_effect` (drop shadow, offset path, round corners, roughen, transform, Gaussian blur) |
-| Blends | `make_blend`, `set_blend_options` (steps, orientation), `release_blend`, `expand_blend`, `reverse_blend` |
-| Preferences and tools | `get_preferences`, `set_preferences`, `select_tool` |
+| Blends | `make_blend` (optionally outlining text for blended lettering), `set_blend_options` (steps, orientation), `release_blend`, `expand_blend`, `reverse_blend`, `replace_blend_spine` |
+| Preferences and tools | `get_preferences`, `set_preferences`, `select_tool` (including the graph, mesh, blend and print tiling tools) |
 | Placing and export | `place_image`, `export_png`, `export_jpeg`, `export_svg` (Save As SVG), `export_web_svg` (Export As SVG: styling, IDs, minify, responsive), `export_for_screens`, `export_pdf` (preset plus PDF/X, bleed, marks, colour conversion, output intent, Acrobat layers) |
 | Variables and data sets | `list_variables`, `create_variable`, `bind_variable`, `delete_variables`, `create_data_sets` (from records: text, image files, visibility), `show_data_set`, `delete_data_sets`, `export_data_sets` (each data set to PNG or JPEG), `import_variables`, `export_variables`, `set_variables_locked` |
-| Prepress and printing | `set_overprint`, `create_trim_marks`, `list_print_settings`, `print_document` (to a printer or a PostScript file; preset plus each Print dialog page) |
+| Prepress and printing | `set_overprint`, `make_trap_stroke`, `flatten_transparency`, `toggle_prepress_view` (Overprint Preview, print tiling, Separations Preview, Flattener Preview, Attributes), `create_trim_marks`, `list_print_settings`, `print_document` (to a printer or a PostScript file; preset plus each Print dialog page, with document ink options) |
 | Utility | `illustrator_status`, `execute_menu_command`, `find_menu_commands`, `execute_illustrator_code`, `help` |
 
 `help({ tool })` describes any tool's parameters.
