@@ -72,6 +72,12 @@ const OVERRIDES = {
     import_variables: { filePath: path.join(docs, 'vars.xml') },
     export_variables: { filePath: path.join(docs, 'vars.xml') },
     export_data_sets: { format: 'jpeg', transparent: undefined, artboards: '1-2' },
+    path_operation: { operation: 'outline_stroke' },
+    average_points: { axis: 'both', join: true, selectedPointsOnly: true },
+    split_into_grid: { rows: 3, columns: 4, gutter: 6, addGuides: true },
+    split_path: { pointIndex: 2 },
+    get_path_info: { includePoints: true },
+    set_path_options: { evenOdd: true, guide: false, pixelAligned: true },
     save_document: {
         filePath: path.join(docs, 'audit.eps'), separateArtboards: true, artboards: '1-2',
         pdfCompatible: undefined, compressed: undefined, embedIccProfile: undefined, fontSubsetThreshold: undefined,
