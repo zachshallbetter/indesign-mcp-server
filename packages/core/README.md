@@ -45,6 +45,9 @@ const { ok, result, error } = await executor.runStructured('app.documents.length
 ```
 
 - Scripts go to the application as a temporary `.jsx` file, removed afterwards.
+- An application with no COM scripting object on Windows passes `winRun`, which
+  runs the `.jsx` some other way and resolves with its result (After Effects runs
+  scripts with `AfterFX.exe -r`).
 - Processes start with `execFile`, never a shell, and never block the event loop.
 - Every run has a timeout (`<PREFIX>_SCRIPT_TIMEOUT_MS`, default 120 s). On
   timeout the error says a dialog may be open in the application, which is the
