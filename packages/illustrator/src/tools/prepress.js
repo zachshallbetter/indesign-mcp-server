@@ -254,7 +254,7 @@ export const tools = [
             },
             required: ['target'],
         },
-        features: ['illustrator.prepress.overprint_fill', 'illustrator.prepress.overprint_stroke'],
+        features: ['illustrator.prepress.overprint_fill', 'illustrator.prepress.overprint_stroke', 'illustrator.appearance.stroke_option.overprint_fill', 'illustrator.appearance.stroke_option.overprint_stroke'],
         handler: (a) => {
             if (a.fill === undefined && a.stroke === undefined) throw new Error('Give fill, stroke or both');
             const pathLines = [], textLines = [];
