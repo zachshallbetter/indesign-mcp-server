@@ -5,7 +5,9 @@ import path from 'node:path';
 import { str, num, index, bool, enumOf, createPathPolicy, jsxPath } from 'adobe-mcp-core';
 import { script, WRITTEN_FN } from '../script.js';
 import { run } from '../executor.js';
-import { ARTBOARD_SCHEMA, TARGET_SCHEMA, targetSpec, artboardRange } from '../args.js';
+import { ARTBOARD_SCHEMA, TARGET_SCHEMA, targetSpec, artboardRange, colorSpec } from '../args.js';
+import { OPEN_EXTENSIONS, PDF_OPEN_SCHEMA, AUTOCAD_IMPORT_SCHEMA, extOf, withImportOptions } from '../import-options.js';
+import { ART_ON } from './layers.js';
 
 export const paths = createPathPolicy({ envVar: 'ILLUSTRATOR_ALLOWED_DIRS' });
 
@@ -13,10 +15,33 @@ const COLOR_MODES = ['CMYK', 'RGB'];
 const EPS_PREVIEWS = { none: 'None', tiff_bw: 'BWTIFF', tiff_color: 'COLORTIFF', tiff_transparent: 'TRANSPARENTCOLORTIFF' };
 const AI_ONLY = ['pdfCompatible', 'compressed', 'embedIccProfile', 'fontSubsetThreshold'];
 const EPS_ONLY = ['preview', 'postScript', 'embedFonts', 'cmykPostScript', 'compatibleGradientPrinting', 'thumbnails', 'overprint'];
+const FLATTENING = { preserve_paths: 'PRESERVEPATHS', preserve_appearance: 'PRESERVEAPPEARANCE' };
 const AI_VERSIONS = { '24': 'ILLUSTRATOR24', '17': 'ILLUSTRATOR17', '16': 'ILLUSTRATOR16', '15': 'ILLUSTRATOR15', '10': 'ILLUSTRATOR10', '8': 'ILLUSTRATOR8', '3': 'ILLUSTRATOR3' };
 const LAYOUTS = ['GridByRow', 'GridByCol', 'Row', 'Column', 'RLGridByRow', 'RLGridByCol', 'RLRow'];
 
 const rect = (x, y, w, h) => ({ x, y, width: w, height: h });
+const KNOCKOUT = { enabled: 'ENABLED', disabled: 'DISABLED', inherited: 'INHERITED' };
+const ORIENTATIONS = ['portrait', 'landscape', 'switch'];
+
+/** Layer Options settings shared by create_layer and set_layer_properties. */
+const LAYER_OPTIONS = {
+    color: { type: 'string', description: 'Highlight colour of the layer\'s selections and outlines, "#RRGGBB" or "rgb(r,g,b)"' },
+    preview: { type: 'boolean', description: 'false shows the layer in Outline mode' },
+    dimPlacedImages: { type: 'boolean', description: 'Dim placed images on the layer (Dim Images to). Illustrator uses its own percentage; scripts cannot set it' },
+};
+
+/** ES3 statements setting Layer Options on the layer \`l\`. */
+function layerOptions(a) {
+    const out = [];
+    if (a.color !== undefined) {
+        const spec = JSON.parse(colorSpec(a.color, 'color'));
+        if (spec?.kind !== 'rgb') throw new Error("'color': give a layer colour as \"#RRGGBB\" or \"rgb(r,g,b)\"");
+        out.push(`var lc = new RGBColor(); lc.red = ${spec.v[0]}; lc.green = ${spec.v[1]}; lc.blue = ${spec.v[2]}; l.color = lc;`);
+    }
+    if (a.preview !== undefined) out.push(`l.preview = ${bool(a.preview)};`);
+    if (a.dimPlacedImages !== undefined) out.push(`l.dimPlacedImages = ${bool(a.dimPlacedImages)};`);
+    return out.join('\n');
+}
 
 export const tools = [
     {
@@ -44,7 +69,7 @@ __result__ = {
   colorMode: String(doc.documentColorSpace).replace("DocumentColorSpace.", ""),
   scaleFactor: __sf(doc), activeArtboard: doc.artboards.getActiveArtboardIndex(),
   artboards: abs, layers: layers, activeLayer: doc.activeLayer.name,
-  counts: { pageItems: doc.pageItems.length, paths: doc.pathItems.length, text: doc.textFrames.length, placed: doc.placedItems.length, raster: doc.rasterItems.length, groups: doc.groupItems.length, symbols: doc.symbolItems.length, swatches: doc.swatches.length },
+  counts: { pageItems: doc.pageItems.length, paths: doc.pathItems.length, text: doc.textFrames.length, placed: doc.placedItems.length, raster: doc.rasterItems.length, embeddedFiles: doc.embeddedItems.length, nonNative: doc.nonNativeItems.length, plugin: doc.pluginItems.length, groups: doc.groupItems.length, symbols: doc.symbolItems.length, swatches: doc.swatches.length },
   selection: doc.selection ? doc.selection.length : 0
 };`)),
     },
@@ -96,22 +121,69 @@ __result__ = { name: d.name, colorMode: ${str(a.colorMode)}, artboards: d.artboa
     },
     {
         name: 'open_document',
-        description: 'Open an .ai, .pdf, .eps or .svg file',
-        inputSchema: { type: 'object', properties: { filePath: { type: 'string', description: 'Absolute path' } }, required: ['filePath'] },
+        description: 'Open a file as a new document (File > Open): Illustrator (.ai, .ait template), PDF, EPS, SVG/SVGZ, AutoCAD DWG/DXF, images (PSD, TIFF, PNG, JPEG, JPEG 2000, GIF, BMP, WebP, AVIF, HEIC, TGA, PCX, PXR), CGM, CorelDRAW, EMF/WMF, and Word, RTF or text (opened with Illustrator\'s last-used import options). PDF and AutoCAD import options are set for this call only',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                filePath: { type: 'string', description: 'Absolute path' },
+                pdf: PDF_OPEN_SCHEMA,
+                autocad: AUTOCAD_IMPORT_SCHEMA,
+            },
+            required: ['filePath'],
+        },
         features: [
             'illustrator.documents.open',
             'illustrator.import_export.open_ai',
             'illustrator.import_export.open_pdf',
             'illustrator.import_export.open_eps',
             'illustrator.import_export.open_svg',
+            'illustrator.import_export.open_svgz',
+            'illustrator.import_export.open_dwg',
+            'illustrator.import_export.open_dxf',
+            'illustrator.import_export.open_avif',
+            'illustrator.import_export.open_bmp',
+            'illustrator.import_export.open_cgm',
+            'illustrator.import_export.open_cdr',
+            'illustrator.import_export.open_emf',
+            'illustrator.import_export.open_wmf',
+            'illustrator.import_export.open_gif',
+            'illustrator.import_export.open_heic',
+            'illustrator.import_export.open_jpeg',
+            'illustrator.import_export.open_jpeg2000',
+            'illustrator.import_export.open_png',
+            'illustrator.import_export.open_psd',
+            'illustrator.import_export.open_tiff',
+            'illustrator.import_export.open_pcx',
+            'illustrator.import_export.open_pxr',
+            'illustrator.import_export.open_tga',
+            'illustrator.import_export.open_webp',
+            'illustrator.import_export.open_rtf',
+            'illustrator.import_export.open_doc',
+            'illustrator.import_export.open_docx',
+            'illustrator.import_export.open_txt',
+            'illustrator.import_export.import_pdf',
+            'illustrator.import_export.import_eps_dcs_autocad',
+            'illustrator.import_export.pdf_import_option.page_to_open',
+            'illustrator.import_export.pdf_import_option.crop_to',
+            'illustrator.import_export.autocad_import_option.layout',
+            'illustrator.import_export.autocad_import_option.scale_import',
+            'illustrator.import_export.autocad_import_option.scale_percent_import',
+            'illustrator.import_export.autocad_import_option.units_import',
+            'illustrator.import_export.autocad_import_option.unit_ratio_import',
+            'illustrator.import_export.autocad_import_option.scale_lineweights_import',
+            'illustrator.import_export.autocad_import_option.center_artwork',
+            'illustrator.import_export.autocad_import_option.merge_layers',
         ],
+        auditArgs: { filePath: path.join(process.env.HOME ?? '/tmp', 'Documents', 'audit.pdf'), pdf: { pages: '1-3', linkPages: false, cropTo: 'trim' }, autocad: undefined },
         handler: (a) => {
             const p = paths.validate(a.filePath);
+            const ext = extOf(p);
+            if (!OPEN_EXTENSIONS.includes(ext)) throw new Error(`Illustrator cannot open .${ext || '(no extension)'} files. It opens: ${OPEN_EXTENSIONS.map((e) => `.${e}`).join(', ')}`);
             return run('Open document', script(`
 var f = new File(${jsxPath(p)});
 if (!f.exists) throw new Error("File not found: " + f.fsName);
-var d = app.open(f);
-__result__ = { name: d.name, artboards: d.artboards.length };`, { needsDocument: false }));
+${withImportOptions(a, ext, `var d = app.open(f);
+__result__ = { name: d.name, artboards: d.artboards.length };`, { allowRange: true })}`, { needsDocument: false }));
         },
     },
     {
@@ -125,7 +197,7 @@ __result__ = { name: d.name, artboards: d.artboards.length };`, { needsDocument:
                 separateArtboards: { type: 'boolean', description: 'Also save each artboard to its own file, named after the artboard. Default false', default: false },
                 artboards: { type: 'string', description: 'With separateArtboards: the artboards to save, 1-based: "1", "1-3,5". Default all' },
                 embedLinkedFiles: { type: 'boolean', description: 'Embed linked images. Default false', default: false },
-                pdfCompatible: { type: 'boolean', description: '.ai: embed a PDF-compatible copy so other apps can preview it. Default true', default: true },
+                pdfCompatible: { type: 'boolean', description: '.ai: embed a PDF-compatible copy so other apps can preview it. Default true. False gives a much smaller native file', default: true },
                 compressed: { type: 'boolean', description: '.ai: compress the file. Default true', default: true },
                 embedIccProfile: { type: 'boolean', description: '.ai: embed the document\'s colour profile. Default true', default: true },
                 fontSubsetThreshold: { type: 'number', minimum: 0, maximum: 100, description: '.ai: subset embedded fonts when less than this percent of their characters is used. Default 100' },
@@ -136,6 +208,7 @@ __result__ = { name: d.name, artboards: d.artboards.length };`, { needsDocument:
                 compatibleGradientPrinting: { type: 'boolean', description: '.eps: rasterise gradients and meshes for older PostScript printers. Default false', default: false },
                 thumbnails: { type: 'boolean', description: '.eps: include a thumbnail. Default true', default: true },
                 overprint: { type: 'string', enum: ['preserve', 'discard'], description: '.eps: keep or discard overprints. Default preserve' },
+                transparency: { type: 'string', enum: Object.keys(FLATTENING), description: 'Saving for Illustrator 8 or 3 only, which have no transparency: preserve_paths (discard transparency) or preserve_appearance (flatten it)' },
             },
         },
         features: [
@@ -149,6 +222,8 @@ __result__ = { name: d.name, artboards: d.artboards.length };`, { needsDocument:
             'illustrator.import_export.ai_option.embed_icc_profiles',
             'illustrator.import_export.ai_option.subset_embedded_fonts_when_percent_of_characters_used_is_less_than',
             'illustrator.import_export.ai_option.save_each_artboard_to_a_separate_file',
+            'illustrator.import_export.ai_option.transparency_preserve_paths_preserve_appearance',
+            'illustrator.import_export.pdf_native_size',
             'illustrator.import_export.save_artboards_range',
             'illustrator.import_export.save_eps',
             'illustrator.import_export.eps_option.version_eps',
@@ -161,6 +236,7 @@ __result__ = { name: d.name, artboards: d.artboards.length };`, { needsDocument:
             'illustrator.import_export.eps_option.include_linked_files_eps',
             'illustrator.import_export.eps_option.overprints_eps',
             'illustrator.import_export.eps_option.use_artboards_eps',
+            'illustrator.import_export.eps_option.transparency_eps',
         ],
         handler: (a) => {
             // Options the caller set to something other than the default.
@@ -180,6 +256,7 @@ __result__ = { saved: true, file: doc.fullName.fsName };`));
             const wrong = given.filter((k) => other.includes(k));
             if (wrong.length) throw new Error(`${wrong.join(', ')} ${wrong.length > 1 ? 'apply' : 'applies'} only to ${ext === '.ai' ? '.eps' : '.ai'} files`);
             if (a.artboards !== undefined && !a.separateArtboards) throw new Error("'artboards' applies with separateArtboards: true");
+            if (a.transparency !== undefined && !['8', '3'].includes(String(a.compatibility))) throw new Error("'transparency' applies when saving for Illustrator 8 or 3: set compatibility to \"8\" or \"3\"");
             const range = a.artboards === undefined ? '' : artboardRange(a.artboards);
             const lines = ext === '.ai' ? [
                 'var o = new IllustratorSaveOptions();',
@@ -202,6 +279,7 @@ var target = new File(${jsxPath(p)}), since = new Date().getTime();
 ${lines.filter(Boolean).join('\n')}
 o.compatibility = Compatibility.${AI_VERSIONS[enumOf(a.compatibility ?? '24', Object.keys(AI_VERSIONS), { name: 'compatibility' })]};
 o.embedLinkedFiles = ${bool(a.embedLinkedFiles)};
+${a.transparency !== undefined ? `o.flattenOutput = OutputFlattening.${FLATTENING[enumOf(a.transparency, Object.keys(FLATTENING), { name: 'transparency' })]};` : ''}
 o.saveMultipleArtboards = ${bool(a.separateArtboards)};
 ${range ? `o.artboardRange = ${str(range)};` : ''}
 doc.saveAs(target, o);
@@ -254,13 +332,15 @@ __result__ = { index: doc.artboards.length - 1, name: ab.name };`)),
     },
     {
         name: 'set_artboard',
-        description: 'Rename, move or resize an artboard. Position is measured from artboard 0\'s top-left corner',
+        description: 'Rename, move or resize an artboard, or switch it between portrait and landscape (Object > Artboards > Switch Orientation). Position is measured from artboard 0\'s top-left corner. scaleArtwork scales and moves the artwork on it with it',
         inputSchema: {
             type: 'object',
             properties: {
                 artboardIndex: ARTBOARD_SCHEMA,
                 name: { type: 'string' },
                 x: { type: 'number' }, y: { type: 'number' }, width: { type: 'number' }, height: { type: 'number' },
+                orientation: { type: 'string', enum: ORIENTATIONS, description: 'Swap width and height to make it portrait or landscape, or switch whichever it is. The top-left corner stays put' },
+                scaleArtwork: { type: 'boolean', description: 'Scale and move the artwork whose centre lies on the artboard along with it. Default false', default: false },
             },
             required: ['artboardIndex'],
         },
@@ -270,20 +350,33 @@ __result__ = { index: doc.artboards.length - 1, name: ab.name };`)),
             'illustrator.artboards.rename_artboard',
             'illustrator.artboards.resize_artboard',
             'illustrator.artboards.artboard_move',
+            'illustrator.artboards.switch_orientation',
+            'illustrator.artboards.scale_artwork_with_artboard',
         ],
+        auditArgs: { orientation: 'switch', scaleArtwork: true },
         handler: (a) => {
-            const geo = ['x', 'y', 'width', 'height'].some((k) => a[k] !== undefined);
-            return run('Set artboard', script(`
-var i = ${index(a.artboardIndex, { name: 'artboardIndex' })}, cur = __artboard(doc, i), a0 = __artboard(doc, 0), f = __sf(doc);
+            const geo = ['x', 'y', 'width', 'height', 'orientation'].some((k) => a[k] !== undefined);
+            if (a.scaleArtwork && !geo) throw new Error("'scaleArtwork' applies when x, y, width, height or orientation changes");
+            const turn = a.orientation === undefined ? '' : {
+                portrait: 'if (w > h) { var t = w; w = h; h = t; }',
+                landscape: 'if (h > w) { var t = w; w = h; h = t; }',
+                switch: 'var t = w; w = h; h = t;',
+            }[enumOf(a.orientation, ORIENTATIONS, { name: 'orientation' })];
+            return run('Set artboard', script(`${a.scaleArtwork ? ART_ON : ''}
+var i = ${index(a.artboardIndex, { name: 'artboardIndex' })}, cur = __artboard(doc, i), a0 = __artboard(doc, 0), f = __sf(doc), skipped = 0;
 ${a.name !== undefined ? `doc.artboards[i].name = ${str(a.name)};` : ''}
 ${geo ? `
 var x = ${a.x !== undefined ? num(a.x, { name: 'x' }) : '(cur.left - a0.left) * f'};
 var y = ${a.y !== undefined ? num(a.y, { name: 'y' }) : '(a0.top - cur.top) * f'};
 var w = ${a.width !== undefined ? num(a.width, { min: 1, name: 'width' }) : '(cur.right - cur.left) * f'};
 var h = ${a.height !== undefined ? num(a.height, { min: 1, name: 'height' }) : '(cur.top - cur.bottom) * f'};
-var p = __toDoc(doc, a0, x, y);
-doc.artboards[i].artboardRect = [p[0], p[1], p[0] + __len(doc, w), p[1] - __len(doc, h)];` : ''}
-__result__ = { index: i, name: doc.artboards[i].name };`));
+${turn}
+var p = __toDoc(doc, a0, x, y), old = doc.artboards[i].artboardRect, nr = [p[0], p[1], p[0] + __len(doc, w), p[1] - __len(doc, h)];
+${a.scaleArtwork ? 'var art = __artOn(doc, old, true);' : ''}
+doc.artboards[i].artboardRect = nr;
+${a.scaleArtwork ? 'skipped = __scaleArt(art, old, nr);' : ''}` : ''}
+var r = __artboard(doc, i);
+__result__ = { index: i, name: r.name, width: (r.right - r.left) * f, height: (r.top - r.bottom) * f${a.scaleArtwork ? ', artworkScaled: art.length - skipped, artworkSkipped: skipped' : ''} };`));
         },
     },
     {
@@ -311,16 +404,26 @@ __result__ = { active: i };`)),
     },
     {
         name: 'fit_artboard_to_artwork',
-        description: 'Resize an artboard to the bounds of the selected artwork',
-        inputSchema: { type: 'object', properties: { artboardIndex: ARTBOARD_SCHEMA, target: TARGET_SCHEMA }, required: ['artboardIndex', 'target'] },
-        features: ['illustrator.artboards.fit_to_selected_art'],
+        description: 'Resize an artboard to the bounds of the given artwork (Object > Artboards > Fit to Selected Art), or without target, to all the artwork on it (Fit to Artwork Bounds)',
+        inputSchema: {
+            type: 'object',
+            properties: { artboardIndex: ARTBOARD_SCHEMA, target: { ...TARGET_SCHEMA, description: 'Fit to these items. Default: all the artwork on the artboard' } },
+            required: ['artboardIndex'],
+        },
+        features: ['illustrator.artboards.fit_to_selected_art', 'illustrator.artboards.fit_to_artwork_bounds'],
+        menuCommands: ['Fit Artboard to artwork bounds'],
         handler: (a) => run('Fit artboard to artwork', script(`
+var i = ${index(a.artboardIndex, { name: 'artboardIndex' })};
+__artboard(doc, i);
+${a.target !== undefined ? `
 var items = __targets(doc, ${targetSpec(a.target)});
 doc.selection = null;
 for (var k = 0; k < items.length; k++) items[k].selected = true;
-var i = ${index(a.artboardIndex, { name: 'artboardIndex' })};
-__artboard(doc, i);
-doc.fitArtboardToSelectedArt(i);
+doc.fitArtboardToSelectedArt(i);` : `
+var was = doc.artboards.getActiveArtboardIndex();
+doc.artboards.setActiveArtboardIndex(i);
+app.executeMenuCommand("Fit Artboard to artwork bounds");
+doc.artboards.setActiveArtboardIndex(was);`}
 var r = __artboard(doc, i), f = __sf(doc);
 __result__ = { index: i, width: (r.right - r.left) * f, height: (r.top - r.bottom) * f };`)),
     },
@@ -345,7 +448,7 @@ __result__ = { artboards: doc.artboards.length };`)),
     // Layers
     {
         name: 'list_layers',
-        description: 'List top-level layers and their sublayers, with visibility, lock state and item counts',
+        description: 'List top-level layers and their sublayers, with visibility, lock state, Layer Options and item counts',
         inputSchema: { type: 'object', properties: {} },
         features: [
             'illustrator.layers.layers_panel',
@@ -356,7 +459,7 @@ __result__ = { artboards: doc.artboards.length };`)),
 function info(l) {
   var subs = [];
   for (var i = 0; i < l.layers.length; i++) subs.push(info(l.layers[i]));
-  return { name: l.name, visible: l.visible, locked: l.locked, printable: l.printable, opacity: l.opacity, items: l.pageItems.length, sublayers: subs };
+  return { name: l.name, visible: l.visible, locked: l.locked, printable: l.printable, preview: l.preview, dimPlacedImages: l.dimPlacedImages, color: __colorInfo(l.color), opacity: l.opacity, items: l.pageItems.length, sublayers: subs };
 }
 var out = [];
 for (var i = 0; i < doc.layers.length; i++) out.push(info(doc.layers[i]));
@@ -364,7 +467,7 @@ __result__ = { active: doc.activeLayer.name, layers: out };`)),
     },
     {
         name: 'create_layer',
-        description: 'Create a layer at the top of the stack, or as a sublayer of parentLayer',
+        description: 'Create a layer at the top of the stack, or as a sublayer of parentLayer, with the Layer Options settings (Layers panel menu > New Layer, New Layer with Dialog)',
         inputSchema: {
             type: 'object',
             properties: {
@@ -373,6 +476,7 @@ __result__ = { active: doc.activeLayer.name, layers: out };`)),
                 visible: { type: 'boolean', default: true },
                 locked: { type: 'boolean', default: false },
                 printable: { type: 'boolean', default: true },
+                ...LAYER_OPTIONS,
             },
             required: ['name'],
         },
@@ -385,7 +489,12 @@ __result__ = { active: doc.activeLayer.name, layers: out };`)),
             'illustrator.layers.layer_option.show',
             'illustrator.layers.layer_option.lock',
             'illustrator.layers.layer_option.print',
+            'illustrator.layers.new_layer_dialog',
+            'illustrator.layers.layer_option.color',
+            'illustrator.layers.layer_option.preview',
+            'illustrator.layers.layer_option.dim_images_to',
         ],
+        auditArgs: { color: '#4F80FF' },
         handler: (a) => run('Create layer', script(`
 var parent = ${a.parentLayer ? `__layer(doc, ${str(a.parentLayer)})` : 'doc'};
 var l = parent.layers.add();
@@ -393,11 +502,12 @@ l.name = ${str(a.name)};
 l.visible = ${bool(a.visible ?? true)};
 l.locked = ${bool(a.locked)};
 l.printable = ${bool(a.printable ?? true)};
+${layerOptions(a)}
 __result__ = { name: l.name };`)),
     },
     {
         name: 'set_layer_properties',
-        description: 'Rename a layer, show or hide it, lock it, set whether it prints, its opacity, or move it in the stack',
+        description: 'Rename a layer, show or hide it, lock it, set whether it prints, its opacity, Layer Options (colour, preview, dim images), knockout group, or move it in the stack',
         inputSchema: {
             type: 'object',
             properties: {
@@ -408,6 +518,8 @@ __result__ = { name: l.name };`)),
                 printable: { type: 'boolean' },
                 opacity: { type: 'number', minimum: 0, maximum: 100 },
                 arrange: { type: 'string', enum: ['BRINGTOFRONT', 'BRINGFORWARD', 'SENDBACKWARD', 'SENDTOBACK'] },
+                ...LAYER_OPTIONS,
+                knockout: { type: 'string', enum: Object.keys(KNOCKOUT), description: 'Knockout Group (Transparency panel): whether the layer\'s objects knock each other out' },
             },
             required: ['layer'],
         },
@@ -422,7 +534,12 @@ __result__ = { name: l.name };`)),
             'illustrator.layers.hide_show_layers',
             'illustrator.layers.lock_unlock_layers',
             'illustrator.layers.layer_zorder',
+            'illustrator.layers.layer_option.color',
+            'illustrator.layers.layer_option.preview',
+            'illustrator.layers.layer_option.dim_images_to',
+            'illustrator.layers.layer_knockout',
         ],
+        auditArgs: { color: 'rgb(255,77,77)' },
         handler: (a) => run('Set layer properties', script(`
 var l = __layer(doc, ${str(a.layer)});
 ${a.newName !== undefined ? `l.name = ${str(a.newName)};` : ''}
@@ -431,7 +548,9 @@ ${a.locked !== undefined ? `l.locked = ${bool(a.locked)};` : ''}
 ${a.printable !== undefined ? `l.printable = ${bool(a.printable)};` : ''}
 ${a.opacity !== undefined ? `l.opacity = ${num(a.opacity, { min: 0, max: 100, name: 'opacity' })};` : ''}
 ${a.arrange ? `l.zOrder(ZOrderMethod.${enumOf(a.arrange, ['BRINGTOFRONT', 'BRINGFORWARD', 'SENDBACKWARD', 'SENDTOBACK'], { name: 'arrange' })});` : ''}
-__result__ = { name: l.name, visible: l.visible, locked: l.locked, printable: l.printable, opacity: l.opacity };`)),
+${layerOptions(a)}
+${a.knockout !== undefined ? `l.artworkKnockout = KnockoutState.${KNOCKOUT[enumOf(a.knockout, Object.keys(KNOCKOUT), { name: 'knockout' })]};` : ''}
+__result__ = { name: l.name, visible: l.visible, locked: l.locked, printable: l.printable, opacity: l.opacity, preview: l.preview, dimPlacedImages: l.dimPlacedImages, color: __colorInfo(l.color), knockout: String(l.artworkKnockout).replace("KnockoutState.", "") };`)),
     },
     {
         name: 'set_active_layer',
@@ -457,9 +576,13 @@ __result__ = { deleted: ${str(a.layer)}, itemsRemoved: n };`)),
     },
     {
         name: 'move_items_to_layer',
-        description: 'Move items to the top of another layer',
-        inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, layer: { type: 'string' } }, required: ['target', 'layer'] },
-        features: ['illustrator.layers.move_to_layer'],
+        description: 'Move items to the top of another layer, or of the active layer when layer is omitted (Object > Arrange > Send to Current Layer)',
+        inputSchema: {
+            type: 'object',
+            properties: { target: TARGET_SCHEMA, layer: { type: 'string', description: 'Top-level layer name. Default the active layer' } },
+            required: ['target'],
+        },
+        features: ['illustrator.layers.move_to_layer', 'illustrator.layers.send_to_current_layer'],
         handler: (a) => run('Move items to layer', script(`
 var items = __targets(doc, ${targetSpec(a.target)}), l = __layer(doc, ${str(a.layer)});
 if (l.locked) throw new Error("Layer " + l.name + " is locked");

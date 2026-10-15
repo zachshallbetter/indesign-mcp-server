@@ -9,7 +9,7 @@ import { ARTBOARD_SCHEMA, COLOR_SCHEMA, TARGET_SCHEMA, colorSpec, targetSpec } f
 const JUSTIFICATION = ['LEFT', 'CENTER', 'RIGHT', 'FULLJUSTIFY', 'FULLJUSTIFYLASTLINELEFT', 'FULLJUSTIFYLASTLINECENTER', 'FULLJUSTIFYLASTLINERIGHT'];
 
 /** Style properties every drawing tool accepts. */
-const STYLE_PROPS = {
+export const STYLE_PROPS = {
     fill: { ...COLOR_SCHEMA, description: `Fill. ${COLOR_SCHEMA.description}` },
     stroke: { ...COLOR_SCHEMA, description: `Stroke colour. ${COLOR_SCHEMA.description}` },
     strokeWeight: { type: 'number', minimum: 0, description: 'Stroke weight in points' },
@@ -18,10 +18,10 @@ const STYLE_PROPS = {
     name: { type: 'string', description: 'Name for the new item (shown in the Layers panel)' },
 };
 
-const PLACEMENT_PROPS = { artboardIndex: ARTBOARD_SCHEMA };
+export const PLACEMENT_PROPS = { artboardIndex: ARTBOARD_SCHEMA };
 
 /** JSX statements applying the common style arguments to `it`. */
-function styleStatements(a) {
+export function styleStatements(a) {
     const lines = [];
     if (a.fill !== undefined) {
         const spec = colorSpec(a.fill, 'fill');
@@ -38,7 +38,7 @@ function styleStatements(a) {
 }
 
 /** Body prefix: the target layer and artboard. */
-function placement(a) {
+export function placement(a) {
     return `
 var layer = __layer(doc, ${a.layer ? str(a.layer) : 'null'});
 if (layer.locked || !layer.visible) throw new Error("Layer " + layer.name + " is locked or hidden");
@@ -165,25 +165,45 @@ __result__ = __itemInfo(doc, it);`)),
     },
     {
         name: 'create_line',
-        description: 'Draw a straight line from x1, y1 to x2, y2',
+        description: 'Draw a straight line (Line Segment tool) from x1, y1 to x2, y2, or from x1, y1 with a length and angle as in the tool\'s options dialog. With fill, the line is filled (Fill Line)',
         inputSchema: {
             type: 'object',
-            properties: { ...PLACEMENT_PROPS, x1: { type: 'number' }, y1: { type: 'number' }, x2: { type: 'number' }, y2: { type: 'number' }, ...STYLE_PROPS },
-            required: ['x1', 'y1', 'x2', 'y2'],
+            properties: {
+                ...PLACEMENT_PROPS,
+                x1: { type: 'number' }, y1: { type: 'number' }, x2: { type: 'number' }, y2: { type: 'number' },
+                length: { type: 'number', minimum: 0, description: 'Length in points, instead of x2, y2' },
+                angle: { type: 'number', description: 'With length: degrees counterclockwise from the 3 o\'clock direction. Default 0' },
+                ...STYLE_PROPS,
+            },
+            required: ['x1', 'y1'],
         },
         features: [
             'illustrator.shapes.line_segment_tool',
+            'illustrator.shapes.line_option.length_line_segment',
+            'illustrator.shapes.line_option.angle_line_segment',
+            'illustrator.shapes.line_option.fill_line',
             'illustrator.appearance.fill',
             'illustrator.appearance.stroke',
             'illustrator.appearance.stroke_option.weight',
             'illustrator.appearance.opacity',
         ],
-        handler: (a) => run('Create line', script(`${placement(a)}
+        auditArgs: { x2: undefined, y2: undefined, length: 120, angle: 30 },
+        handler: (a) => {
+            const polar = a.length !== undefined;
+            if (polar && (a.x2 !== undefined || a.y2 !== undefined)) throw new Error('Give either x2, y2 or length (with angle), not both');
+            if (!polar && (a.x2 === undefined || a.y2 === undefined)) throw new Error('Give the end point x2, y2, or a length (and angle)');
+            const end = polar
+                ? `[${num(a.x1, { name: 'x1' })} + len * Math.cos(rad), ${num(a.y1, { name: 'y1' })} - len * Math.sin(rad)]`
+                : `[${num(a.x2, { name: 'x2' })}, ${num(a.y2, { name: 'y2' })}]`;
+            return run('Create line', script(`${placement(a)}
+${polar ? `var len = ${num(a.length, { min: 0, name: 'length' })}, rad = ${num(a.angle ?? 0, { min: -36000, max: 36000, name: 'angle' })} * Math.PI / 180;` : ''}
+var e = ${end};
 var it = layer.pathItems.add();
-it.setEntirePath([${xy(a, 'x1', 'y1')}, ${xy(a, 'x2', 'y2')}]);
+it.setEntirePath([${xy(a, 'x1', 'y1')}, __toDoc(doc, ab, e[0], e[1])]);
 it.filled = false; it.stroked = true;
 ${styleStatements(a)}
-__result__ = __itemInfo(doc, it);`)),
+__result__ = __itemInfo(doc, it);`));
+        },
     },
     {
         name: 'create_path',
