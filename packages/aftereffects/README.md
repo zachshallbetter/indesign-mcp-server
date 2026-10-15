@@ -56,6 +56,7 @@ Network, which file operations need.
 | Layers | `list_layers`, `add_layer` (solid, null, adjustment, text, shape, camera, light, or a project item), `set_layer_properties` (switches, quality, blending mode, label, timing, stretch), `set_transform`, `parent_layers`, `set_track_matte`, `arrange_layers`, `duplicate_layers` (or copy to another composition), `delete_layers` |
 | Animation | `get_property`, `set_property`, `set_keyframes` (interpolation and easing), `remove_keyframes`, `set_expression` |
 | Effects | `list_effects`, `apply_effect` (with property values), `list_layer_effects`, `remove_effects` (or turn off), `apply_preset` (.ffx) |
+| Effect controls | `find_effects` (the effect catalog by category, with each effect's controls and whether it is installed), `set_effect_controls` (apply any effect and set its controls by name, or edit an applied one; keyframes with `time`), `get_effect_controls` (types, values, menu choices, ranges), `organize_effects` (duplicate, reorder, copy to other layers) |
 | Text | `set_text` (Source Text and Character and Paragraph formatting) |
 | Masks | `add_mask` (rectangle, ellipse or path, with mode, feather, opacity, expansion) |
 | 3D | `set_camera_options` (zoom, F-Stop, depth of field, iris, highlights, Point of Interest), `set_light_options` (type, colour, intensity, cone, falloff, shadows, environment source), `set_material_options` (shadows, lights, reflections, transparency; environment layer), `set_geometry_options` (bevel, extrusion, curvature), `set_comp_3d_settings` (3D renderer, Draft 3D), `set_3d_view` (View > Switch 3D View, Reset, Look at, Create Camera from 3D View), `run_camera_command` (focus links, orbit null, stereo rig, cameras and lights from 3D models), `set_camera_tool` |
@@ -96,6 +97,9 @@ npm test         # definitions, argument parsing, protocol, and the static scrip
 npm run audit    # the audit alone, with findings listed
 npm run check    # syntax check
 ```
+
+`src/data/effects.json` is the effect catalog, built from the capability atlas
+with `node scripts/update-effects.js <path to adobe-capability-atlas>`.
 
 The audit checks each generated script against After Effects' scripting object
 model (types-for-adobe, After Effects 26.0). Nothing is validated against After
