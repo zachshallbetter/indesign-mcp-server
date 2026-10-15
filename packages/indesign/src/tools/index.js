@@ -14,6 +14,7 @@ import { tools as xmlTools } from './xml.js';
 import { tools as longDocumentTools } from './long-documents.js';
 import { tools as stylesTools } from './styles.js';
 import { tools as formatsTools } from './formats.js';
+import { tools as colorTools } from './color.js';
 
 /** [area id, tools, help category { name, description }] */
 export const AREAS = [
@@ -27,6 +28,7 @@ export const AREAS = [
     ['long_documents', longDocumentTools, { name: 'Long documents', description: 'Tables of contents, footnotes and endnotes, the index, conditional text, hyperlinks, cross-references, bookmarks, text variables, captions and books' }],
     ['styles', stylesTools, { name: 'Styles & Colors', description: 'Paragraph, character, object, table and cell styles: create, edit, group, apply, clear overrides, nested and GREP styles, load and defaults; swatches and colors' }],
     ['formats', formatsTools, { name: 'Import and export formats', description: 'Export PDF, interactive PDF, EPUB, HTML, JPEG, PNG, EPS and text with every option; place Word, Excel and text with import options; object export options, articles, and library, preflight, swatch and snippet files' }],
+    ['color', colorTools, { name: 'Colour', description: 'Swatches, tints, mixed inks, colour groups, loading and saving swatches, the Ink Manager, gradients, fills and strokes, the eyedropper, colour settings, document profiles, proofing and image colour settings' }],
 ];
 
 /** Every module tool, with its area. */
