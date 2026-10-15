@@ -75,6 +75,12 @@ __result__ = { count: out.length, items: out };`)),
             'aftereffects.footage.format_aep',
             'aftereffects.three_d.three_d_model_import',
             'aftereffects.three_d.three_d_model_formats',
+            'aftereffects.audio.format_mp2',
+            'aftereffects.audio.format_aac',
+            'aftereffects.audio.format_aiff',
+            'aftereffects.audio.format_mp3',
+            'aftereffects.audio.format_wav',
+            'aftereffects.audio.format_asnd',
             'aftereffects.footage.import_adobe_premiere_project',
             // Every other format After Effects imports through ImportOptions.
             'aftereffects.footage.format_pdf',
@@ -240,10 +246,10 @@ __result__ = { saved: proj.file.fsName };`));
     },
     {
         name: 'open_project',
-        description: 'Open an .aep project or an .aet template (which opens as an untitled copy), or start a new empty one. Unsaved changes in the current project are discarded, so save first',
-        inputSchema: { type: 'object', properties: { filePath: { type: 'string', description: 'Absolute .aep, .aepx or .aet path. Omit for a new project' } } },
+        description: 'Open an .aep project, an .aet template (which opens as an untitled copy) or a .mogrt Motion Graphics template as a project, or start a new empty one. Unsaved changes in the current project are discarded, so save first',
+        inputSchema: { type: 'object', properties: { filePath: { type: 'string', description: 'Absolute .aep, .aepx, .aet or .mogrt path. Omit for a new project' } } },
         hints: { destructive: true },
-        features: ['aftereffects.projects.open_project', 'aftereffects.projects.new_project', 'aftereffects.projects.aep_format', 'aftereffects.projects.project_templates'],
+        features: ['aftereffects.projects.open_project', 'aftereffects.projects.new_project', 'aftereffects.projects.aep_format', 'aftereffects.projects.project_templates', 'aftereffects.essential_graphics.open_mogrt_as_project'],
         handler: (a) => {
             if (!a.filePath) return run('New project', script('var p = app.newProject();\n__result__ = { file: null, items: app.project.numItems };'));
             const p = paths.validate(a.filePath);
