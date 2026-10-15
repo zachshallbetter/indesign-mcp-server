@@ -5,10 +5,12 @@
  * category they appear under.
  */
 import { tools as transformTools } from './transform.js';
+import { tools as textFrameTools } from './text-frames.js';
 
 /** [area id, tools, help category { name, description }] */
 export const AREAS = [
     ['transform', transformTools, { name: 'Transformations', description: 'Rotate, flip, scale, shear and align items, and transform them again' }],
+    ['text_frames', textFrameTools, { name: 'Text frames and stories', description: 'Text Frame Options, text wrap, threading, type on a path, notes, track changes, Story Editor and editorial preferences' }],
 ];
 
 /** Every module tool, with its area. */
