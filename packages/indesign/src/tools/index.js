@@ -21,6 +21,11 @@ import { tools as framesTools } from './frames.js';
 import { tools as layoutTools } from './layout.js';
 import { tools as imagesTools } from './images.js';
 import { tools as pathTools } from './paths.js';
+import { tools as documentTools } from './documents.js';
+import { tools as pageTools } from './pages.js';
+import { tools as layerTools } from './layers.js';
+import { tools as selectionTools } from './selection.js';
+import { tools as historyTools } from './history.js';
 
 /** [area id, tools, help category { name, description }] */
 export const AREAS = [
@@ -41,6 +46,11 @@ export const AREAS = [
     ['frames', framesTools, { name: 'Frames and objects', description: 'Frames, shapes and lines; strokes and stroke styles; frame content type; stacking order; frame fitting; anchored objects; object library items; QR codes and math expressions' }],
     ['layout_tools', layoutTools, { name: 'Layout tools', description: 'Liquid, alternate and flex layouts, named grids, frame grids and the layout grid, linked content and the Content Collector, rulers and units, guides, measuring, gaps and accessible context breaks' }],
     ['images', imagesTools, { name: 'Images and links', description: 'Links panel: list, relink, update, embed and unembed links, open and reveal originals, InCopy check-in and check-out; placing images, PDF, InDesign pages, EPS and SVG with import options; image import and object layer options, cropping and moving frame content, contact sheets and the place cursor' }],
+    ['documents', documentTools, { name: 'Documents and windows', description: 'New documents with every New Document option, document presets, Save a Copy, Save All, Revert, Close All, IDML for earlier versions, File Info, window arrangement, and margins and columns' }],
+    ['pages_spreads', pageTools, { name: 'Pages, spreads and parents', description: 'Multi-page and split spreads, hidden spreads, page and spread navigation, Rotate Spread View, page number and section markers, parent page commands, page numbering and ruler views, and the Pages and Layers panels' }],
+    ['layers', layerTools, { name: 'Layers', description: 'Layer Options, Layers panel commands, moving items between layers, and the objects on each layer' }],
+    ['selection', selectionTools, { name: 'Selection and clipboard', description: 'Select commands, selection tools, cut, copy and paste variants, duplicating and Step and Repeat, and clipboard and drag-and-drop preferences' }],
+    ['history', historyTools, { name: 'Undo and history', description: 'Undo, redo, stepping through and listing the document history' }],
 ];
 
 /** Every module tool, with its area. */
