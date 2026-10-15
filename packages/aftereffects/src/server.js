@@ -5,15 +5,19 @@ import { readFileSync } from 'node:fs';
 import { createMcpServer, createAnnotations } from 'adobe-mcp-core';
 import { executor } from './executor.js';
 import { tools as projectTools } from './tools/project.js';
+import { tools as footageTools } from './tools/footage.js';
 import { tools as compTools } from './tools/comps.js';
 import { tools as layerTools } from './tools/layers.js';
 import { tools as animationTools } from './tools/animation.js';
 import { tools as effectTools } from './tools/effects.js';
+import { tools as effectControlTools } from './tools/effect-controls.js';
 import { tools as textTools } from './tools/text.js';
 import { tools as maskTools } from './tools/masks.js';
 import { tools as renderTools } from './tools/render.js';
 import { tools as threeDTools } from './tools/threed.js';
 import { tools as essentialTools } from './tools/essential.js';
+import { tools as trackingTools } from './tools/tracking.js';
+import { tools as colorTools } from './tools/color.js';
 import { tools as utilityTools, helpTool } from './tools/utility.js';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
@@ -37,15 +41,19 @@ help({ tool }) describes any tool's parameters.`;
 
 const AREAS = [
     ['project', projectTools],
+    ['footage', footageTools],
     ['compositions', compTools],
     ['layers', layerTools],
     ['animation', animationTools],
     ['effects', effectTools],
+    ['effect controls', effectControlTools],
     ['text', textTools],
     ['masks', maskTools],
     ['render', renderTools],
     ['three_d', threeDTools],
     ['essential_graphics', essentialTools],
+    ['tracking', trackingTools],
+    ['color', colorTools],
     ['utility', utilityTools],
 ];
 
