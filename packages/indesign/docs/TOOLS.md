@@ -19,7 +19,7 @@
 - [Tables](#tables) (14): [`get_table_info`](#get_table_info), [`set_table_options`](#set_table_options), [`set_cell_options`](#set_cell_options), [`insert_table`](#insert_table), [`insert_table_rows_columns`](#insert_table_rows_columns), [`delete_table_parts`](#delete_table_parts), [`edit_table_cells`](#edit_table_cells), [`resize_table_rows_columns`](#resize_table_rows_columns), [`convert_text_to_table`](#convert_text_to_table), [`convert_table_to_text`](#convert_table_to_text), [`copy_table_cells`](#copy_table_cells), [`select_table_part`](#select_table_part), [`run_table_command`](#run_table_command), [`place_spreadsheet_table`](#place_spreadsheet_table)
 - [Paragraph formatting](#paragraph) (3): [`set_paragraph_formatting`](#set_paragraph_formatting), [`get_paragraph_formatting`](#get_paragraph_formatting), [`set_underline_and_strikethrough`](#set_underline_and_strikethrough)
 - [Effects and transparency](#effects) (7): [`set_item_effects`](#set_item_effects), [`get_item_effects`](#get_item_effects), [`clear_item_effects`](#clear_item_effects), [`set_transparency_preferences`](#set_transparency_preferences), [`get_transparency_settings`](#get_transparency_settings), [`manage_flattener_preset`](#manage_flattener_preset), [`set_spread_flattening`](#set_spread_flattening)
-- [Long documents](#long_documents) (21): [`define_toc_style`](#define_toc_style), [`create_toc`](#create_toc), [`set_note_options`](#set_note_options), [`insert_note`](#insert_note), [`manage_notes`](#manage_notes), [`manage_index`](#manage_index), [`generate_index`](#generate_index), [`manage_conditions`](#manage_conditions), [`apply_conditions`](#apply_conditions), [`manage_cross_reference_formats`](#manage_cross_reference_formats), [`insert_cross_reference`](#insert_cross_reference), [`manage_hyperlinks`](#manage_hyperlinks), [`manage_bookmarks`](#manage_bookmarks), [`define_text_variable`](#define_text_variable), [`insert_text_variable`](#insert_text_variable), [`convert_text_variables`](#convert_text_variables), [`generate_captions`](#generate_captions), [`manage_book_contents`](#manage_book_contents), [`set_chapter_numbering`](#set_chapter_numbering), [`invoke_long_document_command`](#invoke_long_document_command), [`get_long_document_info`](#get_long_document_info)
+- [Long documents](#long_documents) (21): [`define_toc_style`](#define_toc_style), [`create_toc`](#create_toc), [`set_note_options`](#set_note_options), [`insert_note`](#insert_note), [`manage_footnotes`](#manage_footnotes), [`manage_index`](#manage_index), [`generate_index`](#generate_index), [`manage_conditions`](#manage_conditions), [`apply_conditions`](#apply_conditions), [`manage_cross_reference_formats`](#manage_cross_reference_formats), [`insert_cross_reference`](#insert_cross_reference), [`manage_hyperlinks`](#manage_hyperlinks), [`manage_bookmarks`](#manage_bookmarks), [`define_text_variable`](#define_text_variable), [`insert_text_variable`](#insert_text_variable), [`convert_text_variables`](#convert_text_variables), [`generate_captions`](#generate_captions), [`manage_book_contents`](#manage_book_contents), [`set_chapter_numbering`](#set_chapter_numbering), [`invoke_long_document_command`](#invoke_long_document_command), [`get_long_document_info`](#get_long_document_info)
 - [Import and export formats](#formats) (13): [`export_pdf_with_options`](#export_pdf_with_options), [`manage_pdf_export_presets`](#manage_pdf_export_presets), [`background_exports`](#background_exports), [`export_interactive_pdf`](#export_interactive_pdf), [`export_epub_with_options`](#export_epub_with_options), [`manage_epub_viewing_apps`](#manage_epub_viewing_apps), [`export_html`](#export_html), [`place_with_import_options`](#place_with_import_options), [`export_story`](#export_story), [`set_object_export_options`](#set_object_export_options), [`manage_articles`](#manage_articles), [`export_image_file`](#export_image_file), [`transfer_resource_file`](#transfer_resource_file)
 
 ## Documents & Books
@@ -2067,16 +2067,23 @@ Read the text wrap of page items: wrap type, invert, offsets, wrap to, contour o
 
 ### `manage_notes`
 
-Work with existing footnotes and endnotes: convert footnotes to endnotes or back (Type > Convert Footnote and Endnote), turn footnotes into ordinary text, delete notes, or go to a note's reference or text (Go to Footnote Reference / Go to Endnote Reference). Note ids come from get_long_document_info.
+Work with notes (Type > Notes, Notes panel, Note tool): add a note at a text position, list notes with author and dates, convert text to a note or a note to text, split a note, expand or collapse notes, remove notes from a story or the document, go to the next, previous, first or last note, or invoke Notes Mode at a text position
 
 ***destructive***
 
 | Parameter | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
-| `action` | `convert_to_endnotes`, `convert_to_footnotes`, `convert_to_text`, `delete`, `show_reference`, `show_text` | yes |  | What to do. Conversions move each note's plain text (local formatting is not kept) and keep its reference position |
-| `kind` | `footnote`, `endnote` |  |  | Which notes delete, show_reference and show_text act on |
-| `ids` | array of integer |  |  | Note ids; for conversions and delete, absent means every note in scope |
-| `storyId` | integer |  |  | Limit to the notes of one story |
+| `action` | `add`, `list`, `convert_text_to_note`, `convert_to_text`, `split`, `set_collapsed`, `remove`, `select`, `notes_mode` | yes |  | add \| list \| convert_text_to_note \| convert_to_text \| split \| set_collapsed \| remove \| select (go to a note) \| notes_mode |
+| `story` | object |  |  | Which story: frameId (any text frame of the story), storyId (from get_document_stories), or selection: true (the story of the selected text or text frame) |
+| `position` | integer |  |  | Character position in the story (add, notes_mode); defaults to the selection's insertion point, else the end of the story |
+| `text` | string |  |  | Note text (add) |
+| `start` | integer |  |  | First character of the text to convert (convert_text_to_note) |
+| `length` | integer |  |  | Number of characters to convert (convert_text_to_note) |
+| `noteIds` | array of integer |  |  | Note ids from list (convert_to_text, split, set_collapsed, remove, select) |
+| `splitAt` | integer |  |  | Character in the note text where the second note begins (split) |
+| `collapsed` | boolean |  |  | Collapse (true) or expand (false) the notes in Story Editor (set_collapsed); without noteIds, every note in the story |
+| `which` | `next`, `previous`, `first`, `last` |  |  | select: the note after or before the selection, or the first or last note of the story |
+| `all` | boolean |  |  | remove: every note in the document (Remove All Notes) |
 
 ### `manage_tracked_changes`
 
@@ -2633,6 +2640,19 @@ Insert a footnote or an endnote at a point in text, with its text (Type > Insert
 | `kind` | `footnote`, `endnote` | yes |  | Footnote (at the bottom of the column) or endnote (collected at the end) |
 | `at` | object | yes |  | Where the reference goes: after the chosen text unless before is true |
 | `text` | string |  |  | The note text |
+
+### `manage_footnotes`
+
+Work with existing footnotes and endnotes: convert footnotes to endnotes or back (Type > Convert Footnote and Endnote), turn footnotes into ordinary text, delete notes, or go to a note's reference or text (Go to Footnote Reference / Go to Endnote Reference). Note ids come from get_long_document_info.
+
+***destructive***
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `action` | `convert_to_endnotes`, `convert_to_footnotes`, `convert_to_text`, `delete`, `show_reference`, `show_text` | yes |  | What to do. Conversions move each note's plain text (local formatting is not kept) and keep its reference position |
+| `kind` | `footnote`, `endnote` |  |  | Which notes delete, show_reference and show_text act on |
+| `ids` | array of integer |  |  | Note ids; for conversions and delete, absent means every note in scope |
+| `storyId` | integer |  |  | Limit to the notes of one story |
 
 ### `manage_index`
 

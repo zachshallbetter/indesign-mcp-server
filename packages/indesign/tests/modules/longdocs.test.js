@@ -120,14 +120,14 @@ await test('set_note_options refuses empty calls and bad values', () => {
     refuses('set_note_options', { endnotes: { prefix: 3 } }, /must be a string/);
 });
 
-await test('manage_notes: conversions, delete, go to reference and text', async () => {
+await test('manage_footnotes: conversions, delete, go to reference and text', async () => {
     const [toEnd, toFoot, toText, del, ref, txt] = await scriptsFor([
-        ['manage_notes', { action: 'convert_to_endnotes' }],
-        ['manage_notes', { action: 'convert_to_footnotes', ids: [4, 5], storyId: 9 }],
-        ['manage_notes', { action: 'convert_to_text', ids: [4] }],
-        ['manage_notes', { action: 'delete', kind: 'endnote', ids: [8] }],
-        ['manage_notes', { action: 'show_reference', kind: 'endnote', ids: [8] }],
-        ['manage_notes', { action: 'show_text', kind: 'footnote', ids: [4] }],
+        ['manage_footnotes', { action: 'convert_to_endnotes' }],
+        ['manage_footnotes', { action: 'convert_to_footnotes', ids: [4, 5], storyId: 9 }],
+        ['manage_footnotes', { action: 'convert_to_text', ids: [4] }],
+        ['manage_footnotes', { action: 'delete', kind: 'endnote', ids: [8] }],
+        ['manage_footnotes', { action: 'show_reference', kind: 'endnote', ids: [8] }],
+        ['manage_footnotes', { action: 'show_text', kind: 'footnote', ids: [4] }],
     ]);
     assert.match(toEnd, /var notes = stories\[s\]\.footnotes;/);
     assert.match(toEnd, /var made = ip\.createEndnote\(\);/);
@@ -142,10 +142,10 @@ await test('manage_notes: conversions, delete, go to reference and text', async 
     assert.match(del, /n\.deleteEndnote\(\);/);
     assert.match(ref, /n\.storyOffset\.showText\(\);/);
     assert.match(txt, /n\.texts\[0\]\.showText\(\);/);
-    refuses('manage_notes', { action: 'show_text', kind: 'footnote' }, /exactly one note id/);
-    refuses('manage_notes', { action: 'delete', kind: 'footnote' }, /needs 'ids' or 'storyId'/);
-    refuses('manage_notes', { action: 'delete', ids: [1] }, /'kind'/);
-    refuses('manage_notes', { action: 'convert_to_text', ids: [] }, /must list note ids/);
+    refuses('manage_footnotes', { action: 'show_text', kind: 'footnote' }, /exactly one note id/);
+    refuses('manage_footnotes', { action: 'delete', kind: 'footnote' }, /needs 'ids' or 'storyId'/);
+    refuses('manage_footnotes', { action: 'delete', ids: [1] }, /'kind'/);
+    refuses('manage_footnotes', { action: 'convert_to_text', ids: [] }, /must list note ids/);
 });
 
 await test('manage_index: topics, page references, quick and proper-name entries, cross-references', async () => {

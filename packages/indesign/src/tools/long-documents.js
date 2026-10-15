@@ -789,7 +789,7 @@ __result__ = { kind: "${kind}", id: note.id, storyId: ip.parentStory.id, page: _
         },
     },
     {
-        name: 'manage_notes',
+        name: 'manage_footnotes',
         description: 'Work with existing footnotes and endnotes: convert footnotes to endnotes or back (Type > Convert Footnote and Endnote), turn footnotes into ordinary text, delete notes, or go to a note\'s reference or text (Go to Footnote Reference / Go to Endnote Reference). Note ids come from get_long_document_info.',
         inputSchema: {
             type: 'object',
