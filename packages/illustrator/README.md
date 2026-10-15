@@ -62,6 +62,9 @@ Settings > Privacy & Security > Automation).
 | Combining | `make_clipping_mask`, `make_compound_path`, `pathfinder` |
 | Paths | `path_operation` (outline stroke, join, add anchor points, reverse direction, divide objects below, release compound path, make pixel perfect, expand appearance), `average_points` (and join), `clean_up`, `split_into_grid`, `split_path`, `set_path_options` (fill rule, guides, pixel alignment), `get_path_info` (area, length, anchors) |
 | Effects | `apply_effect` (drop shadow, offset path, round corners, roughen, transform, Gaussian blur) |
+| 3D | `apply_3d_effect` (extrude, revolve, inflate, rotate: the 3D and Materials effect or 3D Classic with rotation, perspective and surface) |
+| Brushes | `list_brushes`, `apply_brush` (and expand to outlines), `import_brushes` (from a library file), `save_brush_library`, `open_brush_library` |
+| Perspective grid | `set_perspective_grid` (presets, show or hide, active plane, match plane to object, View menu toggles), `attach_to_perspective`, `release_perspective`, `import_perspective_presets`, `export_perspective_presets` |
 | Blends | `make_blend`, `set_blend_options` (steps, orientation), `release_blend`, `expand_blend`, `reverse_blend` |
 | Preferences and tools | `get_preferences`, `set_preferences`, `select_tool` |
 | Placing and export | `place_image`, `export_png`, `export_jpeg`, `export_svg` (Save As SVG), `export_web_svg` (Export As SVG: styling, IDs, minify, responsive), `export_for_screens`, `export_pdf` (preset plus PDF/X, bleed, marks, colour conversion, output intent, Acrobat layers) |
