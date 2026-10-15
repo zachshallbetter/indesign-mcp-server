@@ -5,10 +5,12 @@
  * category they appear under.
  */
 import { tools as transformTools } from './transform.js';
+import { tools as effectsTools } from './effects.js';
 
 /** [area id, tools, help category { name, description }] */
 export const AREAS = [
     ['transform', transformTools, { name: 'Transformations', description: 'Rotate, flip, scale, shear and align items, and transform them again' }],
+    ['effects', effectsTools, { name: 'Effects and transparency', description: 'Opacity, blending and effects on items, global light, blend space and transparency flattening' }],
 ];
 
 /** Every module tool, with its area. */
