@@ -18,20 +18,6 @@ function __select(doc, items) {
   for (var i = 0; i < items.length; i++) items[i].selected = true;
 }`;
 
-/** The same pathfinder commands Illustrator's Pathfinder panel runs, then expanded. */
-const PATHFINDER = {
-    unite: 'Live Pathfinder Add',
-    minus_front: 'Live Pathfinder Subtract',
-    intersect: 'Live Pathfinder Intersect',
-    exclude: 'Live Pathfinder Exclude',
-    divide: 'Live Pathfinder Divide',
-    trim: 'Live Pathfinder Trim',
-    merge: 'Live Pathfinder Merge',
-    crop: 'Live Pathfinder Crop',
-    outline: 'Live Pathfinder Outline',
-    minus_back: 'Live Pathfinder Minus Back',
-};
-
 export const tools = [
     {
         name: 'list_items',
@@ -304,29 +290,5 @@ var sel = doc.selection;
 if (!sel || sel.length !== 1 || sel[0].typename !== "CompoundPathItem") throw new Error("Illustrator did not make a compound path from these items");
 __result__ = __itemInfo(doc, sel[0]);`)),
     },
-    {
-        name: 'pathfinder',
-        description: 'Combine shapes as the Pathfinder panel does (unite, minus front, intersect, exclude, divide, trim, merge, crop, outline, minus back), then expand the result to plain paths',
-        inputSchema: {
-            type: 'object',
-            properties: {
-                target: TARGET_SCHEMA,
-                operation: { type: 'string', enum: Object.keys(PATHFINDER) },
-                expand: { type: 'boolean', description: 'Expand the live result to plain paths. Default true', default: true },
-            },
-            required: ['target', 'operation'],
-        },
-        features: ['illustrator.geometry.pathfinder_panel'],
-        menuCommands: Object.values(PATHFINDER).concat('expandStyle'),
-        handler: (a) => run('Pathfinder', script(`${SELECT}
-var items = __targets(doc, ${targetSpec(a.target)});
-if (items.length < 2 && ${str(a.operation)} !== "divide" && ${str(a.operation)} !== "outline") throw new Error("Pathfinder needs at least two items");
-__select(doc, items);
-app.executeMenuCommand(${str(PATHFINDER[enumOf(a.operation, Object.keys(PATHFINDER), { name: 'operation' })])});
-${(a.expand ?? true) ? 'app.executeMenuCommand("expandStyle");' : ''}
-var sel = doc.selection, out = [];
-if (!sel || !sel.length) throw new Error("Pathfinder produced no selection; the items may not overlap");
-for (var i = 0; i < sel.length; i++) out.push(__itemInfo(doc, sel[i]));
-__result__ = { operation: ${str(a.operation)}, result: out };`)),
-    },
+
 ];

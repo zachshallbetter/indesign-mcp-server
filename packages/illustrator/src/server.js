@@ -9,6 +9,7 @@ import { tools as artworkTools } from './tools/artwork.js';
 import { tools as appearanceTools } from './tools/appearance.js';
 import { tools as arrangeTools } from './tools/arrange.js';
 import { tools as outputTools } from './tools/output.js';
+import { tools as effectTools } from './tools/effects.js';
 import { tools as utilityTools, helpTool } from './tools/utility.js';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
@@ -36,6 +37,7 @@ const AREAS = [
     ['artwork', artworkTools],
     ['appearance', appearanceTools],
     ['arrange', arrangeTools],
+    ['effects', effectTools],
     ['output', outputTools],
     ['utility', utilityTools],
 ];
@@ -48,17 +50,17 @@ toolTable.push(help);
 const annotations = createAnnotations({
     readOnly: [
         'help', 'illustrator_status', 'find_menu_commands', 'get_document_info', 'list_documents', 'list_artboards',
-        'list_layers', 'list_items', 'get_selection', 'get_appearance', 'list_swatches', 'list_fonts',
+        'list_layers', 'list_items', 'get_selection', 'get_appearance', 'list_swatches', 'list_fonts', 'get_preferences',
     ],
     destructive: [
         'close_document', 'delete_artboard', 'delete_layer', 'delete_items', 'set_text_contents',
         'convert_text_to_outlines', 'ungroup_items', 'pathfinder', 'make_compound_path', 'execute_illustrator_code',
-        'execute_menu_command', 'save_document',
+        'execute_menu_command', 'save_document', 'set_preferences',
     ],
     idempotent: [
         'save_document', 'set_artboard', 'set_active_artboard', 'set_active_layer', 'set_layer_properties',
         'select_items', 'deselect_all', 'set_fill', 'set_stroke', 'set_opacity', 'set_text_style', 'set_text_contents',
-        'arrange_items', 'align_items', 'export_png', 'export_svg', 'export_for_screens', 'export_pdf', 'move_items_to_layer',
+        'arrange_items', 'align_items', 'set_preferences', 'select_tool', 'export_png', 'export_svg', 'export_for_screens', 'export_pdf', 'move_items_to_layer',
     ],
     words: { svg: 'SVG', png: 'PNG', pdf: 'PDF', illustrator: 'Illustrator' },
 });

@@ -157,7 +157,9 @@ test('copying named swatches that do not exist is an error', async () => {
 });
 
 test('an MCP client sees the chosen apps', async () => {
-    for (const [apps, expect] of [['illustrator', 64], ['indesign,illustrator', 203]]) {
+    const { app: ai } = await import('adobe-mcp-illustrator');
+    const { app: id } = await import('adobe-mcp-indesign');
+    for (const [apps, expect] of [['illustrator', ai.tools.length], ['indesign,illustrator', ai.tools.length + id.tools.length + 2]]) {
         const client = new Client({ name: 'test', version: '0' });
         await client.connect(new StdioClientTransport({ command: process.execPath, args: [new URL('../src/index.js', import.meta.url).pathname, '--apps', apps] }));
         try {
