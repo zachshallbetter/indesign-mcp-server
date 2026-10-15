@@ -7,10 +7,11 @@ import { script, WRITTEN_FN } from '../script.js';
 import { run } from '../executor.js';
 import { ARTBOARD_SCHEMA, artboardRange } from '../args.js';
 import { paths } from './documents.js';
+import { SCREEN_ADVANCED_SCHEMA, screenAdvanced, screenScales, screenItem } from './assets.js';
 
 const RANGE_SCHEMA = { type: 'string', description: 'Artboards to export, 1-based like Illustrator: "1", "1-3,5". Default all' };
 
-const SCREEN_FORMATS = { png: 'SE_PNG24', png8: 'SE_PNG8', jpg: 'SE_JPEG80', jpg100: 'SE_JPEG100', jpg50: 'SE_JPEG50', svg: 'SE_SVG', pdf: 'SE_PDF' };
+const SCREEN_FORMATS = { png: 'SE_PNG24', png8: 'SE_PNG8', jpg: 'SE_JPEG80', jpg100: 'SE_JPEG100', jpg50: 'SE_JPEG50', jpg20: 'SE_JPEG20', svg: 'SE_SVG', pdf: 'SE_PDF' };
 
 /** Export As > SVG choices, by the names the dialog uses. */
 const SVG_STYLING = { internal_css: 'STYLEELEMENTS', inline_style: 'STYLEATTRIBUTES', presentation_attributes: 'PRESENTATIONATTRIBUTES', entities: 'ENTITIES' };
@@ -292,15 +293,20 @@ __result__ = { files: __written(target.parent, "*.svg", since), artboards: ${str
     },
     {
         name: 'export_for_screens',
-        description: 'Export artboards in several formats and scales in one pass (File > Export > Export for Screens). Scales apply to PNG and JPEG',
+        description: 'Export artboards, collected assets (list_assets) and the full document in several formats and scales in one pass (File > Export > Export for Screens, and the Asset Export panel). Scales apply to PNG and JPEG',
         inputSchema: {
             type: 'object',
             properties: {
                 outputFolder: { type: 'string', description: 'Absolute folder path' },
                 formats: { type: 'array', items: { type: 'string', enum: Object.keys(SCREEN_FORMATS) }, default: ['png'] },
-                scales: { type: 'array', items: { type: 'number', minimum: 0.1, maximum: 10 }, description: 'Scale factors, e.g. [1, 2, 3]. Default [1]' },
-                artboards: RANGE_SCHEMA,
+                scales: { type: 'array', items: { type: 'number', minimum: 0.1 }, description: 'One export per value (Add Scale), e.g. [1, 2, 3]. Default [1]' },
+                scaleBy: { type: 'string', enum: ['factor', 'width', 'height', 'resolution'], description: 'What scales mean: factor (2 = 2x, default), width or height in pixels, or resolution in ppi' },
+                artboards: { ...RANGE_SCHEMA, description: 'Artboards to export, 1-based: "1", "1-3,5". Default all, or none when assets or fullDocument are given' },
+                assets: { type: 'array', items: { type: 'integer', minimum: 0 }, description: 'Asset ids to export (list_assets, collect_assets)' },
+                fullDocument: { type: 'boolean', description: 'Also export the whole document as one file. Default false' },
                 prefix: { type: 'string', description: 'File name prefix' },
+                advanced: SCREEN_ADVANCED_SCHEMA,
+                openFolder: { type: 'boolean', description: 'Open the folder when the export finishes. Default false' },
             },
             required: ['outputFolder'],
         },
@@ -312,39 +318,54 @@ __result__ = { files: __written(target.parent, "*.svg", since), artboards: ${str
             'illustrator.asset_export.efs_option.scale',
             'illustrator.asset_export.efs_option.prefix',
             'illustrator.asset_export.efs_option.export_to',
+            'illustrator.asset_export.efs_option.assets',
+            'illustrator.asset_export.efs_option.full_document',
+            'illustrator.asset_export.efs_option.add_scale',
+            'illustrator.asset_export.efs_option.advanced_settings',
+            'illustrator.asset_export.efs_option.open_location_after_export',
+            'illustrator.asset_export.asset_panel_option.export_settings',
             'illustrator.import_export.screens_png',
             'illustrator.import_export.screens_jpg',
             'illustrator.import_export.screens_svg',
             'illustrator.import_export.screens_pdf',
         ],
+        auditArgs: {
+            artboards: '1', scales: [1, 2], formats: ['png', 'png8', 'jpg', 'svg', 'pdf'],
+            advanced: {
+                png: { antiAliasing: 'art', transparency: true }, png8: { colors: 64 }, jpeg: { compression: 'progressive', scans: 3, embedProfile: true },
+                svg: { styling: 'inline_style', fonts: 'outlines', images: 'link', objectIds: 'minimal', decimals: 2, minify: true, responsive: true }, pdf: { preset: '[Smallest File Size]' },
+            },
+        },
         handler: (a) => {
             const folder = paths.validate(a.outputFolder);
             const formats = (a.formats ?? ['png']).map((f) => SCREEN_FORMATS[enumOf(f, Object.keys(SCREEN_FORMATS), { name: 'formats' })]);
-            const scales = (a.scales ?? [1]).map((s) => Number(num(s, { min: 0.1, max: 10, name: 'scales' })));
+            const scale = screenScales(a);
             const range = artboardRange(a.artboards);
             return run('Export for screens', script(`
 var folder = new Folder(${jsxPath(folder)});
 if (!folder.exists && !folder.create()) throw new Error("Cannot create " + folder.fsName);
-var item = new ExportForScreensItemToExport();
-item.artboards = ${str(range || 'all')};
-item.document = false;
-var formats = ${json(formats)}, scales = ${json(scales)}, runs = 0;
+${screenItem(a, range)}
+${screenAdvanced(a.advanced)}
+var formats = ${json(formats)}, scales = ${json(scale.values)}, tags = ${json(scale.tags)}, runs = 0;
 for (var f = 0; f < formats.length; f++) {
   var type = ExportForScreensType[formats[f]], opts = null;
   var scaled = formats[f] === "SE_PNG24" || formats[f] === "SE_PNG8" || formats[f].indexOf("SE_JPEG") === 0;
   var passes = scaled ? scales : [1];
   for (var s = 0; s < passes.length; s++) {
-    if (formats[f] === "SE_PNG24") { opts = new ExportForScreensOptionsPNG24(); opts.scaleType = ExportForScreensScaleType.SCALEBYFACTOR; opts.scaleTypeValue = passes[s]; }
-    else if (formats[f] === "SE_PNG8") { opts = new ExportForScreensOptionsPNG8(); opts.scaleType = ExportForScreensScaleType.SCALEBYFACTOR; opts.scaleTypeValue = passes[s]; }
-    else if (formats[f].indexOf("SE_JPEG") === 0) { opts = new ExportForScreensOptionsJPEG(); opts.scaleType = ExportForScreensScaleType.SCALEBYFACTOR; opts.scaleTypeValue = passes[s]; }
-    else if (formats[f] === "SE_SVG") { opts = new ExportForScreensOptionsWebOptimizedSVG(); }
-    else { opts = new ExportForScreensPDFOptions(); }
-    var prefix = ${a.prefix ? str(a.prefix) : '""'} + (passes.length > 1 ? "@" + passes[s] + "x-" : "");
+    if (formats[f] === "SE_PNG24") opts = new ExportForScreensOptionsPNG24();
+    else if (formats[f] === "SE_PNG8") opts = new ExportForScreensOptionsPNG8();
+    else if (formats[f].indexOf("SE_JPEG") === 0) opts = new ExportForScreensOptionsJPEG();
+    else if (formats[f] === "SE_SVG") opts = new ExportForScreensOptionsWebOptimizedSVG();
+    else opts = new ExportForScreensPDFOptions();
+    if (scaled) { opts.scaleType = ExportForScreensScaleType.${scale.type}; opts.scaleTypeValue = passes[s]; }
+    __advanced(formats[f], opts);
+    var prefix = ${a.prefix ? str(a.prefix) : '""'} + (scaled && passes.length > 1 ? tags[s] : "");
     doc.exportForScreens(folder, type, opts, item, prefix);
     runs++;
   }
 }
-__result__ = { folder: folder.fsName, exports: runs, formats: ${json(a.formats ?? ['png'])}, scales: scales };`));
+${a.openFolder ? 'folder.execute();' : ''}
+__result__ = { folder: folder.fsName, exports: runs, formats: ${json(a.formats ?? ['png'])}, scales: scales, scaleBy: ${str(a.scaleBy ?? 'factor')}, artboards: item.artboards, assets: assetIds, fullDocument: item.document };`));
         },
     },
     {

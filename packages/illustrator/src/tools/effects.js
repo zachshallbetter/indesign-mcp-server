@@ -274,7 +274,7 @@ __result__ = { updated: ${json(entries.map(([n]) => n))} };`, { needsDocument: f
         name: 'select_tool',
         description: 'Switch Illustrator to a tool, ready for the user to draw with it. Name it as Illustrator does, e.g. "Pen Tool", "Shape Builder Tool", "Width Tool"',
         inputSchema: { type: 'object', properties: { tool: { type: 'string', description: 'Tool name' } }, required: ['tool'] },
-        features: ['illustrator.ui.toolbar'],
+        features: ['illustrator.ui.toolbar', 'illustrator.asset_export.slice_tool', 'illustrator.asset_export.slice_selection_tool'],
         handler: (a) => {
             const want = String(a.tool ?? '').toLowerCase().replace(/^adobe\s+/, '').replace(/\s+tool$/, '').trim();
             const match = TOOLS.find((t) => t.toLowerCase().replace(/^adobe\s+/, '').replace(/\s+tool$/, '') === want);
