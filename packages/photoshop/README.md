@@ -63,6 +63,10 @@ Settings > Privacy & Security > Automation).
 | Export | `export_image` (Save for Web: PNG, PNG-8, JPEG, GIF, optionally resized), `export_layers` (one file per layer or group), `quick_export` (the document or chosen layers), `export_layer_comps` (to files or one PDF), `export_paths_to_illustrator`, `make_pdf_presentation` (multi-page PDF or slideshow), `generate_image_assets` (Generator asset layer names, defaults layer, on or off) |
 | Print | `get_print_options`, `set_print_options` (printer, copies, colour handling and separations, print space, position and scale, marks, functions), `print_image` (with the settings, or one copy), `apply_trap` |
 | History | `list_history`, `undo` (back, forward, or to a state), `make_snapshot` |
+| Application | `get_photoshop_info` (version, memory, System Info, file types, feature checks), `get_photoshop_preferences`, `set_photoshop_preferences` (general, interface and colour theme, file handling, performance, cursors, transparency, units and rulers, guides and grid, plug-ins, type, script dialogs), `purge_photoshop_caches`, `run_photoshop_command` (beep, bring to front, refresh, hide, Help, account), `run_photoshop_menu_item`, `manage_script_options` (values kept between sessions), `quit_photoshop` |
+| Interface | `arrange_photoshop_windows` (tile, 2-up to 6-up, tabs, float, match zoom and location), `set_zoom_and_screen_mode`, `toggle_view_extras` (extras, show items, rulers, snapping, locks), `show_photoshop_panels` (show or hide panels, Essentials workspace, Histogram and Info panel options), `select_view_tool`, `edit_photoshop_guides` (add, guide layout, from shape, clear guides or slices) |
+| Camera Raw | `open_raw_file` (Camera Raw settings and workflow options), `apply_camera_raw_settings` (Camera Raw Filter), `apply_neural_filter` (Depth Blur, Style Transfer), `replace_sky`, `remove_background` |
+| Generative | `generative_fill`, `generate_image`, `harmonize_layer` (need an Adobe account and an internet connection; use generative credits) |
 | Utility | `photoshop_status`, `play_action`, `execute_photoshop_code`, `help` |
 
 `help({ tool })` describes any tool's parameters.

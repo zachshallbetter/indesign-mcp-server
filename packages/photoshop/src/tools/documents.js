@@ -468,7 +468,7 @@ __result__ = __docInfo(d);`)),
             properties: { name: { type: 'string' }, index: { type: 'integer', minimum: 0 } },
         },
         hints: { idempotent: true },
-        features: ['photoshop.documents.documents_collection', 'photoshop.ui.cycle_documents'],
+        features: ['photoshop.documents.documents_collection', 'photoshop.ui.cycle_documents', 'photoshop.ui.document_window'],
         handler: (a) => {
             if ((a.name === undefined) === (a.index === undefined)) throw new Error('Give name or index');
             return run('Set active document', script(a.name !== undefined ? `
