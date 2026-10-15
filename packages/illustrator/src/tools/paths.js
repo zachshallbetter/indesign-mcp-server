@@ -273,7 +273,7 @@ __result__ = { paths: results };`)),
     },
     {
         name: 'set_path_options',
-        description: 'Set path attributes on paths (inside groups and compound paths too): even-odd or non-zero fill rule, closed or open, make or release guides, and align to pixel grid',
+        description: 'Set path attributes on paths (inside groups and compound paths too): even-odd or non-zero fill rule, closed or open, make or release guides, and align to pixel grid (Transform panel)',
         inputSchema: {
             type: 'object',
             properties: {
@@ -285,7 +285,7 @@ __result__ = { paths: results };`)),
             },
             required: ['target'],
         },
-        features: ['illustrator.geometry.path_fill_rule', 'illustrator.geometry.guides_from_paths', 'illustrator.geometry.pixel_align'],
+        features: ['illustrator.geometry.path_fill_rule', 'illustrator.geometry.guides_from_paths', 'illustrator.geometry.pixel_align', 'illustrator.transformations.transform_panel_option.align_to_pixel_grid'],
         handler: (a) => {
             const lines = [];
             if (a.evenOdd !== undefined) lines.push(`p.evenodd = ${bool(a.evenOdd)};`);
