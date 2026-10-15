@@ -41,7 +41,22 @@ const ALLOWED_NAMES = new Set([
     // __targets(spec) reads ids, names and selection; __swatch(spec) reads kind, name and v.
     'kind', 'v', 'ids', 'names',
     // The prelude is in every module script, also where no target literal declares those keys.
+    // Members added after 2023, which the 2023 typings lack (InDesign 2025 and 2026 object models):
+    // math objects (20.0) and the EPUB math export preference (21.0).
+    'mathObjects', 'mathmlDescription', 'appliedMathMLFontSize', 'appliedMathMLSwatch', 'preferMathMLInEpubExport',
 ]);
+// Object-model names added after InDesign 2023, which the 2023 typings lack.
+// Each is in the InDesign 2026 (21.0) object model; scripts using them check
+// app.version first. Flex layout: FlexObject, FlexObjects and their enums.
+const LATER_NAMES = new Set([
+    'flexObjects', 'addFlexObject', 'flexDirection', 'flexWrap', 'alignItems', 'alignContent', 'justifyContent',
+    'flexGapRow', 'flexGapColumn', 'flexPaddingTop', 'flexPaddingBottom', 'flexPaddingLeft', 'flexPaddingRight',
+    'flexWidthMode', 'flexHeightMode', 'flexItemWidthMode', 'flexItemHeightMode',
+    'FLEX_ROW', 'FLEX_ROW_REVERSE', 'FLEX_COLUMN', 'FLEX_COLUMN_REVERSE', 'NO_WRAP', 'WRAP', 'WRAP_REVERSE',
+    'FLEX_START', 'FLEX_CENTER', 'FLEX_END', 'FLEX_SPACE_BETWEEN', 'FLEX_SPACE_AROUND', 'FLEX_SPACE_EVENLY',
+    'FLEX_FIXED', 'FLEX_FILL', 'FLEX_AUTO',
+]);
+const LATER_GLOBALS = new Set(['FlexDirection', 'FlexWrap', 'FlexPosition', 'FlexSpacing', 'FlexWidthHeightMode', 'FlexEnum']);
 const ALLOWED_GLOBALS = new Set([
     'undefined', 'NaN', 'Infinity', 'Math', 'String', 'Number', 'Array', 'Object', 'Date', 'RegExp', 'Error',
     'parseInt', 'parseFloat', 'isNaN', 'isFinite', 'Boolean', 'Function', 'encodeURI', 'decodeURI',
@@ -57,8 +72,8 @@ const NO_SCRIPT_TOOLS = new Set(['help', 'indesign_status', 'get_session_info', 
 function loadTypings() {
     const files = ['InDesign/2023/index.d.ts', 'shared/JavaScript.d.ts', 'shared/global.d.ts', 'shared/ScriptUI.d.ts'];
     const dts = files.map((f) => readFileSync(path.join(typesRoot, f), 'utf8')).join('\n');
-    const members = new Set(ALLOWED_NAMES);
-    const globals = new Set(ALLOWED_GLOBALS);
+    const members = new Set([...ALLOWED_NAMES, ...LATER_NAMES]);
+    const globals = new Set([...ALLOWED_GLOBALS, ...LATER_GLOBALS]);
     for (const m of dts.matchAll(/^\s*(?:readonly\s+|static\s+)*([A-Za-z_$][\w$]*)\??\s*[:(<]/gm)) members.add(m[1]);
     for (const m of dts.matchAll(/^\s*([A-Z_][A-Z0-9_]*)\s*=\s*\d+/gm)) members.add(m[1]);
     for (const m of dts.matchAll(/declare\s+(?:class|enum|var|const|let|function|interface)\s+([A-Za-z_$][\w$]*)/g)) globals.add(m[1]);

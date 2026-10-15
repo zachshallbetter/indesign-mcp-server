@@ -17,8 +17,11 @@ import { tools as formatsTools } from './formats.js';
 import { tools as interactiveTools } from './interactive.js';
 import { tools as prepressTools } from './prepress.js';
 import { tools as colorTools } from './color.js';
+import { tools as framesTools } from './frames.js';
+import { tools as layoutTools } from './layout.js';
 import { tools as imagesTools } from './images.js';
 import { tools as preferencesTools } from './preferences.js';
+import { tools as pathTools } from './paths.js';
 
 /** [area id, tools, help category { name, description }] */
 export const AREAS = [
@@ -27,6 +30,7 @@ export const AREAS = [
     ['text_frames', textFrameTools, { name: 'Text frames and stories', description: 'Text Frame Options, text wrap, threading, type on a path, notes, track changes, Story Editor and editorial preferences' }],
     ['tables', tableTools, { name: 'Tables', description: 'Table and cell options, rows and columns, merging and splitting, converting text and tables, and selecting in tables' }],
     ['paragraph', paragraphTools, { name: 'Paragraph formatting', description: 'Indents, spacing, alignment, justification, hyphenation, keep options, rules, borders, shading, span columns, drop caps and nested styles; underline and strikethrough options' }],
+    ['paths', pathTools, { name: 'Paths and pathfinder', description: 'Drawing and editing paths and anchor points, joining, cutting, compound paths, Pathfinder, Convert Shape, corner options, clipping paths and Create Outlines' }],
     ['effects', effectsTools, { name: 'Effects and transparency', description: 'Opacity, blending and effects on items, global light, blend space and transparency flattening' }],
     ['xml', xmlTools, { name: 'XML structure and tags', description: 'XML elements, attributes, comments and processing instructions; tags, tagging presets and tag-to-style maps; DTD validation; XML import and export options' }],
     ['long_documents', longDocumentTools, { name: 'Long documents', description: 'Tables of contents, footnotes and endnotes, the index, conditional text, hyperlinks, cross-references, bookmarks, text variables, captions and books' }],
@@ -35,6 +39,8 @@ export const AREAS = [
     ['interactive', interactiveTools, { name: 'Interactive documents', description: 'Buttons and their actions, form fields, multi-state objects, animation and timing, video and sound, page transitions and interactivity preview' }],
     ['prepress', prepressTools, { name: 'Printing and prepress', description: 'Print and Print Booklet with every option or a preset, to a printer or PostScript file; print and trap presets; preflight profiles, rules and options; inks, separations and overprint preview; print attributes; package report and options' }],
     ['color', colorTools, { name: 'Colour', description: 'Swatches, tints, mixed inks, colour groups, loading and saving swatches, the Ink Manager, gradients, fills and strokes, the eyedropper, colour settings, document profiles, proofing and image colour settings' }],
+    ['frames', framesTools, { name: 'Frames and objects', description: 'Frames, shapes and lines; strokes and stroke styles; frame content type; stacking order; frame fitting; anchored objects; object library items; QR codes and math expressions' }],
+    ['layout_tools', layoutTools, { name: 'Layout tools', description: 'Liquid, alternate and flex layouts, named grids, frame grids and the layout grid, linked content and the Content Collector, rulers and units, guides, measuring, gaps and accessible context breaks' }],
     ['images', imagesTools, { name: 'Images and links', description: 'Links panel: list, relink, update, embed and unembed links, open and reveal originals, InCopy check-in and check-out; placing images, PDF, InDesign pages, EPS and SVG with import options; image import and object layer options, cropping and moving frame content, contact sheets and the place cursor' }],
     ['preferences', preferencesTools, { name: 'Preferences', description: 'Read and change the Preferences panes for the application or the active document: General, Interface, Type, Advanced Type, Composition, Units & Increments, Display Performance, GPU, File Handling, Clipboard, Guides & Pasteboard, Spelling, Autocorrect, Dictionary, Japanese layout and Generative AI' }],
 ];
