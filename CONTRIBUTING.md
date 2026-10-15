@@ -5,8 +5,12 @@ Each package has its own guide for adding tools:
 - [InDesign](packages/indesign/CONTRIBUTING.md)
 - Illustrator: tools live in `packages/illustrator/src/tools/<area>.js`. Each
   tool has a definition, a handler, and the atlas feature ids it performs
-  (`features`); annotate it in `src/server.js`. `npm test -w packages/illustrator`
-  checks the definitions, the feature ids and every generated script.
+  (`features`). A tool can declare its annotations with `hints`
+  (`{ readOnly, destructive, idempotent, openWorld }`) and the arguments the
+  static audit should call it with (`auditArgs`); new areas are registered in
+  `src/server.js`. Tests for an area can go in their own `tests/<area>.test.js`,
+  using `tests/helpers.js`. `npm test -w packages/illustrator` checks the
+  definitions, the feature ids and every generated script.
 
 ## Adding an application
 
