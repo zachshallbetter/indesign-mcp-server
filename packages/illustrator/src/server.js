@@ -8,6 +8,7 @@ import { tools as documentTools } from './tools/documents.js';
 import { tools as artworkTools } from './tools/artwork.js';
 import { tools as appearanceTools } from './tools/appearance.js';
 import { tools as arrangeTools } from './tools/arrange.js';
+import { tools as selectTools } from './tools/select.js';
 import { tools as outputTools } from './tools/output.js';
 import { tools as colorTools } from './tools/color.js';
 import { tools as prepressTools } from './tools/prepress.js';
@@ -43,6 +44,7 @@ const AREAS = [
     ['appearance', appearanceTools],
     ['color', colorTools],
     ['arrange', arrangeTools],
+    ['select', selectTools],
     ['paths', pathTools],
     ['effects', effectTools],
     ['blends', blendTools],
