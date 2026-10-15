@@ -60,8 +60,15 @@ export class HelpHandlers {
             description: 'PDF, image, EPUB and package export; status, custom code and session tools',
             tools: [...names(exportToolDefinitions), ...names(utilityToolDefinitions), 'help'],
         },
-        ...moduleCategories,
     };
+
+    static {
+        // Module areas join the category with the same key, or add their own.
+        for (const [key, cat] of Object.entries(moduleCategories)) {
+            const base = this.toolCategories[key];
+            this.toolCategories[key] = base ? { ...base, description: cat.description, tools: [...base.tools, ...cat.tools] } : cat;
+        }
+    }
 
     static findTool(name) {
         return allToolDefinitions.find((t) => t.name === name);
