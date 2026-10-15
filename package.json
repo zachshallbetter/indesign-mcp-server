@@ -5,7 +5,8 @@
   "workspaces": [
     "packages/core",
     "packages/indesign",
-    "packages/illustrator"
+    "packages/illustrator",
+    "packages/suite"
   ],
   "scripts": {
     "check": "npm run check --workspaces --if-present",

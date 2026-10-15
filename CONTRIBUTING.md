@@ -15,6 +15,15 @@ A new application gets its own package, `packages/<app>`, published as
 runtime dependency. The InDesign server was published as `indesign-mcp-server` up
 to 2.3.0; that package is deprecated in favour of `adobe-mcp-indesign`.
 
+## The suite
+
+`packages/suite` loads application modules (`src/module.js` in each package) and
+prefixes their tools. To add an application to it, register its loader in
+`packages/suite/src/apps.js`. Cross-application tools live in
+`packages/suite/src/cross/`: each declares the applications it `requires`, runs
+its scripts through each application's `runStructured`, and is tested with both
+applications stubbed.
+
 ## Before a pull request
 
 - `npm run check && npm test` pass at the repository root. CI runs both.
