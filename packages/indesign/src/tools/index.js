@@ -20,6 +20,7 @@ import { tools as colorTools } from './color.js';
 import { tools as framesTools } from './frames.js';
 import { tools as layoutTools } from './layout.js';
 import { tools as imagesTools } from './images.js';
+import { tools as pathTools } from './paths.js';
 
 /** [area id, tools, help category { name, description }] */
 export const AREAS = [
@@ -28,6 +29,7 @@ export const AREAS = [
     ['text_frames', textFrameTools, { name: 'Text frames and stories', description: 'Text Frame Options, text wrap, threading, type on a path, notes, track changes, Story Editor and editorial preferences' }],
     ['tables', tableTools, { name: 'Tables', description: 'Table and cell options, rows and columns, merging and splitting, converting text and tables, and selecting in tables' }],
     ['paragraph', paragraphTools, { name: 'Paragraph formatting', description: 'Indents, spacing, alignment, justification, hyphenation, keep options, rules, borders, shading, span columns, drop caps and nested styles; underline and strikethrough options' }],
+    ['paths', pathTools, { name: 'Paths and pathfinder', description: 'Drawing and editing paths and anchor points, joining, cutting, compound paths, Pathfinder, Convert Shape, corner options, clipping paths and Create Outlines' }],
     ['effects', effectsTools, { name: 'Effects and transparency', description: 'Opacity, blending and effects on items, global light, blend space and transparency flattening' }],
     ['xml', xmlTools, { name: 'XML structure and tags', description: 'XML elements, attributes, comments and processing instructions; tags, tagging presets and tag-to-style maps; DTD validation; XML import and export options' }],
     ['long_documents', longDocumentTools, { name: 'Long documents', description: 'Tables of contents, footnotes and endnotes, the index, conditional text, hyperlinks, cross-references, bookmarks, text variables, captions and books' }],
