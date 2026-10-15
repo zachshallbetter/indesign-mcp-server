@@ -178,3 +178,11 @@ export function script(body, { needsDocument = true } = {}) {
         '}',
     ].join('\n');
 }
+
+/** ES3: files matching mask in folder, written since a time in ms. */
+export const WRITTEN_FN = `
+function __written(folder, mask, since) {
+  var out = [], found = folder.getFiles(mask);
+  for (var w = 0; w < found.length; w++) if (found[w] instanceof File && found[w].modified.getTime() >= since - 2000) out.push(found[w].fsName);
+  return out;
+}`;

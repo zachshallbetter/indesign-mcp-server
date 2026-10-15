@@ -236,3 +236,79 @@ test('blend tools load, play and always unload the Action', async () => {
     assert.match(sent[2], /\/value 6\\n/, 'step count reaches the Action text');
     for (const s of sent) assert.deepEqual(checkScript(s, typings), []);
 });
+
+/** Run tool calls against a stubbed executor; returns the scripts sent. */
+async function scriptsFor(calls) {
+    const { executor } = await import('../src/executor.js');
+    const mcp = (await import('../src/server.js')).createServer();
+    const sent = [];
+    const original = executor.runScript;
+    executor.runScript = async (s) => { sent.push(s); return '{"ok":true,"result":"{}"}'; };
+    try {
+        for (const [name, args] of calls) {
+            const r = await mcp.handleToolCall(name, args);
+            assert.equal(r.success, true, `${name}: ${JSON.stringify(r)}`);
+        }
+    } finally {
+        executor.runScript = original;
+    }
+    for (const s of sent) assert.deepEqual(checkScript(s, typings), []);
+    return sent;
+}
+
+const home = process.env.HOME ?? '/tmp';
+
+test('PDF options override the preset with the object model\'s settings', async () => {
+    const [s] = await scriptsFor([['export_pdf', {
+        outputFile: `${home}/Documents/out.pdf`, preset: '[PDF/X-4:2008]', compatibility: 'acrobat7', standard: 'x4', bleed: 9,
+        marks: ['trim', 'registration'], markType: 'roman', trimMarkWeight: '0.25', markOffset: 6,
+        colorConversion: 'convert_to_destination', destination: 'document_cmyk', profileInclusion: 'destination',
+        outputIntent: 'Coated FOGRA39 (ISO 12647-2:2004)', outputConditionId: 'FOGRA39', registryName: 'http://www.color.org', acrobatLayers: true,
+    }]]);
+    const lines = [
+        'o.compatibility = PDFCompatibility.ACROBAT7;', 'o.pDFXStandard = PDFXStandard.PDFX42007;',
+        'o.bleedLink = true;', 'o.bleedOffsetRect = [9, 9, 9, 9];',
+        'o.trimMarks = true;', 'o.registrationMarks = true;', 'o.colorBars = false;', 'o.pageInformation = false;',
+        'o.pageMarksType = PageMarksTypes.Roman;', 'o.trimMarkWeight = PDFTrimMarkWeight.TRIMMARKWEIGHT025;', 'o.offset = 6;',
+        'o.colorConversionID = ColorConversion.COLORCONVERSIONTODEST;', 'o.colorDestinationID = ColorDestination.COLORDESTINATIONDOCCMYK;',
+        'o.colorProfileID = ColorProfile.INCLUDEDESTPROFILE;', 'o.outputIntentProfile = "Coated FOGRA39 (ISO 12647-2:2004)";',
+        'o.outputConditionID = "FOGRA39";', 'o.registryName = "http://www.color.org";', 'o.acrobatLayers = true;', 'o.viewAfterSaving = false;',
+    ];
+    for (const line of lines) assert.ok(s.includes(line), line);
+    assert.ok(s.indexOf('o.pDFPreset = preset;') < s.indexOf('o.compatibility ='), 'the preset is applied before the overrides');
+    const [plain] = await scriptsFor([['export_pdf', { outputFile: `${home}/Documents/out.pdf` }]]);
+    assert.doesNotMatch(plain, /bleedOffsetRect|trimMarks|pDFXStandard/, 'without options the preset decides');
+    const mcp = (await import('../src/server.js')).createServer();
+    await assert.rejects(mcp.handleToolCall('export_pdf', { outputFile: `${home}/a.pdf`, compatibility: 'acrobat5', acrobatLayers: true }), /acrobat6 or later/);
+    await assert.rejects(mcp.handleToolCall('export_pdf', { outputFile: `${home}/a.pdf`, colorConversion: 'none', destination: 'working_cmyk' }), /colorConversion other than none/);
+    await assert.rejects(mcp.handleToolCall('export_pdf', { outputFile: `${home}/a.pdf`, standard: 'x5' }), /Allowed: none, x1a-2001/);
+});
+
+test('JPEG and SVG exports set the dialog\'s options', async () => {
+    const [jpeg, svgz, web] = await scriptsFor([
+        ['export_jpeg', { outputFolder: `${home}/Documents`, quality: 60, scale: 200, matteColor: '#ff8000', blur: 0.5 }],
+        ['export_svg', { outputFile: `${home}/Documents/a.svgz`, styling: 'presentation_attributes' }],
+        ['export_web_svg', { outputFile: `${home}/Documents/a.svg`, styling: 'inline_style', images: 'link', objectIds: 'unique', decimals: 1, minify: true }],
+    ]);
+    for (const line of ['new ExportOptionsJPEG()', 'o.qualitySetting = 60;', 'o.horizontalScale = 200;', 'mc.red = 255; mc.green = 128; mc.blue = 0;', 'o.blurAmount = 0.5;', 'ExportType.JPEG', '".jpg"']) assert.ok(jpeg.includes(line), line);
+    for (const line of ['o.compressed = true;', 'o.cssProperties = SVGCSSPropertyLocation.PRESENTATIONATTRIBUTES;', 'ExportType.SVG', '"*.svgz"']) assert.ok(svgz.includes(line), line);
+    for (const line of ['new ExportOptionsWebOptimizedSVG()', 'o.cssProperties = SVGCSSPropertyLocation.STYLEATTRIBUTES;', 'o.rasterImageLocation = RasterImageLocation.LINK;', 'o.svgId = SVGIdType.SVGIDUNIQUE;', 'o.coordinatePrecision = 1;', 'o.svgMinify = true;', 'o.svgResponsive = true;', 'ExportType.WOSVG']) assert.ok(web.includes(line), line);
+    const mcp = (await import('../src/server.js')).createServer();
+    await assert.rejects(mcp.handleToolCall('export_jpeg', { outputFolder: `${home}/Documents`, matteColor: 'white' }), /hex colour/);
+    await assert.rejects(mcp.handleToolCall('export_web_svg', { outputFile: `${home}/Documents/a.svg`, styling: 'entities' }), /Allowed: internal_css, inline_style, presentation_attributes/);
+});
+
+test('save_document: AI and EPS options, each artboard to its own file', async () => {
+    const [ai, eps] = await scriptsFor([
+        ['save_document', { filePath: `${home}/Documents/a.ai`, compatibility: '17', separateArtboards: true, artboards: '2-3', compressed: false, fontSubsetThreshold: 50 }],
+        ['save_document', { filePath: `${home}/Documents/a.eps`, preview: 'tiff_transparent', postScript: 2, overprint: 'discard' }],
+    ]);
+    for (const line of ['new IllustratorSaveOptions()', 'o.compatibility = Compatibility.ILLUSTRATOR17;', 'o.compressed = false;', 'o.fontSubsetThreshold = 50;', 'o.saveMultipleArtboards = true;', 'o.artboardRange = "2-3";', '__written(target.parent, "*.ai", since)']) assert.ok(ai.includes(line), line);
+    for (const line of ['new EPSSaveOptions()', 'o.preview = EPSPreview.TRANSPARENTCOLORTIFF;', 'o.postScript = EPSPostScriptLevelEnum.LEVEL2;', 'o.overprint = PDFOverprint.DISCARDPDFOVERPRINT;', 'o.saveMultipleArtboards = false;']) assert.ok(eps.includes(line), line);
+    const mcp = (await import('../src/server.js')).createServer();
+    await assert.rejects(mcp.handleToolCall('save_document', { filePath: `${home}/Documents/a.ai`, preview: 'none' }), /preview applies only to \.eps files/);
+    await assert.rejects(mcp.handleToolCall('save_document', { filePath: `${home}/Documents/a.eps`, compressed: false }), /compressed applies only to \.ai files/);
+    await assert.rejects(mcp.handleToolCall('save_document', { compatibility: '17' }), /pass filePath to use compatibility/);
+    await assert.rejects(mcp.handleToolCall('save_document', { filePath: `${home}/Documents/a.ai`, artboards: '1' }), /separateArtboards: true/);
+    await assert.rejects(mcp.handleToolCall('save_document', { filePath: `${home}/Documents/a.pdf` }), /\.ai or \.eps/);
+});

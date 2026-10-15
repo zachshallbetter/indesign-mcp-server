@@ -64,3 +64,11 @@ export function targetSpec(target) {
     }
     return json(out);
 }
+
+/** Validate an Illustrator artboard range string ("1-3,5"). */
+export function artboardRange(value) {
+    if (value === undefined || value === null || value === '') return '';
+    const v = String(value).replace(/\s+/g, '');
+    if (!/^\d+(-\d+)?(,\d+(-\d+)?)*$/.test(v)) throw new Error(`Invalid artboard range: ${value}. Use "1", "1-3" or "1,3,5"`);
+    return v;
+}

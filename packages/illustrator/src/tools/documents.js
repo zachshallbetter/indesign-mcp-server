@@ -1,14 +1,18 @@
 /**
  * Documents, artboards and layers.
  */
+import path from 'node:path';
 import { str, num, index, bool, enumOf, createPathPolicy, jsxPath } from 'adobe-mcp-core';
-import { script } from '../script.js';
+import { script, WRITTEN_FN } from '../script.js';
 import { run } from '../executor.js';
-import { ARTBOARD_SCHEMA, TARGET_SCHEMA, targetSpec } from '../args.js';
+import { ARTBOARD_SCHEMA, TARGET_SCHEMA, targetSpec, artboardRange } from '../args.js';
 
 export const paths = createPathPolicy({ envVar: 'ILLUSTRATOR_ALLOWED_DIRS' });
 
 const COLOR_MODES = ['CMYK', 'RGB'];
+const EPS_PREVIEWS = { none: 'None', tiff_bw: 'BWTIFF', tiff_color: 'COLORTIFF', tiff_transparent: 'TRANSPARENTCOLORTIFF' };
+const AI_ONLY = ['pdfCompatible', 'compressed', 'embedIccProfile', 'fontSubsetThreshold'];
+const EPS_ONLY = ['preview', 'postScript', 'embedFonts', 'cmykPostScript', 'compatibleGradientPrinting', 'thumbnails', 'overprint'];
 const AI_VERSIONS = { '24': 'ILLUSTRATOR24', '17': 'ILLUSTRATOR17', '16': 'ILLUSTRATOR16', '15': 'ILLUSTRATOR15', '10': 'ILLUSTRATOR10', '8': 'ILLUSTRATOR8', '3': 'ILLUSTRATOR3' };
 const LAYOUTS = ['GridByRow', 'GridByCol', 'Row', 'Column', 'RLGridByRow', 'RLGridByCol', 'RLRow'];
 
@@ -112,14 +116,26 @@ __result__ = { name: d.name, artboards: d.artboards.length };`, { needsDocument:
     },
     {
         name: 'save_document',
-        description: 'Save the active document. With filePath, save it as an Illustrator file there (the document then refers to that file)',
+        description: 'Save the active document. With filePath, save it as an Illustrator (.ai) or Illustrator EPS (.eps) file there; the document then refers to that file. Can also save each artboard to its own file',
         inputSchema: {
             type: 'object',
             properties: {
-                filePath: { type: 'string', description: 'Absolute .ai path. Omit to save in place' },
+                filePath: { type: 'string', description: 'Absolute .ai or .eps path. Omit to save in place' },
                 compatibility: { type: 'string', enum: Object.keys(AI_VERSIONS), description: 'Illustrator version to save for: 24 = Illustrator 2020 and later (default), 17 = CC, 16 = CS6' },
-                pdfCompatible: { type: 'boolean', description: 'Embed a PDF-compatible copy so other apps can preview it. Default true', default: true },
+                separateArtboards: { type: 'boolean', description: 'Also save each artboard to its own file, named after the artboard. Default false', default: false },
+                artboards: { type: 'string', description: 'With separateArtboards: the artboards to save, 1-based: "1", "1-3,5". Default all' },
                 embedLinkedFiles: { type: 'boolean', description: 'Embed linked images. Default false', default: false },
+                pdfCompatible: { type: 'boolean', description: '.ai: embed a PDF-compatible copy so other apps can preview it. Default true', default: true },
+                compressed: { type: 'boolean', description: '.ai: compress the file. Default true', default: true },
+                embedIccProfile: { type: 'boolean', description: '.ai: embed the document\'s colour profile. Default true', default: true },
+                fontSubsetThreshold: { type: 'number', minimum: 0, maximum: 100, description: '.ai: subset embedded fonts when less than this percent of their characters is used. Default 100' },
+                preview: { type: 'string', enum: Object.keys(EPS_PREVIEWS), description: '.eps: preview format. Default tiff_color' },
+                postScript: { type: 'integer', enum: [2, 3], description: '.eps: PostScript level. Default 3' },
+                embedFonts: { type: 'boolean', description: '.eps: include document fonts. Default true', default: true },
+                cmykPostScript: { type: 'boolean', description: '.eps: include CMYK PostScript in RGB files. Default true', default: true },
+                compatibleGradientPrinting: { type: 'boolean', description: '.eps: rasterise gradients and meshes for older PostScript printers. Default false', default: false },
+                thumbnails: { type: 'boolean', description: '.eps: include a thumbnail. Default true', default: true },
+                overprint: { type: 'string', enum: ['preserve', 'discard'], description: '.eps: keep or discard overprints. Default preserve' },
             },
         },
         features: [
@@ -129,22 +145,67 @@ __result__ = { name: d.name, artboards: d.artboards.length };`, { needsDocument:
             'illustrator.import_export.ai_option.version',
             'illustrator.import_export.ai_option.create_pdf_compatible_file',
             'illustrator.import_export.ai_option.include_linked_files',
+            'illustrator.import_export.ai_option.use_compression',
+            'illustrator.import_export.ai_option.embed_icc_profiles',
+            'illustrator.import_export.ai_option.subset_embedded_fonts_when_percent_of_characters_used_is_less_than',
+            'illustrator.import_export.ai_option.save_each_artboard_to_a_separate_file',
+            'illustrator.import_export.save_artboards_range',
+            'illustrator.import_export.save_eps',
+            'illustrator.import_export.eps_option.version_eps',
+            'illustrator.import_export.eps_option.preview_format',
+            'illustrator.import_export.eps_option.adobe_postscript',
+            'illustrator.import_export.eps_option.include_document_fonts',
+            'illustrator.import_export.eps_option.include_cmyk_postscript_in_rgb_files',
+            'illustrator.import_export.eps_option.compatible_gradient_and_gradient_mesh_printing',
+            'illustrator.import_export.eps_option.include_document_thumbnails',
+            'illustrator.import_export.eps_option.include_linked_files_eps',
+            'illustrator.import_export.eps_option.overprints_eps',
+            'illustrator.import_export.eps_option.use_artboards_eps',
         ],
         handler: (a) => {
+            // Options the caller set to something other than the default.
+            const props = tools.find((t) => t.name === 'save_document').inputSchema.properties;
+            const given = Object.keys(a).filter((k) => k !== 'filePath' && a[k] !== undefined && a[k] !== props[k]?.default);
             if (!a.filePath) {
+                if (given.length) throw new Error(`Saving in place keeps the file's options; pass filePath to use ${given.join(', ')}`);
                 return run('Save document', script(`
 try { if (!doc.fullName || !doc.fullName.exists) throw 0; } catch (e) { throw new Error("The document has never been saved: pass filePath"); }
 doc.save();
 __result__ = { saved: true, file: doc.fullName.fsName };`));
             }
             const p = paths.validate(a.filePath);
-            return run('Save document', script(`
-var o = new IllustratorSaveOptions();
+            const ext = path.extname(p).toLowerCase();
+            if (ext !== '.ai' && ext !== '.eps') throw new Error('filePath must end in .ai or .eps');
+            const other = ext === '.ai' ? EPS_ONLY : AI_ONLY;
+            const wrong = given.filter((k) => other.includes(k));
+            if (wrong.length) throw new Error(`${wrong.join(', ')} ${wrong.length > 1 ? 'apply' : 'applies'} only to ${ext === '.ai' ? '.eps' : '.ai'} files`);
+            if (a.artboards !== undefined && !a.separateArtboards) throw new Error("'artboards' applies with separateArtboards: true");
+            const range = a.artboards === undefined ? '' : artboardRange(a.artboards);
+            const lines = ext === '.ai' ? [
+                'var o = new IllustratorSaveOptions();',
+                `o.pdfCompatible = ${bool(a.pdfCompatible ?? true)};`,
+                `o.compressed = ${bool(a.compressed ?? true)};`,
+                `o.embedICCProfile = ${bool(a.embedIccProfile ?? true)};`,
+                a.fontSubsetThreshold !== undefined ? `o.fontSubsetThreshold = ${num(a.fontSubsetThreshold, { min: 0, max: 100, name: 'fontSubsetThreshold' })};` : '',
+            ] : [
+                'var o = new EPSSaveOptions();',
+                `o.preview = EPSPreview.${EPS_PREVIEWS[enumOf(a.preview ?? 'tiff_color', Object.keys(EPS_PREVIEWS), { name: 'preview' })]};`,
+                `o.postScript = EPSPostScriptLevelEnum.LEVEL${enumOf(String(a.postScript ?? 3), ['2', '3'], { name: 'postScript' })};`,
+                `o.embedAllFonts = ${bool(a.embedFonts ?? true)};`,
+                `o.cmykPostScript = ${bool(a.cmykPostScript ?? true)};`,
+                `o.compatibleGradientPrinting = ${bool(a.compatibleGradientPrinting)};`,
+                `o.includeDocumentThumbnails = ${bool(a.thumbnails ?? true)};`,
+                `o.overprint = PDFOverprint.${enumOf(a.overprint ?? 'preserve', ['preserve', 'discard'], { name: 'overprint' }) === 'preserve' ? 'PRESERVEPDFOVERPRINT' : 'DISCARDPDFOVERPRINT'};`,
+            ];
+            return run('Save document', script(`${WRITTEN_FN}
+var target = new File(${jsxPath(p)}), since = new Date().getTime();
+${lines.filter(Boolean).join('\n')}
 o.compatibility = Compatibility.${AI_VERSIONS[enumOf(a.compatibility ?? '24', Object.keys(AI_VERSIONS), { name: 'compatibility' })]};
-o.pdfCompatible = ${bool(a.pdfCompatible ?? true)};
 o.embedLinkedFiles = ${bool(a.embedLinkedFiles)};
-doc.saveAs(new File(${jsxPath(p)}), o);
-__result__ = { saved: true, file: doc.fullName.fsName };`));
+o.saveMultipleArtboards = ${bool(a.separateArtboards)};
+${range ? `o.artboardRange = ${str(range)};` : ''}
+doc.saveAs(target, o);
+__result__ = { saved: true, file: doc.fullName.fsName, files: ${a.separateArtboards ? `__written(target.parent, "*${ext}", since)` : '[doc.fullName.fsName]'} };`));
         },
     },
     {

@@ -51,7 +51,7 @@ Settings > Privacy & Security > Automation).
 
 | Area | Tools |
 |---|---|
-| Documents | `get_document_info`, `list_documents`, `create_document`, `open_document`, `save_document`, `close_document` |
+| Documents | `get_document_info`, `list_documents`, `create_document`, `open_document`, `save_document` (.ai or .eps, each artboard to its own file), `close_document` |
 | Artboards | `list_artboards`, `add_artboard`, `set_artboard`, `delete_artboard`, `set_active_artboard`, `fit_artboard_to_artwork`, `rearrange_artboards` |
 | Layers | `list_layers`, `create_layer`, `set_layer_properties`, `set_active_layer`, `delete_layer`, `move_items_to_layer` |
 | Shapes and paths | `create_rectangle`, `create_ellipse`, `create_polygon`, `create_star`, `create_line`, `create_path` |
@@ -62,7 +62,7 @@ Settings > Privacy & Security > Automation).
 | Effects | `apply_effect` (drop shadow, offset path, round corners, roughen, transform, Gaussian blur) |
 | Blends | `make_blend`, `set_blend_options` (steps, orientation), `release_blend`, `expand_blend`, `reverse_blend` |
 | Preferences and tools | `get_preferences`, `set_preferences`, `select_tool` |
-| Placing and export | `place_image`, `export_png`, `export_svg`, `export_for_screens`, `export_pdf` |
+| Placing and export | `place_image`, `export_png`, `export_jpeg`, `export_svg` (Save As SVG), `export_web_svg` (Export As SVG: styling, IDs, minify, responsive), `export_for_screens`, `export_pdf` (preset plus PDF/X, bleed, marks, colour conversion, output intent, Acrobat layers) |
 | Utility | `illustrator_status`, `execute_menu_command`, `find_menu_commands`, `execute_illustrator_code`, `help` |
 
 `help({ tool })` describes any tool's parameters.

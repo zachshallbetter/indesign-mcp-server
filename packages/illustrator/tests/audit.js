@@ -44,7 +44,12 @@ const OVERRIDES = {
     export_png: { artboards: '1-2' },
     export_svg: { artboards: '1', outputFile: path.join(docs, 'audit.svg') },
     export_for_screens: { artboards: '1', scales: [1, 2], formats: ['png', 'svg', 'pdf'] },
-    export_pdf: { artboards: '1', outputFile: path.join(docs, 'audit.pdf') },
+    export_jpeg: { artboards: '1-2', matteColor: '#F0F0F0' },
+    export_web_svg: { artboards: '1,3', outputFile: path.join(docs, 'audit.svg') },
+    export_pdf: {
+        artboards: '1', outputFile: path.join(docs, 'audit.pdf'), preset: '[PDF/X-4:2008]', compatibility: 'acrobat7', standard: 'x4',
+        marks: ['all'], colorConversion: 'convert_to_destination',
+    },
     execute_menu_command: { command: 'expandStyle' },
     select_tool: { tool: 'Pen Tool' },
     make_blend: { steps: 12, orientation: 'path' },
@@ -53,7 +58,10 @@ const OVERRIDES = {
     apply_effect: { effect: 'offset_path', options: { offset: -2, joins: 'round' }, expand: true },
     get_preferences: { names: ['usePreviewBounds', 'keyboardIncrement'] },
     open_document: { filePath: path.join(docs, 'audit.ai') },
-    save_document: { filePath: path.join(docs, 'audit.ai') },
+    save_document: {
+        filePath: path.join(docs, 'audit.eps'), separateArtboards: true, artboards: '1-2',
+        pdfCompatible: undefined, compressed: undefined, embedIccProfile: undefined, fontSubsetThreshold: undefined,
+    },
     place_image: { filePath: path.join(docs, 'audit.png') },
 };
 
