@@ -33,10 +33,10 @@ export const USER_CODE = ['execute_photoshop_code'];
 /** Valid arguments for parameters with a format the generic samples cannot meet. */
 const docs = path.join(process.env.HOME ?? '/tmp', 'Documents');
 const OVERRIDES = {
-    save_document: { filePath: path.join(docs, 'audit.tif'), compression: 'lzw', format: 'progressive' },
+    save_document: { filePath: path.join(docs, 'audit.tif'), compression: 'lzw', format: 'progressive', epsType: undefined },
     set_active_document: { index: undefined },
     set_colors: { foreground: '#FF6600', background: 'cmyk(0,0,0,100)' },
-    resize_image: { scale: undefined },
+    resize_image: { scale: undefined, reduceNoise: undefined, scaleStyles: undefined },
     rotate_canvas: { flip: undefined },
     set_layer_properties: { target: { ids: [7] } },
     fill_selection: { color: 'gray(40)' },
