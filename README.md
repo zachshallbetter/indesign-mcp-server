@@ -12,6 +12,7 @@ client configuration.
 |---|---|---|
 | [adobe-mcp-indesign](packages/indesign) | Adobe InDesign: documents, pages, text, styles, tables, books, PDF and EPUB export (137 tools) | [`adobe-mcp-indesign`](https://www.npmjs.com/package/adobe-mcp-indesign) |
 | [adobe-mcp-illustrator](packages/illustrator) | Adobe Illustrator: documents, artboards, layers, shapes and paths, typography, colour and swatches, effects and 3D, symbols, patterns, Image Trace, images and links, variables and data sets, actions, export, prepress and printing (308 tools) | `adobe-mcp-illustrator` |
+| [adobe-mcp-aftereffects](packages/aftereffects) | Adobe After Effects: projects, compositions, layers, keyframes and expressions, effects, text, masks and rendering (44 tools) | `adobe-mcp-aftereffects` |
 | [adobe-mcp-suite](packages/suite) | InDesign and Illustrator in one server, plus cross-application tools: Illustrator artwork into InDesign layouts, swatches with exact values | `adobe-mcp-suite` |
 | [adobe-mcp-core](packages/core) | The shared foundation: script escaping, the script runner, the server shell and the static script audit | `adobe-mcp-core` |
 

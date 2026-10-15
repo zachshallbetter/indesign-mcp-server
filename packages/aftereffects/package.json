@@ -1,0 +1,61 @@
+{
+  "name": "adobe-mcp-aftereffects",
+  "version": "0.1.0",
+  "description": "MCP server for Adobe After Effects: projects, compositions, layers, keyframes, expressions, effects, text, masks and rendering through ExtendScript",
+  "mcpName": "io.github.zachshallbetter/adobe-mcp-aftereffects",
+  "type": "module",
+  "main": "src/module.js",
+  "bin": {
+    "adobe-mcp-aftereffects": "src/index.js"
+  },
+  "files": [
+    "src/",
+    "LICENSE",
+    "NOTICE",
+    "README.md",
+    "server.json"
+  ],
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test tests/*.test.js",
+    "audit": "node tests/audit.js",
+    "check": "node scripts/check-syntax.js",
+    "prepublishOnly": "npm run check && npm test"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "after-effects",
+    "adobe",
+    "motion-graphics",
+    "animation",
+    "extendscript",
+    "macos",
+    "windows"
+  ],
+  "author": "Zach Shallbetter",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zachshallbetter/adobe-mcp.git",
+    "directory": "packages/aftereffects"
+  },
+  "bugs": {
+    "url": "https://github.com/zachshallbetter/adobe-mcp/issues"
+  },
+  "homepage": "https://github.com/zachshallbetter/adobe-mcp/tree/main/packages/aftereffects#readme",
+  "dependencies": {
+    "adobe-mcp-core": "0.2.0"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "types-for-adobe": "^7.2.6"
+  },
+  "exports": {
+    ".": "./src/module.js",
+    "./package.json": "./package.json"
+  }
+}
