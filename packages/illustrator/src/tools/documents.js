@@ -5,7 +5,8 @@ import path from 'node:path';
 import { str, num, index, bool, enumOf, createPathPolicy, jsxPath } from 'adobe-mcp-core';
 import { script, WRITTEN_FN } from '../script.js';
 import { run } from '../executor.js';
-import { ARTBOARD_SCHEMA, TARGET_SCHEMA, targetSpec, artboardRange } from '../args.js';
+import { ARTBOARD_SCHEMA, TARGET_SCHEMA, targetSpec, artboardRange, colorSpec } from '../args.js';
+import { ART_ON } from './layers.js';
 
 export const paths = createPathPolicy({ envVar: 'ILLUSTRATOR_ALLOWED_DIRS' });
 
@@ -17,6 +18,28 @@ const AI_VERSIONS = { '24': 'ILLUSTRATOR24', '17': 'ILLUSTRATOR17', '16': 'ILLUS
 const LAYOUTS = ['GridByRow', 'GridByCol', 'Row', 'Column', 'RLGridByRow', 'RLGridByCol', 'RLRow'];
 
 const rect = (x, y, w, h) => ({ x, y, width: w, height: h });
+const KNOCKOUT = { enabled: 'ENABLED', disabled: 'DISABLED', inherited: 'INHERITED' };
+const ORIENTATIONS = ['portrait', 'landscape', 'switch'];
+
+/** Layer Options settings shared by create_layer and set_layer_properties. */
+const LAYER_OPTIONS = {
+    color: { type: 'string', description: 'Highlight colour of the layer\'s selections and outlines, "#RRGGBB" or "rgb(r,g,b)"' },
+    preview: { type: 'boolean', description: 'false shows the layer in Outline mode' },
+    dimPlacedImages: { type: 'boolean', description: 'Dim placed images on the layer (Dim Images to). Illustrator uses its own percentage; scripts cannot set it' },
+};
+
+/** ES3 statements setting Layer Options on the layer \`l\`. */
+function layerOptions(a) {
+    const out = [];
+    if (a.color !== undefined) {
+        const spec = JSON.parse(colorSpec(a.color, 'color'));
+        if (spec?.kind !== 'rgb') throw new Error("'color': give a layer colour as \"#RRGGBB\" or \"rgb(r,g,b)\"");
+        out.push(`var lc = new RGBColor(); lc.red = ${spec.v[0]}; lc.green = ${spec.v[1]}; lc.blue = ${spec.v[2]}; l.color = lc;`);
+    }
+    if (a.preview !== undefined) out.push(`l.preview = ${bool(a.preview)};`);
+    if (a.dimPlacedImages !== undefined) out.push(`l.dimPlacedImages = ${bool(a.dimPlacedImages)};`);
+    return out.join('\n');
+}
 
 export const tools = [
     {
@@ -44,7 +67,7 @@ __result__ = {
   colorMode: String(doc.documentColorSpace).replace("DocumentColorSpace.", ""),
   scaleFactor: __sf(doc), activeArtboard: doc.artboards.getActiveArtboardIndex(),
   artboards: abs, layers: layers, activeLayer: doc.activeLayer.name,
-  counts: { pageItems: doc.pageItems.length, paths: doc.pathItems.length, text: doc.textFrames.length, placed: doc.placedItems.length, raster: doc.rasterItems.length, groups: doc.groupItems.length, symbols: doc.symbolItems.length, swatches: doc.swatches.length },
+  counts: { pageItems: doc.pageItems.length, paths: doc.pathItems.length, text: doc.textFrames.length, placed: doc.placedItems.length, raster: doc.rasterItems.length, embeddedFiles: doc.embeddedItems.length, nonNative: doc.nonNativeItems.length, plugin: doc.pluginItems.length, groups: doc.groupItems.length, symbols: doc.symbolItems.length, swatches: doc.swatches.length },
   selection: doc.selection ? doc.selection.length : 0
 };`)),
     },
@@ -254,13 +277,15 @@ __result__ = { index: doc.artboards.length - 1, name: ab.name };`)),
     },
     {
         name: 'set_artboard',
-        description: 'Rename, move or resize an artboard. Position is measured from artboard 0\'s top-left corner',
+        description: 'Rename, move or resize an artboard, or switch it between portrait and landscape (Object > Artboards > Switch Orientation). Position is measured from artboard 0\'s top-left corner. scaleArtwork scales and moves the artwork on it with it',
         inputSchema: {
             type: 'object',
             properties: {
                 artboardIndex: ARTBOARD_SCHEMA,
                 name: { type: 'string' },
                 x: { type: 'number' }, y: { type: 'number' }, width: { type: 'number' }, height: { type: 'number' },
+                orientation: { type: 'string', enum: ORIENTATIONS, description: 'Swap width and height to make it portrait or landscape, or switch whichever it is. The top-left corner stays put' },
+                scaleArtwork: { type: 'boolean', description: 'Scale and move the artwork whose centre lies on the artboard along with it. Default false', default: false },
             },
             required: ['artboardIndex'],
         },
@@ -270,20 +295,33 @@ __result__ = { index: doc.artboards.length - 1, name: ab.name };`)),
             'illustrator.artboards.rename_artboard',
             'illustrator.artboards.resize_artboard',
             'illustrator.artboards.artboard_move',
+            'illustrator.artboards.switch_orientation',
+            'illustrator.artboards.scale_artwork_with_artboard',
         ],
+        auditArgs: { orientation: 'switch', scaleArtwork: true },
         handler: (a) => {
-            const geo = ['x', 'y', 'width', 'height'].some((k) => a[k] !== undefined);
-            return run('Set artboard', script(`
-var i = ${index(a.artboardIndex, { name: 'artboardIndex' })}, cur = __artboard(doc, i), a0 = __artboard(doc, 0), f = __sf(doc);
+            const geo = ['x', 'y', 'width', 'height', 'orientation'].some((k) => a[k] !== undefined);
+            if (a.scaleArtwork && !geo) throw new Error("'scaleArtwork' applies when x, y, width, height or orientation changes");
+            const turn = a.orientation === undefined ? '' : {
+                portrait: 'if (w > h) { var t = w; w = h; h = t; }',
+                landscape: 'if (h > w) { var t = w; w = h; h = t; }',
+                switch: 'var t = w; w = h; h = t;',
+            }[enumOf(a.orientation, ORIENTATIONS, { name: 'orientation' })];
+            return run('Set artboard', script(`${a.scaleArtwork ? ART_ON : ''}
+var i = ${index(a.artboardIndex, { name: 'artboardIndex' })}, cur = __artboard(doc, i), a0 = __artboard(doc, 0), f = __sf(doc), skipped = 0;
 ${a.name !== undefined ? `doc.artboards[i].name = ${str(a.name)};` : ''}
 ${geo ? `
 var x = ${a.x !== undefined ? num(a.x, { name: 'x' }) : '(cur.left - a0.left) * f'};
 var y = ${a.y !== undefined ? num(a.y, { name: 'y' }) : '(a0.top - cur.top) * f'};
 var w = ${a.width !== undefined ? num(a.width, { min: 1, name: 'width' }) : '(cur.right - cur.left) * f'};
 var h = ${a.height !== undefined ? num(a.height, { min: 1, name: 'height' }) : '(cur.top - cur.bottom) * f'};
-var p = __toDoc(doc, a0, x, y);
-doc.artboards[i].artboardRect = [p[0], p[1], p[0] + __len(doc, w), p[1] - __len(doc, h)];` : ''}
-__result__ = { index: i, name: doc.artboards[i].name };`));
+${turn}
+var p = __toDoc(doc, a0, x, y), old = doc.artboards[i].artboardRect, nr = [p[0], p[1], p[0] + __len(doc, w), p[1] - __len(doc, h)];
+${a.scaleArtwork ? 'var art = __artOn(doc, old, true);' : ''}
+doc.artboards[i].artboardRect = nr;
+${a.scaleArtwork ? 'skipped = __scaleArt(art, old, nr);' : ''}` : ''}
+var r = __artboard(doc, i);
+__result__ = { index: i, name: r.name, width: (r.right - r.left) * f, height: (r.top - r.bottom) * f${a.scaleArtwork ? ', artworkScaled: art.length - skipped, artworkSkipped: skipped' : ''} };`));
         },
     },
     {
@@ -311,16 +349,26 @@ __result__ = { active: i };`)),
     },
     {
         name: 'fit_artboard_to_artwork',
-        description: 'Resize an artboard to the bounds of the selected artwork',
-        inputSchema: { type: 'object', properties: { artboardIndex: ARTBOARD_SCHEMA, target: TARGET_SCHEMA }, required: ['artboardIndex', 'target'] },
-        features: ['illustrator.artboards.fit_to_selected_art'],
+        description: 'Resize an artboard to the bounds of the given artwork (Object > Artboards > Fit to Selected Art), or without target, to all the artwork on it (Fit to Artwork Bounds)',
+        inputSchema: {
+            type: 'object',
+            properties: { artboardIndex: ARTBOARD_SCHEMA, target: { ...TARGET_SCHEMA, description: 'Fit to these items. Default: all the artwork on the artboard' } },
+            required: ['artboardIndex'],
+        },
+        features: ['illustrator.artboards.fit_to_selected_art', 'illustrator.artboards.fit_to_artwork_bounds'],
+        menuCommands: ['Fit Artboard to artwork bounds'],
         handler: (a) => run('Fit artboard to artwork', script(`
+var i = ${index(a.artboardIndex, { name: 'artboardIndex' })};
+__artboard(doc, i);
+${a.target !== undefined ? `
 var items = __targets(doc, ${targetSpec(a.target)});
 doc.selection = null;
 for (var k = 0; k < items.length; k++) items[k].selected = true;
-var i = ${index(a.artboardIndex, { name: 'artboardIndex' })};
-__artboard(doc, i);
-doc.fitArtboardToSelectedArt(i);
+doc.fitArtboardToSelectedArt(i);` : `
+var was = doc.artboards.getActiveArtboardIndex();
+doc.artboards.setActiveArtboardIndex(i);
+app.executeMenuCommand("Fit Artboard to artwork bounds");
+doc.artboards.setActiveArtboardIndex(was);`}
 var r = __artboard(doc, i), f = __sf(doc);
 __result__ = { index: i, width: (r.right - r.left) * f, height: (r.top - r.bottom) * f };`)),
     },
@@ -345,7 +393,7 @@ __result__ = { artboards: doc.artboards.length };`)),
     // Layers
     {
         name: 'list_layers',
-        description: 'List top-level layers and their sublayers, with visibility, lock state and item counts',
+        description: 'List top-level layers and their sublayers, with visibility, lock state, Layer Options and item counts',
         inputSchema: { type: 'object', properties: {} },
         features: [
             'illustrator.layers.layers_panel',
@@ -356,7 +404,7 @@ __result__ = { artboards: doc.artboards.length };`)),
 function info(l) {
   var subs = [];
   for (var i = 0; i < l.layers.length; i++) subs.push(info(l.layers[i]));
-  return { name: l.name, visible: l.visible, locked: l.locked, printable: l.printable, opacity: l.opacity, items: l.pageItems.length, sublayers: subs };
+  return { name: l.name, visible: l.visible, locked: l.locked, printable: l.printable, preview: l.preview, dimPlacedImages: l.dimPlacedImages, color: __colorInfo(l.color), opacity: l.opacity, items: l.pageItems.length, sublayers: subs };
 }
 var out = [];
 for (var i = 0; i < doc.layers.length; i++) out.push(info(doc.layers[i]));
@@ -364,7 +412,7 @@ __result__ = { active: doc.activeLayer.name, layers: out };`)),
     },
     {
         name: 'create_layer',
-        description: 'Create a layer at the top of the stack, or as a sublayer of parentLayer',
+        description: 'Create a layer at the top of the stack, or as a sublayer of parentLayer, with the Layer Options settings (Layers panel menu > New Layer, New Layer with Dialog)',
         inputSchema: {
             type: 'object',
             properties: {
@@ -373,6 +421,7 @@ __result__ = { active: doc.activeLayer.name, layers: out };`)),
                 visible: { type: 'boolean', default: true },
                 locked: { type: 'boolean', default: false },
                 printable: { type: 'boolean', default: true },
+                ...LAYER_OPTIONS,
             },
             required: ['name'],
         },
@@ -385,7 +434,12 @@ __result__ = { active: doc.activeLayer.name, layers: out };`)),
             'illustrator.layers.layer_option.show',
             'illustrator.layers.layer_option.lock',
             'illustrator.layers.layer_option.print',
+            'illustrator.layers.new_layer_dialog',
+            'illustrator.layers.layer_option.color',
+            'illustrator.layers.layer_option.preview',
+            'illustrator.layers.layer_option.dim_images_to',
         ],
+        auditArgs: { color: '#4F80FF' },
         handler: (a) => run('Create layer', script(`
 var parent = ${a.parentLayer ? `__layer(doc, ${str(a.parentLayer)})` : 'doc'};
 var l = parent.layers.add();
@@ -393,11 +447,12 @@ l.name = ${str(a.name)};
 l.visible = ${bool(a.visible ?? true)};
 l.locked = ${bool(a.locked)};
 l.printable = ${bool(a.printable ?? true)};
+${layerOptions(a)}
 __result__ = { name: l.name };`)),
     },
     {
         name: 'set_layer_properties',
-        description: 'Rename a layer, show or hide it, lock it, set whether it prints, its opacity, or move it in the stack',
+        description: 'Rename a layer, show or hide it, lock it, set whether it prints, its opacity, Layer Options (colour, preview, dim images), knockout group, or move it in the stack',
         inputSchema: {
             type: 'object',
             properties: {
@@ -408,6 +463,8 @@ __result__ = { name: l.name };`)),
                 printable: { type: 'boolean' },
                 opacity: { type: 'number', minimum: 0, maximum: 100 },
                 arrange: { type: 'string', enum: ['BRINGTOFRONT', 'BRINGFORWARD', 'SENDBACKWARD', 'SENDTOBACK'] },
+                ...LAYER_OPTIONS,
+                knockout: { type: 'string', enum: Object.keys(KNOCKOUT), description: 'Knockout Group (Transparency panel): whether the layer\'s objects knock each other out' },
             },
             required: ['layer'],
         },
@@ -422,7 +479,12 @@ __result__ = { name: l.name };`)),
             'illustrator.layers.hide_show_layers',
             'illustrator.layers.lock_unlock_layers',
             'illustrator.layers.layer_zorder',
+            'illustrator.layers.layer_option.color',
+            'illustrator.layers.layer_option.preview',
+            'illustrator.layers.layer_option.dim_images_to',
+            'illustrator.layers.layer_knockout',
         ],
+        auditArgs: { color: 'rgb(255,77,77)' },
         handler: (a) => run('Set layer properties', script(`
 var l = __layer(doc, ${str(a.layer)});
 ${a.newName !== undefined ? `l.name = ${str(a.newName)};` : ''}
@@ -431,7 +493,9 @@ ${a.locked !== undefined ? `l.locked = ${bool(a.locked)};` : ''}
 ${a.printable !== undefined ? `l.printable = ${bool(a.printable)};` : ''}
 ${a.opacity !== undefined ? `l.opacity = ${num(a.opacity, { min: 0, max: 100, name: 'opacity' })};` : ''}
 ${a.arrange ? `l.zOrder(ZOrderMethod.${enumOf(a.arrange, ['BRINGTOFRONT', 'BRINGFORWARD', 'SENDBACKWARD', 'SENDTOBACK'], { name: 'arrange' })});` : ''}
-__result__ = { name: l.name, visible: l.visible, locked: l.locked, printable: l.printable, opacity: l.opacity };`)),
+${layerOptions(a)}
+${a.knockout !== undefined ? `l.artworkKnockout = KnockoutState.${KNOCKOUT[enumOf(a.knockout, Object.keys(KNOCKOUT), { name: 'knockout' })]};` : ''}
+__result__ = { name: l.name, visible: l.visible, locked: l.locked, printable: l.printable, opacity: l.opacity, preview: l.preview, dimPlacedImages: l.dimPlacedImages, color: __colorInfo(l.color), knockout: String(l.artworkKnockout).replace("KnockoutState.", "") };`)),
     },
     {
         name: 'set_active_layer',
@@ -457,9 +521,13 @@ __result__ = { deleted: ${str(a.layer)}, itemsRemoved: n };`)),
     },
     {
         name: 'move_items_to_layer',
-        description: 'Move items to the top of another layer',
-        inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, layer: { type: 'string' } }, required: ['target', 'layer'] },
-        features: ['illustrator.layers.move_to_layer'],
+        description: 'Move items to the top of another layer, or of the active layer when layer is omitted (Object > Arrange > Send to Current Layer)',
+        inputSchema: {
+            type: 'object',
+            properties: { target: TARGET_SCHEMA, layer: { type: 'string', description: 'Top-level layer name. Default the active layer' } },
+            required: ['target'],
+        },
+        features: ['illustrator.layers.move_to_layer', 'illustrator.layers.send_to_current_layer'],
         handler: (a) => run('Move items to layer', script(`
 var items = __targets(doc, ${targetSpec(a.target)}), l = __layer(doc, ${str(a.layer)});
 if (l.locked) throw new Error("Layer " + l.name + " is locked");

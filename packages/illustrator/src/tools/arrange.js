@@ -6,10 +6,11 @@ import { script } from '../script.js';
 import { run } from '../executor.js';
 import { ARTBOARD_SCHEMA, TARGET_SCHEMA, targetSpec } from '../args.js';
 
-const ORIGINS = { center: 'CENTER', topLeft: 'TOPLEFT', top: 'TOP', topRight: 'TOPRIGHT', left: 'LEFT', right: 'RIGHT', bottomLeft: 'BOTTOMLEFT', bottom: 'BOTTOM', bottomRight: 'BOTTOMRIGHT' };
-const ORIGIN_SCHEMA = { type: 'string', enum: Object.keys(ORIGINS), description: 'Point to transform around. Default center' };
+export const ORIGINS = { center: 'CENTER', topLeft: 'TOPLEFT', top: 'TOP', topRight: 'TOPRIGHT', left: 'LEFT', right: 'RIGHT', bottomLeft: 'BOTTOMLEFT', bottom: 'BOTTOM', bottomRight: 'BOTTOMRIGHT' };
+export const ORIGIN_SCHEMA = { type: 'string', enum: Object.keys(ORIGINS), description: 'Point to transform around. Default center' };
 const ORDER = { front: 'BRINGTOFRONT', forward: 'BRINGFORWARD', backward: 'SENDBACKWARD', back: 'SENDTOBACK' };
-const TYPES = ['PathItem', 'CompoundPathItem', 'GroupItem', 'TextFrame', 'PlacedItem', 'RasterItem', 'SymbolItem', 'MeshItem', 'PluginItem', 'GraphItem'];
+const ALIGN_EDGES = ['left', 'center', 'right', 'top', 'middle', 'bottom', 'center_middle'];
+const TYPES = ['PathItem', 'CompoundPathItem', 'GroupItem', 'TextFrame', 'PlacedItem', 'RasterItem', 'SymbolItem', 'MeshItem', 'PluginItem', 'GraphItem', 'NonNativeItem'];
 
 /** Selecting by script: deselect everything, then select the targets. */
 const SELECT = `
@@ -192,7 +193,9 @@ __result__ = { created: out.length, ids: out };`)),
         features: [
             'illustrator.transformations.move',
             'illustrator.transformations.move_objects',
+            'illustrator.symbols.transform_symbols',
             'illustrator.transformations.position_size',
+            'illustrator.shapes.move_live_shape',
         ],
         handler: (a) => {
             const absolute = a.x !== undefined || a.y !== undefined;
@@ -229,6 +232,8 @@ __result__ = out;`));
         features: [
             'illustrator.transformations.scale',
             'illustrator.transformations.scale_multiple',
+            'illustrator.shapes.scale_live_shape',
+            'illustrator.symbols.transform_symbols',
             'illustrator.transformations.transform_panel_option.scale_strokes_and_effects',
             'illustrator.transformations.transform_dialog_option.transform_objects',
             'illustrator.transformations.transform_dialog_option.transform_patterns',
@@ -248,6 +253,8 @@ __result__ = { scaled: items.length };`));
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, angle: { type: 'number' }, origin: ORIGIN_SCHEMA }, required: ['target', 'angle'] },
         features: [
             'illustrator.transformations.rotate',
+            'illustrator.shapes.rotate_live_shape',
+            'illustrator.symbols.transform_symbols',
             'illustrator.transformations.transform_dialog_option.transform_objects',
             'illustrator.transformations.transform_dialog_option.transform_patterns',
         ],
@@ -277,14 +284,16 @@ __result__ = { reflected: items.length };`));
     },
     {
         name: 'align_items',
-        description: 'Align items to each other (their combined bounds) or to an artboard',
+        description: 'Align items to each other (their combined bounds), to an artboard, or to a key object that stays still (Object > Align, Align panel). center_middle centres both ways in one step',
         inputSchema: {
             type: 'object',
             properties: {
                 target: TARGET_SCHEMA,
-                edge: { type: 'string', enum: ['left', 'center', 'right', 'top', 'middle', 'bottom'] },
-                to: { type: 'string', enum: ['selection', 'artboard'], description: 'Default selection', default: 'selection' },
+                edge: { type: 'string', enum: ALIGN_EDGES },
+                to: { type: 'string', enum: ['selection', 'artboard', 'key_object'], description: 'Default selection', default: 'selection' },
                 artboardIndex: ARTBOARD_SCHEMA,
+                keyObjectId: { type: 'string', description: 'With to: key_object, the id of the item the others align to' },
+                usePreviewBounds: { type: 'boolean', description: 'Measure including strokes and effects (Use Preview Bounds). Default true', default: true },
             },
             required: ['target', 'edge'],
         },
@@ -296,24 +305,38 @@ __result__ = { reflected: items.length };`));
             'illustrator.transformations.align_top',
             'illustrator.transformations.align_vcenter',
             'illustrator.transformations.align_bottom',
+            'illustrator.transformations.align_hv_center',
+            'illustrator.transformations.align_single_action',
             'illustrator.transformations.align_to_selection',
             'illustrator.transformations.align_to_artboard',
+            'illustrator.transformations.align_to_key_object',
+            'illustrator.transformations.align_option.key_object',
+            'illustrator.transformations.align_option.use_preview_bounds',
         ],
         handler: (a) => {
-            const edge = enumOf(a.edge, ['left', 'center', 'right', 'top', 'middle', 'bottom'], { name: 'edge' });
+            const edge = enumOf(a.edge, ALIGN_EDGES, { name: 'edge' });
+            const to = enumOf(a.to ?? 'selection', ['selection', 'artboard', 'key_object'], { name: 'to' });
+            if (to === 'key_object' && !a.keyObjectId) throw new Error('to: key_object needs keyObjectId');
+            const bounds = (a.usePreviewBounds ?? true) ? 'visibleBounds' : 'geometricBounds';
             return run('Align items', script(`
 var items = __targets(doc, ${targetSpec(a.target)});
 var L, T, R, B, g, i;
-${a.to === 'artboard' ? `var ab = __artboard(doc, ${index(a.artboardIndex ?? 0, { name: 'artboardIndex' })}); L = ab.left; T = ab.top; R = ab.right; B = ab.bottom;` : `
+${{
+        artboard: `var ab = __artboard(doc, ${index(a.artboardIndex ?? 0, { name: 'artboardIndex' })}); L = ab.left; T = ab.top; R = ab.right; B = ab.bottom;`,
+        key_object: `var key = doc.getPageItemFromUuid(${str(a.keyObjectId)});
+if (!key) throw new Error("Key object " + ${str(a.keyObjectId)} + " not found");
+g = key.${bounds}; L = g[0]; T = g[1]; R = g[2]; B = g[3];`,
+        selection: `
 L = Infinity; T = -Infinity; R = -Infinity; B = Infinity;
-for (i = 0; i < items.length; i++) { g = items[i].visibleBounds; if (g[0] < L) L = g[0]; if (g[1] > T) T = g[1]; if (g[2] > R) R = g[2]; if (g[3] < B) B = g[3]; }`}
+for (i = 0; i < items.length; i++) { g = items[i].${bounds}; if (g[0] < L) L = g[0]; if (g[1] > T) T = g[1]; if (g[2] > R) R = g[2]; if (g[3] < B) B = g[3]; }`,
+    }[to]}
 for (i = 0; i < items.length; i++) {
-  g = items[i].visibleBounds;
+  g = items[i].${bounds};
   var dx = 0, dy = 0;
-  ${{ left: 'dx = L - g[0];', right: 'dx = R - g[2];', center: 'dx = (L + R) / 2 - (g[0] + g[2]) / 2;', top: 'dy = T - g[1];', bottom: 'dy = B - g[3];', middle: 'dy = (T + B) / 2 - (g[1] + g[3]) / 2;' }[edge]}
+  ${{ left: 'dx = L - g[0];', right: 'dx = R - g[2];', center: 'dx = (L + R) / 2 - (g[0] + g[2]) / 2;', top: 'dy = T - g[1];', bottom: 'dy = B - g[3];', middle: 'dy = (T + B) / 2 - (g[1] + g[3]) / 2;', center_middle: 'dx = (L + R) / 2 - (g[0] + g[2]) / 2; dy = (T + B) / 2 - (g[1] + g[3]) / 2;' }[edge]}
   items[i].translate(dx, dy);
 }
-__result__ = { aligned: items.length, edge: ${str(edge)} };`));
+__result__ = { aligned: items.length, edge: ${str(edge)}, to: ${str(to)} };`));
         },
     },
     {
@@ -346,10 +369,25 @@ __result__ = __itemInfo(doc, g);`)),
     },
     {
         name: 'ungroup_items',
-        description: 'Ungroup groups, leaving their contents in place',
-        inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA }, required: ['target'] },
-        features: ['illustrator.selection.ungroup'],
-        handler: (a) => run('Ungroup items', script(`
+        description: 'Ungroup groups, leaving their contents in place. With allLevels, ungroup every level of nested groups at once (Object > Ungroup All, Illustrator 29.3 or later)',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                target: TARGET_SCHEMA,
+                allLevels: { type: 'boolean', description: 'Ungroup nested groups too (Object > Ungroup All). Default false: one level', default: false },
+            },
+            required: ['target'],
+        },
+        features: ['illustrator.selection.ungroup', 'illustrator.selection.ungroup_all'],
+        menuCommands: ['ungroup all'],
+        handler: (a) => run('Ungroup items', script(a.allLevels ? `${SELECT}
+var v = String(app.version).split(".");
+if (Number(v[0]) < 29 || (Number(v[0]) === 29 && Number(v[1]) < 3)) throw new Error("allLevels needs Illustrator 29.3 or later (Object > Ungroup All); this is " + app.version);
+__select(doc, __targets(doc, ${targetSpec(a.target)}));
+app.executeMenuCommand("ungroup all");
+var sel = doc.selection, ids = [];
+for (var j = 0; sel && j < sel.length; j++) { try { ids.push(sel[j].uuid); } catch (e) {} }
+__result__ = { allLevels: true, selected: ids.length, ids: ids };` : `
 var items = __targets(doc, ${targetSpec(a.target)}), freed = [];
 for (var i = 0; i < items.length; i++) {
   var g = items[i];

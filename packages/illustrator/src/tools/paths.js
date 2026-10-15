@@ -4,8 +4,8 @@
  * Commands that run without a dialog go through executeMenuCommand on the
  * targets. Average, Clean Up and Split Into Grid open a dialog, so they are
  * done through the object model instead, the way the dialogs describe them.
- * Simplify, Smooth and Offset Path also open a dialog and are not offered;
- * apply_effect's offset_path with expand covers Offset Path.
+ * Smooth and Offset Path also open a dialog and are not offered; Simplify is
+ * in path-edit.js, and apply_effect's offset_path with expand covers Offset Path.
  */
 import { str, num, index, bool, enumOf } from 'adobe-mcp-core';
 import { script } from '../script.js';
@@ -26,12 +26,12 @@ export const PATH_OPERATIONS = {
 };
 
 /** ES3: select exactly these items. */
-const SELECT = `
+export const SELECT = `
 doc.selection = null;
 for (var k = 0; k < items.length; k++) items[k].selected = true;`;
 
 /** ES3: the selection as item info. */
-const SELECTION = `
+export const SELECTION = `
 var sel = doc.selection, out = [];
 if (sel && sel.length) for (var j = 0; j < sel.length && j < 500; j++) out.push(__itemInfo(doc, sel[j]));`;
 
@@ -199,6 +199,7 @@ __result__ = removed;`));
         },
         features: [
             'illustrator.geometry.split_into_grid',
+            'illustrator.geometry.split_into_grid_variant',
             'illustrator.geometry.split_grid_option.rows_number',
             'illustrator.geometry.split_grid_option.columns_number',
             'illustrator.geometry.split_grid_option.gutter',
@@ -273,7 +274,7 @@ __result__ = { paths: results };`)),
     },
     {
         name: 'set_path_options',
-        description: 'Set path attributes on paths (inside groups and compound paths too): even-odd or non-zero fill rule, closed or open, make or release guides, and align to pixel grid',
+        description: 'Set path attributes on paths (inside groups and compound paths too): even-odd or non-zero fill rule, closed or open, make or release guides, and align to pixel grid (Transform panel)',
         inputSchema: {
             type: 'object',
             properties: {
@@ -285,7 +286,7 @@ __result__ = { paths: results };`)),
             },
             required: ['target'],
         },
-        features: ['illustrator.geometry.path_fill_rule', 'illustrator.geometry.guides_from_paths', 'illustrator.geometry.pixel_align'],
+        features: ['illustrator.geometry.path_fill_rule', 'illustrator.geometry.guides_from_paths', 'illustrator.geometry.pixel_align', 'illustrator.transformations.transform_panel_option.align_to_pixel_grid'],
         handler: (a) => {
             const lines = [];
             if (a.evenOdd !== undefined) lines.push(`p.evenodd = ${bool(a.evenOdd)};`);

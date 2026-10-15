@@ -36,6 +36,7 @@ export const PREFERENCES = {
     snapToPoint: { key: 'snapToPoint', type: 'Boolean', description: 'Snap to point' },
     showPixelGrid: { key: 'Guide/ShowPixelGrid', type: 'Boolean', description: 'Show the pixel grid at high zoom' },
     penAutoAddDelete: { key: 'pen/disableAutoAddDelete', type: 'Boolean', description: 'Disable the Pen tool\'s automatic add/delete anchor (true disables it)' },
+    showHandlesOnSelectedAnchors: { key: 'showDirectionHandles', type: 'Boolean', description: 'Show direction handles when several anchor points are selected (Selection & Anchor Display)' },
     highlightAnchorsOnHover: { key: 'highlightAnchorOnMouseOver', type: 'Boolean', description: 'Highlight anchors on mouse over' },
     preciseCursors: { key: 'usePreciseCursors', type: 'Boolean', description: 'Use precise cursors' },
     toolTips: { key: 'showToolTips', type: 'Boolean', description: 'Show tool tips' },
@@ -91,6 +92,7 @@ export const tools = [
             'illustrator.effects.drop_shadow_option.darkness',
             'illustrator.effects.ps_gaussian_blur',
             'illustrator.appearance.expand_appearance',
+            'illustrator.appearance.appearance_menu.add_new_effect',
         ],
         handler: (a) => {
             const effect = EFFECTS[enumOf(a.effect, Object.keys(EFFECTS), { name: 'effect' })];
@@ -207,6 +209,7 @@ __result__ = { operation: ${str(op)}, method: ${str(viaMenu ? 'menu' : 'effect')
             'illustrator.application.pref_pixel_grid',
             'illustrator.application.pref_disable_auto_add_delete',
             'illustrator.application.pref_highlight_anchors',
+            'illustrator.geometry.direction_line_display',
             'illustrator.application.pref_precise_cursors',
             'illustrator.application.pref_show_tool_tips',
             'illustrator.application.pref_japanese_crop_marks',
@@ -251,6 +254,7 @@ __result__ = out;`, { needsDocument: false }));
             'illustrator.application.pref_pixel_grid',
             'illustrator.application.pref_disable_auto_add_delete',
             'illustrator.application.pref_highlight_anchors',
+            'illustrator.geometry.direction_line_display',
             'illustrator.application.pref_precise_cursors',
             'illustrator.application.pref_show_tool_tips',
             'illustrator.application.pref_japanese_crop_marks',
@@ -274,7 +278,7 @@ __result__ = { updated: ${json(entries.map(([n]) => n))} };`, { needsDocument: f
         name: 'select_tool',
         description: 'Switch Illustrator to a tool, ready for the user to draw with it. Name it as Illustrator does, e.g. "Pen Tool", "Shape Builder Tool", "Width Tool"',
         inputSchema: { type: 'object', properties: { tool: { type: 'string', description: 'Tool name' } }, required: ['tool'] },
-        features: ['illustrator.ui.toolbar', 'illustrator.asset_export.slice_tool', 'illustrator.asset_export.slice_selection_tool'],
+        features: ['illustrator.ui.toolbar', 'illustrator.asset_export.slice_tool', 'illustrator.asset_export.slice_selection_tool', 'illustrator.appearance.live_paint_bucket_tool', 'illustrator.appearance.live_paint_selection_tool'],
         handler: (a) => {
             const want = String(a.tool ?? '').toLowerCase().replace(/^adobe\s+/, '').replace(/\s+tool$/, '').trim();
             const match = TOOLS.find((t) => t.toLowerCase().replace(/^adobe\s+/, '').replace(/\s+tool$/, '') === want);
