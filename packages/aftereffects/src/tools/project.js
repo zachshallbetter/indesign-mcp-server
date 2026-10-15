@@ -17,7 +17,7 @@ export const tools = [
         description: 'Describe the open project: file, unsaved changes, bit depth, working colour space, expression engine, item counts by type, the active item and the render queue',
         inputSchema: { type: 'object', properties: {} },
         hints: { readOnly: true },
-        features: [],
+        features: ['aftereffects.projects.project_object'],
         handler: () => run('Project info', script(`
 var counts = { composition: 0, footage: 0, folder: 0 };
 for (var i = 1; i <= proj.numItems; i++) { var t = __itemType(proj.item(i)); counts[t] = (counts[t] || 0) + 1; }
@@ -37,7 +37,7 @@ __result__ = { file: proj.file ? proj.file.fsName : null, dirty: proj.dirty, bit
             },
         },
         hints: { readOnly: true },
-        features: [],
+        features: ['aftereffects.projects.item_collection_object', 'aftereffects.projects.item_object'],
         handler: (a) => run('List items', script(`
 var want = ${a.type ? str(a.type) : 'null'}, folder = ${a.folder !== undefined ? index(a.folder, { name: 'folder' }) : 'null'}, out = [];
 for (var i = 1; i <= proj.numItems; i++) {
@@ -61,7 +61,18 @@ __result__ = { count: out.length, items: out };`)),
             },
             required: ['files'],
         },
-        features: [],
+        features: [
+            'aftereffects.footage.import_file',
+            'aftereffects.footage.import_multiple_files',
+            'aftereffects.footage.import_options_object',
+            'aftereffects.footage.import_as',
+            'aftereffects.footage.import_still_sequence',
+            'aftereffects.footage.import_into_folder',
+            'aftereffects.footage.import_after_effects_project',
+            'aftereffects.footage.format_psd',
+            'aftereffects.footage.format_ai',
+            'aftereffects.footage.format_aep',
+        ],
         handler: (a) => {
             if (!Array.isArray(a.files) || !a.files.length) throw new Error("'files' must list at least one path");
             const files = a.files.map((f) => paths.validate(f));
@@ -96,7 +107,7 @@ __result__ = { imported: out };`, { undo: 'Import files' }));
             },
             required: ['name'],
         },
-        features: [],
+        features: ['aftereffects.projects.new_folder', 'aftereffects.projects.folder_item_object', 'aftereffects.projects.move_items_to_folder'],
         handler: (a) => run('Create folder', script(`
 var f = proj.items.addFolder(${str(a.name)});
 ${a.parent !== undefined ? `var p = proj.itemByID(${index(a.parent, { name: 'parent' })}); if (!(p instanceof FolderItem)) throw new Error("parent must be a folder"); f.parentFolder = p;` : ''}
@@ -119,7 +130,12 @@ __result__ = __itemInfo(f);`, { undo: 'Create folder' })),
             required: ['items'],
         },
         hints: { destructive: true },
-        features: [],
+        features: [
+            'aftereffects.projects.rename_project_item',
+            'aftereffects.projects.move_items_to_folder',
+            'aftereffects.projects.project_item_label',
+            'aftereffects.projects.delete_project_item',
+        ],
         handler: (a) => {
             if (!Array.isArray(a.items) || !a.items.length) throw new Error("'items' must list at least one id");
             if (a.rename !== undefined && a.items.length > 1) throw new Error('Rename one item at a time');
@@ -143,7 +159,7 @@ __result__ = { items: out };`, { undo: 'Manage items' }));
         description: 'Save the project in place, or as a new .aep file (the project then refers to it)',
         inputSchema: { type: 'object', properties: { filePath: { type: 'string', description: 'Absolute .aep path. Omit to save in place' } } },
         hints: { destructive: true, idempotent: true },
-        features: [],
+        features: ['aftereffects.projects.save', 'aftereffects.projects.save_as', 'aftereffects.projects.aep_format'],
         handler: (a) => {
             if (!a.filePath) {
                 return run('Save project', script(`
@@ -163,7 +179,7 @@ __result__ = { saved: proj.file.fsName };`));
         description: 'Open an .aep project, or start a new empty one. Unsaved changes in the current project are discarded, so save first',
         inputSchema: { type: 'object', properties: { filePath: { type: 'string', description: 'Absolute .aep path. Omit for a new project' } } },
         hints: { destructive: true },
-        features: [],
+        features: ['aftereffects.projects.open_project', 'aftereffects.projects.new_project', 'aftereffects.projects.aep_format'],
         handler: (a) => {
             if (!a.filePath) return run('New project', script('var p = app.newProject();\n__result__ = { file: null, items: app.project.numItems };'));
             const p = paths.validate(a.filePath);
@@ -186,7 +202,7 @@ __result__ = { file: opened.file ? opened.file.fsName : null, items: opened.numI
             required: ['operation'],
         },
         hints: { destructive: true },
-        features: [],
+        features: ['aftereffects.projects.remove_unused_footage', 'aftereffects.projects.consolidate_all_footage', 'aftereffects.projects.reduce_project'],
         handler: (a) => {
             const op = enumOf(a.operation, ['remove_unused_footage', 'consolidate_footage', 'reduce_project'], { name: 'operation' });
             if (op === 'reduce_project' && !(Array.isArray(a.keep) && a.keep.length)) throw new Error("reduce_project needs 'keep'");

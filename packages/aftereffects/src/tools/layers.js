@@ -15,6 +15,8 @@ const BLEND = [
     'DIVIDE', 'HUE', 'SATURATION', 'COLOR', 'LUMINOSITY', 'STENCIL_ALPHA', 'STENCIL_LUMA', 'SILHOUETE_ALPHA', 'SILHOUETTE_LUMA',
     'ALPHA_ADD', 'LUMINESCENT_PREMUL',
 ];
+/** The blending mode features set_layer_properties covers, one per BLEND value. */
+const BLEND_FEATURES = BLEND.map((b) => `aftereffects.layers.blending_mode_${b === 'SILHOUETE_ALPHA' ? 'silhouette_alpha' : b.toLowerCase()}`);
 const MATTES = { alpha: 'ALPHA', alpha_inverted: 'ALPHA_INVERTED', luma: 'LUMA', luma_inverted: 'LUMA_INVERTED', none: 'NO_TRACK_MATTE' };
 const QUALITY = { best: 'BEST', draft: 'DRAFT', wireframe: 'WIREFRAME' };
 const LIGHTS = { parallel: 'PARALLEL', spot: 'SPOT', point: 'POINT', ambient: 'AMBIENT' };
@@ -30,7 +32,7 @@ export const tools = [
         description: 'List a composition\'s layers, top to bottom, with index, id, type, switches, timing, parent, blending mode and track matte. Indexes are what other tools take',
         inputSchema: { type: 'object', properties: { comp: COMP_SCHEMA } },
         hints: { readOnly: true },
-        features: [],
+        features: ['aftereffects.layers.layer_collection_object', 'aftereffects.layers.layer_object'],
         handler: (a) => run('List layers', script(`
 var c = __comp(${compSpec(a.comp)}), out = [];
 for (var i = 1; i <= c.numLayers; i++) out.push(__layerInfo(c.layer(i)));
@@ -58,7 +60,18 @@ __result__ = { comp: __itemInfo(c), selected: sel, layers: out };`)),
             required: ['type'],
         },
         auditArgs: { type: 'solid', color: '#3366FF', item: undefined },
-        features: [],
+        features: [
+            'aftereffects.layers.new_solid',
+            'aftereffects.layers.new_null_object',
+            'aftereffects.layers.new_adjustment_layer',
+            'aftereffects.layers.new_text_layer',
+            'aftereffects.layers.new_shape_layer',
+            'aftereffects.layers.new_camera',
+            'aftereffects.layers.new_light',
+            'aftereffects.three_d.light_type',
+            'aftereffects.layers.create_layers_from_footage',
+            'aftereffects.compositions.nest_composition',
+        ],
         handler: (a) => {
             const type = enumOf(a.type, LAYER_TYPES, { name: 'type' });
             if (type === 'item' && a.item === undefined) throw new Error("type item needs 'item'");
@@ -101,7 +114,27 @@ __result__ = __layerInfo(l);`, { undo: 'Add layer' }));
             required: ['layers'],
         },
         hints: { idempotent: true },
-        features: [],
+        features: [
+            'aftereffects.layers.rename_layer',
+            'aftereffects.layers.video_switch',
+            'aftereffects.layers.audio_switch',
+            'aftereffects.layers.solo_switch',
+            'aftereffects.layers.shy_switch',
+            'aftereffects.layers.lock_switch',
+            'aftereffects.three_d.three_d_layer',
+            'aftereffects.layers.motion_blur_switch',
+            'aftereffects.layers.adjustment_layer_switch',
+            'aftereffects.layers.guide_layer',
+            'aftereffects.layers.quality_best',
+            'aftereffects.layers.quality_draft',
+            'aftereffects.layers.quality_wireframe',
+            'aftereffects.layers.blending_mode_menu',
+            ...BLEND_FEATURES,
+            'aftereffects.layers.layer_label_color',
+            'aftereffects.layers.set_in_out_numerically',
+            'aftereffects.time.time_stretch',
+            'aftereffects.time.time_reverse_layer',
+        ],
         handler: (a) => {
             const L = [];
             if (a.name !== undefined) L.push(`l.name = ${str(a.name)};`);
@@ -147,7 +180,14 @@ ${RESULT}`, { undo: 'Set layer properties' }));
             required: ['layers'],
         },
         hints: { idempotent: true },
-        features: [],
+        features: [
+            'aftereffects.layers.transform_properties',
+            'aftereffects.layers.anchor_point',
+            'aftereffects.layers.position_property',
+            'aftereffects.layers.scale_property',
+            'aftereffects.layers.rotation_property',
+            'aftereffects.layers.opacity_property',
+        ],
         handler: (a) => {
             const vec = (v, k) => json(v.map((x) => Number(num(x, { name: k }))));
             const L = [];
@@ -180,7 +220,7 @@ ${RESULT}`, { undo: 'Set transform' }));
             required: ['layers'],
         },
         hints: { idempotent: true },
-        features: [],
+        features: ['aftereffects.layers.parent_layer'],
         handler: (a) => run('Parent layers', script(`
 var c = __comp(${compSpec(a.comp)}), ls = __layers(c, ${layerSpec(a.layers)});
 var parent = ${a.parent !== undefined ? `c.layer(${index(a.parent, { name: 'parent', max: 10000 })})` : 'null'};
@@ -201,7 +241,14 @@ ${RESULT}`, { undo: 'Parent layers' })),
             required: ['layers'],
         },
         hints: { idempotent: true },
-        features: [],
+        features: [
+            'aftereffects.layers.track_matte',
+            'aftereffects.layers.track_matte_alpha_matte',
+            'aftereffects.layers.track_matte_alpha_inverted_matte',
+            'aftereffects.layers.track_matte_luma_matte',
+            'aftereffects.layers.track_matte_luma_inverted_matte',
+            'aftereffects.layers.track_matte_none',
+        ],
         handler: (a) => {
             const type = MATTES[enumOf(a.type ?? 'alpha', Object.keys(MATTES), { name: 'type' })];
             if (type !== 'NO_TRACK_MATTE' && a.matteLayer === undefined) throw new Error("Give matteLayer, or type 'none' to remove the matte");
@@ -225,7 +272,12 @@ ${RESULT}`, { undo: 'Track matte' }));
             },
             required: ['layers', 'order'],
         },
-        features: [],
+        features: [
+            'aftereffects.layers.bring_layer_to_front',
+            'aftereffects.layers.send_layer_to_back',
+            'aftereffects.layers.bring_layer_forward',
+            'aftereffects.layers.send_layer_backward',
+        ],
         handler: (a) => {
             const order = enumOf(a.order, ['top', 'bottom', 'before', 'after'], { name: 'order' });
             if ((order === 'before' || order === 'after') && a.relativeTo === undefined) throw new Error(`'${order}' needs relativeTo`);
@@ -245,7 +297,7 @@ ${RESULT}`, { undo: 'Arrange layers' }));
             properties: { comp: COMP_SCHEMA, layers: LAYERS_SCHEMA, toComp: { type: 'integer', description: 'Copy into this composition (id) instead' } },
             required: ['layers'],
         },
-        features: [],
+        features: ['aftereffects.layers.duplicate_layer'],
         handler: (a) => run('Duplicate layers', script(`
 var c = __comp(${compSpec(a.comp)}), src = __layers(c, ${layerSpec(a.layers)}), ls = [];
 ${a.toComp !== undefined ? `var dest = __comp({ id: ${index(a.toComp, { name: 'toComp' })} });
@@ -257,7 +309,7 @@ ${RESULT}`, { undo: 'Duplicate layers' })),
         description: 'Delete layers from a composition',
         inputSchema: { type: 'object', properties: { comp: COMP_SCHEMA, layers: LAYERS_SCHEMA }, required: ['layers'] },
         hints: { destructive: true },
-        features: [],
+        features: ['aftereffects.application.clear'],
         handler: (a) => run('Delete layers', script(`
 var c = __comp(${compSpec(a.comp)}), ls = __layers(c, ${layerSpec(a.layers)}), names = [];
 for (var i = ls.length - 1; i >= 0; i--) { names.push(ls[i].name); ls[i].locked = false; ls[i].remove(); }

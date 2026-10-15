@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
-import { toolDefinitions } from '../src/server.js';
+import { toolTable, toolDefinitions } from '../src/server.js';
 import { compSpec, layerSpec, propertyPath, colorValue, propertyValue } from '../src/args.js';
 import { script } from '../src/script.js';
 import { resultWrapper } from '../src/executor.js';
@@ -11,6 +11,8 @@ import { checkScript } from 'adobe-mcp-core/testing';
 import { wrapScriptForStructuredResult } from 'adobe-mcp-core';
 import { audit, typings } from './audit.js';
 import { scriptsFor, server, home } from './helpers.js';
+
+const featureIds = new Set(JSON.parse(readFileSync(new URL('./fixtures/feature-ids.json', import.meta.url), 'utf8')).ids);
 
 test('every tool is well-formed', () => {
     const names = new Set();
@@ -22,6 +24,14 @@ test('every tool is well-formed', () => {
         assert.equal(t.inputSchema.type, 'object', t.name);
         for (const r of t.inputSchema.required ?? []) assert.ok(r in t.inputSchema.properties, `${t.name}: required ${r} is not a property`);
         assert.ok(t.title);
+    }
+});
+
+test('every tool claims atlas features that exist', () => {
+    for (const t of toolTable) {
+        if (t.name === 'help') continue;
+        assert.ok(t.features?.length, `${t.name} claims no feature`);
+        for (const f of t.features) assert.ok(featureIds.has(f), `${t.name}: unknown feature ${f}`);
     }
 });
 
