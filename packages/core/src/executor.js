@@ -61,6 +61,9 @@ export function powerShellString(value) {
  * @param {string} [app.macBundleId]    e.g. "com.adobe.illustrator": address the app by bundle id
  *        (`tell application id ...`) unless <PREFIX>_APP_NAME names a specific copy
  * @param {string} [app.winProcessName] image name for tasklist, e.g. "Illustrator.exe"
+ * @param {(o: { scriptPath: string, run: typeof runProcess, timeoutMs: number }) => Promise<string>} [app.winRun]
+ *        Windows: run the .jsx at scriptPath another way and resolve with its result, for an
+ *        application without a COM scripting object (After Effects runs scripts with AfterFX.exe -r)
  * @param {boolean} [app.activate=true] bring the application to the front first (menu commands need it)
  * @param {number} [app.timeoutMs=120000]
  * @param {Array<{ name: string, isAvailable: () => Promise<boolean>, run: (script: string) => Promise<string>, isUnavailableError?: (e: Error) => boolean }>} [app.backends]
@@ -69,7 +72,7 @@ export function powerShellString(value) {
 export function createExecutor(app) {
     const {
         label, envPrefix, appNamePrefix, defaultAppName,
-        macScript, macBundleId, winProgIds = [], winInvoke, winProcessName,
+        macScript, macBundleId, winProgIds = [], winInvoke, winProcessName, winRun,
         activate = true, backends = [],
     } = app;
     const run = app.run ?? runProcess;
@@ -177,6 +180,13 @@ export function createExecutor(app) {
     async function runExtendScript(script) {
         const scriptPath = writeTemp(script);
         try {
+            if (IS_WINDOWS && winRun) {
+                try {
+                    return await winRun({ scriptPath, run, timeoutMs: timeoutMs() });
+                } catch (error) {
+                    throw failure(error, label);
+                }
+            }
             if (IS_WINDOWS) {
                 const ps = [
                     `$progIds = @(${winProgIds.map(powerShellString).join(',')})`,
