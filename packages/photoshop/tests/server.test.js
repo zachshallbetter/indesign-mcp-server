@@ -3,13 +3,15 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
-import { toolDefinitions } from '../src/server.js';
+import { toolTable, toolDefinitions } from '../src/server.js';
 import { colorSpec, targetSpec, rect } from '../src/args.js';
 import { script } from '../src/script.js';
 import { checkScript } from 'adobe-mcp-core/testing';
 import { wrapScriptForStructuredResult } from 'adobe-mcp-core';
 import { audit, typings } from './audit.js';
 import { scriptsFor, server, home } from './helpers.js';
+
+const featureIds = new Set(JSON.parse(readFileSync(new URL('./fixtures/feature-ids.json', import.meta.url), 'utf8')).ids);
 
 test('every tool is well-formed', () => {
     const names = new Set();
@@ -23,6 +25,16 @@ test('every tool is well-formed', () => {
         assert.equal(typeof t.annotations.readOnlyHint, 'boolean');
         assert.ok(t.title);
     }
+});
+
+test('every tool claims atlas features that exist', async () => {
+    for (const t of toolTable) {
+        if (t.name === 'help') continue;
+        assert.ok(t.features?.length, `${t.name} claims no feature`);
+        for (const f of t.features) assert.ok(featureIds.has(f), `${t.name}: unknown feature ${f}`);
+    }
+    const { ADJUSTMENTS, FILTERS } = await import('../src/tools/adjust.js');
+    for (const [k, entry] of Object.entries({ ...ADJUSTMENTS, ...FILTERS })) assert.ok(entry.features?.length, `${k} claims no feature`);
 });
 
 test('destructive and read-only tools are annotated as such', () => {

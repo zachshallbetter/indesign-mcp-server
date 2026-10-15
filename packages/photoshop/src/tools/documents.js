@@ -62,7 +62,7 @@ export const tools = [
         description: 'List open documents with their size in pixels, resolution, colour mode, bit depth, file and whether they have unsaved changes',
         inputSchema: { type: 'object', properties: {} },
         hints: { readOnly: true },
-        features: [],
+        features: ['photoshop.documents.documents_collection', 'photoshop.documents.document_object', 'photoshop.documents.document_id', 'photoshop.documents.document_saved_state', 'photoshop.documents.document_file_path'],
         handler: () => run('List documents', script(`
 var out = [];
 for (var i = 0; i < app.documents.length; i++) out.push(__docInfo(app.documents[i]));
@@ -73,7 +73,7 @@ __result__ = { active: app.documents.length ? app.activeDocument.name : null, do
         description: 'Describe the active document: size in pixels, resolution, mode, bit depth, colour profile, layer count, active layer, channels, guides, selection bounds and history',
         inputSchema: { type: 'object', properties: {} },
         hints: { readOnly: true },
-        features: [],
+        features: ['photoshop.documents.document_object', 'photoshop.documents.document_id', 'photoshop.documents.document_saved_state', 'photoshop.documents.document_file_path', 'photoshop.color_management.color_profile_of_document', 'photoshop.channels.channel_object', 'photoshop.ui.guides', 'photoshop.selection.selection_object', 'photoshop.history.history_state'],
         handler: () => run('Document info', script(`
 var info = __docInfo(doc), ch = [], g = [];
 for (var i = 0; i < doc.channels.length; i++) ch.push({ name: doc.channels[i].name, kind: __enumName(doc.channels[i].kind) });
@@ -101,7 +101,7 @@ __result__ = info;`)),
             },
             required: ['width', 'height'],
         },
-        features: [],
+        features: ['photoshop.documents.new_document', 'photoshop.documents.new_doc_width_height', 'photoshop.documents.new_doc_resolution', 'photoshop.documents.new_doc_color_mode', 'photoshop.documents.new_doc_background_contents', 'photoshop.documents.new_doc_color_profile'],
         handler: (a) => run('Create document', script(`
 var d = app.documents.add(${num(a.width, { min: 1, max: 300000, name: 'width' })}, ${num(a.height, { min: 1, max: 300000, name: 'height' })}, ${num(a.resolution ?? 72, { min: 1, max: 10000, name: 'resolution' })},
   ${a.name ? str(a.name) : 'undefined'}, NewDocumentMode.${MODES[enumOf(a.mode ?? 'rgb', Object.keys(MODES), { name: 'mode' })]},
@@ -120,7 +120,7 @@ __result__ = __docInfo(d);`, { needsDocument: false })),
             },
             required: ['filePath'],
         },
-        features: [],
+        features: ['photoshop.documents.open', 'photoshop.import_export.open_as_smart_object'],
         handler: (a) => {
             const p = paths.validate(a.filePath);
             return run('Open document', script(`
@@ -153,7 +153,7 @@ __result__ = __docInfo(d);`, { needsDocument: false }));
             },
         },
         hints: { destructive: true, idempotent: true },
-        features: [],
+        features: ['photoshop.documents.save', 'photoshop.documents.save_as', 'photoshop.documents.save_a_copy', 'photoshop.import_export.format_psd', 'photoshop.import_export.format_tiff', 'photoshop.import_export.format_png', 'photoshop.import_export.format_jpeg', 'photoshop.import_export.format_photoshop_pdf', 'photoshop.import_export.save_option_layers', 'photoshop.import_export.save_option_alpha', 'photoshop.import_export.save_option_spot', 'photoshop.import_export.save_option_color', 'photoshop.import_export.tiff_image_compression', 'photoshop.import_export.tiff_transparency', 'photoshop.import_export.png_compression', 'photoshop.import_export.png_interlace', 'photoshop.import_export.jpeg_quality', 'photoshop.import_export.jpeg_format_options', 'photoshop.import_export.pdf_preset', 'photoshop.import_export.pdf_standard', 'photoshop.import_export.pdf_preserve_editing'],
         handler: (a) => {
             if (!a.filePath) {
                 return run('Save document', script(`
@@ -183,7 +183,7 @@ __result__ = { saved: true, file: target.fsName, asCopy: ${bool(a.asCopy)}, docu
                 mergeLayers: { type: 'boolean', description: 'Duplicate merged layers only. Default false', default: false },
             },
         },
-        features: [],
+        features: ['photoshop.image.duplicate', 'photoshop.image.duplicate_merged_layers_only'],
         handler: (a) => run('Duplicate document', script(`
 var d = doc.duplicate(${a.name ? str(a.name) : 'undefined'}, ${bool(a.mergeLayers)});
 __result__ = __docInfo(d);`)),
@@ -196,7 +196,7 @@ __result__ = __docInfo(d);`)),
             properties: { name: { type: 'string' }, index: { type: 'integer', minimum: 0 } },
         },
         hints: { idempotent: true },
-        features: [],
+        features: ['photoshop.documents.documents_collection', 'photoshop.ui.cycle_documents'],
         handler: (a) => {
             if ((a.name === undefined) === (a.index === undefined)) throw new Error('Give name or index');
             return run('Set active document', script(a.name !== undefined ? `
@@ -216,7 +216,7 @@ __result__ = __docInfo(app.activeDocument);`, { needsDocument: false }));
         description: 'Close the active document. Unsaved changes are discarded unless save is true',
         inputSchema: { type: 'object', properties: { save: { type: 'boolean', description: 'Save before closing. Default false', default: false } } },
         hints: { destructive: true },
-        features: [],
+        features: ['photoshop.documents.close'],
         handler: (a) => run('Close document', script(`
 var n = doc.name;
 doc.close(SaveOptions.${a.save ? 'SAVECHANGES' : 'DONOTSAVECHANGES'});
@@ -227,7 +227,7 @@ __result__ = { closed: n };`)),
         description: 'Set the foreground and background colours used by fills, strokes, brushes and new documents',
         inputSchema: { type: 'object', properties: { foreground: COLOR_SCHEMA, background: COLOR_SCHEMA } },
         hints: { idempotent: true },
-        features: [],
+        features: ['photoshop.color.foreground_color', 'photoshop.color.background_color'],
         handler: (a) => {
             if (a.foreground === undefined && a.background === undefined) throw new Error('Give foreground, background or both');
             return run('Set colours', script(`

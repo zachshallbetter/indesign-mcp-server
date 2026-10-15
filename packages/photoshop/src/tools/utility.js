@@ -11,7 +11,7 @@ export const tools = [
         description: 'Check that Photoshop is reachable: platform, how the server addresses Photoshop, whether it is running, its version and open documents. Use this first when a call fails to connect',
         inputSchema: { type: 'object', properties: { probe: { type: 'boolean', description: 'Ask Photoshop for its version and documents (starts Photoshop if it is not running). Default true', default: true } } },
         hints: { readOnly: true },
-        features: [],
+        features: ['photoshop.application.application_object', 'photoshop.application.version_info'],
         handler: async (a) => {
             const status = await executor.status();
             if (a.probe === false) return formatResponse(status, 'Status');
@@ -36,7 +36,7 @@ __result__ = { version: app.version, build: app.build, scriptingVersion: app.scr
             },
             required: ['action', 'set'],
         },
-        features: [],
+        features: ['photoshop.automation.play_action', 'photoshop.automation.action'],
         handler: (a) => run('Play action', script(`
 app.doAction(${str(a.action)}, ${str(a.set)});
 __result__ = { played: ${str(a.action)}, set: ${str(a.set)}, document: app.documents.length ? __docInfo(app.activeDocument) : null };`, { needsDocument: false })),
@@ -46,7 +46,7 @@ __result__ = { played: ${str(a.action)}, set: ${str(a.set)}, document: app.docum
         description: 'Run your own ExtendScript in Photoshop and return its last expression. It runs unrestricted: it can change or delete anything and read or write files. Prefer the specific tools',
         inputSchema: { type: 'object', properties: { code: { type: 'string', description: 'ExtendScript (ES3) source' } }, required: ['code'] },
         hints: { destructive: true },
-        features: [],
+        features: ['photoshop.automation.extendscript_dom', 'photoshop.automation.scripts_menu', 'photoshop.application.action_manager'],
         handler: async (a) => {
             if (typeof a.code !== 'string' || !a.code.trim()) throw new Error("'code' is empty");
             const r = await executor.runStructured(a.code);
