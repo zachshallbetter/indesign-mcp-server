@@ -5,10 +5,12 @@
  * category they appear under.
  */
 import { tools as transformTools } from './transform.js';
+import { tools as tableTools } from './tables.js';
 
 /** [area id, tools, help category { name, description }] */
 export const AREAS = [
     ['transform', transformTools, { name: 'Transformations', description: 'Rotate, flip, scale, shear and align items, and transform them again' }],
+    ['tables', tableTools, { name: 'Tables', description: 'Table and cell options, rows and columns, merging and splitting, converting text and tables, and selecting in tables' }],
 ];
 
 /** Every module tool, with its area. */
