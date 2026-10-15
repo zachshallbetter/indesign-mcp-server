@@ -5,18 +5,24 @@
  * category they appear under.
  */
 import { tools as transformTools } from './transform.js';
+import { tools as characterTools } from './character.js';
+import { tools as textFrameTools } from './text-frames.js';
 import { tools as tableTools } from './tables.js';
 import { tools as paragraphTools } from './paragraph.js';
 import { tools as effectsTools } from './effects.js';
 import { tools as stylesTools } from './styles.js';
+import { tools as formatsTools } from './formats.js';
 
 /** [area id, tools, help category { name, description }] */
 export const AREAS = [
     ['transform', transformTools, { name: 'Transformations', description: 'Rotate, flip, scale, shear and align items, and transform them again' }],
+    ['character', characterTools, { name: 'Character formatting', description: 'Character, OpenType and CJK formatting, type commands, special characters and glyphs, change case, fonts, tabs, GREP styles, and bullets and numbering' }],
+    ['text_frames', textFrameTools, { name: 'Text frames and stories', description: 'Text Frame Options, text wrap, threading, type on a path, notes, track changes, Story Editor and editorial preferences' }],
     ['tables', tableTools, { name: 'Tables', description: 'Table and cell options, rows and columns, merging and splitting, converting text and tables, and selecting in tables' }],
     ['paragraph', paragraphTools, { name: 'Paragraph formatting', description: 'Indents, spacing, alignment, justification, hyphenation, keep options, rules, borders, shading, span columns, drop caps and nested styles; underline and strikethrough options' }],
     ['effects', effectsTools, { name: 'Effects and transparency', description: 'Opacity, blending and effects on items, global light, blend space and transparency flattening' }],
     ['styles', stylesTools, { name: 'Styles & Colors', description: 'Paragraph, character, object, table and cell styles: create, edit, group, apply, clear overrides, nested and GREP styles, load and defaults; swatches and colors' }],
+    ['formats', formatsTools, { name: 'Import and export formats', description: 'Export PDF, interactive PDF, EPUB, HTML, JPEG, PNG, EPS and text with every option; place Word, Excel and text with import options; object export options, articles, and library, preflight, swatch and snippet files' }],
 ];
 
 /** Every module tool, with its area. */
