@@ -2,18 +2,18 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.zachshallbetter/adobe-mcp-illustrator",
   "title": "Illustrator MCP Server",
-  "description": "Drive Adobe Illustrator from any MCP client: artboards, layers, shapes, text, colour and export.",
+  "description": "Drive Adobe Illustrator from any MCP client: artwork, type, colour, effects, data and export.",
   "repository": {
     "url": "https://github.com/zachshallbetter/adobe-mcp",
     "source": "github",
     "subfolder": "packages/illustrator"
   },
-  "version": "0.8.0",
+  "version": "0.9.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "adobe-mcp-illustrator",
-      "version": "0.8.0",
+      "version": "0.9.0",
       "transport": {
         "type": "stdio"
       },
