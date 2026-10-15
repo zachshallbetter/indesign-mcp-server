@@ -133,7 +133,7 @@ const INSETS = (what) => ({
     },
 });
 
-const TEXT_LOCATION_SCHEMA = {
+export const TEXT_LOCATION_SCHEMA = {
     type: 'object',
     description: 'Where in text: a text frame\'s story or a story, at characterIndex (default: the end), or selection: true for the text cursor or selected text frame',
     properties: {
@@ -220,7 +220,7 @@ function strokeLines(obj, prefixes, s, name, typeNames = []) {
 }
 
 /** A text location as a JSX literal for __textAt(). */
-function textAtSpec(at, name = 'at') {
+export function textAtSpec(at, name = 'at') {
     const g = group(at, ['frameId', 'storyId', 'characterIndex', 'selection'], name);
     if (!g) throw new Error(`Choose where: ${name}.frameId, ${name}.storyId or ${name}.selection: true`);
     if (has(g.selection) && typeof g.selection !== 'boolean') throw new Error(`'${name}.selection' must be true or false`);
@@ -367,7 +367,7 @@ function __named(list, name, kind) {
 `;
 
 /** __textAt(doc, spec): the insertion point a text location names. */
-const TEXT_AT_JSX = `
+export const TEXT_AT_JSX = `
 function __textAt(doc, spec) {
   var story;
   if (spec.selection) {
