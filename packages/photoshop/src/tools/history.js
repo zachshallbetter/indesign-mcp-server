@@ -19,7 +19,7 @@ export const tools = [
         description: 'List the History panel\'s states and snapshots, and which one is current',
         inputSchema: { type: 'object', properties: {} },
         hints: { readOnly: true },
-        features: [],
+        features: ['photoshop.history.history_panel', 'photoshop.history.history_state', 'photoshop.history.snapshot_object'],
         handler: () => run('List history', script(`${STATES}
 __result__ = { active: active, states: states };`)),
     },
@@ -34,7 +34,7 @@ __result__ = { active: active, states: states };`)),
             },
         },
         auditArgs: { toIndex: undefined },
-        features: [],
+        features: ['photoshop.history.undo', 'photoshop.history.redo', 'photoshop.history.step_backward', 'photoshop.history.step_forward', 'photoshop.history.select_history_state'],
         handler: (a) => {
             if (a.steps !== undefined && a.toIndex !== undefined) throw new Error('Give steps or toIndex');
             return run('Undo', script(`${STATES}
@@ -49,7 +49,7 @@ __result__ = { active: target, state: states[target].name };`));
         name: 'make_snapshot',
         description: 'Save the current state as a History snapshot, so it can be returned to later',
         inputSchema: { type: 'object', properties: { name: { type: 'string' } } },
-        features: [],
+        features: ['photoshop.history.snapshot'],
         handler: (a) => run('Make snapshot', script(`
 var d = new ActionDescriptor(), r = new ActionReference(), from = new ActionReference();
 r.putClass(app.charIDToTypeID("SnpS"));

@@ -57,7 +57,7 @@ export const tools = [
             },
         },
         hints: { readOnly: true },
-        features: [],
+        features: ['photoshop.layers.layer_object', 'photoshop.layers.layer_group_object', 'photoshop.layers.background_layer'],
         handler: (a) => run('List layers', script(`
 var root = ${a.group !== undefined ? `__layerById(doc, ${index(a.group, { name: 'group' })})` : 'doc'}, max = ${a.depth !== undefined ? index(a.depth, { name: 'depth' }) : 1000}, out = [];
 __eachLayer(root, function (l, d) { if (d <= max) { var i = __layerInfo(l); i.depth = d; out.push(i); } });
@@ -76,7 +76,7 @@ __result__ = { active: active, count: out.length, layers: out };`)),
                 ...LAYER_OPTIONS,
             },
         },
-        features: [],
+        features: ['photoshop.layers.new_layer', 'photoshop.layers.new_group', 'photoshop.layers.layer_opacity', 'photoshop.layers.fill_opacity', 'photoshop.layers.blend_mode', 'photoshop.layers.show_hide_layers'],
         handler: (a) => {
             const type = enumOf(a.type ?? 'layer', ['layer', 'group'], { name: 'type' });
             return run('Create layer', script(`
@@ -104,7 +104,7 @@ __result__ = __layerInfo(l);`));
             required: ['target'],
         },
         hints: { idempotent: true },
-        features: [],
+        features: ['photoshop.layers.rename_layer', 'photoshop.layers.layer_opacity', 'photoshop.layers.fill_opacity', 'photoshop.layers.blend_mode', 'photoshop.layers.show_hide_layers', 'photoshop.layers.lock_all', 'photoshop.layers.lock_image_pixels', 'photoshop.layers.lock_position', 'photoshop.layers.lock_transparent_pixels'],
         handler: (a) => {
             const lines = layerOptionLines(a);
             if (a.locked !== undefined) lines.push(`l.allLocked = ${bool(a.locked)};`);
@@ -127,7 +127,7 @@ ${RESULT}`));
         description: 'Make a layer the active one; many commands work on the active layer',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA }, required: ['target'] },
         hints: { idempotent: true },
-        features: [],
+        features: ['photoshop.layers.select_layer'],
         handler: (a) => run('Set active layer', script(`
 var items = __targets(doc, ${targetSpec(a.target)});
 doc.activeLayer = items[0];
@@ -145,7 +145,7 @@ __result__ = __layerInfo(doc.activeLayer);`)),
             },
             required: ['target', 'order'],
         },
-        features: [],
+        features: ['photoshop.layers.bring_to_front', 'photoshop.layers.bring_forward', 'photoshop.layers.send_backward', 'photoshop.layers.send_to_back'],
         handler: (a) => {
             const order = enumOf(a.order, ['front', 'forward', 'backward', 'back', 'above', 'below', 'inside'], { name: 'order' });
             const relative = ['above', 'below', 'inside'].includes(order);
@@ -175,7 +175,7 @@ ${RESULT}`));
         name: 'group_layers',
         description: 'Put layers into a new group (Layer > Group Layers), placed where the first of them was; they keep the order given',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, name: { type: 'string' } }, required: ['target'] },
-        features: [],
+        features: ['photoshop.layers.group_layers', 'photoshop.layers.group_from_layers'],
         handler: (a) => run('Group layers', script(`
 var items = __targets(doc, ${targetSpec(a.target)});
 var g = items[0].parent.layerSets.add();
@@ -192,7 +192,7 @@ __result__ = __layerInfo(g);`)),
         description: 'Move a group\'s layers out to where the group was and remove the empty group (Layer > Ungroup Layers)',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA }, required: ['target'] },
         hints: { destructive: true },
-        features: [],
+        features: ['photoshop.layers.ungroup_layers'],
         handler: (a) => run('Ungroup layers', script(`
 var groups = __targets(doc, ${targetSpec(a.target)}), items = [];
 for (var i = 0; i < groups.length; i++) {
@@ -207,7 +207,7 @@ ${RESULT}`)),
         name: 'duplicate_layers',
         description: 'Duplicate layers or groups (Layer > Duplicate Layer), placed above each original, optionally renamed',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, name: { type: 'string', description: 'Name for the copy (one layer only)' } }, required: ['target'] },
-        features: [],
+        features: ['photoshop.layers.duplicate_layer'],
         handler: (a) => run('Duplicate layers', script(`
 var src = __targets(doc, ${targetSpec(a.target)}), items = [];
 ${a.name ? 'if (src.length > 1) throw new Error("Name one copy at a time");' : ''}
@@ -223,7 +223,7 @@ ${RESULT}`)),
         description: 'Delete layers or groups (with everything inside them)',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA }, required: ['target'] },
         hints: { destructive: true },
-        features: [],
+        features: ['photoshop.layers.delete_layer'],
         handler: (a) => run('Delete layers', script(`
 var items = __targets(doc, ${targetSpec(a.target)}), names = [];
 for (var i = items.length - 1; i >= 0; i--) { names.push(items[i].name); items[i].remove(); }
@@ -234,7 +234,7 @@ __result__ = { deleted: names };`)),
         description: 'Merge a layer into the one below (Merge Down), or merge a group into one layer (Merge Group)',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA }, required: ['target'] },
         hints: { destructive: true },
-        features: [],
+        features: ['photoshop.layers.merge_down', 'photoshop.layers.merge_layers'],
         handler: (a) => run('Merge layers', script(`
 var src = __targets(doc, ${targetSpec(a.target)}), items = [];
 for (var i = 0; i < src.length; i++) items.push(src[i].merge());
@@ -256,7 +256,7 @@ ${RESULT}`)),
             },
             required: ['target'],
         },
-        features: [],
+        features: ['photoshop.transformations.free_transform', 'photoshop.transformations.transform_scale', 'photoshop.transformations.transform_rotate', 'photoshop.transformations.transform_rotate_180', 'photoshop.transformations.transform_rotate_90_cw', 'photoshop.transformations.transform_rotate_90_ccw', 'photoshop.transformations.transform_flip_horizontal', 'photoshop.transformations.transform_flip_vertical', 'photoshop.transformations.reference_point'],
         handler: (a) => {
             const anchor = `AnchorPosition.${ANCHORS[enumOf(a.anchor ?? 'center', Object.keys(ANCHORS), { name: 'anchor' })]}`;
             const lines = [];
@@ -283,7 +283,7 @@ ${RESULT}`));
             required: ['target'],
         },
         hints: { destructive: true },
-        features: [],
+        features: ['photoshop.layers.rasterize_layer', 'photoshop.layers.rasterize_type', 'photoshop.layers.rasterize_shape', 'photoshop.layers.rasterize_fill_content', 'photoshop.masks.rasterize_vector_mask', 'photoshop.smart_objects.rasterize_smart_object'],
         handler: (a) => run('Rasterize layers', script(`
 var items = __targets(doc, ${targetSpec(a.target)});
 for (var i = 0; i < items.length; i++) {
@@ -297,7 +297,7 @@ ${RESULT}`)),
         description: 'Link layers together so they move and transform as one, or unlink them',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, unlink: { type: 'boolean', default: false } }, required: ['target'] },
         hints: { idempotent: true },
-        features: [],
+        features: ['photoshop.layers.link_layers', 'photoshop.layers.unlink_layers'],
         handler: (a) => run('Link layers', script(`
 var items = __targets(doc, ${targetSpec(a.target)});
 ${a.unlink ? 'for (var i = 0; i < items.length; i++) items[i].unlink();' : 'if (items.length < 2) throw new Error("Linking needs at least two layers"); for (var i = 1; i < items.length; i++) items[0].link(items[i]);'}
@@ -307,7 +307,7 @@ ${RESULT}`)),
         name: 'convert_background_layer',
         description: 'Turn the background layer into a normal layer that can move and hold transparency, or make a layer the background',
         inputSchema: { type: 'object', properties: { target: TARGET_SCHEMA, toBackground: { type: 'boolean', description: 'Make the target the background layer. Default false: turn the background into a normal layer', default: false } } },
-        features: [],
+        features: ['photoshop.layers.layer_from_background', 'photoshop.layers.background_from_layer', 'photoshop.layers.background_layer'],
         handler: (a) => run('Convert background', script(a.toBackground ? `
 var items = __targets(doc, ${targetSpec(a.target)});
 items[0].isBackgroundLayer = true;
@@ -331,7 +331,7 @@ __result__ = __layerInfo(bg);`)),
             },
             required: ['action'],
         },
-        features: [],
+        features: ['photoshop.layers.layer_comps_panel', 'photoshop.layers.layer_comp_object', 'photoshop.layers.new_layer_comp', 'photoshop.layers.apply_layer_comp', 'photoshop.layers.update_layer_comp', 'photoshop.layers.delete_layer_comp'],
         handler: (a) => {
             const action = enumOf(a.action, ['list', 'create', 'apply', 'update', 'delete'], { name: 'action' });
             if (action !== 'list' && !a.name) throw new Error(`'${action}' needs name`);

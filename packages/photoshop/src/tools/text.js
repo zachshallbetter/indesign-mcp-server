@@ -82,7 +82,7 @@ export const tools = [
             required: ['text', 'x', 'y'],
         },
         auditArgs: { color: '#202020', width: 400, height: 120 },
-        features: [],
+        features: ['photoshop.type.type_layer', 'photoshop.type.point_type', 'photoshop.type.paragraph_type', 'photoshop.type.font', 'photoshop.type.font_size', 'photoshop.type.text_color', 'photoshop.type.tracking', 'photoshop.type.leading', 'photoshop.type.paragraph_alignment', 'photoshop.type.paragraph_justification', 'photoshop.type.faux_bold', 'photoshop.type.faux_italic', 'photoshop.type.all_caps_small_caps', 'photoshop.type.underline', 'photoshop.type.strikethrough', 'photoshop.type.baseline_shift', 'photoshop.type.horizontal_scale', 'photoshop.type.vertical_scale'],
         handler: (a) => {
             const paragraph = a.width !== undefined || a.height !== undefined;
             if (paragraph && (a.width === undefined || a.height === undefined)) throw new Error('Paragraph type needs width and height');
@@ -119,7 +119,7 @@ ${TEXT_RESULT}`));
         },
         hints: { idempotent: true },
         auditArgs: { color: 'rgb(200,30,30)', warp: 'arc' },
-        features: [],
+        features: ['photoshop.type.type_layer', 'photoshop.type.change_font_multiple_layers', 'photoshop.type.font', 'photoshop.type.font_size', 'photoshop.type.text_color', 'photoshop.type.tracking', 'photoshop.type.leading', 'photoshop.type.paragraph_alignment', 'photoshop.type.paragraph_justification', 'photoshop.type.faux_bold', 'photoshop.type.faux_italic', 'photoshop.type.all_caps_small_caps', 'photoshop.type.underline', 'photoshop.type.strikethrough', 'photoshop.type.baseline_shift', 'photoshop.type.horizontal_scale', 'photoshop.type.vertical_scale', 'photoshop.type.warp_text', 'photoshop.type.warp_style_arc', 'photoshop.type.warp_style_arclower', 'photoshop.type.warp_style_arcupper', 'photoshop.type.warp_style_arch', 'photoshop.type.warp_style_bulge', 'photoshop.type.warp_style_shelllower', 'photoshop.type.warp_style_shellupper', 'photoshop.type.warp_style_flag', 'photoshop.type.warp_style_wave', 'photoshop.type.warp_style_fish', 'photoshop.type.warp_style_rise', 'photoshop.type.warp_style_fisheye', 'photoshop.type.warp_style_inflate', 'photoshop.type.warp_style_squeeze', 'photoshop.type.warp_style_twist', 'photoshop.type.warp_bend', 'photoshop.type.warp_horizontal_distortion', 'photoshop.type.warp_vertical_distortion', 'photoshop.type.unwarp_text'],
         handler: (a) => {
             const lines = styleLines(a);
             if (a.text !== undefined) lines.unshift(`t.contents = ${textLiteral(a.text)};`);
@@ -148,7 +148,7 @@ ${TEXT_RESULT}`));
             properties: { query: { type: 'string' }, limit: { type: 'integer', minimum: 1, maximum: 1000, default: 50 } },
         },
         hints: { readOnly: true },
-        features: [],
+        features: ['photoshop.type.font_list'],
         handler: (a) => run('List fonts', script(`
 var q = ${str(String(a.query ?? '').toLowerCase())}, max = ${index(a.limit ?? 50, { name: 'limit', max: 1000 })}, out = [], total = 0;
 for (var i = 0; i < app.fonts.length; i++) {

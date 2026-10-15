@@ -47,7 +47,7 @@ export const tools = [
                 antiAlias: { type: 'boolean', default: true },
             },
         },
-        features: [],
+        features: ['photoshop.selection.rectangular_marquee_tool', 'photoshop.selection.elliptical_marquee_tool', 'photoshop.selection.polygonal_lasso_tool', 'photoshop.selection.selection_modes', 'photoshop.selection.feather_option', 'photoshop.selection.anti_alias'],
         handler: (a) => {
             const shape = enumOf(a.shape ?? 'rectangle', ['rectangle', 'ellipse', 'polygon'], { name: 'shape' });
             let pts;
@@ -68,7 +68,7 @@ ${RESULT}`));
         description: 'Select the whole canvas (Select > All), deselect (Select > Deselect), or invert the selection (Select > Inverse)',
         inputSchema: { type: 'object', properties: { action: { type: 'string', enum: ['all', 'none', 'inverse'] } }, required: ['action'] },
         hints: { idempotent: true },
-        features: [],
+        features: ['photoshop.selection.select_all', 'photoshop.selection.deselect', 'photoshop.selection.inverse'],
         handler: (a) => {
             const action = enumOf(a.action, ['all', 'none', 'inverse'], { name: 'action' });
             return run('Select', script(`
@@ -87,7 +87,7 @@ ${RESULT}`));
             },
             required: ['operation', 'amount'],
         },
-        features: [],
+        features: ['photoshop.selection.expand', 'photoshop.selection.contract', 'photoshop.selection.feather', 'photoshop.selection.smooth', 'photoshop.selection.border', 'photoshop.selection.grow', 'photoshop.selection.similar'],
         handler: (a) => {
             const op = enumOf(a.operation, ['expand', 'contract', 'feather', 'smooth', 'border', 'grow', 'similar'], { name: 'operation' });
             const v = num(a.amount, { min: 0, max: op === 'grow' || op === 'similar' ? 255 : 1000, name: 'amount' });
@@ -118,7 +118,7 @@ ${RESULT}`));
                 angle: { type: 'number', minimum: -360, maximum: 360 },
             },
         },
-        features: [],
+        features: ['photoshop.selection.transform_selection', 'photoshop.selection.move_selection_border', 'photoshop.transformations.transform_masks_channels', 'photoshop.transformations.transform_scale', 'photoshop.transformations.transform_rotate'],
         handler: (a) => {
             const b = a.pixels ? '' : 'Boundary';
             const lines = [];
@@ -143,7 +143,7 @@ ${RESULT}`));
                 preserveTransparency: { type: 'boolean', default: false },
             },
         },
-        features: [],
+        features: ['photoshop.painting.fill', 'photoshop.painting.fill_option.contents', 'photoshop.painting.fill_option.color', 'photoshop.painting.fill_option.foreground_color', 'photoshop.painting.fill_option.mode', 'photoshop.painting.fill_option.opacity', 'photoshop.painting.fill_option.preserve_transparency'],
         handler: (a) => run('Fill selection', script(`
 doc.selection.fill(${a.color !== undefined ? `__color(${colorSpec(a.color)})` : 'app.foregroundColor'}, ColorBlendMode.${FILL_BLEND[enumOf(a.blendMode ?? 'normal', Object.keys(FILL_BLEND), { name: 'blendMode' })]}, ${num(a.opacity ?? 100, { min: 1, max: 100, name: 'opacity' })}, ${bool(a.preserveTransparency)});
 ${RESULT}`)),
@@ -163,7 +163,7 @@ ${RESULT}`)),
             },
             required: ['width'],
         },
-        features: [],
+        features: ['photoshop.painting.stroke', 'photoshop.painting.stroke_option.width', 'photoshop.painting.stroke_option.color', 'photoshop.painting.stroke_option.inside', 'photoshop.painting.stroke_option.center', 'photoshop.painting.stroke_option.outside', 'photoshop.painting.stroke_option.mode', 'photoshop.painting.stroke_option.opacity', 'photoshop.painting.stroke_option.preserve_transparency'],
         handler: (a) => run('Stroke selection', script(`
 doc.selection.stroke(${a.color !== undefined ? `__color(${colorSpec(a.color)})` : 'app.foregroundColor'}, ${num(a.width, { min: 1, max: 250, name: 'width' })}, StrokeLocation.${enumOf(a.location ?? 'center', ['inside', 'center', 'outside'], { name: 'location' }).toUpperCase()}, ColorBlendMode.${FILL_BLEND[enumOf(a.blendMode ?? 'normal', Object.keys(FILL_BLEND), { name: 'blendMode' })]}, ${num(a.opacity ?? 100, { min: 1, max: 100, name: 'opacity' })}, ${bool(a.preserveTransparency)});
 ${RESULT}`)),
@@ -181,7 +181,7 @@ ${RESULT}`)),
             },
             required: ['action', 'channel'],
         },
-        features: [],
+        features: ['photoshop.selection.save_selection', 'photoshop.selection.load_selection', 'photoshop.selection.selection_modes', 'photoshop.channels.alpha_channel'],
         handler: (a) => {
             const action = enumOf(a.action, ['save', 'load'], { name: 'action' });
             const combine = `SelectionType.${COMBINE[enumOf(a.combine ?? 'replace', Object.keys(COMBINE), { name: 'combine' })]}`;
@@ -204,7 +204,7 @@ ${RESULT}`));
             properties: { action: { type: 'string', enum: ['copy', 'copy_merged', 'cut', 'clear', 'paste', 'paste_into'] } },
             required: ['action'],
         },
-        features: [],
+        features: ['photoshop.documents.copy', 'photoshop.documents.copy_merged', 'photoshop.documents.cut', 'photoshop.documents.clear', 'photoshop.documents.paste', 'photoshop.documents.paste_into'],
         handler: (a) => {
             const action = enumOf(a.action, ['copy', 'copy_merged', 'cut', 'clear', 'paste', 'paste_into'], { name: 'action' });
             return run('Clipboard', script(`

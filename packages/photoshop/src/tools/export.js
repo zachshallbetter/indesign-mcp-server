@@ -59,7 +59,7 @@ export const tools = [
         inputSchema: { type: 'object', properties: { outputFile: { type: 'string', description: 'Absolute path; the extension must match the format' }, ...OPTIONS }, required: ['outputFile'] },
         hints: { idempotent: true },
         auditArgs: { outputFile: `${process.env.HOME ?? '/tmp'}/Documents/audit.jpg`, format: 'jpeg', height: undefined },
-        features: [],
+        features: ['photoshop.import_export.save_for_web', 'photoshop.import_export.sfw_format', 'photoshop.import_export.sfw_quality', 'photoshop.import_export.sfw_color_reduction', 'photoshop.import_export.sfw_dither', 'photoshop.import_export.sfw_transparency', 'photoshop.import_export.sfw_interlaced', 'photoshop.import_export.sfw_profile', 'photoshop.import_export.format_png', 'photoshop.import_export.format_jpeg', 'photoshop.import_export.format_gif'],
         handler: (a) => {
             const out = paths.validate(a.outputFile);
             const { ext, lines } = webOptionLines(a);
@@ -95,7 +95,7 @@ try {
         },
         hints: { idempotent: true },
         auditArgs: { format: 'png8', height: undefined, trim: true },
-        features: [],
+        features: ['photoshop.import_export.export_layers_to_files', 'photoshop.import_export.sfw_format', 'photoshop.import_export.sfw_quality', 'photoshop.import_export.sfw_color_reduction', 'photoshop.import_export.sfw_dither', 'photoshop.import_export.sfw_transparency', 'photoshop.import_export.sfw_interlaced', 'photoshop.import_export.sfw_profile'],
         handler: (a) => {
             const folder = paths.validate(a.outputFolder);
             const { ext, lines } = webOptionLines(a);

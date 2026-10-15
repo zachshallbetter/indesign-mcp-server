@@ -35,7 +35,7 @@ export const tools = [
                 resample: { type: 'string', enum: Object.keys(RESAMPLE), description: 'Default automatic' },
             },
         },
-        features: [],
+        features: ['photoshop.image.image_size', 'photoshop.image.image_size_dimensions', 'photoshop.image.image_size_resample', 'photoshop.image.image_size_constrain'],
         handler: (a) => {
             if (a.scale !== undefined && (a.width !== undefined || a.height !== undefined)) throw new Error('Give scale, or width and/or height, not both');
             if (a.scale === undefined && a.width === undefined && a.height === undefined && a.resolution === undefined) throw new Error('Give width, height, scale or resolution');
@@ -64,7 +64,7 @@ ${RESULT}`));
                 anchor: { type: 'string', enum: Object.keys(ANCHORS), description: 'Default center' },
             },
         },
-        features: [],
+        features: ['photoshop.image.canvas_size', 'photoshop.image.canvas_size_relative', 'photoshop.image.canvas_size_anchor'],
         handler: (a) => {
             if (a.width === undefined && a.height === undefined) throw new Error('Give width, height or both');
             const lim = a.relative ? { min: -300000, max: 300000 } : { min: 1, max: 300000 };
@@ -91,7 +91,7 @@ ${RESULT}`));
             required: ['bounds'],
         },
         hints: { destructive: true },
-        features: [],
+        features: ['photoshop.image.crop_command', 'photoshop.image.straighten'],
         handler: (a) => {
             const [l, t, r, b] = rect(a.bounds, 'bounds');
             return run('Crop image', script(`
@@ -111,7 +111,7 @@ ${RESULT}`));
             },
         },
         hints: { destructive: true },
-        features: [],
+        features: ['photoshop.image.trim'],
         handler: (a) => {
             const type = { transparent: 'TRANSPARENT', top_left: 'TOPLEFT', bottom_right: 'BOTTOMRIGHT' }[enumOf(a.basedOn ?? 'transparent', ['transparent', 'top_left', 'bottom_right'], { name: 'basedOn' })];
             return run('Trim image', script(`
@@ -129,7 +129,7 @@ ${RESULT}`));
                 flip: { type: 'string', enum: ['horizontal', 'vertical'] },
             },
         },
-        features: [],
+        features: ['photoshop.image.image_rotation', 'photoshop.image.rotate_180', 'photoshop.image.rotate_90_cw', 'photoshop.image.rotate_90_ccw', 'photoshop.image.rotate_arbitrary', 'photoshop.image.flip_canvas_horizontal', 'photoshop.image.flip_canvas_vertical'],
         handler: (a) => {
             if ((a.angle === undefined) === (a.flip === undefined)) throw new Error('Give angle or flip');
             return run('Rotate canvas', script(`
@@ -148,7 +148,7 @@ ${RESULT}`));
             },
         },
         hints: { destructive: true },
-        features: [],
+        features: ['photoshop.image.mode', 'photoshop.image.mode_rgb', 'photoshop.image.mode_cmyk', 'photoshop.image.mode_grayscale', 'photoshop.image.mode_lab', 'photoshop.image.mode_bitmap', 'photoshop.image.mode_indexed', 'photoshop.image.mode_multichannel', 'photoshop.image.bit_depth', 'photoshop.image.bits_8', 'photoshop.image.bits_16', 'photoshop.image.bits_32'],
         handler: (a) => {
             if (a.mode === undefined && a.bitsPerChannel === undefined) throw new Error('Give mode, bitsPerChannel or both');
             return run('Change mode', script(`
@@ -170,7 +170,7 @@ ${RESULT}`));
             },
             required: ['profile'],
         },
-        features: [],
+        features: ['photoshop.color_management.convert_to_profile', 'photoshop.color_management.conversion_options', 'photoshop.color_management.rendering_intent'],
         handler: (a) => run('Convert profile', script(`
 doc.convertProfile(${str(a.profile)}, Intent.${INTENTS[enumOf(a.intent ?? 'relative_colorimetric', Object.keys(INTENTS), { name: 'intent' })]}, ${bool(a.blackPointCompensation ?? true)}, ${bool(a.dither ?? true)});
 ${RESULT}`)),
@@ -180,7 +180,7 @@ ${RESULT}`)),
         description: 'Flatten every layer into a background layer (Layer > Flatten Image), or merge only the visible layers (Merge Visible)',
         inputSchema: { type: 'object', properties: { visibleOnly: { type: 'boolean', description: 'Merge visible layers only. Default false', default: false } } },
         hints: { destructive: true },
-        features: [],
+        features: ['photoshop.layers.flatten_image', 'photoshop.layers.merge_visible'],
         handler: (a) => run('Flatten image', script(`
 ${a.visibleOnly ? 'doc.mergeVisibleLayers();' : 'doc.flatten();'}
 ${RESULT}`)),
@@ -189,7 +189,7 @@ ${RESULT}`)),
         name: 'reveal_all',
         description: 'Enlarge the canvas to show every pixel that extends beyond it (Image > Reveal All)',
         inputSchema: { type: 'object', properties: {} },
-        features: [],
+        features: ['photoshop.image.reveal_all'],
         handler: () => run('Reveal all', script(`
 doc.revealAll();
 ${RESULT}`)),
