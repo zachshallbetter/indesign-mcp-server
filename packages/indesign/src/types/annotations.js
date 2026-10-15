@@ -10,6 +10,7 @@
  * - openWorld: talks to something beyond the local InDesign (cloud, printer).
  */
 import { createAnnotations } from 'adobe-mcp-core';
+import { moduleTools } from '../tools/index.js';
 
 const READ_ONLY = new Set([
     'help', 'indesign_status', 'get_session_info', 'view_document',
@@ -47,6 +48,14 @@ const IDEMPOTENT = new Set([
 ]);
 
 const OPEN_WORLD = new Set(['save_document_to_cloud', 'open_cloud_document', 'print_book']);
+
+// Module tools declare their own hints.
+for (const t of moduleTools) {
+    if (t.hints?.readOnly) READ_ONLY.add(t.name);
+    if (t.hints?.destructive) DESTRUCTIVE.add(t.name);
+    if (t.hints?.idempotent) IDEMPOTENT.add(t.name);
+    if (t.hints?.openWorld) OPEN_WORLD.add(t.name);
+}
 
 const { titleFor, annotationsFor, unknownAnnotationNames } = createAnnotations({
     readOnly: READ_ONLY,

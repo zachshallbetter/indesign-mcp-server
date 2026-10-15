@@ -1,4 +1,5 @@
 import { formatResponse, formatErrorResponse } from '../utils/stringUtils.js';
+import { moduleCategories } from '../tools/index.js';
 import {
     allToolDefinitions,
     bookToolDefinitions,
@@ -59,6 +60,7 @@ export class HelpHandlers {
             description: 'PDF, image, EPUB and package export; status, custom code and session tools',
             tools: [...names(exportToolDefinitions), ...names(utilityToolDefinitions), 'help'],
         },
+        ...moduleCategories,
     };
 
     static findTool(name) {

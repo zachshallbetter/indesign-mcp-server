@@ -15,6 +15,7 @@ import { spreadToolDefinitions } from './toolDefinitionsSpread.js';
 import { layerToolDefinitions } from './toolDefinitionsLayer.js';
 
 import { annotationsFor } from './annotations.js';
+import { moduleTools } from '../tools/index.js';
 
 // Combine all tool definitions into a single array; every tool gets a title
 // and MCP annotations (see annotations.js).
@@ -29,6 +30,7 @@ export const allToolDefinitions = [
     ...masterSpreadToolDefinitions,
     ...spreadToolDefinitions,
     ...layerToolDefinitions,
+    ...moduleTools.map(({ name, description, inputSchema }) => ({ name, description, inputSchema })),
 ].map((tool) => ({ ...tool, title: tool.title ?? annotationsFor(tool.name).title, annotations: annotationsFor(tool.name) }));
 
 // Export individual modules for specific use cases

@@ -37,6 +37,9 @@ const ALLOWED_NAMES = new Set([
     'charAt', 'charCodeAt', 'substring', 'substr', 'toLowerCase', 'toUpperCase', 'match', 'concat', 'sort',
     'pop', 'shift', 'unshift', 'splice', 'reverse', 'exists', 'fsName', 'fullName', 'lineNumber', 'number',
     'test', 'exec', 'apply', 'call', 'getTime', 'toUTCString', 'getFullYear', 'getMonth', 'getDate',
+    // Fields of the spec objects module tools pass into their helpers (src/tools/script.js):
+    // __targets(spec) reads ids, names and selection; __swatch(spec) reads kind, name and v.
+    'kind', 'v',
 ]);
 const ALLOWED_GLOBALS = new Set([
     'undefined', 'NaN', 'Infinity', 'Math', 'String', 'Number', 'Array', 'Object', 'Date', 'RegExp', 'Error',
