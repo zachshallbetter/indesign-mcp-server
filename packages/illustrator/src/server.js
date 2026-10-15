@@ -19,6 +19,7 @@ import { tools as pathTools } from './tools/paths.js';
 import { tools as pathEditTools } from './tools/path-edit.js';
 import { tools as effectTools } from './tools/effects.js';
 import { tools as blendTools } from './tools/blends.js';
+import { tools as textTools } from './tools/text.js';
 import { tools as assetTools } from './tools/assets.js';
 import { tools as layerTools } from './tools/layers.js';
 import { tools as patternTools } from './tools/patterns.js';
@@ -65,6 +66,7 @@ const AREAS = [
     ['path-edit', pathEditTools],
     ['effects', effectTools],
     ['blends', blendTools],
+    ['text', textTools],
     ['patterns', patternTools],
     ['images', imageTools],
     ['trace', traceTools],
