@@ -1,0 +1,39 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.zachshallbetter/adobe-mcp-photoshop",
+  "title": "Photoshop MCP Server",
+  "description": "Drive Adobe Photoshop from any MCP client: layers, selections, adjustments, type and export.",
+  "repository": {
+    "url": "https://github.com/zachshallbetter/adobe-mcp",
+    "source": "github",
+    "subfolder": "packages/photoshop"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "adobe-mcp-photoshop",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "PHOTOSHOP_APP_NAME",
+          "description": "macOS only: address a specific copy, e.g. \"Adobe Photoshop 2025\". Default: Photoshop by bundle id",
+          "isRequired": false
+        },
+        {
+          "name": "PHOTOSHOP_ALLOWED_DIRS",
+          "description": "Extra directories allowed for file operations (':' on macOS, ';' on Windows)",
+          "isRequired": false
+        },
+        {
+          "name": "PHOTOSHOP_SCRIPT_TIMEOUT_MS",
+          "description": "How long to wait for Photoshop before reporting that a dialog may be open. Default 120000",
+          "isRequired": false
+        }
+      ]
+    }
+  ]
+}

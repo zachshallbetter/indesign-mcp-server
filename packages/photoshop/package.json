@@ -1,0 +1,61 @@
+{
+  "name": "adobe-mcp-photoshop",
+  "version": "0.1.0",
+  "description": "MCP server for Adobe Photoshop: documents, image size and canvas, layers, selections, adjustments, filters, type, export and history through ExtendScript",
+  "mcpName": "io.github.zachshallbetter/adobe-mcp-photoshop",
+  "type": "module",
+  "main": "src/module.js",
+  "bin": {
+    "adobe-mcp-photoshop": "src/index.js"
+  },
+  "files": [
+    "src/",
+    "LICENSE",
+    "NOTICE",
+    "README.md",
+    "server.json"
+  ],
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test tests/*.test.js",
+    "audit": "node tests/audit.js",
+    "check": "node scripts/check-syntax.js",
+    "prepublishOnly": "npm run check && npm test"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "photoshop",
+    "adobe",
+    "image-editing",
+    "design-automation",
+    "extendscript",
+    "macos",
+    "windows"
+  ],
+  "author": "Zach Shallbetter",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zachshallbetter/adobe-mcp.git",
+    "directory": "packages/photoshop"
+  },
+  "bugs": {
+    "url": "https://github.com/zachshallbetter/adobe-mcp/issues"
+  },
+  "homepage": "https://github.com/zachshallbetter/adobe-mcp/tree/main/packages/photoshop#readme",
+  "dependencies": {
+    "adobe-mcp-core": "0.1.0"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "types-for-adobe": "^7.2.6"
+  },
+  "exports": {
+    ".": "./src/module.js",
+    "./package.json": "./package.json"
+  }
+}
