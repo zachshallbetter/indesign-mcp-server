@@ -238,7 +238,7 @@ function textAtSpec(at, name = 'at') {
 // ------------------------------------------------------------ JSX helpers
 
 /** __table(doc, spec), __tableOf(selected) and __tableInfo(table). */
-const TABLE_JSX = `
+export const TABLE_JSX = `
 function __tableOf(s) {
   var n = s.constructor.name;
   if (n === "Table") return s;
@@ -308,7 +308,7 @@ function __tableInfo(t) {
 `;
 
 /** __cells(table, spec): { range, r1, r2, c1, c2 } for the chosen rectangle of cells. */
-const CELLS_JSX = `
+export const CELLS_JSX = `
 function __cells(t, spec) {
   var nr = t.rows.length, nc = t.columns.length, r1 = 0, r2 = nr - 1, c1 = 0, c2 = nc - 1, i;
   if (spec.selection) {

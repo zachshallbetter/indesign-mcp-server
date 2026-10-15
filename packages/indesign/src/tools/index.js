@@ -8,6 +8,7 @@ import { tools as transformTools } from './transform.js';
 import { tools as tableTools } from './tables.js';
 import { tools as paragraphTools } from './paragraph.js';
 import { tools as effectsTools } from './effects.js';
+import { tools as stylesTools } from './styles.js';
 
 /** [area id, tools, help category { name, description }] */
 export const AREAS = [
@@ -15,6 +16,7 @@ export const AREAS = [
     ['tables', tableTools, { name: 'Tables', description: 'Table and cell options, rows and columns, merging and splitting, converting text and tables, and selecting in tables' }],
     ['paragraph', paragraphTools, { name: 'Paragraph formatting', description: 'Indents, spacing, alignment, justification, hyphenation, keep options, rules, borders, shading, span columns, drop caps and nested styles; underline and strikethrough options' }],
     ['effects', effectsTools, { name: 'Effects and transparency', description: 'Opacity, blending and effects on items, global light, blend space and transparency flattening' }],
+    ['styles', stylesTools, { name: 'Styles & Colors', description: 'Paragraph, character, object, table and cell styles: create, edit, group, apply, clear overrides, nested and GREP styles, load and defaults; swatches and colors' }],
 ];
 
 /** Every module tool, with its area. */
