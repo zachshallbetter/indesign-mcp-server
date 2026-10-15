@@ -129,7 +129,11 @@ test('every Live Effect and both Pathfinder methods generate valid scripts', asy
     const original = executor.runScript;
     executor.runScript = async (s) => { sent.push(s); return '{"ok":true,"result":"{}"}'; };
     try {
-        const required = { offset_path: { offset: 3 }, round_corners: { radius: 4 }, gaussian_blur: { radius: 2 } };
+        const required = {
+            offset_path: { offset: 3 }, round_corners: { radius: 4 }, gaussian_blur: { radius: 2 }, feather: { radius: 6 },
+            convert_to_shape: { shape: 'ellipse' }, free_distort: { corners: { topRight: [1.2, -0.1] } }, pucker_bloat: { amount: -30 },
+            twist: { angle: 45 }, warp: { style: 'flag' },
+        };
         for (const effect of Object.keys(EFFECTS)) {
             for (const expand of [false, true]) {
                 const r = await mcp.handleToolCall('apply_effect', { target: { selection: true }, effect, options: required[effect] ?? {}, expand });
@@ -145,7 +149,7 @@ test('every Live Effect and both Pathfinder methods generate valid scripts', asy
     } finally {
         executor.runScript = original;
     }
-    assert.equal(sent.length, Object.keys(EFFECTS).length * 2 + 10 * 2);
+    assert.equal(sent.length, Object.keys(EFFECTS).length * 2 + Object.keys(PATHFINDER_COMMANDS).length * 2);
     for (const s of sent) assert.deepEqual(checkScript(s, typings), []);
 });
 
