@@ -8,6 +8,7 @@ import { tools as projectTools } from './tools/project.js';
 import { tools as compTools } from './tools/comps.js';
 import { tools as layerTools } from './tools/layers.js';
 import { tools as animationTools } from './tools/animation.js';
+import { tools as keyframeTools } from './tools/keyframes.js';
 import { tools as effectTools } from './tools/effects.js';
 import { tools as textTools } from './tools/text.js';
 import { tools as maskTools } from './tools/masks.js';
@@ -38,6 +39,7 @@ const AREAS = [
     ['compositions', compTools],
     ['layers', layerTools],
     ['animation', animationTools],
+    ['keyframes', keyframeTools],
     ['effects', effectTools],
     ['text', textTools],
     ['masks', maskTools],

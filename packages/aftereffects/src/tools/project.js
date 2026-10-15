@@ -50,7 +50,7 @@ __result__ = { count: out.length, items: out };`)),
     },
     {
         name: 'import_files',
-        description: 'Import files into the project (File > Import): footage, image sequences, layered Photoshop or Illustrator files as footage or compositions, or another project, optionally into a folder',
+        description: 'Import files into the project (File > Import): footage, image sequences, layered Photoshop or Illustrator files as footage or compositions, another project, or a .jsx expression library that expressions call through footage("name.jsx"), optionally into a folder',
         inputSchema: {
             type: 'object',
             properties: {
@@ -74,6 +74,7 @@ __result__ = { count: out.length, items: out };`)),
             'aftereffects.footage.format_aep',
             'aftereffects.three_d.three_d_model_import',
             'aftereffects.three_d.three_d_model_formats',
+            'aftereffects.expressions.jsx_expression_library',
         ],
         handler: (a) => {
             if (!Array.isArray(a.files) || !a.files.length) throw new Error("'files' must list at least one path");

@@ -109,7 +109,8 @@ export function loadTypings({ files, allowedNames = [], allowedGlobals = [], exc
     const members = new Set([...DEFAULT_ALLOWED_NAMES, ...allowedNames]);
     const globals = new Set([...DEFAULT_ALLOWED_GLOBALS, ...allowedGlobals]);
     for (const m of dts.matchAll(/^\s*(?:readonly\s+|static\s+)*([A-Za-z_$][\w$]*)\??\s*[:(<]/gm)) members.add(m[1]);
-    for (const m of dts.matchAll(/^\s*([A-Z_][A-Z0-9_]*)\s*=\s*\d+/gm)) members.add(m[1]);
+    // Enum members, including mixed-case ones such as ToolType.Tool_Pin.
+    for (const m of dts.matchAll(/^\s*([A-Za-z_][\w$]*)\s*=\s*\d+/gm)) members.add(m[1]);
     for (const m of dts.matchAll(/declare\s+(?:class|enum|var|const|let|function|interface)\s+([A-Za-z_$][\w$]*)/g)) globals.add(m[1]);
     for (const g of excludeGlobals) globals.delete(g);
     return { members, globals };
