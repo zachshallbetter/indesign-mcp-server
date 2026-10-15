@@ -99,9 +99,11 @@ test('server.json meets the MCP Registry limits and matches package.json', () =>
 
 test('every adjustment and filter generates a valid script with its defaults', async () => {
     const { ADJUSTMENTS, FILTERS } = await import('../src/tools/adjust.js');
+    // Filters with an option that has no default.
+    const NEEDS = { displace: { mapFile: `${home}/Documents/map.psd` }, shear: { curve: [[0, 0], [10, 128], [0, 255]] }, custom: { matrix: [...Array(12).fill(0), 1, ...Array(12).fill(0)] } };
     const calls = [
         ...Object.keys(ADJUSTMENTS).map((adjustment) => ['adjust_layers', { adjustment, options: adjustment === 'curves' ? { points: [[0, 0], [128, 160], [255, 255]] } : {} }]),
-        ...Object.keys(FILTERS).map((filter) => ['apply_filter', { filter, target: { ids: [4] } }]),
+        ...Object.keys(FILTERS).map((filter) => ['apply_filter', { filter, target: { ids: [4] }, ...(NEEDS[filter] ? { options: NEEDS[filter] } : {}) }]),
     ];
     const sent = await scriptsFor(calls);
     assert.equal(sent.length, calls.length);
@@ -127,7 +129,7 @@ test('saving maps each format to its save options', async () => {
     assert.match(jpg, /doc\.saveAs\(target, o, true, Extension\.LOWERCASE\);/);
     assert.match(pdf, /o\.presetFile = "\[High Quality Print\]";\no\.PDFStandard = PDFStandard\.PDFX42008;/);
     const mcp = await server();
-    await assert.rejects(mcp.handleToolCall('save_document', { filePath: `${home}/Documents/a.gif` }), /must end in/);
+    await assert.rejects(mcp.handleToolCall('save_document', { filePath: `${home}/Documents/a.heic` }), /must end in/);
     await assert.rejects(mcp.handleToolCall('save_document', { filePath: `${home}/Documents/a.png`, compression: 'lzw' }), /PNG 'compression' is a number/);
 });
 
