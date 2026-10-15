@@ -51,7 +51,7 @@ Settings > Privacy & Security > Automation).
 
 | Area | Tools |
 |---|---|
-| Documents | `get_document_info`, `list_documents`, `create_document`, `open_document`, `save_document` (.ai or .eps, each artboard to its own file), `close_document` |
+| Documents | `get_document_info`, `list_documents`, `create_document`, `open_document` (AI, PDF pages with crop box, EPS, SVG, AutoCAD with import options, images, CGM, CorelDRAW, EMF/WMF, Word, RTF, text), `save_document` (.ai or .eps, each artboard to its own file, transparency for legacy versions), `close_document` |
 | Artboards | `list_artboards`, `add_artboard`, `set_artboard`, `delete_artboard`, `set_active_artboard`, `fit_artboard_to_artwork`, `rearrange_artboards` |
 | Layers | `list_layers`, `create_layer`, `set_layer_properties`, `set_active_layer`, `delete_layer`, `move_items_to_layer` |
 | Shapes and paths | `create_rectangle`, `create_ellipse`, `create_polygon`, `create_star`, `create_line`, `create_path` |
@@ -64,7 +64,8 @@ Settings > Privacy & Security > Automation).
 | Effects | `apply_effect` (drop shadow, offset path, round corners, roughen, transform, Gaussian blur) |
 | Blends | `make_blend`, `set_blend_options` (steps, orientation), `release_blend`, `expand_blend`, `reverse_blend` |
 | Preferences and tools | `get_preferences`, `set_preferences`, `select_tool` |
-| Placing and export | `place_image`, `export_png`, `export_jpeg`, `export_svg` (Save As SVG), `export_web_svg` (Export As SVG: styling, IDs, minify, responsive), `export_for_screens`, `export_pdf` (preset plus PDF/X, bleed, marks, colour conversion, output intent, Acrobat layers) |
+| Placing and export | `place_image` (images, PDF pages, EPS and DCS, SVG, AI, AutoCAD, CGM, CorelDRAW, EMF/WMF), `export_png` (scale or fit, matte, HTML), `export_jpeg`, `export_svg` (Save As SVG: profile, font subsetting, encoding, XMP, slices, text options), `export_web_svg` (Export As SVG: styling, IDs, minify, responsive), `export_for_screens` (scales or resolutions, PNG background, interlacing, JPEG profile), `export_pdf` (preset plus PDF/X, compression and downsampling, font subsetting, bleed, marks, colour conversion, output intent, flattening, passwords and permissions, Acrobat layers) |
+| Other formats | `export_psd` (layers, editable text, colour model, resolution), `export_tiff` (LZW, byte order, colour model, resolution), `export_web_image` (GIF and PNG-8 with colours, reduction, dither, matte, lossy GIF), `export_autocad` (DWG or DXF: version, scale, colours, raster format), `export_selection_as_ai`, `place_text_file` |
 | Variables and data sets | `list_variables`, `create_variable`, `bind_variable`, `delete_variables`, `create_data_sets` (from records: text, image files, visibility), `show_data_set`, `delete_data_sets`, `export_data_sets` (each data set to PNG or JPEG), `import_variables`, `export_variables`, `set_variables_locked` |
 | Prepress and printing | `set_overprint`, `create_trim_marks`, `list_print_settings`, `print_document` (to a printer or a PostScript file; preset plus each Print dialog page) |
 | Utility | `illustrator_status`, `execute_menu_command`, `find_menu_commands`, `execute_illustrator_code`, `help` |

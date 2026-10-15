@@ -41,14 +41,20 @@ export const USER_CODE = ['execute_illustrator_code'];
 const docs = path.join(process.env.HOME ?? '/tmp', 'Documents');
 const OVERRIDES = {
     create_path: { points: [[0, 0], [100, 0], { x: 100, y: 100, in: [90, 80], out: [110, 120] }], closed: true },
-    export_png: { artboards: '1-2' },
-    export_svg: { artboards: '1', outputFile: path.join(docs, 'audit.svg') },
-    export_for_screens: { artboards: '1', scales: [1, 2], formats: ['png', 'svg', 'pdf'] },
+    export_png: { artboards: '1-2', scale: undefined, maxWidth: 1200, matteColor: '#FFFFFF' },
+    export_svg: { artboards: '1', outputFile: path.join(docs, 'audit.svg'), profile: 'tiny_1.2', fontSubsetting: 'glyphs_used', encoding: 'utf16' },
+    export_for_screens: { artboards: '1', scales: [1, 2], resolutions: undefined, formats: ['png', 'png8', 'jpg', 'svg', 'pdf'], pngBackground: 'black' },
     export_jpeg: { artboards: '1-2', matteColor: '#F0F0F0' },
     export_web_svg: { artboards: '1,3', outputFile: path.join(docs, 'audit.svg') },
     export_pdf: {
         artboards: '1', outputFile: path.join(docs, 'audit.pdf'), preset: '[PDF/X-4:2008]', compatibility: 'acrobat7', standard: 'x4',
-        marks: ['all'], colorConversion: 'convert_to_destination',
+        marks: ['all'], colorConversion: 'convert_to_destination', standard: 'none', flattener: undefined,
+        images: {
+            color: { downsample: 'bicubic', resolution: 300, above: 450, compression: 'jpeg2000_high', tileSize: 256 },
+            grayscale: { downsample: 'none', compression: 'zip_8bit' },
+            monochrome: { downsample: 'subsample', resolution: 1200, above: 1800, compression: 'ccitt_group4' },
+        },
+        security: { openPassword: 'open', permissionsPassword: 'perms', printing: 'low_resolution', changes: 'fill_forms', allowCopy: false, allowScreenReaders: true, plaintextMetadata: true },
     },
     execute_menu_command: { command: 'expandStyle' },
     select_tool: { tool: 'Pen Tool' },
@@ -57,7 +63,6 @@ const OVERRIDES = {
     reverse_blend: { what: 'spine' },
     apply_effect: { effect: 'offset_path', options: { offset: -2, joins: 'round' }, expand: true },
     get_preferences: { names: ['usePreviewBounds', 'keyboardIncrement'] },
-    open_document: { filePath: path.join(docs, 'audit.ai') },
     print_document: { outputFile: path.join(docs, 'audit.ps'), marks: { marks: ['all'], trimMarkWeight: 0.25, bleed: 9 }, general: { artboards: '1-2', copies: 2 } },
     edit_colors: { operation: 'convert_to_cmyk' },
     create_swatch: { color: 'lab(50,20,-30)', spot: true, group: 'Brand' },
@@ -80,9 +85,9 @@ const OVERRIDES = {
     set_path_options: { evenOdd: true, guide: false, pixelAligned: true },
     save_document: {
         filePath: path.join(docs, 'audit.eps'), separateArtboards: true, artboards: '1-2',
-        pdfCompatible: undefined, compressed: undefined, embedIccProfile: undefined, fontSubsetThreshold: undefined,
+        pdfCompatible: undefined, compressed: undefined, embedIccProfile: undefined, fontSubsetThreshold: undefined, compatibility: '8', transparency: 'preserve_appearance',
     },
-    place_image: { filePath: path.join(docs, 'audit.png') },
+    place_image: { filePath: path.join(docs, 'audit.dwg'), pdf: undefined, autocad: { layout: 'Model', scale: 'by_value', scalePercent: 50, unit: 'inches', center: false } },
 };
 
 function sampleArgs(tool) {
