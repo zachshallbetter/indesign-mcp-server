@@ -8,18 +8,7 @@ import { readFileSync } from 'node:fs';
 import { moduleTools } from '../../src/tools/index.js';
 import { allToolDefinitions } from '../../src/types/index.js';
 
-let passed = 0;
-async function test(name, fn) {
-    try {
-        await fn();
-        passed++;
-        console.log(`ok - ${name}`);
-    } catch (e) {
-        console.error(`not ok - ${name}`);
-        console.error('  ', e.message);
-        process.exitCode = 1;
-    }
-}
+import { test, done } from './helpers.js';
 
 const featureIds = new Set(JSON.parse(readFileSync(new URL('../fixtures/feature-ids.json', import.meta.url), 'utf8')).ids);
 const HINTS = new Set(['readOnly', 'destructive', 'idempotent', 'openWorld']);
@@ -46,4 +35,4 @@ await test('turn_items refuses an unknown operation and empty targets', async ()
     assert.throws(() => turn.handler({ target: {}, operation: 'rotate_180' }), /Choose the items/);
 });
 
-console.log(`\n${passed} passed`);
+done();
