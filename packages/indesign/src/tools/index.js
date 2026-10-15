@@ -20,6 +20,7 @@ import { tools as colorTools } from './color.js';
 import { tools as framesTools } from './frames.js';
 import { tools as layoutTools } from './layout.js';
 import { tools as imagesTools } from './images.js';
+import { tools as preferencesTools } from './preferences.js';
 import { tools as pathTools } from './paths.js';
 
 /** [area id, tools, help category { name, description }] */
@@ -41,6 +42,7 @@ export const AREAS = [
     ['frames', framesTools, { name: 'Frames and objects', description: 'Frames, shapes and lines; strokes and stroke styles; frame content type; stacking order; frame fitting; anchored objects; object library items; QR codes and math expressions' }],
     ['layout_tools', layoutTools, { name: 'Layout tools', description: 'Liquid, alternate and flex layouts, named grids, frame grids and the layout grid, linked content and the Content Collector, rulers and units, guides, measuring, gaps and accessible context breaks' }],
     ['images', imagesTools, { name: 'Images and links', description: 'Links panel: list, relink, update, embed and unembed links, open and reveal originals, InCopy check-in and check-out; placing images, PDF, InDesign pages, EPS and SVG with import options; image import and object layer options, cropping and moving frame content, contact sheets and the place cursor' }],
+    ['preferences', preferencesTools, { name: 'Preferences', description: 'Read and change the Preferences panes for the application or the active document: General, Interface, Type, Advanced Type, Composition, Units & Increments, Display Performance, GPU, File Handling, Clipboard, Guides & Pasteboard, Spelling, Autocorrect, Dictionary, Japanese layout and Generative AI' }],
 ];
 
 /** Every module tool, with its area. */
