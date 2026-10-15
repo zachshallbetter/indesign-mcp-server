@@ -36,7 +36,7 @@ __result__ = { version: app.version, build: app.build, scriptingVersion: app.scr
             },
             required: ['action', 'set'],
         },
-        features: ['photoshop.automation.play_action', 'photoshop.automation.action'],
+        features: ['photoshop.automation.play_action', 'photoshop.automation.action', 'photoshop.type.text_effects_actions'],
         handler: (a) => run('Play action', script(`
 app.doAction(${str(a.action)}, ${str(a.set)});
 __result__ = { played: ${str(a.action)}, set: ${str(a.set)}, document: app.documents.length ? __docInfo(app.activeDocument) : null };`, { needsDocument: false })),
