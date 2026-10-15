@@ -242,7 +242,7 @@ ${RESULT}`)),
     },
     {
         name: 'transform_layers',
-        description: 'Move layers by dx, dy pixels, scale them by a percentage, rotate them by degrees, or flip them, around an anchor point',
+        description: 'Move layers by dx, dy pixels, scale them by a percentage, rotate them by degrees, or flip them, around an anchor point; optionally transform a copy of each, keeping the original. Video layers transform the same way once they are Smart Objects',
         inputSchema: {
             type: 'object',
             properties: {
@@ -253,10 +253,11 @@ ${RESULT}`)),
                 angle: { type: 'number', minimum: -360, maximum: 360, description: 'Degrees, clockwise' },
                 flip: { type: 'string', enum: ['horizontal', 'vertical'] },
                 anchor: { type: 'string', enum: Object.keys(ANCHORS), description: 'Default center' },
+                duplicate: { type: 'boolean', description: 'Transform a copy of each layer, placed above it. Default false', default: false },
             },
             required: ['target'],
         },
-        features: ['photoshop.transformations.free_transform', 'photoshop.transformations.transform_scale', 'photoshop.transformations.transform_rotate', 'photoshop.transformations.transform_rotate_180', 'photoshop.transformations.transform_rotate_90_cw', 'photoshop.transformations.transform_rotate_90_ccw', 'photoshop.transformations.transform_flip_horizontal', 'photoshop.transformations.transform_flip_vertical', 'photoshop.transformations.reference_point'],
+        features: ['photoshop.transformations.duplicate_while_transforming', 'photoshop.transformations.transform_video_layers', 'photoshop.transformations.free_transform', 'photoshop.transformations.transform_scale', 'photoshop.transformations.transform_rotate', 'photoshop.transformations.transform_rotate_180', 'photoshop.transformations.transform_rotate_90_cw', 'photoshop.transformations.transform_rotate_90_ccw', 'photoshop.transformations.transform_flip_horizontal', 'photoshop.transformations.transform_flip_vertical', 'photoshop.transformations.reference_point'],
         handler: (a) => {
             const anchor = `AnchorPosition.${ANCHORS[enumOf(a.anchor ?? 'center', Object.keys(ANCHORS), { name: 'anchor' })]}`;
             const lines = [];
@@ -268,7 +269,8 @@ ${RESULT}`)),
             return run('Transform layers', script(`
 var items = __targets(doc, ${targetSpec(a.target)});
 for (var i = 0; i < items.length; i++) {
-  var l = items[i];
+  var l = ${a.duplicate ? 'items[i].duplicate(items[i], ElementPlacement.PLACEBEFORE)' : 'items[i]'};
+  ${a.duplicate ? 'items[i] = l;' : ''}
   ${lines.join('\n  ')}
 }
 ${RESULT}`));

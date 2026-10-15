@@ -36,7 +36,7 @@ const OVERRIDES = {
     save_document: { filePath: path.join(docs, 'audit.tif'), compression: 'lzw', format: 'progressive' },
     set_active_document: { index: undefined },
     set_colors: { foreground: '#FF6600', background: 'cmyk(0,0,0,100)' },
-    resize_image: { scale: undefined },
+    resize_image: { scale: undefined, reduceNoise: undefined, scaleStyles: undefined },
     rotate_canvas: { flip: undefined },
     set_layer_properties: { target: { ids: [7] } },
     fill_selection: { color: 'gray(40)' },
