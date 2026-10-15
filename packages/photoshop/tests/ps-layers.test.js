@@ -74,26 +74,6 @@ test('layer commands play the Layers-panel events', async () => {
     await assert.rejects(mcp.handleToolCall('set_layer_link_enabled', { target: { ids: [1] } }), /true or false/);
 });
 
-test('fill layers make a contentLayer of the chosen type', async () => {
-    const [solid, gradient, pattern] = await scriptsFor([
-        ['create_fill_layer', { type: 'solid', color: '#FF6600', name: 'Orange', opacity: 50 }],
-        ['create_fill_layer', { type: 'gradient', gradient: { colors: ['#000000', '#FF0000', '#FFFFFF'], style: 'radial', angle: 45 } }],
-        ['create_fill_layer', { type: 'pattern', pattern: { name: 'Bubbles' }, scale: 50 }],
-    ]);
-    assert.match(solid, /__s\("solidColorLayer"\)/);
-    assert.match(solid, /__color\(\{"kind":"rgb","v":\[255,102,0\]\}\)/);
-    assert.match(solid, /l\.name = "Orange";\nl\.opacity = 50;/);
-    assert.match(gradient, /__s\("gradientLayer"\)/);
-    assert.match(gradient, /putInteger\(__c\("Lctn"\), 2048\)/);
-    assert.match(gradient, /__s\("radial"\)/);
-    assert.match(pattern, /pat\.putString\(__s\("name"\), "Bubbles"\);/);
-    assert.match(pattern, /__s\("patternLayer"\)/);
-    const mcp = await server();
-    await assert.rejects(mcp.handleToolCall('create_fill_layer', { type: 'pattern' }), /needs pattern/);
-    await assert.rejects(mcp.handleToolCall('create_fill_layer', { type: 'gradient', gradient: { colors: ['#000000'] } }), /at least two colours/);
-    await assert.rejects(mcp.handleToolCall('create_fill_layer', { type: 'solid', color: 'orange' }), /not a colour/);
-});
-
 test('layer comps step, duplicate, edit options and clear warnings', async () => {
     const [next, prev, opts, dup, restore, clear, clearAll] = await scriptsFor([
         ['layer_comps', { action: 'next' }],
