@@ -20,6 +20,9 @@ import { tools as pathTools } from './tools/paths.js';
 import { tools as pathEditTools } from './tools/path-edit.js';
 import { tools as effectTools } from './tools/effects.js';
 import { tools as blendTools } from './tools/blends.js';
+import { tools as brushTools } from './tools/brushes.js';
+import { tools as perspectiveTools } from './tools/perspective.js';
+import { tools as threeDTools } from './tools/three_d.js';
 import { tools as actionTools } from './tools/actions.js';
 import { tools as textFormatTools } from './tools/text-format.js';
 import { tools as textTools } from './tools/text.js';
@@ -70,6 +73,9 @@ const AREAS = [
     ['path-edit', pathEditTools],
     ['effects', effectTools],
     ['blends', blendTools],
+    ['brushes', brushTools],
+    ['perspective', perspectiveTools],
+    ['three_d', threeDTools],
     ['text', textTools],
     ['patterns', patternTools],
     ['images', imageTools],
@@ -111,6 +117,7 @@ const annotations = createAnnotations({
         'arrange_items', 'align_items', 'set_preferences', 'select_tool', 'set_blend_options', 'set_overprint', 'select_same', 'select_all', 'set_path_options', 'bind_variable', 'show_data_set', 'set_variables_locked', 'export_variables', 'export_data_sets', 'export_png', 'export_jpeg', 'export_svg', 'export_web_svg', 'export_for_screens', 'export_pdf', 'move_items_to_layer',
     ],
     openWorld: ['print_document', ...hinted('openWorld')],
+    words: { svg: 'SVG', png: 'PNG', jpeg: 'JPEG', pdf: 'PDF', illustrator: 'Illustrator', '3d': '3D' },
     words: { svg: 'SVG', png: 'PNG', jpeg: 'JPEG', pdf: 'PDF', csv: 'CSV', illustrator: 'Illustrator' },
 });
 

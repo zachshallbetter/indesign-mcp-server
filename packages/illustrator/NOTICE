@@ -38,6 +38,25 @@ with the parameter codes used by:
 src/tools/actions.js lists the loaded action sets from the preference keys
 (plugin/Action/SavedSets) that AiCommandPalette reads in src/user/actions.ts.
 
+src/tools/three_d.js writes the 3D and Materials effect with the parameters
+Illustrator stores for it, as read back and re-applied by:
+
+  illustrator-com-skill, presets/effects.json
+  https://github.com/Moksa1123/illustrator-com-skill
+  Copyright (c) 2026 Moksa1123. MIT licence.
+
+and the classic 3D effect in the format and with the parameters used by:
+
+  Live Effect Functions for Illustrator, scripts/LE_Functions.js (LE_3DEffect)
+  https://github.com/mark1bean/live-effect-functions-for-illustrator
+  Copyright (c) 2021 Mark Bean. MIT licence.
+
+src/tools/brushes.js brings brushes in from a library file the way it is done by:
+
+  ImportAndApplyBrush, jsx/fx/single-function/ImportAndApplyBrush.jsx
+  https://github.com/swwwitch/illustrator-scripts
+  Masahiro Takano (@swwwitch). MIT licence.
+
 These licences require this notice to be kept with copies of the data:
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
