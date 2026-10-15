@@ -16,6 +16,7 @@ import { tools as stylesTools } from './styles.js';
 import { tools as formatsTools } from './formats.js';
 import { tools as prepressTools } from './prepress.js';
 import { tools as colorTools } from './color.js';
+import { tools as layoutTools } from './layout.js';
 
 /** [area id, tools, help category { name, description }] */
 export const AREAS = [
@@ -31,6 +32,7 @@ export const AREAS = [
     ['formats', formatsTools, { name: 'Import and export formats', description: 'Export PDF, interactive PDF, EPUB, HTML, JPEG, PNG, EPS and text with every option; place Word, Excel and text with import options; object export options, articles, and library, preflight, swatch and snippet files' }],
     ['prepress', prepressTools, { name: 'Printing and prepress', description: 'Print and Print Booklet with every option or a preset, to a printer or PostScript file; print and trap presets; preflight profiles, rules and options; inks, separations and overprint preview; print attributes; package report and options' }],
     ['color', colorTools, { name: 'Colour', description: 'Swatches, tints, mixed inks, colour groups, loading and saving swatches, the Ink Manager, gradients, fills and strokes, the eyedropper, colour settings, document profiles, proofing and image colour settings' }],
+    ['layout_tools', layoutTools, { name: 'Layout tools', description: 'Liquid, alternate and flex layouts, named grids, frame grids and the layout grid, linked content and the Content Collector, rulers and units, guides, measuring, gaps and accessible context breaks' }],
 ];
 
 /** Every module tool, with its area. */
