@@ -253,8 +253,8 @@ await test('set_preflight_options sets document or application options and the p
     assert.throws(() => s({ enabled: 'on' }), /true or false/);
 });
 
-await test('set_inks sets Ink Manager options per ink and for all spots', async () => {
-    const s = await one('set_inks', {
+await test('set_separation_inks sets Ink Manager options per ink and for all spots', async () => {
+    const s = await one('set_separation_inks', {
         inks: [{ name: 'PANTONE 185 C', alias: 'Process Magenta', type: 'OPAQUE', neutralDensity: 0.8, trapOrder: 5, convertToProcess: false, print: true, frequency: 150, angle: 45 }],
         allSpotsToProcess: true, useStandardLabValuesForSpots: false,
     });
@@ -268,7 +268,7 @@ await test('set_inks sets Ink Manager options per ink and for all spots', async 
     assert.match(s, /k\.printInk = true;/);
     assert.match(s, /k\.frequency = 150;/);
     assert.match(s, /k\.angle = 45;/);
-    const set = tool('set_inks').handler;
+    const set = tool('set_separation_inks').handler;
     assert.throws(() => set({}), /Nothing to set/);
     assert.throws(() => set({ inks: [{ name: 'X' }] }), /nothing to set/);
     assert.throws(() => set({ inks: [{ name: 'X', neutralDensity: 0 }] }), /out of range/);

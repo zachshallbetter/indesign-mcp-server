@@ -460,7 +460,7 @@ export const tools = [
             type: 'object',
             properties: {
                 preset: PRESET_SCHEMA,
-                settings: optionsSchema(PRINT_FIELDS, 'Print dialog options; only the ones you pass change. Separations need colorOutput: SEPARATIONS; set ink plates and screens with set_inks'),
+                settings: optionsSchema(PRINT_FIELDS, 'Print dialog options; only the ones you pass change. Separations need colorOutput: SEPARATIONS; set ink plates and screens with set_separation_inks'),
                 output: OUTPUT_SCHEMA,
                 postscriptFile: POSTSCRIPT_SCHEMA,
             },
@@ -956,7 +956,7 @@ __result__ = { scope: "${scope}", enabled: !po.preflightOff, workingProfile: __w
 __result__ = { inks: __inks(doc), useStandardLabValuesForSpots: doc.accurateLABSpots };`)),
     },
     {
-        name: 'set_inks',
+        name: 'set_separation_inks',
         description: 'Set inks for separations as the Ink Manager does: alias a spot ink to another ink, set ink type, neutral density and trapping sequence, convert spot inks (or all of them) to process, use standard Lab values for spots, and choose which ink plates print with their screen frequency and angle (Ink Manager; Print > Output > Inks)',
         inputSchema: {
             type: 'object',
