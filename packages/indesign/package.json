@@ -1,7 +1,7 @@
 {
   "name": "indesign-mcp-server",
   "version": "2.3.0",
-  "description": "MCP server that turns Adobe InDesign into an AI design automation platform — 135+ tools for layout, styles, export, and publishing workflows",
+  "description": "MCP server that turns Adobe InDesign into an AI design automation platform \u2014 135+ tools for layout, styles, export, and publishing workflows",
   "mcpName": "io.github.zachshallbetter/indesign-mcp-server",
   "main": "src/index.js",
   "bin": {
@@ -64,6 +64,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "adobe-mcp-core": "0.1.0",
     "@modelcontextprotocol/sdk": "^1.32.1",
     "express": "^4.22.3",
     "ws": "^8.21.3"

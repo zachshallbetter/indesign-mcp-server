@@ -36,7 +36,7 @@ The code map and request flow are in [src/README.md](src/README.md). The executi
    - Pass every path through `validateFilePath()`, then `jsxPath()`.
    - Build page-level scripts with `jsxProgram` and `jsxPage` from `pageItemHandlers.js` where they fit.
    - Return `formatResponse(result, "Operation Name")`.
-3. **Dispatch it.** Add a `case 'tool_name':` to `InDesignMCPServer.handleToolCall` in `src/core/InDesignMCPServer.js`.
+3. **Register it.** Add `tool_name: (args) => YourHandlers.method(args),` to `TOOL_HANDLERS` in `src/core/InDesignMCPServer.js`. The server refuses to start if an advertised tool has no handler.
 4. **Annotate it** in `src/types/annotations.js`.
    - Add it to `READ_ONLY` if it changes nothing.
    - Otherwise add it to `DESTRUCTIVE` if it can delete or overwrite content or files.
@@ -70,7 +70,7 @@ The code map and request flow are in [src/README.md](src/README.md). The executi
 
 - Keep each PR to one change, and explain what it changes and why.
 - `npm run check && npm test` must pass. CI runs both on every push and pull request.
-- If you change `scriptExecutor.js` or anything platform-specific, say whether you tested on macOS, Windows or both, and with which InDesign version.
+- If you change `scriptExecutor.js`, the shared executor in `packages/core`, or anything platform-specific, say whether you tested on macOS, Windows or both, and with which InDesign version.
 - If you ran integration tests or tried the change in a client against a real InDesign, say so. The audit checks scripts against the DOM types but does not run them.
 - Update the docs your change affects:
   - `docs/TOOLS.md` (generated)

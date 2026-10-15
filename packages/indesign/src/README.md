@@ -6,8 +6,8 @@ This is a map of `src/` for contributors. To add a tool, follow the checklist in
 src/
   index.js                    Entry point (bin: indesign-mcp-server); starts the stdio server
   core/
-    InDesignMCPServer.js      MCP Server: SERVER_INSTRUCTIONS, tools/list, tools/call: handleToolCall (aliases, warnings) and the dispatch switch
-    scriptExecutor.js         Runs scripts in InDesign: AppleScript (macOS), COM (Windows), UXP bridge; indesign_status data
+    InDesignMCPServer.js      SERVER_INSTRUCTIONS and TOOL_HANDLERS (one handler per tool); the protocol is adobe-mcp-core's server shell
+    scriptExecutor.js         Runs scripts in InDesign: UXP bridge and backend selection here; AppleScript (macOS) and COM (Windows) through adobe-mcp-core's executor; indesign_status data
     sessionManager.js         In-process state: last document page size, last created item, default positioning
   handlers/                   One class of static async methods per area; each method implements one tool
     index.js                  Re-exports the handler classes
@@ -30,8 +30,8 @@ src/
     index.js                  Assembles allToolDefinitions and attaches title + annotations
     annotations.js            Explicit READ_ONLY / DESTRUCTIVE / IDEMPOTENT / OPEN_WORLD lists
   utils/
-    jsxSafe.js                Escaping and validation for values interpolated into scripts; path allow-list
-    stringUtils.js            Re-exports jsxSafe; looksLikeFailure, formatResponse, formatErrorResponse
+    jsxSafe.js                InDesign enum allow-lists; re-exports adobe-mcp-core's escaping and path helpers (INDESIGN_ALLOWED_DIRS)
+    stringUtils.js            Re-exports jsxSafe and adobe-mcp-core's looksLikeFailure, formatResponse, formatErrorResponse
 ```
 
 ## Request flow

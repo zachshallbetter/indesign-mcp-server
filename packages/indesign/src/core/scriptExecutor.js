@@ -6,29 +6,54 @@
  *   - uxp: HTTP bridge + UXP plugin (see uxp/)
  *   - auto: use UXP when plugin connected, else ExtendScript
  *
+ * The ExtendScript transport (temporary .jsx file, AppleScript `do script` or
+ * COM DoScript, application detection, timeouts) is adobe-mcp-core's executor,
+ * shared with the other servers. Backend selection and the UXP bridge are
+ * InDesign's own and stay here.
+ *
  * executeInDesignScript(script) returns a plain string (legacy).
  * executeInDesignScriptStructured(script) wraps the script and returns
  * { ok, result|error, raw }.
  */
-import { execSync } from 'child_process';
-import fs from 'fs';
 import os from 'os';
-import path from 'path';
+import {
+    createExecutor,
+    appleScriptString,
+    powerShellString,
+    autoCaptureResult,
+    wrapScriptForStructuredResult,
+    parseStructuredResult as coreParseStructuredResult,
+} from 'adobe-mcp-core';
 
 const IS_WINDOWS = process.platform === 'win32';
-
-const INDESIGN_PROGIDS = [
-    'InDesign.Application.2026',
-    'InDesign.Application.2025',
-    'InDesign.Application.2024',
-    'InDesign.Application.2023',
-    'InDesign.Application',
-];
 
 // ScriptLanguage.javascript = 1246973031
 const JS_LANG_ID = 1246973031;
 
-const TEMP_PREFIX = 'indesign_mcp_';
+/** The ExtendScript transport: AppleScript on macOS, COM through PowerShell on Windows. */
+const transport = createExecutor({
+    label: 'InDesign',
+    envPrefix: 'INDESIGN',
+    appNamePrefix: 'Adobe InDesign',
+    defaultAppName: 'Adobe InDesign 2025',
+    macScript: ({ scriptPath }) => `do script POSIX file ${appleScriptString(scriptPath)} language javascript`,
+    winProgIds: [
+        'InDesign.Application.2026',
+        'InDesign.Application.2025',
+        'InDesign.Application.2024',
+        'InDesign.Application.2023',
+        'InDesign.Application',
+    ],
+    winInvoke: ({ scriptPath }) => `$app.DoScript(${powerShellString(scriptPath)}, ${JS_LANG_ID})`,
+    winProcessName: 'InDesign.exe',
+});
+
+export { autoCaptureResult, wrapScriptForStructuredResult };
+
+/** Parse a wrapped script's output: { ok, result | error, raw }. */
+export function parseStructuredResult(raw) {
+    return coreParseStructuredResult(raw, { appLabel: 'InDesign' });
+}
 
 /** @typedef {'extendscript' | 'uxp' | 'auto'} BackendMode */
 
@@ -49,158 +74,7 @@ function uxpBridgeHeaders() {
     return headers;
 }
 
-
-/**
- * Last code character of a line — strings and comments skipped.
- * Returns '' for lines without code.
- */
-function lastCodeChar(line) {
-    let last = '';
-    for (let i = 0; i < line.length; i++) {
-        const ch = line[i];
-        if (ch === '/' && line[i + 1] === '/') break;
-        if (ch === '"' || ch === "'") {
-            const quote = ch;
-            i++;
-            while (i < line.length) {
-                if (line[i] === '\\') {
-                    i += 2;
-                    continue;
-                }
-                if (line[i] === quote) break;
-                i++;
-            }
-            last = quote;
-            continue;
-        }
-        if (!/\s/.test(ch)) last = ch;
-    }
-    return last;
-}
-
-const NON_EXPRESSION =
-    /^(var|let|const|if|for|while|do|switch|function|try|return|throw|break|continue|with)\b/;
-
-/**
- * Assign a script's trailing expression to __result__.
- * Scripts that already set __result__ are left alone.
- */
-export function autoCaptureResult(script) {
-    if (/\b__result__\b/.test(script)) return script;
-
-    const lines = script.split('\n');
-
-    let end = -1;
-    for (let i = lines.length - 1; i >= 0; i--) {
-        const t = lines[i].trim();
-        if (t && !t.startsWith('//') && !t.startsWith('}')) {
-            end = i;
-            break;
-        }
-    }
-    if (end < 0) return script;
-
-    let start = end;
-    for (;;) {
-        let prev = -1;
-        for (let i = start - 1; i >= 0; i--) {
-            if (lines[i].trim()) {
-                prev = i;
-                break;
-            }
-        }
-        if (prev < 0) break;
-        const ch = lastCodeChar(lines[prev]);
-        if (ch === '' || ch === ';' || ch === '{' || ch === '}') break;
-        start = prev;
-    }
-
-    const head = lines[start].trim();
-    if (NON_EXPRESSION.test(head) || /^[)\]}]/.test(head)) return script;
-
-    lines[start] = lines[start].replace(/^(\s*)/, '$1var __result__ = ');
-    return lines.join('\n');
-}
-
-/**
- * Wrap a handler script so ExtendScript always yields a JSON string:
- * {"ok":true,"result":...} or {"ok":false,"error":"..."}.
- */
-export function wrapScriptForStructuredResult(script) {
-    const captured = autoCaptureResult(script);
-    return [
-        'var __result__;',
-        'try {',
-        captured,
-        '  if (typeof __result__ === "undefined") { __result__ = ""; }',
-        '  function __mcpEscape(s) {',
-        '    s = String(s);',
-        '    var out = "";',
-        '    for (var i = 0; i < s.length; i++) {',
-        '      var c = s.charAt(i);',
-        '      var code = s.charCodeAt(i);',
-        '      if (c === "\\\\") out += "\\\\\\\\";',
-        '      else if (c === "\\"") out += "\\\\\\"";',
-        '      else if (c === "\\n") out += "\\\\n";',
-        '      else if (c === "\\r") out += "\\\\r";',
-        '      else if (c === "\\t") out += "\\\\t";',
-        '      else if (code < 32) out += "\\\\u" + ("0000" + code.toString(16)).slice(-4);',
-        '      else out += c;',
-        '    }',
-        '    return out;',
-        '  }',
-        '  var __payload = "{\\"ok\\":true,\\"result\\":\\"" + __mcpEscape(__result__) + "\\"}";',
-        '  __payload;',
-        '} catch (__mcpErr) {',
-        '  var __msg = (__mcpErr && __mcpErr.message) ? __mcpErr.message : String(__mcpErr);',
-        '  function __mcpEscapeErr(s) {',
-        '    s = String(s);',
-        '    var out = "";',
-        '    for (var i = 0; i < s.length; i++) {',
-        '      var c = s.charAt(i);',
-        '      if (c === "\\\\") out += "\\\\\\\\";',
-        '      else if (c === "\\"") out += "\\\\\\"";',
-        '      else if (c === "\\n") out += "\\\\n";',
-        '      else if (c === "\\r") out += "\\\\r";',
-        '      else out += c;',
-        '    }',
-        '    return out;',
-        '  }',
-        '  "{\\"ok\\":false,\\"error\\":\\"" + __mcpEscapeErr(__msg) + "\\"}";',
-        '}',
-    ].join('\n');
-}
-
-export function parseStructuredResult(raw) {
-    const text = String(raw == null ? '' : raw).trim();
-    if (!text) {
-        return { ok: false, error: 'Empty response from InDesign', raw: text };
-    }
-    try {
-        const parsed = JSON.parse(text);
-        if (parsed && typeof parsed === 'object' && 'ok' in parsed) {
-            return {
-                ok: Boolean(parsed.ok),
-                result: parsed.result,
-                error: parsed.error,
-                raw: text,
-            };
-        }
-        return { ok: true, result: parsed, raw: text };
-    } catch {
-        const isError =
-            /^ERROR:/i.test(text) ||
-            /^Error /i.test(text) ||
-            (/failed/i.test(text) && /error/i.test(text));
-        if (isError) {
-            return { ok: false, error: text, raw: text };
-        }
-        return { ok: true, result: text, raw: text };
-    }
-}
-
 export class ScriptExecutor {
-    static _appName = null;
     /** @type {string|null} cached resolved backend for this process */
     static _resolvedBackend = null;
     /** @type {number} when _resolvedBackend was set (ms since epoch) */
@@ -215,76 +89,16 @@ export class ScriptExecutor {
      *   2. An InDesign process that is already running
      *   3. Newest "Adobe InDesign <year>.app" on disk
      *   4. Fallback default
+     * @returns {Promise<string>}
      */
     static resolveAppName() {
-        if (this._appName) return this._appName;
-
-        if (process.env.INDESIGN_APP_NAME) {
-            this._appName = process.env.INDESIGN_APP_NAME;
-            return this._appName;
-        }
-
-        if (IS_WINDOWS) {
-            this._appName = 'Adobe InDesign';
-            return this._appName;
-        }
-
-        try {
-            const running = execSync(
-                `osascript -e 'tell application "System Events" to get name of (processes whose name starts with "Adobe InDesign")'`,
-                { encoding: 'utf8', timeout: 10000 }
-            ).trim();
-            if (running) {
-                this._appName = running.split(',')[0].trim();
-                return this._appName;
-            }
-        } catch {
-            // nothing running
-        }
-
-        const candidates = [];
-        const bases = ['/Applications', path.join(os.homedir(), 'Applications')];
-        for (const base of bases) {
-            let entries;
-            try {
-                entries = fs.readdirSync(base);
-            } catch {
-                continue;
-            }
-            for (const entry of entries) {
-                if (!/^Adobe InDesign/.test(entry)) continue;
-                if (/\.app$/.test(entry)) {
-                    candidates.push(entry.replace(/\.app$/, ''));
-                    continue;
-                }
-                try {
-                    for (const inner of fs.readdirSync(path.join(base, entry))) {
-                        if (/^Adobe InDesign.*\.app$/.test(inner)) {
-                            candidates.push(inner.replace(/\.app$/, ''));
-                        }
-                    }
-                } catch {
-                    // ignore
-                }
-            }
-        }
-
-        if (candidates.length) {
-            const ver = (n) => parseInt((n.match(/\d+/) || ['0'])[0], 10) || 0;
-            candidates.sort((a, b) => ver(b) - ver(a));
-            this._appName = candidates[0];
-            return this._appName;
-        }
-
-        this._appName = 'Adobe InDesign 2025';
-        return this._appName;
+        return transport.resolveAppName();
     }
 
     /** Clear cached app name (tests / env changes). */
     static resetAppNameCache() {
-        this._appName = null;
+        transport.resetAppNameCache();
     }
-
 
     /** Clear cached backend resolution (tests / env changes). */
     static resetBackendCache() {
@@ -407,7 +221,6 @@ export class ScriptExecutor {
         }
     }
 
-
     /**
      * Host/environment status without requiring a full tool call surface.
      * probeInDesign=true attempts a lightweight ExtendScript round-trip and,
@@ -455,20 +268,12 @@ export class ScriptExecutor {
             status.appName = 'Adobe InDesign (COM)';
             status.appNameSource = 'windows-com';
         } else {
-            status.appName = this.resolveAppName();
+            status.appName = await this.resolveAppName();
             status.appNameSource = 'resolved';
         }
 
         if (!IS_WINDOWS) {
-            try {
-                const running = execSync(
-                    `osascript -e 'tell application "System Events" to (name of processes whose name starts with "Adobe InDesign") is not {}'`,
-                    { encoding: 'utf8', timeout: 5000 }
-                ).trim();
-                status.indesign.running = running === 'true';
-            } catch {
-                status.indesign.running = false;
-            }
+            status.indesign.running = (await transport.isRunning()) === true;
         }
 
         if (probeInDesign) {
@@ -534,83 +339,7 @@ export class ScriptExecutor {
 
     /** Remove leftover temp scripts from prior crashes. */
     static cleanupTempScripts() {
-        const dir = os.tmpdir();
-        let removed = 0;
-        try {
-            for (const name of fs.readdirSync(dir)) {
-                if (!name.startsWith(TEMP_PREFIX)) continue;
-                if (!name.endsWith('.jsx') && !name.endsWith('.txt')) continue;
-                try {
-                    fs.unlinkSync(path.join(dir, name));
-                    removed++;
-                } catch {
-                    // ignore
-                }
-            }
-        } catch {
-            // ignore
-        }
-        return removed;
-    }
-
-    static async executeAppleScript(script) {
-        if (IS_WINDOWS) {
-            throw new Error('AppleScript is unavailable on Windows');
-        }
-        try {
-            const escaped = script.replace(/'/g, "'\"'\"'");
-            const result = execSync(`osascript -e '${escaped}'`, {
-                encoding: 'utf8',
-                timeout: 120000,
-            });
-            return result.trim();
-        } catch (error) {
-            throw new Error(`AppleScript execution failed: ${error.message}`);
-        }
-    }
-
-    static async executeWindowsCOM(script) {
-        const tempScriptPath = path.join(
-            os.tmpdir(),
-            `${TEMP_PREFIX}${Date.now()}_${process.pid}.jsx`
-        );
-        fs.writeFileSync(tempScriptPath, script, 'utf8');
-
-        const escapedPath = tempScriptPath.replace(/'/g, "''");
-        const progIdList = INDESIGN_PROGIDS.map((id) => `'${id}'`).join(',');
-
-        const psScript = [
-            `$progIds = @(${progIdList})`,
-            '$app = $null',
-            'foreach ($id in $progIds) {',
-            '  try { $app = New-Object -ComObject $id; break } catch {}',
-            '}',
-            'if ($null -eq $app) { Write-Error "Adobe InDesign not found. Check installation."; exit 1 }',
-            'try {',
-            `  $result = $app.DoScript('${escapedPath}', ${JS_LANG_ID})`,
-            '  if ($null -ne $result) { Write-Output $result }',
-            '} catch {',
-            '  Write-Error $_.Exception.Message',
-            '  exit 1',
-            '}',
-        ].join('; ');
-
-        try {
-            const result = execSync(
-                `powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command ${JSON.stringify(psScript)}`,
-                { encoding: 'utf8', timeout: 120000 }
-            );
-            return result.trim();
-        } catch (error) {
-            const detail = error.stderr || error.message;
-            throw new Error(`COM execution failed: ${detail}`);
-        } finally {
-            try {
-                fs.unlinkSync(tempScriptPath);
-            } catch {
-                // ignore
-            }
-        }
+        return transport.cleanupTempScripts();
     }
 
     /**
@@ -643,35 +372,8 @@ export class ScriptExecutor {
      * @returns {Promise<string>}
      */
     static async executeViaExtendScript(script) {
-        if (IS_WINDOWS) {
-            return await this.executeWindowsCOM(script);
-        }
-
-        const tempScriptPath = path.join(
-            os.tmpdir(),
-            `${TEMP_PREFIX}${Date.now()}_${process.pid}.jsx`
-        );
-        fs.writeFileSync(tempScriptPath, script, 'utf8');
-
-        try {
-            const appName = this.resolveAppName();
-            const posixPath = tempScriptPath.replace(/\\/g, '/');
-            const appleScript = `
-        tell application "${appName}"
-          activate
-          do script POSIX file "${posixPath}" language javascript
-        end tell
-      `;
-            return await this.executeAppleScript(appleScript);
-        } finally {
-            try {
-                fs.unlinkSync(tempScriptPath);
-            } catch {
-                // ignore
-            }
-        }
+        return transport.runExtendScript(script);
     }
-
 
     static async executeInDesignScriptStructured(script) {
         const wrapped = wrapScriptForStructuredResult(script);

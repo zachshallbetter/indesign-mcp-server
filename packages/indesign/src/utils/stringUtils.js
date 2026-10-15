@@ -33,54 +33,14 @@ export function escapeJsxString(str) {
         .replace(/\t/g, '\\t');
 }
 
-const FAILURE_START = /^(no document open|no documents? (is )?open|no active document|error\b|failed\b|invalid\b|cannot\b|could not\b|unable to\b)/i;
-const FAILURE_SHORT = /\b(not found|out of range|does not exist|not open)\b/i;
-
 /**
- * True when a script's string result reports a failure. Handler scripts report
- * failures as strings ("No document open", "Error adding page: ..."), so these
- * patterns are the contract: a failure message starts with one of FAILURE_START,
- * or is a short single line containing one of FAILURE_SHORT.
- * @param {any} result
- * @returns {boolean}
+ * Failure detection and the result shape are adobe-mcp-core's: a script result
+ * string reports a failure when it starts with "No document open", "Error",
+ * "Failed", "Invalid", "Cannot", "Could not" or "Unable to", or is a short
+ * single line containing "not found", "out of range", "does not exist" or
+ * "not open". Handler scripts report failures that way.
  */
-export function looksLikeFailure(result) {
-    if (typeof result !== 'string') return false;
-    const text = result.trim();
-    if (FAILURE_START.test(text)) return true;
-    return text.length <= 200 && !text.includes('\n') && FAILURE_SHORT.test(text);
-}
-
-/**
- * Formats a response with a consistent structure. `success` is false when the
- * result string reports a failure (see looksLikeFailure).
- * @param {any} result - The result to format.
- * @param {string} [operation="Operation"] - The operation name.
- * @returns {object} Formatted response object.
- */
-export function formatResponse(result, operation = "Operation") {
-    return {
-        success: !looksLikeFailure(result),
-        operation,
-        result,
-        timestamp: new Date().toISOString()
-    };
-}
-
-/**
- * Formats an error response with a consistent structure.
- * @param {any} error - The error to format.
- * @param {string} [operation="Operation"] - The operation name.
- * @returns {object} Formatted error response object.
- */
-export function formatErrorResponse(error, operation = "Operation") {
-    return {
-        success: false,
-        operation,
-        result: error,
-        timestamp: new Date().toISOString()
-    };
-}
+export { looksLikeFailure, formatResponse, formatErrorResponse } from 'adobe-mcp-core';
 
 /**
  * Removes emoticons (emoji characters) from a string.
