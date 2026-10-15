@@ -1,13 +1,15 @@
 # Adobe MCP Suite
 
-One MCP server for Adobe InDesign, Illustrator, Photoshop and After Effects
-together, with tools that work across them. Use it when you work in both applications; to drive only one,
+One MCP server for Adobe InDesign, Illustrator, Photoshop, After Effects and
+Premiere Pro together, with tools that work across them. Use it when you work in both applications; to drive only one,
 install that application's server instead
 ([adobe-mcp-indesign](../indesign), [adobe-mcp-illustrator](../illustrator),
-[adobe-mcp-photoshop](../photoshop), [adobe-mcp-aftereffects](../aftereffects)).
+[adobe-mcp-photoshop](../photoshop), [adobe-mcp-aftereffects](../aftereffects),
+[adobe-mcp-premiere](../premiere)).
 
 Requires Node.js 18 or later, and InDesign, Illustrator, Photoshop and/or After
-Effects 2023 or later on macOS or Windows.
+Effects 2023 or later, or Premiere Pro 25.6 or later with its plugin loaded (see
+[adobe-mcp-premiere](../premiere)), on macOS or Windows.
 
 ## Install
 
@@ -42,7 +44,9 @@ name in front: `indesign_create_text_frame`, `illustrator_create_rectangle`,
 units and conventions (InDesign: millimetres from the page's top-left;
 Illustrator: points from the artboard's top-left; Photoshop: pixels from the
 document's top-left; After Effects: pixels from the composition's top-left and
-seconds), and the server's instructions describe each.
+seconds; Premiere Pro: seconds, with clips chosen by track and clip index), and
+the server's instructions describe each. Premiere Pro's plugin port opens on
+the first Premiere Pro call.
 
 Tools across applications, offered when both are loaded:
 
@@ -56,7 +60,8 @@ Tools across applications, offered when both are loaded:
 Each application's variables apply as they do in its own server:
 `INDESIGN_ALLOWED_DIRS`, `ILLUSTRATOR_ALLOWED_DIRS`, `INDESIGN_APP_NAME`,
 `ILLUSTRATOR_APP_NAME`, `INDESIGN_SCRIPT_TIMEOUT_MS`,
-`ILLUSTRATOR_SCRIPT_TIMEOUT_MS`, `INDESIGN_BACKEND` and the UXP bridge settings.
+`ILLUSTRATOR_SCRIPT_TIMEOUT_MS`, `INDESIGN_BACKEND` and the UXP bridge settings,
+and Premiere Pro's `PREMIERE_WS_PORT`, `BRIDGE_TOKEN` and `PREMIERE_ALLOWED_DIRS`.
 `ADOBE_MCP_APPS` chooses the applications.
 
 ## Development
