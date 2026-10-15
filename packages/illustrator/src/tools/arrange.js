@@ -6,8 +6,8 @@ import { script } from '../script.js';
 import { run } from '../executor.js';
 import { ARTBOARD_SCHEMA, TARGET_SCHEMA, targetSpec } from '../args.js';
 
-const ORIGINS = { center: 'CENTER', topLeft: 'TOPLEFT', top: 'TOP', topRight: 'TOPRIGHT', left: 'LEFT', right: 'RIGHT', bottomLeft: 'BOTTOMLEFT', bottom: 'BOTTOM', bottomRight: 'BOTTOMRIGHT' };
-const ORIGIN_SCHEMA = { type: 'string', enum: Object.keys(ORIGINS), description: 'Point to transform around. Default center' };
+export const ORIGINS = { center: 'CENTER', topLeft: 'TOPLEFT', top: 'TOP', topRight: 'TOPRIGHT', left: 'LEFT', right: 'RIGHT', bottomLeft: 'BOTTOMLEFT', bottom: 'BOTTOM', bottomRight: 'BOTTOMRIGHT' };
+export const ORIGIN_SCHEMA = { type: 'string', enum: Object.keys(ORIGINS), description: 'Point to transform around. Default center' };
 const ORDER = { front: 'BRINGTOFRONT', forward: 'BRINGFORWARD', backward: 'SENDBACKWARD', back: 'SENDTOBACK' };
 const ALIGN_EDGES = ['left', 'center', 'right', 'top', 'middle', 'bottom', 'center_middle'];
 const TYPES = ['PathItem', 'CompoundPathItem', 'GroupItem', 'TextFrame', 'PlacedItem', 'RasterItem', 'SymbolItem', 'MeshItem', 'PluginItem', 'GraphItem', 'NonNativeItem'];
