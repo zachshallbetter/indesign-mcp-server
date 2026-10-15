@@ -31,10 +31,11 @@ test('suite tool names carry the app once', () => {
     assert.equal(suiteToolName('indesign', 'execute_indesign_code'), 'indesign_execute_code');
     assert.equal(suiteToolName('illustrator', 'execute_illustrator_code'), 'illustrator_execute_code');
     assert.equal(suiteToolName('illustrator', 'help'), 'illustrator_help');
+    assert.equal(suiteToolName('aftereffects', 'execute_aftereffects_code'), 'aftereffects_execute_code');
 });
 
 test('apps are chosen by --apps, then ADOBE_MCP_APPS, else all', () => {
-    assert.deepEqual(selectedApps([], {}), ['indesign', 'illustrator']);
+    assert.deepEqual(selectedApps([], {}), ['indesign', 'illustrator', 'aftereffects']);
     assert.deepEqual(selectedApps(['--apps', 'illustrator'], { ADOBE_MCP_APPS: 'indesign' }), ['illustrator']);
     assert.deepEqual(selectedApps(['--apps=InDesign, illustrator'], {}), ['indesign', 'illustrator']);
     assert.deepEqual(selectedApps([], { ADOBE_MCP_APPS: 'indesign' }), ['indesign']);
