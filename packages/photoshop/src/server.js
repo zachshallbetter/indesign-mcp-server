@@ -12,6 +12,7 @@ import { tools as adjustTools } from './tools/adjust.js';
 import { tools as textTools } from './tools/text.js';
 import { tools as exportTools } from './tools/export.js';
 import { tools as historyTools } from './tools/history.js';
+import { tools as videoTools } from './tools/video.js';
 import { tools as utilityTools, helpTool } from './tools/utility.js';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
@@ -26,6 +27,7 @@ Conventions:
 - Layers are chosen with target: { ids: [...] } (ids come from list_layers and from every tool that creates a layer), { names: [...] }, or { active: true }.
 - Colours are "#RRGGBB", "rgb(r,g,b)", "cmyk(c,m,y,k)", "gray(g)", "hsb(h,s,b)" or "lab(L,a,b)".
 - Adjustments, filters, fills and strokes work on pixel layers, inside the selection when there is one.
+- Timeline times are { seconds, frames } at the timeline's frame rate (get_timeline).
 - Fonts are PostScript names (list_fonts).
 - File paths must be absolute and inside the user's home folder or PHOTOSHOP_ALLOWED_DIRS.
 
@@ -42,6 +44,7 @@ const AREAS = [
     ['type', textTools],
     ['export', exportTools],
     ['history', historyTools],
+    ['video', videoTools],
     ['utility', utilityTools],
 ];
 
