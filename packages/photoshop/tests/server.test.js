@@ -127,7 +127,7 @@ test('saving maps each format to its save options', async () => {
     assert.match(jpg, /doc\.saveAs\(target, o, true, Extension\.LOWERCASE\);/);
     assert.match(pdf, /o\.presetFile = "\[High Quality Print\]";\no\.PDFStandard = PDFStandard\.PDFX42008;/);
     const mcp = await server();
-    await assert.rejects(mcp.handleToolCall('save_document', { filePath: `${home}/Documents/a.gif` }), /must end in/);
+    await assert.rejects(mcp.handleToolCall('save_document', { filePath: `${home}/Documents/a.heic` }), /must end in/);
     await assert.rejects(mcp.handleToolCall('save_document', { filePath: `${home}/Documents/a.png`, compression: 'lzw' }), /PNG 'compression' is a number/);
 });
 

@@ -32,6 +32,8 @@ function ellipsePoints([l, t, r, b]) {
     });
 }
 
+const CLIPBOARD_ACTIONS = ['copy', 'copy_merged', 'cut', 'clear', 'paste', 'paste_into', 'paste_in_place', 'paste_outside'];
+
 export const tools = [
     {
         name: 'select_area',
@@ -198,19 +200,24 @@ ${RESULT}`));
     },
     {
         name: 'clipboard',
-        description: 'Copy, copy merged, cut or clear the selection on the active layer, or paste (optionally into the selection) as a new layer',
+        description: 'Copy, copy merged, cut or clear the selection on the active layer, or paste as a new layer: paste, paste_into the selection, paste_in_place (Edit > Paste Special > Paste in Place: at the copied pixels\' original position) or paste_outside the selection (Paste Outside: the selection is masked out)',
         inputSchema: {
             type: 'object',
-            properties: { action: { type: 'string', enum: ['copy', 'copy_merged', 'cut', 'clear', 'paste', 'paste_into'] } },
+            properties: { action: { type: 'string', enum: CLIPBOARD_ACTIONS, description: 'What to do' } },
             required: ['action'],
         },
-        features: ['photoshop.documents.copy', 'photoshop.documents.copy_merged', 'photoshop.documents.cut', 'photoshop.documents.clear', 'photoshop.documents.paste', 'photoshop.documents.paste_into'],
+        features: ['photoshop.documents.copy', 'photoshop.documents.copy_merged', 'photoshop.documents.cut', 'photoshop.documents.clear', 'photoshop.documents.paste', 'photoshop.documents.paste_into', 'photoshop.documents.paste_in_place', 'photoshop.documents.paste_outside'],
         handler: (a) => {
-            const action = enumOf(a.action, ['copy', 'copy_merged', 'cut', 'clear', 'paste', 'paste_into'], { name: 'action' });
+            const action = enumOf(a.action, CLIPBOARD_ACTIONS, { name: 'action' });
             return run('Clipboard', script(`
 ${{
         copy: 'doc.selection.copy(false);', copy_merged: 'doc.selection.copy(true);', cut: 'doc.selection.cut();', clear: 'doc.selection.clear();',
         paste: 'var pasted = doc.paste(false);', paste_into: 'var pasted = doc.paste(true);',
+        paste_in_place: `var pd = new ActionDescriptor();
+pd.putBoolean(app.stringIDToTypeID("inPlace"), true);
+app.executeAction(app.stringIDToTypeID("paste"), pd, DialogModes.NO);`,
+        paste_outside: `try { doc.selection.bounds; } catch (e) { throw new Error("Paste Outside needs a selection"); }
+app.executeAction(app.stringIDToTypeID("pasteOutside"), new ActionDescriptor(), DialogModes.NO);`,
     }[action]}
 __result__ = { action: ${str(action)}, layer: ${action.startsWith('paste') ? '__layerInfo(doc.activeLayer)' : 'null'} };`));
         },
