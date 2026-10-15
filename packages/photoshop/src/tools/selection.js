@@ -9,7 +9,7 @@ import { COLOR_SCHEMA, RECT_SCHEMA, colorSpec, rect } from '../args.js';
 
 const COMBINE = { replace: 'REPLACE', add: 'EXTEND', subtract: 'DIMINISH', intersect: 'INTERSECT' };
 const COMBINE_SCHEMA = { type: 'string', enum: Object.keys(COMBINE), description: 'How it combines with the current selection. Default replace' };
-const FILL_BLEND = {
+export const FILL_BLEND = {
     normal: 'NORMAL', dissolve: 'DISSOLVE', behind: 'BEHIND', clear: 'CLEAR', darken: 'DARKEN', multiply: 'MULTIPLY', color_burn: 'COLORBURN',
     linear_burn: 'LINEARBURN', lighten: 'LIGHTEN', screen: 'SCREEN', color_dodge: 'COLORDODGE', linear_dodge: 'LINEARDODGE', overlay: 'OVERLAY',
     soft_light: 'SOFTLIGHT', hard_light: 'HARDLIGHT', difference: 'DIFFERENCE', exclusion: 'EXCLUSION', hue: 'HUE', saturation: 'SATURATION',
