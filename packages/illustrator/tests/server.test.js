@@ -119,3 +119,83 @@ test('server.json meets the MCP Registry limits and matches package.json', () =>
     assert.equal(server.packages[0].identifier, pkg.name);
     assert.equal(server.packages[0].version, pkg.version);
 });
+
+test('every Live Effect and both Pathfinder methods generate valid scripts', async () => {
+    const { EFFECTS, PATHFINDER_COMMANDS } = await import('../src/effects.js');
+    const { executor } = await import('../src/executor.js');
+    const mcp = (await import('../src/server.js')).createServer();
+    const sent = [];
+    const original = executor.runScript;
+    executor.runScript = async (s) => { sent.push(s); return '{"ok":true,"result":"{}"}'; };
+    try {
+        const required = { offset_path: { offset: 3 }, round_corners: { radius: 4 }, gaussian_blur: { radius: 2 } };
+        for (const effect of Object.keys(EFFECTS)) {
+            for (const expand of [false, true]) {
+                const r = await mcp.handleToolCall('apply_effect', { target: { selection: true }, effect, options: required[effect] ?? {}, expand });
+                assert.equal(r.success, true, `${effect}: ${JSON.stringify(r)}`);
+            }
+        }
+        for (const operation of Object.keys(PATHFINDER_COMMANDS)) {
+            for (const method of ['effect', 'menu']) {
+                const r = await mcp.handleToolCall('pathfinder', { target: { selection: true }, operation, method, removeUnpainted: true });
+                assert.equal(r.success, true, `${operation} ${method}`);
+            }
+        }
+    } finally {
+        executor.runScript = original;
+    }
+    assert.equal(sent.length, Object.keys(EFFECTS).length * 2 + 10 * 2);
+    for (const s of sent) assert.deepEqual(checkScript(s, typings), []);
+});
+
+test('effect options are checked before anything runs', async () => {
+    const mcp = (await import('../src/server.js')).createServer();
+    await assert.rejects(mcp.handleToolCall('apply_effect', { target: { selection: true }, effect: 'offset_path', options: {} }), /needs options\.offset/);
+    await assert.rejects(mcp.handleToolCall('apply_effect', { target: { selection: true }, effect: 'round_corners', options: { radius: 2, size: 3 } }), /has no option size/);
+    await assert.rejects(mcp.handleToolCall('apply_effect', { target: { selection: true }, effect: 'offset_path', options: { offset: 2, joins: 'square' } }), /Allowed: round, bevel, miter/);
+});
+
+test('the Live Effect XML carries the published parameters', async () => {
+    const { EFFECTS, pathfinderEffect } = await import('../src/effects.js');
+    // Evaluate the generated expression with a stand-in document (scale factor 1, CMYK).
+    const evalXml = (expr) => Function('doc', 'DocumentColorSpace', '__sf', `return ${expr};`)({ documentColorSpace: 'CMYK' }, { CMYK: 'CMYK' }, () => 1);
+    assert.equal(evalXml(EFFECTS.offset_path.build({ offset: -2.5, joins: 'round', miterLimit: 4 })),
+        '<LiveEffect name="Adobe Offset Path"><Dict data="R ofst -2.5 I jntp 0 R mlim 4 "/></LiveEffect>');
+    assert.match(evalXml(EFFECTS.drop_shadow.build({ opacity: 50 })), /R opac 0\.5 .*<Fill color="0 0 0 1"\/>/);
+    assert.match(evalXml(pathfinderEffect('divide', { removeUnpainted: true })), /I Command 5 B ConvertCustom 1 B ExtractUnpainted 1 .*value="Divide"/);
+    assert.match(evalXml(EFFECTS.transform.build({ moveY: 10 })), /R moveV_Pts -10 /, 'down is positive for callers, up for the effect');
+});
+
+test('preferences: only known keys, with their stored types', async () => {
+    const { executor } = await import('../src/executor.js');
+    const mcp = (await import('../src/server.js')).createServer();
+    const sent = [];
+    const original = executor.runScript;
+    executor.runScript = async (s) => { sent.push(s); return '{"ok":true,"result":"{}"}'; };
+    try {
+        await mcp.handleToolCall('set_preferences', { usePreviewBounds: true, keyboardIncrement: 0.5 });
+        assert.match(sent[0], /p\.setBooleanPreference\("includeStrokeInBounds", true\);/);
+        assert.match(sent[0], /p\.setRealPreference\("cursorKeyLength", 0\.5\);/);
+        const none = await mcp.handleToolCall('set_preferences', { madeUpKey: 1 });
+        assert.equal(none.success, false);
+        assert.match(none.warnings.join(), /Unknown parameter 'madeUpKey'/);
+    } finally {
+        executor.runScript = original;
+    }
+});
+
+test('select_tool matches Illustrator tool names loosely and refuses unknown ones', async () => {
+    const { executor } = await import('../src/executor.js');
+    const mcp = (await import('../src/server.js')).createServer();
+    const original = executor.runScript;
+    let sent = '';
+    executor.runScript = async (s) => { sent = s; return '{"ok":true,"result":"{}"}'; };
+    try {
+        await mcp.handleToolCall('select_tool', { tool: 'pen' });
+        assert.match(sent, /app\.selectTool\("Adobe Pen Tool"\);/);
+        const r = await mcp.handleToolCall('select_tool', { tool: 'Lasso of Truth' });
+        assert.equal(r.success, false);
+    } finally {
+        executor.runScript = original;
+    }
+});

@@ -2,7 +2,8 @@ adobe-mcp-illustrator
 Copyright (c) 2026 Zach Shallbetter. MIT licence: see LICENSE.
 
 src/data/menu-commands.json lists Illustrator executeMenuCommand names and
-their menu locations, compiled from:
+their menu locations, and src/data/tools.json lists app.selectTool tool ids,
+compiled from:
 
   AiCommandPalette, data/menu_commands.csv
   https://github.com/joshbduncan/AiCommandPalette

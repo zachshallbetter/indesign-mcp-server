@@ -59,6 +59,8 @@ Settings > Privacy & Security > Automation).
 | Appearance and colour | `set_fill`, `set_stroke`, `set_opacity`, `get_appearance`, `list_swatches`, `create_swatch`, `create_gradient` |
 | Selecting and arranging | `list_items`, `get_selection`, `select_items`, `deselect_all`, `delete_items`, `duplicate_items`, `move_items`, `scale_items`, `rotate_items`, `reflect_items`, `align_items`, `arrange_items`, `group_items`, `ungroup_items` |
 | Combining | `make_clipping_mask`, `make_compound_path`, `pathfinder` |
+| Effects | `apply_effect` (drop shadow, offset path, round corners, roughen, transform, Gaussian blur) |
+| Preferences and tools | `get_preferences`, `set_preferences`, `select_tool` |
 | Placing and export | `place_image`, `export_png`, `export_svg`, `export_for_screens`, `export_pdf` |
 | Utility | `illustrator_status`, `execute_menu_command`, `find_menu_commands`, `execute_illustrator_code`, `help` |
 
@@ -78,6 +80,12 @@ Settings > Privacy & Security > Automation).
   not know and reports nothing for one it does. `execute_menu_command` accepts
   only the 859 known names (unless you pass `allowUnknown`) and returns the
   selection and document state after the command, so you can see what it did.
+- **Live Effects and preferences come from published practice.** Adobe does not
+  document the LiveEffect XML that `apply_effect` and `pathfinder` pass to
+  `applyEffect`, nor the preference keys behind `set_preferences`; the server
+  uses only parameters and keys that published scripts rely on, recorded with
+  their sources in the capability atlas. `pathfinder` can fall back to
+  Illustrator's menu commands with `method: "menu"`.
 - **No raw input in scripts.** Every value a caller passes is validated and
   written into the script as a literal.
 
