@@ -5,10 +5,12 @@
  * category they appear under.
  */
 import { tools as transformTools } from './transform.js';
+import { tools as characterTools } from './character.js';
 
 /** [area id, tools, help category { name, description }] */
 export const AREAS = [
     ['transform', transformTools, { name: 'Transformations', description: 'Rotate, flip, scale, shear and align items, and transform them again' }],
+    ['character', characterTools, { name: 'Character formatting', description: 'Character, OpenType and CJK formatting, type commands, special characters and glyphs, change case, fonts, tabs, GREP styles, and bullets and numbering' }],
 ];
 
 /** Every module tool, with its area. */
