@@ -17,6 +17,7 @@ import { tools as formatsTools } from './formats.js';
 import { tools as interactiveTools } from './interactive.js';
 import { tools as prepressTools } from './prepress.js';
 import { tools as colorTools } from './color.js';
+import { tools as imagesTools } from './images.js';
 
 /** [area id, tools, help category { name, description }] */
 export const AREAS = [
@@ -33,6 +34,7 @@ export const AREAS = [
     ['interactive', interactiveTools, { name: 'Interactive documents', description: 'Buttons and their actions, form fields, multi-state objects, animation and timing, video and sound, page transitions and interactivity preview' }],
     ['prepress', prepressTools, { name: 'Printing and prepress', description: 'Print and Print Booklet with every option or a preset, to a printer or PostScript file; print and trap presets; preflight profiles, rules and options; inks, separations and overprint preview; print attributes; package report and options' }],
     ['color', colorTools, { name: 'Colour', description: 'Swatches, tints, mixed inks, colour groups, loading and saving swatches, the Ink Manager, gradients, fills and strokes, the eyedropper, colour settings, document profiles, proofing and image colour settings' }],
+    ['images', imagesTools, { name: 'Images and links', description: 'Links panel: list, relink, update, embed and unembed links, open and reveal originals, InCopy check-in and check-out; placing images, PDF, InDesign pages, EPS and SVG with import options; image import and object layer options, cropping and moving frame content, contact sheets and the place cursor' }],
 ];
 
 /** Every module tool, with its area. */
