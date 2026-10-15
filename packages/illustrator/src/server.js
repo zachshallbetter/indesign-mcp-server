@@ -19,6 +19,7 @@ import { tools as pathTools } from './tools/paths.js';
 import { tools as pathEditTools } from './tools/path-edit.js';
 import { tools as effectTools } from './tools/effects.js';
 import { tools as blendTools } from './tools/blends.js';
+import { tools as textFormatTools } from './tools/text-format.js';
 import { tools as textTools } from './tools/text.js';
 import { tools as assetTools } from './tools/assets.js';
 import { tools as layerTools } from './tools/layers.js';
@@ -55,6 +56,7 @@ const AREAS = [
     ['document-setup', documentSetupTools],
     ['layers', layerTools],
     ['artwork', artworkTools],
+    ['text-format', textFormatTools],
     ['shapes', shapeTools],
     ['appearance', appearanceTools],
     ['styles', styleTools],
