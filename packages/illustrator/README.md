@@ -59,9 +59,9 @@ Settings > Privacy & Security > Automation).
 | Appearance | `set_fill`, `set_stroke` (both with a tint for spot and global swatches), `set_opacity`, `get_appearance`, `create_gradient` |
 | Colour | `list_swatches`, `create_swatch` (process, global, spot, spot from Lab values), `create_swatch_group`, `delete_swatches`, `add_used_colors`, `edit_colors` (convert to CMYK, RGB or grayscale, invert, blend) |
 | Selecting and arranging | `list_items`, `get_selection`, `select_items`, `select_same`, `select_all`, `deselect_all`, `delete_items`, `duplicate_items`, `move_items`, `scale_items`, `rotate_items`, `reflect_items`, `align_items`, `arrange_items`, `group_items`, `ungroup_items` |
-| Combining | `make_clipping_mask`, `make_compound_path`, `pathfinder` |
+| Combining | `make_clipping_mask`, `make_compound_path`, `pathfinder` (also hard mix, soft mix and trap) |
 | Paths | `path_operation` (outline stroke, join, add anchor points, reverse direction, divide objects below, release compound path, make pixel perfect, expand appearance), `average_points` (and join), `clean_up`, `split_into_grid`, `split_path`, `set_path_options` (fill rule, guides, pixel alignment), `get_path_info` (area, length, anchors) |
-| Effects | `apply_effect` (drop shadow, offset path, round corners, roughen, transform, Gaussian blur) |
+| Effects | `apply_effect` (drop shadow, inner and outer glow, feather, scribble, round corners, convert to shape, free distort, pucker & bloat, roughen, transform, tweak, twist, zig zag, the fifteen warps, offset path, outline object and stroke, crop marks, rasterize, Gaussian blur, NTSC colors), `apply_svg_filter`, `apply_last_effect`, `set_raster_effect_settings` |
 | Blends | `make_blend`, `set_blend_options` (steps, orientation), `release_blend`, `expand_blend`, `reverse_blend` |
 | Preferences and tools | `get_preferences`, `set_preferences`, `select_tool` |
 | Placing and export | `place_image`, `export_png`, `export_jpeg`, `export_svg` (Save As SVG), `export_web_svg` (Export As SVG: styling, IDs, minify, responsive), `export_for_screens`, `export_pdf` (preset plus PDF/X, bleed, marks, colour conversion, output intent, Acrobat layers) |
@@ -90,7 +90,11 @@ Settings > Privacy & Security > Automation).
   `applyEffect`, nor the preference keys behind `set_preferences`; the server
   uses only parameters and keys that published scripts rely on, recorded with
   their sources in the capability atlas. `pathfinder` can fall back to
-  Illustrator's menu commands with `method: "menu"`.
+  Illustrator's menu commands with `method: "menu"`. The Photoshop effects
+  (Effect Gallery, Artistic, Sketch, Texture and the rest) are not offered:
+  each command opens a dialog, and their LiveEffect parameters are stored as
+  encoded binary that no published script sets. NTSC Colors, which has no
+  dialog, is the exception.
 - **Blend options through a temporary Action.** The object model cannot set a
   blend's steps or orientation, so `make_blend` and `set_blend_options` write a
   one-step Action, play it on the blend and unload it again.
