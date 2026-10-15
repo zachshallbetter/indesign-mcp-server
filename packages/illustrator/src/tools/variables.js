@@ -173,6 +173,7 @@ __result__ = { deleted: deleted, notFound: missing };`));
         features: [
             'illustrator.automation.data_set_object',
             'illustrator.automation.variables_control.previous_data_set_and_next_data_set',
+            'illustrator.automation.dynamic_objects',
         ],
         handler: (a) => {
             if (!Array.isArray(a.records) || !a.records.length) throw new Error("'records' must list at least one record");
@@ -286,7 +287,7 @@ __result__ = { deleted: deleted, notFound: missing };`));
         name: 'import_variables',
         description: 'Load a variable library (Variables panel > Load Variable Library): an XML file of variables and data sets, e.g. one saved by export_variables or another Illustrator document. Variables bind to objects by name',
         inputSchema: { type: 'object', properties: { filePath: { type: 'string', description: 'Absolute .xml path' } }, required: ['filePath'] },
-        features: ['illustrator.automation.import_data', 'illustrator.graphs.labels_data_sets'],
+        features: ['illustrator.automation.import_data', 'illustrator.automation.data_source_files', 'illustrator.graphs.labels_data_sets'],
         handler: (a) => {
             const p = paths.validate(a.filePath);
             if (path.extname(p).toLowerCase() !== '.xml') throw new Error('filePath must end in .xml');
