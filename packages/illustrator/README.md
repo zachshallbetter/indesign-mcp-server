@@ -60,6 +60,7 @@ Settings > Privacy & Security > Automation).
 | Selecting and arranging | `list_items`, `get_selection`, `select_items`, `deselect_all`, `delete_items`, `duplicate_items`, `move_items`, `scale_items`, `rotate_items`, `reflect_items`, `align_items`, `arrange_items`, `group_items`, `ungroup_items` |
 | Combining | `make_clipping_mask`, `make_compound_path`, `pathfinder` |
 | Effects | `apply_effect` (drop shadow, offset path, round corners, roughen, transform, Gaussian blur) |
+| Blends | `make_blend`, `set_blend_options` (steps, orientation), `release_blend`, `expand_blend`, `reverse_blend` |
 | Preferences and tools | `get_preferences`, `set_preferences`, `select_tool` |
 | Placing and export | `place_image`, `export_png`, `export_svg`, `export_for_screens`, `export_pdf` |
 | Utility | `illustrator_status`, `execute_menu_command`, `find_menu_commands`, `execute_illustrator_code`, `help` |
@@ -86,6 +87,9 @@ Settings > Privacy & Security > Automation).
   uses only parameters and keys that published scripts rely on, recorded with
   their sources in the capability atlas. `pathfinder` can fall back to
   Illustrator's menu commands with `method: "menu"`.
+- **Blend options through a temporary Action.** The object model cannot set a
+  blend's steps or orientation, so `make_blend` and `set_blend_options` write a
+  one-step Action, play it on the blend and unload it again.
 - **No raw input in scripts.** Every value a caller passes is validated and
   written into the script as a literal.
 

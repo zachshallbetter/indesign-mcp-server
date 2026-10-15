@@ -199,3 +199,40 @@ test('select_tool matches Illustrator tool names loosely and refuses unknown one
         executor.runScript = original;
     }
 });
+
+test('blend options: the generated Action carries spacing, steps and orientation', async () => {
+    const { blendOptionsAction, ACTION_SET, ACTION_NAME } = await import('../src/blend.js');
+    const aia = blendOptionsAction({ steps: 12, orientation: 'path' });
+    const hex = (s) => Buffer.from(s, 'utf8').toString('hex');
+    assert.match(aia, /^\/version 3\n/);
+    assert.ok(aia.includes(`/name [ ${ACTION_SET.length}\n\t${hex(ACTION_SET)}\n]`), 'set name, hex-encoded with its byte count');
+    assert.ok(aia.includes(`\t/name [ ${ACTION_NAME.length}\n\t\t${hex(ACTION_NAME)}\n\t]`), 'action name');
+    assert.match(aia, /\/internalName \(ai_plugin_liveblend\)/);
+    assert.match(aia, /\/key 1835363957\n\t\t\t\/showInPalette 4294967295\n\t\t\t\/type \(enumerated\)\n[\s\S]*?\/value 5\n/, "'menu' = 5, specified steps");
+    assert.match(aia, /\/key 1937007984\n\t\t\t\/showInPalette 4294967295\n\t\t\t\/type \(integer\)\n\t\t\t\/value 12\n/, "'step' = 12");
+    assert.match(aia, /\/key 1919906913[\s\S]*?\/value 1\n/, "'rota' = 1, align to path");
+    assert.match(blendOptionsAction({ steps: 3 }), /\/key 1919906913[\s\S]*?\/value 0\n/, 'orientation defaults to page');
+    assert.equal((aia.match(/\{/g) || []).length, (aia.match(/\}/g) || []).length, 'balanced braces');
+    assert.throws(() => blendOptionsAction({ steps: 0 }), /at least 1/);
+    assert.throws(() => blendOptionsAction({ steps: 1001 }), /Invalid index/);
+    assert.throws(() => blendOptionsAction({ steps: 4, orientation: 'sideways' }), /Allowed: page, path/);
+});
+
+test('blend tools load, play and always unload the Action', async () => {
+    const { executor } = await import('../src/executor.js');
+    const mcp = (await import('../src/server.js')).createServer();
+    const sent = [];
+    const original = executor.runScript;
+    executor.runScript = async (s) => { sent.push(s); return '{"ok":true,"result":"{}"}'; };
+    try {
+        await mcp.handleToolCall('make_blend', { target: { selection: true }, steps: 6 });
+        await mcp.handleToolCall('make_blend', { target: { selection: true } });
+        await mcp.handleToolCall('set_blend_options', { target: { selection: true }, steps: 6, orientation: 'path' });
+    } finally {
+        executor.runScript = original;
+    }
+    assert.match(sent[0], /app\.executeMenuCommand\("Path Blend Make"\);[\s\S]*app\.loadAction\(__aia\);\n {2}app\.doScript\("setBlendOptions", "adobe-mcp-blend"\);\n\} finally \{\n {2}try \{ app\.unloadAction\("adobe-mcp-blend", ""\); \} catch \(e\) \{\}\n {2}try \{ __aia\.remove\(\); \} catch \(e\) \{\}/);
+    assert.doesNotMatch(sent[1], /loadAction/, 'no Action without steps');
+    assert.match(sent[2], /\/value 6\\n/, 'step count reaches the Action text');
+    for (const s of sent) assert.deepEqual(checkScript(s, typings), []);
+});
