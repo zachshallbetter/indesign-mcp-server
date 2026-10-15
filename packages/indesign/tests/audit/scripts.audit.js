@@ -41,6 +41,9 @@ const ALLOWED_NAMES = new Set([
     // __targets(spec) reads ids, names and selection; __swatch(spec) reads kind, name and v.
     'kind', 'v', 'ids', 'names',
     // The prelude is in every module script, also where no target literal declares those keys.
+    // Members added after 2023, which the 2023 typings lack (InDesign 2025 and 2026 object models):
+    // math objects (20.0) and the EPUB math export preference (21.0).
+    'mathObjects', 'mathmlDescription', 'appliedMathMLFontSize', 'appliedMathMLSwatch', 'preferMathMLInEpubExport',
 ]);
 // Object-model names added after InDesign 2023, which the 2023 typings lack.
 // Each is in the InDesign 2026 (21.0) object model; scripts using them check
