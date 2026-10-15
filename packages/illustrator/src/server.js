@@ -16,6 +16,7 @@ import { tools as variableTools } from './tools/variables.js';
 import { tools as pathTools } from './tools/paths.js';
 import { tools as effectTools } from './tools/effects.js';
 import { tools as blendTools } from './tools/blends.js';
+import { tools as transformTools } from './tools/transform.js';
 import { tools as styleTools } from './tools/styles.js';
 import { tools as imageTools } from './tools/images.js';
 import { tools as traceTools } from './tools/trace.js';
@@ -49,6 +50,7 @@ const AREAS = [
     ['styles', styleTools],
     ['color', colorTools],
     ['arrange', arrangeTools],
+    ['transform', transformTools],
     ['select', selectTools],
     ['paths', pathTools],
     ['effects', effectTools],
