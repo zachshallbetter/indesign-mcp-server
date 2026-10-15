@@ -56,7 +56,9 @@ Settings > Privacy & Security > Automation).
 | Layers | `list_layers`, `create_layer`, `set_layer_properties`, `set_active_layer`, `delete_layer`, `move_items_to_layer` |
 | Shapes and paths | `create_rectangle`, `create_ellipse`, `create_polygon`, `create_star`, `create_line`, `create_path` |
 | Text | `create_text`, `set_text_style`, `set_text_contents`, `convert_text_to_outlines`, `list_fonts` |
-| Appearance | `set_fill`, `set_stroke` (both with a tint for spot and global swatches), `set_opacity`, `get_appearance`, `create_gradient` |
+| Appearance | `set_fill`, `set_stroke` (both with a tint for spot and global swatches, or a gradient swatch), `set_opacity`, `get_appearance`, `create_gradient` |
+| Graphic styles and fill/stroke controls | `list_graphic_styles`, `apply_graphic_style` (replace or merge), `rename_graphic_style`, `delete_graphic_styles`, `save_graphic_style_library`, `open_graphic_styles` (panel or a built-in library), `add_appearance_attribute` (another fill or stroke), `set_transparency_group` (knockout, isolate blending), `toggle_view_option` (transparency grid, Live Paint gaps), `get_default_fill_stroke`, `set_default_fill_stroke`, `swap_fill_stroke`, `reset_fill_stroke` |
+| Live Paint | `make_live_paint` (make or merge), `release_live_paint`, `expand_live_paint` |
 | Colour | `list_swatches`, `create_swatch` (process, global, spot, spot from Lab values), `create_swatch_group`, `delete_swatches`, `add_used_colors`, `edit_colors` (convert to CMYK, RGB or grayscale, invert, blend) |
 | Selecting and arranging | `list_items`, `get_selection`, `select_items`, `select_same`, `select_all`, `deselect_all`, `delete_items`, `duplicate_items`, `move_items`, `scale_items`, `rotate_items`, `reflect_items`, `align_items`, `arrange_items`, `group_items`, `ungroup_items` |
 | Combining | `make_clipping_mask`, `make_compound_path`, `pathfinder` |

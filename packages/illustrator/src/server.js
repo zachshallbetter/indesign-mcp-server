@@ -15,6 +15,7 @@ import { tools as variableTools } from './tools/variables.js';
 import { tools as pathTools } from './tools/paths.js';
 import { tools as effectTools } from './tools/effects.js';
 import { tools as blendTools } from './tools/blends.js';
+import { tools as styleTools } from './tools/styles.js';
 import { tools as utilityTools, helpTool } from './tools/utility.js';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
@@ -41,6 +42,7 @@ const AREAS = [
     ['documents', documentTools],
     ['artwork', artworkTools],
     ['appearance', appearanceTools],
+    ['styles', styleTools],
     ['color', colorTools],
     ['arrange', arrangeTools],
     ['paths', pathTools],
