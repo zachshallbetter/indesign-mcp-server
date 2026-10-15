@@ -16,6 +16,8 @@ import { tools as vectorTools } from './tools/vector.js';
 import { tools as exportTools } from './tools/export.js';
 import { tools as historyTools } from './tools/history.js';
 import { tools as videoTools } from './tools/video.js';
+import { tools as automationTools } from './tools/automation.js';
+import { tools as artboardTools } from './tools/artboards.js';
 import { tools as utilityTools, helpTool } from './tools/utility.js';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
@@ -51,6 +53,8 @@ const AREAS = [
     ['export', exportTools],
     ['history', historyTools],
     ['video', videoTools],
+    ['automation', automationTools],
+    ['artboards', artboardTools],
     ['utility', utilityTools],
 ];
 
