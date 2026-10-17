@@ -32,7 +32,7 @@ function api(args, input) {
 function ticketBody(epicNumber, t) {
     return [
         `Part of #${epicNumber}.`, '', t.scope, '',
-        `**Atlas features (${t.features.length})**, with the route the capability atlas records for each: object model, menu command, Action Manager or Action.`, '',
+        `**Atlas features (${t.features.length})**, with the route the capability atlas records for each: object model, menu command, Action Manager, UXP API or Action.`, '',
         ...t.features.map((f) => `- [ ] \`${f.id}\` ${f.name} (${f.route})`), '',
         '**Done when**',
         '- Each feature above is claimed by a tool\'s `features`, or recorded in the capability atlas as not scriptable, with the reason.',
