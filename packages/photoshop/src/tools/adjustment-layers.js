@@ -36,7 +36,7 @@ const optionsHelp = (table) => Object.entries(table).map(([k, s]) => `${k}${Obje
 /** Create a layer of `layerClass` (adjustmentLayer or contentLayer) holding a `spec` with `entries`. */
 function createScript(layerClass, spec, entries, a) {
     const type = spec.classOnly ? t.cls(spec.cls) : t.obj(spec.cls, entries);
-    const set = !spec.classOnly && entries.length
+    const set = entries.length
         ? `${amCall('set', [['null', targetRef(layerClass)], ['to', t.obj(spec.cls, entries)]])};`
         : '';
     return script(`${AM_HELPERS}
@@ -48,14 +48,26 @@ ${layerLines(a).join('\n')}
 __result__ = __layerInfo(l);`);
 }
 
+/** ES3: whether layer `l` is an adjustment layer of class `cls`, read through the Action Manager. */
+const IS_ADJUSTMENT = String.raw`
+var __isAdjustment = function (l, cls) {
+  if (l.typename !== "ArtLayer") return false;
+  var r = new ActionReference();
+  r.putIdentifier(app.charIDToTypeID("Lyr "), l.id);
+  var ld = app.executeActionGet(r), key = app.stringIDToTypeID("adjustment");
+  if (!ld.hasKey(key)) return false;
+  var list = ld.getList(key);
+  return list.count > 0 && list.getObjectType(0) === app.stringIDToTypeID(cls);
+};`;
+
 /** Apply `entries` to each target layer of the right kind. */
 function editScript(layerClass, spec, type, entries, a) {
-    return script(`${AM_HELPERS}
+    return script(`${AM_HELPERS}${spec.kind ? '' : IS_ADJUSTMENT}
 var items = __targets(doc, ${targetSpec(a.target)});
 var before = doc.activeLayer;
 for (var i = 0; i < items.length; i++) {
   var l = items[i];
-  if (l.typename !== "ArtLayer" || l.kind !== LayerKind.${spec.kind}) throw new Error(l.name + " is not a " + ${json(type.replace(/_/g, ' '))} + " layer");
+  if (${spec.kind ? `l.typename !== "ArtLayer" || l.kind !== LayerKind.${spec.kind}` : `!__isAdjustment(l, ${json(spec.cls)})`}) throw new Error(l.name + " is not a " + ${json(type.replace(/_/g, ' '))} + " layer");
   doc.activeLayer = l;
   ${entries.length ? `${amCall('set', [['null', targetRef(layerClass)], ['to', t.obj(spec.cls, entries)]])};` : ''}
   ${layerLines(a).join('\n  ')}
@@ -87,14 +99,14 @@ const GRADIENT_FEATURES = [
     'photoshop.color.gradient_editor_option.linear', 'photoshop.color.gradient_editor_option.classic', 'photoshop.color.gradient_interpolation',
 ];
 const typeFeatures = (table) => Object.values(table).flatMap((s) => s.features);
-const EDITABLE = Object.fromEntries(Object.entries(TYPES).filter(([, s]) => s.kind && !s.classOnly));
+const EDITABLE = Object.fromEntries(Object.entries(TYPES).filter(([, s]) => s.build));
 
 const OPTIONS_SCHEMA = (what) => ({ type: 'object', description: `Settings for the chosen ${what}; see the list in this tool's description. Omitted settings use Photoshop's defaults` });
 
 export const tools = [
     {
         name: 'create_adjustment_layer',
-        description: `Add an adjustment layer above the active layer (Layer > New Adjustment Layer, or the Adjustments panel), with its settings, optionally clipped to the layer below. Adjustment layers change the look of the layers beneath without changing their pixels. Options by type: ${optionsHelp(TYPES)}. Color Lookup, Clarity and Dehaze and Grain are created with Photoshop's defaults; choose their settings in the Properties panel.`,
+        description: `Add an adjustment layer above the active layer (Layer > New Adjustment Layer, or the Adjustments panel), with its settings, optionally clipped to the layer below. Adjustment layers change the look of the layers beneath without changing their pixels. Options by type: ${optionsHelp(TYPES)}. Color Lookup is created with Photoshop's defaults; choose its LUT in the Properties panel. color_and_vibrance is the Color and Vibrance layer (Temperature, Tint, Vibrance, Saturation); its settings, and those of clarity_and_dehaze and grain, are Photoshop's own unless given.`,
         inputSchema: {
             type: 'object',
             properties: {

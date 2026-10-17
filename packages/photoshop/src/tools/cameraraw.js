@@ -75,7 +75,64 @@ const ACR = {
     grainAmount: ['GRNA', 0, 100, false, 'Effects: Grain amount'],
     grainSize: ['GRNS', 0, 100, false, 'Effects: Grain size'],
     grainRoughness: ['GRNF', 0, 100, false, 'Effects: Grain roughness'],
+    saturation: ['Strt', -100, 100, false, 'Basic: Saturation'],
+    curveHighlights: ['PC_H', -100, 100, false, 'Curve, parametric: Highlights'],
+    curveLights: ['PC_L', -100, 100, false, 'Curve, parametric: Lights'],
+    curveDarks: ['PC_D', -100, 100, false, 'Curve, parametric: Darks'],
+    curveShadows: ['PC_S', -100, 100, false, 'Curve, parametric: Shadows'],
+    curveShadowSplit: ['PC_1', 0, 100, false, 'Curve, parametric: split between shadows and darks. Default 25'],
+    curveMidtoneSplit: ['PC_2', 0, 100, false, 'Curve, parametric: split between darks and lights. Default 50'],
+    curveHighlightSplit: ['PC_3', 0, 100, false, 'Curve, parametric: split between lights and highlights. Default 75'],
+    refineSaturation: ['crfs', 0, 100, false, 'Curve: Refine Saturation. Default 100'],
+    luminanceDetail: ['LNRD', 0, 100, false, 'Detail: Noise Reduction detail'],
+    luminanceContrast: ['LNRC', 0, 100, false, 'Detail: Noise Reduction contrast'],
+    colorNoiseDetail: ['CNRD', 0, 100, false, 'Detail: Color Noise Reduction detail'],
+    colorNoiseSmoothness: ['CNRS', 0, 100, false, 'Detail: Color Noise Reduction smoothness'],
+    lensVignetteAmount: ['VigA', -100, 100, false, 'Optics: lens Vignetting amount'],
+    lensVignetteMidpoint: ['VigM', 0, 100, false, 'Optics: lens Vignetting midpoint'],
+    defringePurpleAmount: ['DfPA', 0, 20, false, 'Optics: Defringe purple amount, 0-20'],
+    defringePurpleHueLow: ['DPHL', 0, 100, false, 'Optics: Defringe purple hue, low end'],
+    defringePurpleHueHigh: ['DPHH', 0, 100, false, 'Optics: Defringe purple hue, high end'],
+    defringeGreenAmount: ['DfGA', 0, 20, false, 'Optics: Defringe green amount, 0-20'],
+    defringeGreenHueLow: ['DPGL', 0, 100, false, 'Optics: Defringe green hue, low end'],
+    defringeGreenHueHigh: ['DPGH', 0, 100, false, 'Optics: Defringe green hue, high end'],
+    vignetteRoundness: ['PCVR', -100, 100, false, 'Effects: Vignette roundness'],
 };
+
+/** Parametric curve region keys, and the split points sent with them (with Camera Raw's defaults). */
+const CURVE_REGIONS = ['curveHighlights', 'curveLights', 'curveDarks', 'curveShadows'];
+const CURVE_SPLITS = [['curveShadowSplit', 25], ['curveMidtoneSplit', 50], ['curveHighlightSplit', 75]];
+
+/** Color Mixer (HSL) colour ranges and their key suffixes. */
+const HSL_RANGES = { red: 'R', orange: 'O', yellow: 'Y', green: 'G', aqua: 'A', blue: 'B', purple: 'P', magenta: 'M' };
+const HSL_KEYS = { hue: 'HA_', saturation: 'SA_', luminance: 'LA_' };
+
+/** Color Grading wheels: hue, saturation and luminance keys. */
+const GRADING = {
+    shadows: ['STSH', 'STSS', 'CgSL'], midtones: ['CgMH', 'CgMS', 'CgML'],
+    highlights: ['STHH', 'STHS', 'CgHL'], global: ['CgGH', 'CgGS', 'CgGL'],
+};
+
+/** Point curve channels and their keys (each a flat list of input, output pairs). */
+const POINT_CURVES = { rgb: 'Crv ', red: 'CrvR', green: 'CrvG', blue: 'CrvB' };
+
+/** Masking: local sliders, their XMP attribute and the divisor from the panel's value to the stored one. */
+const LOCAL = {
+    exposure: ['LocalExposure2012', 4, -4, 4], hue: ['LocalHue', 180, -180, 180], saturation: ['LocalSaturation', 100],
+    sharpness: ['LocalSharpness', 100], contrast: ['LocalContrast2012', 100], highlights: ['LocalHighlights2012', 100],
+    shadows: ['LocalShadows2012', 100], whites: ['LocalWhites2012', 100], blacks: ['LocalBlacks2012', 100],
+    clarity: ['LocalClarity2012', 100], dehaze: ['LocalDehaze', 100], noise: ['LocalLuminanceNoise', 100],
+    moire: ['LocalMoire', 100], defringe: ['LocalDefringe', 100], temperature: ['LocalTemperature', 100],
+    tint: ['LocalTint', 100], texture: ['LocalTexture', 100], grain: ['LocalGrain', 100], glow: ['LocalGlow', 100],
+};
+/** Every correction carries these attributes, in this order: fixed values, or a LOCAL slider by name. */
+const LOCAL_ORDER = [
+    ['LocalExposure', '0'], 'hue', 'saturation', ['LocalContrast', '0'], ['LocalClarity', '0'], 'sharpness', ['LocalBrightness', '0'],
+    ['LocalToningHue', '0'], ['LocalToningSaturation', '0'], 'exposure', 'contrast', 'highlights', 'shadows', 'whites', 'blacks',
+    'clarity', 'dehaze', 'noise', 'moire', 'defringe', 'temperature', 'tint', 'texture', 'grain', ['LocalCorrectedDepth', '0'], 'glow',
+    ['LocalCurveRefineSaturation', '100'],
+];
+const MASK_TYPES = ['linear', 'radial', 'luminance_range'];
 
 /** Neural filters: the filter id in the stack and its slider keys (spl::...), range and default. */
 const NEURAL = {
@@ -93,6 +150,17 @@ const NEURAL = {
         fixed: 'v.putString(__s("spl::style_transfer_option"), "style_transfer");\nv.putInteger(__s("spl::sliderMultipleIterations"), 0);',
         nulls: ['spl::refImageAndCrop', 'spl::sliderBrightness', 'spl::sliderSaturation'],
     },
+    photo_restoration: {
+        id: 'internal.PhotoRestoration',
+        feature: 'nf_photo_restoration',
+        options: {
+            enhance: ['spl::enhance', 0, 100, 100], faceEnhance: ['spl::faceEnhance', 0, 100, 60], scratches: ['spl::scratches', 0, 100, 100],
+            luminanceNoise: ['spl::luminanceNoise', 0, 100, 100], colorNoise: ['spl::colorNoise', 0, 100, 100],
+            halftoning: ['spl::halftoning', 0, 100, 100], removeJpeg: ['spl::removeJpeg', 0, 100, 100],
+        },
+        fixed: '',
+        nulls: [],
+    },
 };
 
 /** Sky Replacement settings: descriptor key, put method, range and default. */
@@ -109,6 +177,138 @@ const SKY_OUTPUT = { new_layers: 'skyReplacementOutputToNewSheets', duplicate_la
 const LIGHTING = { screen: 'Scrn', multiply: 'Mltp' };
 
 const numberSchema = (min, max, description) => ({ type: 'number', minimum: min, maximum: max, description });
+const objectOf = (keys, item, description) => ({ type: 'object', description, properties: Object.fromEntries(keys.map((k) => [k, item])) });
+const POINT_SCHEMA = { type: 'object', properties: { x: { type: 'number' }, y: { type: 'number' } }, required: ['x', 'y'] };
+
+/** A plain object argument, or a clear error. */
+function plain(value, name) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error(`'${name}' must be an object`);
+    return value;
+}
+
+/** A whole number in range, as a number. */
+const whole = (value, min, max, name) => Math.round(Number(num(value, { min, max, name })));
+
+/** An XML attribute value, escaped. */
+const xml = (text) => String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+/** A number as Camera Raw writes it in XMP. */
+const xmpNumber = (n) => String(Math.round(n * 1e6) / 1e6).replace(/^-0$/, '0');
+
+/** A 32-digit hexadecimal sync id. */
+const syncId = () => randomUUID().replace(/-/g, '').toUpperCase();
+
+/**
+ * One mask as XMP: pieces that are strings, or { px, axis } for a pixel
+ * position the script divides by the document's width or height.
+ */
+function maskXmp(mask, name) {
+    const m = plain(mask, name);
+    const type = enumOf(m.type, MASK_TYPES, { name: `${name}.type` });
+    const allowed = { linear: ['type', 'from', 'to', 'inverted'], radial: ['type', 'bounds', 'angle', 'feather', 'roundness', 'inverted'], luminance_range: ['type', 'min', 'max', 'softness', 'inverted'] }[type];
+    const extra = Object.keys(m).filter((k) => !allowed.includes(k));
+    if (extra.length) throw new Error(`'${name}' (${type}) has no ${extra.join(', ')}. Keys: ${allowed.join(', ')}`);
+    if (m.inverted !== undefined && typeof m.inverted !== 'boolean') throw new Error(`'${name}.inverted' must be true or false`);
+    const head = (what, label) => [
+        `crs:What="${what}" crs:MaskActive="true" crs:MaskName="${xml(label)}" crs:MaskBlendMode="0" crs:MaskInverted="${m.inverted ? 'true' : 'false'}" crs:MaskSyncID="${syncId()}" crs:MaskValue="1"`,
+    ];
+    const px = (v, axis, key) => ({ px: Number(num(v, { min: -100000, max: 100000, name: key })), axis });
+    const at = (p, key) => {
+        plain(p, key);
+        return [px(p.x, 'w', `${key}.x`), px(p.y, 'h', `${key}.y`)];
+    };
+    if (type === 'linear') {
+        const [fx, fy] = at(m.from, `${name}.from`), [tx, ty] = at(m.to, `${name}.to`);
+        return ['<rdf:li ', ...head('Mask/Gradient', 'Linear Gradient'), ' crs:ZeroX="', fx, '" crs:ZeroY="', fy, '" crs:FullX="', tx, '" crs:FullY="', ty, '"/>'];
+    }
+    if (type === 'radial') {
+        const b = plain(m.bounds, `${name}.bounds`);
+        const x = Number(num(b.x, { min: -100000, max: 100000, name: `${name}.bounds.x` })), y = Number(num(b.y, { min: -100000, max: 100000, name: `${name}.bounds.y` }));
+        const bw = Number(num(b.width, { min: 1, max: 300000, name: `${name}.bounds.width` })), bh = Number(num(b.height, { min: 1, max: 300000, name: `${name}.bounds.height` }));
+        const angle = Number(num(m.angle ?? 0, { min: -360, max: 360, name: `${name}.angle` }));
+        const feather = Number(num(m.feather ?? 50, { min: 0, max: 100, name: `${name}.feather` }));
+        const roundness = Number(num(m.roundness ?? 0, { min: 0, max: 100, name: `${name}.roundness` }));
+        return ['<rdf:li ', ...head('Mask/CircularGradient', 'Radial Gradient'), ' crs:Top="', { px: y, axis: 'h' }, '" crs:Left="', { px: x, axis: 'w' }, '" crs:Bottom="', { px: y + bh, axis: 'h' }, '" crs:Right="', { px: x + bw, axis: 'w' },
+            `" crs:Angle="${xmpNumber(angle)}" crs:Midpoint="50" crs:Roundness="${xmpNumber(roundness)}" crs:Feather="${xmpNumber(feather)}" crs:Flipped="false" crs:Version="2"/>`];
+    }
+    const low = Number(num(m.min ?? 0, { min: 0, max: 100, name: `${name}.min` })) / 100;
+    const high = Number(num(m.max ?? 100, { min: 0, max: 100, name: `${name}.max` })) / 100;
+    if (low > high) throw new Error(`'${name}.min' must not be above '${name}.max'`);
+    const soft = Number(num(m.softness ?? 0, { min: 0, max: 100, name: `${name}.softness` })) / 100;
+    const range = [Math.max(0, low - soft), low, high, Math.min(1, high + soft)].map((v) => v.toFixed(6)).join(' ');
+    return ['<rdf:li><rdf:Description ', ...head('Mask/RangeMask', 'Luminance Range'), `><crs:CorrectionRangeMask crs:Version="4" crs:Type="2" crs:Invert="false" crs:SampleType="2" crs:LumRange="${range}"/></rdf:Description></rdf:li>`];
+}
+
+/** The Masking panel's local corrections as one crs:MaskGroupBasedCorrections XMP packet (pieces, as maskXmp). */
+function localCorrectionsXmp(list) {
+    if (!Array.isArray(list) || !list.length || list.length > 20) throw new Error("'localCorrections' takes 1 to 20 corrections");
+    const pieces = ['<x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><rdf:Description rdf:about="" xmlns:crs="http://ns.adobe.com/camera-raw-settings/1.0/"><crs:MaskGroupBasedCorrections><rdf:Seq>'];
+    list.forEach((entry, i) => {
+        const name = `localCorrections[${i}]`;
+        const e = plain(entry, name);
+        const extra = Object.keys(e).filter((k) => !['mask', 'amount', 'name', ...Object.keys(LOCAL)].includes(k));
+        if (extra.length) throw new Error(`'${name}' has no ${extra.join(', ')}. Keys: mask, amount, name, ${Object.keys(LOCAL).join(', ')}`);
+        const amount = Number(num(e.amount ?? 100, { min: 0, max: 100, name: `${name}.amount` })) / 100;
+        if (e.name !== undefined && typeof e.name !== 'string') throw new Error(`'${name}.name' must be a string`);
+        const attrs = LOCAL_ORDER.map((slot) => {
+            if (Array.isArray(slot)) return `crs:${slot[0]}="${slot[1]}"`;
+            const [key, divisor, min = -100, max = 100] = LOCAL[slot];
+            const value = e[slot] === undefined ? 0 : Number(num(e[slot], { min, max, name: `${name}.${slot}` })) / divisor;
+            return `crs:${key}="${xmpNumber(value)}"`;
+        });
+        pieces.push(`<rdf:li><rdf:Description crs:What="Correction" crs:CorrectionAmount="${xmpNumber(amount)}" crs:CorrectionActive="true" crs:CorrectionName="${xml(e.name ?? `Mask ${i + 1}`)}" crs:CorrectionSyncID="${syncId()}" ${attrs.join(' ')}><crs:CorrectionMasks><rdf:Seq>`,
+            ...maskXmp(e.mask, `${name}.mask`), '</rdf:Seq></crs:CorrectionMasks></rdf:Description></rdf:li>');
+    });
+    pieces.push('</rdf:Seq></crs:MaskGroupBasedCorrections></rdf:Description></rdf:RDF></x:xmpmeta>');
+    return pieces;
+}
+
+/** XMP pieces as one ES3 string expression; pixel positions become fractions of the document (w, h in the script). */
+const xmpExpression = (pieces) => pieces.map((p) => (typeof p === 'string' ? str(p) : `__xn(${p.px} / ${p.axis})`)).join(' + ');
+
+/** The Camera Raw Filter settings beyond the flat sliders, as descriptor statements on `d`. */
+function extraSettings(a, puts) {
+    if (a.hsl !== undefined) {
+        for (const [range, values] of Object.entries(plain(a.hsl, 'hsl'))) {
+            const suffix = HSL_RANGES[enumOf(range, Object.keys(HSL_RANGES), { name: 'hsl' })];
+            for (const [k, v] of Object.entries(plain(values, `hsl.${range}`))) {
+                const prefix = HSL_KEYS[enumOf(k, Object.keys(HSL_KEYS), { name: `hsl.${range}` })];
+                puts.push(`d.putInteger(app.charIDToTypeID(${str(prefix + suffix)}), ${whole(v, -100, 100, `hsl.${range}.${k}`)});`);
+            }
+        }
+    }
+    if (a.colorGrading !== undefined) {
+        for (const [k, v] of Object.entries(plain(a.colorGrading, 'colorGrading'))) {
+            if (k === 'blending') { puts.push(`d.putInteger(app.charIDToTypeID("CgBl"), ${whole(v, 0, 100, 'colorGrading.blending')});`); continue; }
+            if (k === 'balance') { puts.push(`d.putInteger(app.charIDToTypeID("STB "), ${whole(v, -100, 100, 'colorGrading.balance')});`); continue; }
+            const keys = GRADING[enumOf(k, [...Object.keys(GRADING), 'blending', 'balance'], { name: 'colorGrading' })];
+            for (const [part, x] of Object.entries(plain(v, `colorGrading.${k}`))) {
+                const i = ['hue', 'saturation', 'luminance'].indexOf(enumOf(part, ['hue', 'saturation', 'luminance'], { name: `colorGrading.${k}` }));
+                const [min, max] = [[0, 360], [0, 100], [-100, 100]][i];
+                puts.push(`d.putInteger(app.charIDToTypeID(${str(keys[i])}), ${whole(x, min, max, `colorGrading.${k}.${part}`)});`);
+            }
+        }
+    }
+    if (a.pointCurve !== undefined) {
+        for (const [channel, points] of Object.entries(plain(a.pointCurve, 'pointCurve'))) {
+            const key = POINT_CURVES[enumOf(channel, Object.keys(POINT_CURVES), { name: 'pointCurve' })];
+            const name = `pointCurve.${channel}`;
+            if (!Array.isArray(points) || points.length < 2 || points.length > 16) throw new Error(`'${name}' needs 2 to 16 [input, output] points`);
+            const flat = points.flatMap((p, i) => {
+                if (!Array.isArray(p) || p.length !== 2) throw new Error(`'${name}[${i}]' must be [input, output]`);
+                return p.map((x, j) => whole(x, 0, 255, `${name}[${i}][${j}]`));
+            });
+            for (let i = 2; i < flat.length; i += 2) if (flat[i] <= flat[i - 2]) throw new Error(`'${name}' inputs must increase`);
+            puts.push(`var cl = new ActionList();
+  ${flat.map((x) => `cl.putInteger(${x});`).join(' ')}
+  d.putList(app.charIDToTypeID(${str(key)}), cl);`);
+        }
+    }
+    if (a.localCorrections !== undefined) {
+        puts.push(`var w = __px(doc.width), h = __px(doc.height);
+  d.putString(app.charIDToTypeID("LCs "), ${xmpExpression(localCorrectionsXmp(a.localCorrections))});`);
+    }
+}
 
 /** Make each target layer active in turn and run `body` (which sees `l`). */
 const eachTarget = (target, body) => `
@@ -186,27 +386,73 @@ __result__ = __docInfo(d);`, { needsDocument: false }));
     },
     {
         name: 'apply_camera_raw_settings',
-        description: 'Apply Filter > Camera Raw Filter to layers without its dialog: Basic (white balance, exposure, contrast, highlights, shadows, whites, blacks, texture, clarity, dehaze, vibrance), Detail (sharpening, noise reduction) and Effects (vignette, grain). On a smart object it is added as an editable smart filter; on a pixel layer it changes the pixels. Settings not given stay at zero',
+        description: 'Apply Filter > Camera Raw Filter to layers without its dialog, with the settings of its panels: Basic (white balance, exposure, contrast, highlights, shadows, whites, blacks, texture, clarity, dehaze, vibrance, saturation), Curve (parametric regions and splits, point curves, refine saturation), Detail (sharpening, noise reduction), Color Mixer (HSL), Color Grading (wheels, blending, balance), Optics (lens vignetting, defringe), Effects (vignette, grain) and Masking (local corrections through linear gradient, radial gradient and luminance range masks; these replace any local corrections the filter had). On a smart object it is added as an editable smart filter; on a pixel layer it changes the pixels. Settings not given stay at Camera Raw\'s defaults',
         inputSchema: {
             type: 'object',
             properties: {
                 target: { ...TARGET_SCHEMA, description: 'Pixel or smart object layers. Default the active layer' },
-                settings: { type: 'object', description: 'Camera Raw values', properties: Object.fromEntries(Object.entries(ACR).map(([k, v]) => [k, numberSchema(v[1], v[2], v[4])])) },
+                settings: { type: 'object', description: 'Camera Raw slider values. Temperature and tint are relative (-100 to 100) and set white balance to Custom', properties: Object.fromEntries(Object.entries(ACR).map(([k, v]) => [k, numberSchema(v[1], v[2], v[4])])) },
+                whiteBalance: { type: 'string', enum: ['as_shot', 'custom'], description: 'Basic: White Balance. as_shot uses the camera\'s; custom goes with temperature and tint (the default when they are given)' },
+                hsl: objectOf(Object.keys(HSL_RANGES), objectOf(Object.keys(HSL_KEYS), numberSchema(-100, 100)), 'Color Mixer, HSL: per colour range { hue, saturation, luminance }, each -100 to 100, e.g. { "blue": { "saturation": -30 } }'),
+                colorGrading: {
+                    type: 'object',
+                    description: 'Color Grading: shadows, midtones, highlights and global wheels { hue 0-360, saturation 0-100, luminance -100 to 100 }, blending 0-100 and balance -100 to 100',
+                    properties: { ...Object.fromEntries(Object.keys(GRADING).map((k) => [k, { type: 'object', properties: { hue: numberSchema(0, 360), saturation: numberSchema(0, 100), luminance: numberSchema(-100, 100) } }])), blending: numberSchema(0, 100, 'Blending'), balance: numberSchema(-100, 100, 'Balance') },
+                },
+                pointCurve: objectOf(Object.keys(POINT_CURVES), { type: 'array', minItems: 2, maxItems: 16, items: { type: 'array', items: { type: 'number', minimum: 0, maximum: 255 }, minItems: 2, maxItems: 2 } }, 'Curve, point curve per channel (rgb, red, green, blue): [[input, output], ...], 0-255, inputs increasing'),
+                localCorrections: {
+                    type: 'array', minItems: 1, maxItems: 20,
+                    description: 'Masking: local corrections, each a mask and the sliders it applies. mask: { type: "linear", from: { x, y } (no effect), to: { x, y } (full effect) }, { type: "radial", bounds: { x, y, width, height }, angle, feather 0-100 (default 50), roundness 0-100 }, or { type: "luminance_range", min, max, softness } (0-100); positions in document pixels; inverted: true flips any mask. Sliders: exposure (-4 to 4), hue (-180 to 180), and -100 to 100 for the rest. amount 0-100 (default 100) scales them',
+                    items: {
+                        type: 'object',
+                        properties: {
+                            mask: { type: 'object', properties: { type: { type: 'string', enum: MASK_TYPES }, from: POINT_SCHEMA, to: POINT_SCHEMA, bounds: { type: 'object', properties: { x: { type: 'number' }, y: { type: 'number' }, width: { type: 'number' }, height: { type: 'number' } } }, angle: { type: 'number' }, feather: { type: 'number' }, roundness: { type: 'number' }, min: { type: 'number' }, max: { type: 'number' }, softness: { type: 'number' }, inverted: { type: 'boolean' } }, required: ['type'] },
+                            amount: numberSchema(0, 100, 'Amount, percent'),
+                            name: { type: 'string', description: 'Mask name in the Masking panel' },
+                            ...Object.fromEntries(Object.entries(LOCAL).map(([k, v]) => [k, numberSchema(v[2] ?? -100, v[3] ?? 100)])),
+                        },
+                        required: ['mask'],
+                    },
+                },
             },
-            required: ['settings'],
         },
-        auditArgs: { settings: { exposure: 0.5, contrast: 20, temperature: 10, sharpenRadius: 1.2 } },
-        features: [`${CR}camera_raw_filter_settings`, `${CR}panel_basic_option.exposure_all`],
+        auditArgs: { settings: { exposure: 0.5, contrast: 20, temperature: 10, sharpenRadius: 1.2 }, whiteBalance: undefined, hsl: undefined, colorGrading: undefined, pointCurve: undefined, localCorrections: undefined },
+        features: [
+            `${CR}camera_raw_filter_settings`, `${CR}panel_basic_option.exposure_all`,
+            ...['basic', 'curve', 'detail', 'color_mixer', 'color_grading', 'optics', 'effects', 'masking'].map((k) => `${CR}panel_${k}`),
+            ...['as_shot', 'temperature', 'tint', 'contrast_all', 'highlights_pv2012', 'shadows_pv2012', 'whites_pv2012', 'blacks_pv2012', 'clarity', 'vibrance', 'saturation', 'dehaze'].map((k) => `${CR}panel_basic_option.${k}`),
+            ...['parametric_curve', 'point_curve', 'refine_saturation'].map((k) => `${CR}panel_curve_option.${k}`),
+            `${CR}panel_color_mixer_option.hsl`, `${CR}panel_color_grading_option.blending`, `${CR}panel_color_grading_option.balance`,
+        ],
         handler: (a) => {
-            const given = a.settings;
-            if (!given || typeof given !== 'object' || Array.isArray(given) || !Object.keys(given).length) throw new Error(`'settings' needs at least one of ${Object.keys(ACR).join(', ')}`);
+            const given = a.settings ?? {};
+            if (typeof given !== 'object' || Array.isArray(given)) throw new Error("'settings' must be an object");
+            const extras = ['whiteBalance', 'hsl', 'colorGrading', 'pointCurve', 'localCorrections'].filter((k) => a[k] !== undefined);
+            if (!Object.keys(given).length && !extras.length) throw new Error(`Give at least one setting: settings (${Object.keys(ACR).join(', ')}), whiteBalance, hsl, colorGrading, pointCurve or localCorrections`);
+            const values = {};
             const puts = Object.entries(given).map(([k, v]) => {
                 const [key, min, max, double] = ACR[enumOf(k, Object.keys(ACR), { name: 'settings' })];
                 const n = num(v, { min, max, name: `settings.${k}` });
+                values[k] = Number(n);
                 return `d.${double ? 'putDouble' : 'putInteger'}(app.charIDToTypeID(${str(key)}), ${double ? n : Math.round(Number(n))});`;
             });
-            if (given.temperature !== undefined || given.tint !== undefined) puts.unshift('d.putEnumerated(app.charIDToTypeID("WBal"), app.charIDToTypeID("WBal"), app.charIDToTypeID("Cst "));');
-            return run('Camera Raw Filter', script(eachTarget(a.target, `var d = new ActionDescriptor();
+            const wb = a.whiteBalance === undefined ? undefined : enumOf(a.whiteBalance, ['as_shot', 'custom'], { name: 'whiteBalance' });
+            const relative = given.temperature !== undefined || given.tint !== undefined;
+            if (wb === 'as_shot' && relative) throw new Error('whiteBalance as_shot takes no temperature or tint');
+            if (wb === 'as_shot') puts.unshift('d.putEnumerated(app.charIDToTypeID("WBal"), app.charIDToTypeID("WBal"), app.charIDToTypeID("AsSh"));');
+            else if (relative || wb === 'custom') puts.unshift('d.putEnumerated(app.charIDToTypeID("WBal"), app.charIDToTypeID("WBal"), app.charIDToTypeID("Cst "));');
+            if (CURVE_REGIONS.some((k) => given[k] !== undefined) || CURVE_SPLITS.some(([k]) => given[k] !== undefined)) {
+                const splits = CURVE_SPLITS.map(([k, fallback]) => values[k] ?? fallback);
+                if (!(splits[0] < splits[1] && splits[1] < splits[2])) throw new Error('The parametric curve splits must increase: curveShadowSplit < curveMidtoneSplit < curveHighlightSplit');
+                CURVE_SPLITS.forEach(([k, fallback]) => { if (given[k] === undefined) puts.push(`d.putInteger(app.charIDToTypeID(${str(ACR[k][0])}), ${fallback});`); });
+            }
+            for (const hue of ['Purple', 'Green']) {
+                const lo = values[`defringe${hue}HueLow`], hi = values[`defringe${hue}HueHigh`];
+                if (lo !== undefined && hi !== undefined && lo >= hi) throw new Error(`settings.defringe${hue}HueLow must be below settings.defringe${hue}HueHigh`);
+            }
+            extraSettings(a, puts);
+            const helpers = a.localCorrections !== undefined ? 'var __xn = function (v) { return String(Math.round(v * 1000000) / 1000000); };\n' : '';
+            return run('Camera Raw Filter', script(helpers + eachTarget(a.target, `var d = new ActionDescriptor();
   d.putString(app.charIDToTypeID("CrVe"), "18.2.2");
   d.putInteger(app.charIDToTypeID("PrVN"), 6);
   d.putInteger(app.charIDToTypeID("PrVe"), 251920384);
@@ -217,20 +463,20 @@ __result__ = { applied: ${puts.length}, layers: out };`));
     },
     {
         name: 'apply_neural_filter',
-        description: 'Run a Neural Filter (Filter > Neural Filters) on the active layer without its workspace: Depth Blur or Style Transfer. The filter must already be downloaded in the Neural Filters panel; some filters process in the cloud and need a signed-in Adobe account',
+        description: 'Run a Neural Filter (Filter > Neural Filters) on the active layer without its workspace: Depth Blur, Style Transfer or Photo Restoration. The filter must already be downloaded in the Neural Filters panel; some filters process in the cloud and need a signed-in Adobe account',
         inputSchema: {
             type: 'object',
             properties: {
                 filter: { type: 'string', enum: Object.keys(NEURAL), description: 'The filter' },
                 style: { type: 'string', description: 'style_transfer: preset style id. Default "style28_crop"' },
                 preserveColor: { type: 'boolean', description: 'style_transfer: keep the image\'s colours. Default false' },
-                options: { type: 'object', description: 'Sliders, 0-100. depth_blur: aperture, focalDistance, focalRange, haze. style_transfer: brushSize, preserveWeight, blur' },
+                options: { type: 'object', description: 'Sliders, 0-100. depth_blur: aperture, focalDistance, focalRange, haze. style_transfer: brushSize, preserveWeight, blur. photo_restoration: enhance (Photo Enhancement), faceEnhance (Enhance Face), scratches (Scratch Reduction), luminanceNoise, colorNoise, halftoning (Halftone Artifacts Reduction), removeJpeg (JPEG Artifacts Reduction)' },
             },
             required: ['filter'],
         },
         hints: { openWorld: true },
         auditArgs: { filter: 'style_transfer', options: { blur: 10 } },
-        features: [`${CR}neural_filters`, `${CR}nf_depth_blur`, `${CR}nf_style_transfer`],
+        features: [`${CR}neural_filters`, `${CR}nf_depth_blur`, `${CR}nf_style_transfer`, `${CR}nf_photo_restoration`],
         handler: (a) => {
             const key = enumOf(a.filter, Object.keys(NEURAL), { name: 'filter' });
             const spec = NEURAL[key];
@@ -242,7 +488,7 @@ __result__ = { applied: ${puts.length}, layers: out };`));
             if (key === 'style_transfer') {
                 lines.push(`v.putString(__s("spl::style"), ${str(a.style ?? 'style28_crop')});`, `v.putBoolean(__s("spl::preserveColor"), ${bool(a.preserveColor)});`);
             }
-            lines.push(spec.fixed, ...spec.nulls.map((n) => `v.putClass(__s(${str(n)}), __s("jsonNull"));`));
+            lines.push(...(spec.fixed ? [spec.fixed] : []), ...spec.nulls.map((n) => `v.putClass(__s(${str(n)}), __s("jsonNull"));`));
             return run('Neural filter', script(`
 var __s = function (id) { return app.stringIDToTypeID(id); };
 var before = 0;

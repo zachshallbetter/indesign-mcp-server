@@ -158,7 +158,7 @@ test('Camera Raw: raw open options, the filter descriptor, neural filters, sky a
     await assert.rejects(mcp.handleToolCall('open_raw_file', { filePath: raw, settings: 'camera', tint: 5 }), /settings: custom/);
     await assert.rejects(mcp.handleToolCall('open_raw_file', { filePath: raw, calibration: { purpleHue: 5 } }), /Allowed: redHue/);
     await assert.rejects(mcp.handleToolCall('apply_camera_raw_settings', { settings: {} }), /at least one/);
-    await assert.rejects(mcp.handleToolCall('apply_camera_raw_settings', { settings: { saturation: 5 } }), /Allowed/);
+    await assert.rejects(mcp.handleToolCall('apply_camera_raw_settings', { settings: { purpleHue: 5 } }), /Allowed/);
     await assert.rejects(mcp.handleToolCall('apply_neural_filter', { filter: 'depth_blur', options: { blur: 5 } }), /Allowed: aperture/);
     await assert.rejects(mcp.handleToolCall('apply_neural_filter', { filter: 'depth_blur', style: 'x' }), /style_transfer settings/);
     await assert.rejects(mcp.handleToolCall('replace_sky', { skyFile: `${home}/Pictures/sky.jpg`, fadeEdge: 120 }), /out of range/);

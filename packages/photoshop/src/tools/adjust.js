@@ -8,15 +8,20 @@ import { num, bool, enumOf, json } from 'adobe-mcp-core';
 import { script } from '../script.js';
 import { run } from '../executor.js';
 import { COLOR_SCHEMA, TARGET_SCHEMA, colorSpec, targetSpec } from '../args.js';
-import { AM_HELPERS, amCall, t } from '../am.js';
+import { AM_HELPERS, amCall, t, conv } from '../am.js';
 import { TYPES, PHOTO_FILTERS, PHOTO_FILTER_OPTION } from '../adjustment-types.js';
-import { MORE_FILTERS, PRESERVE, choice, preserveShape } from './filters.js';
+import { MORE_FILTERS, PRESERVE, choice, preserveShape, am } from './filters.js';
 
 const n = (min, max, description) => ({ type: 'number', minimum: min, maximum: max, ...(description ? { description } : {}) });
 const triple = (description) => ({ type: 'array', items: { type: 'number', minimum: -100, maximum: 100 }, minItems: 3, maxItems: 3, description });
 
 /** Run an Action Manager adjustment on the active layer `l` (the script includes AM_HELPERS when this is used). */
 const onLayer = (event, entries) => `doc.activeLayer = l; ${amCall(event, entries)}`;
+
+const c = (id) => `app.charIDToTypeID(${JSON.stringify(id)})`;
+
+/** Auto Color Correction Options algorithms: the levels key each one turns on. */
+const AUTO_ALGORITHMS = { monochromatic_contrast: '@AuCo', per_channel_contrast: '@Auto', dark_and_light_colors: 'autoBlackWhite' };
 
 /** An adjustment from TYPES, applied with the type's own event and options. */
 const amAdjustment = (type, features) => ({
@@ -76,6 +81,47 @@ export const ADJUSTMENTS = {
     auto_levels: { features: ['photoshop.adjustments.auto_tone'], options: {}, call: () => 'l.autoLevels()' },
     auto_contrast: { features: ['photoshop.adjustments.auto_contrast'], options: {}, call: () => 'l.autoContrast()' },
     auto_color: { features: ['photoshop.adjustments.auto_color'], options: {}, call: () => onLayer('levels', [['autoBlackWhite', t.bool(true)], ['autoNeutrals', t.bool(true)]]) },
+    auto_color_correction: {
+        features: ['photoshop.adjustments.auto_color_correction_options', 'photoshop.adjustments.auto_color_correction_options_option.enhance_monochromatic_contrast', 'photoshop.adjustments.auto_color_correction_options_option.enhance_per_channel_contrast', 'photoshop.adjustments.auto_color_correction_options_option.find_dark_and_light_colors', 'photoshop.adjustments.auto_color_correction_options_option.snap_neutral_midtones'],
+        options: {
+            algorithm: choice(AUTO_ALGORITHMS, 'per_channel_contrast', 'Algorithm (Auto Color Correction Options)'),
+            snapNeutralMidtones: [{ type: 'boolean', description: 'Snap Neutral Midtones' }, false, conv.bool()],
+        },
+        call: (v) => onLayer('levels', [[v('algorithm'), t.bool(true)], ...(v('snapNeutralMidtones') ? [['autoNeutrals', t.bool(true)]] : [])]),
+    },
+    match_color: {
+        features: ['photoshop.adjustments.match_color', 'photoshop.adjustments.match_color_option.luminance', 'photoshop.adjustments.match_color_option.color_intensity', 'photoshop.adjustments.match_color_option.fade', 'photoshop.adjustments.match_color_option.neutralize'],
+        options: {
+            luminance: [n(1, 200, 'Luminance'), 100],
+            colorIntensity: [n(1, 200, 'Color Intensity'), 100],
+            fade: [n(0, 100, 'Fade'), 0],
+            neutralize: [{ type: 'boolean', description: 'Neutralize: remove a colour cast' }, false, conv.bool()],
+        },
+        call: (v) => `if (doc.mode !== DocumentMode.RGB) throw new Error("Match Color needs an RGB document");
+  ${onLayer('matchColor', [['@Lght', t.int(v('luminance'))], ['@ClrR', t.int(v('colorIntensity'))], ['@Fade', t.int(v('fade'))], ['neutralizeColor', t.bool(v('neutralize'))], ['noReference', t.bool(true)]])}`,
+    },
+    replace_color: {
+        features: ['photoshop.adjustments.replace_color', 'photoshop.adjustments.replace_color_option.fuzziness', 'photoshop.adjustments.replace_color_option.hue', 'photoshop.adjustments.replace_color_option.saturation', 'photoshop.adjustments.replace_color_option.lightness'],
+        options: {
+            color: [{ ...COLOR_SCHEMA, description: `The colour to replace (what the dialog's eyedropper samples): ${COLOR_SCHEMA.description}` }, null],
+            fuzziness: [n(0, 200, 'Fuzziness: how far related colours are included'), 40],
+            hue: [n(-180, 180, 'Replacement hue shift'), 0],
+            saturation: [n(-100, 100, 'Replacement saturation'), 0],
+            lightness: [n(-100, 100, 'Replacement lightness'), 0],
+        },
+        call: (v) => am(`app.stringIDToTypeID("replaceColor")`, [
+            `var rc = ${v('color')}.lab, lab = new ActionDescriptor();`,
+            `lab.putDouble(${c('Lmnc')}, rc.L);`,
+            `lab.putDouble(${c('A   ')}, rc.A);`,
+            `lab.putDouble(${c('B   ')}, rc.B);`,
+            `d.putInteger(${c('Fzns')}, ${Math.round(Number(v('fuzziness')))});`,
+            `d.putObject(${c('Mnm ')}, ${c('LbCl')}, lab);`,
+            `d.putObject(${c('Mxm ')}, ${c('LbCl')}, lab);`,
+            `d.putInteger(${c('H   ')}, ${Math.round(Number(v('hue')))});`,
+            `d.putInteger(${c('Strt')}, ${Math.round(Number(v('saturation')))});`,
+            `d.putInteger(${c('Lght')}, ${Math.round(Number(v('lightness')))});`,
+        ]),
+    },
     exposure: amAdjustment('exposure', ['photoshop.adjustments.exposure', 'photoshop.adjustments.exposure_option.exposure', 'photoshop.adjustments.exposure_option.offset', 'photoshop.adjustments.exposure_option.gamma']),
     vibrance: amAdjustment('vibrance', ['photoshop.adjustments.vibrance', 'photoshop.adjustments.vibrance_option.vibrance', 'photoshop.adjustments.vibrance_option.saturation']),
     hue_saturation: amAdjustment('hue_saturation', ['photoshop.adjustments.hue_saturation', 'photoshop.adjustments.hue_saturation_option.master', 'photoshop.adjustments.hue_saturation_option.hue', 'photoshop.adjustments.hue_saturation_option.saturation', 'photoshop.adjustments.hue_saturation_option.lightness', 'photoshop.adjustments.hue_saturation_option.colorize', 'photoshop.adjustments.hue_saturation_option.color_range']),
@@ -197,13 +243,13 @@ export const tools = [
     layerTool({
         name: 'adjust_layers',
         label: 'adjustment',
-        description: 'Apply an Image > Adjustments command to pixel layers (inside the selection, if there is one). This changes the pixels; it does not add an adjustment layer.',
+        description: 'Apply an Image > Adjustments command to pixel layers (inside the selection, if there is one). This changes the pixels; it does not add an adjustment layer. auto_color_correction applies Auto with an algorithm from Auto Color Correction Options, once; match_color adjusts the layer on its own (Match Color with Source: None, RGB only); replace_color changes one colour and the colours within its fuzziness (Replace Color).',
         table: ADJUSTMENTS,
     }),
     layerTool({
         name: 'apply_filter',
         label: 'filter',
-        description: 'Apply a filter from the Filter menu to pixel layers (inside the selection, if there is one). The Filter Gallery filters (Artistic, Brush Strokes, Sketch, Texture, glowing_edges), shape_blur, mezzotint, diffuse and extrude have no options here: they use the settings last used in their dialog or the Filter Gallery. Filters without an object-model method act through the active layer, which ends on the last target.',
+        description: 'Apply a filter from the Filter menu to pixel layers (inside the selection, if there is one). The Filter Gallery filters (Artistic, Brush Strokes, Sketch, Texture, glowing_edges), filter_gallery (the whole gallery stack), shape_blur, mezzotint and adaptive_wide_angle have no options here: they use the settings last used in their dialog or the Filter Gallery. diffuse, extrude and lens_correction (Filter > Lens Correction) apply only the settings given; the rest keep the values last used in the dialog. Filters without an object-model method act through the active layer, which ends on the last target.',
         table: FILTERS,
     }),
 ];
