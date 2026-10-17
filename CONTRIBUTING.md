@@ -1,8 +1,13 @@
 # Contributing
 
+The handbook in [docs/handbook/](docs/handbook/README.md) covers everything below in more depth:
+the architecture, per-application briefs for writing tools, planning work from the
+capability atlas, landing changes, releasing, current status and known pitfalls.
+
 Each package has its own guide for adding tools:
 
-- [InDesign](packages/indesign/CONTRIBUTING.md)
+- [InDesign](packages/indesign/CONTRIBUTING.md); new tools go in module areas,
+  `packages/indesign/src/tools/<area>.js` ([brief](docs/handbook/briefs/indesign.md))
 - Illustrator: tools live in `packages/illustrator/src/tools/<area>.js`. Each
   tool has a definition, a handler, and the atlas feature ids it performs
   (`features`). A tool can declare its annotations with `hints`

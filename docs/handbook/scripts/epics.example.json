@@ -1,0 +1,68 @@
+{
+  "_comment": "Epic layout for plan.mjs. Each ticket takes the open features of one atlas domain that match its selector, in order; '*' takes what is left of the domain. Selectors: '*', { \"idPattern\": \"^(regex on the id after <app>.<domain>.)\" }, or { \"menuRoot\": \"Filter\", \"menuCategory\": [\"Blur\", \"Sharpen\"] } (groups an item and its _option records by menu path). This example is the Photoshop round of October 2026. An id selector looks like { \"idPattern\": \"^tfo\" } (InDesign text frame options: ids like indesign.text_frames.tfo_general_columns).",
+  "routes": [
+    "dom",
+    "menu_command",
+    "action_manager",
+    "action"
+  ],
+  "epics": [
+    {
+      "title": "Filters",
+      "summary": "Every filter on the Filter menu and its options, through the DOM where ArtLayer has a method and the Action Manager otherwise.",
+      "tickets": [
+        {
+          "title": "Blur, Sharpen and Noise filters",
+          "domain": "filters",
+          "select": {
+            "menuRoot": "Filter",
+            "menuCategory": [
+              "Blur",
+              "Blur Gallery",
+              "Sharpen",
+              "Noise"
+            ]
+          },
+          "scope": "Apply each filter and set every option."
+        },
+        {
+          "title": "Distort, Pixelate and Render filters",
+          "domain": "filters",
+          "select": {
+            "menuRoot": "Filter",
+            "menuCategory": [
+              "Distort",
+              "Pixelate",
+              "Render"
+            ]
+          },
+          "scope": "Apply each filter and set every option."
+        },
+        {
+          "title": "Lens Correction, Liquify, Smart Filters and other filter features",
+          "domain": "filters",
+          "select": "*",
+          "scope": "The remaining filter features."
+        }
+      ]
+    },
+    {
+      "title": "Type and vector",
+      "summary": "Type options and commands, paths, shapes and the pen tools.",
+      "tickets": [
+        {
+          "title": "Type",
+          "domain": "type",
+          "select": "*",
+          "scope": "Character and Paragraph panel options, OpenType, type commands."
+        },
+        {
+          "title": "Paths and shapes",
+          "domain": "vector",
+          "select": "*",
+          "scope": "Paths panel, work paths, shape layers, path operations."
+        }
+      ]
+    }
+  ]
+}
