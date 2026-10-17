@@ -5,9 +5,14 @@
  * Filters with an ArtLayer.apply... method use it. The others run their
  * Action Manager event on the layer (made active first) with
  * DialogModes.NO, with descriptor keys as Photoshop records them. Filters
- * whose descriptor keys are not published (the Filter Gallery filters, Shape
- * Blur, Mezzotint, Diffuse, Extrude) take no options: Photoshop applies them
- * with the settings last used in their dialog.
+ * whose descriptor keys are not published (the Filter Gallery and its
+ * filters, Shape Blur, Mezzotint, Adaptive Wide Angle) take no options:
+ * Photoshop applies them with the settings last used in their dialog.
+ * Diffuse, Extrude and Lens Correction take options that are all optional:
+ * a setting left out keeps the plug-in's own value. The Diffuse and Extrude
+ * keys are the plug-in SDK's, as published recordings show them; the Lens
+ * Correction keys are those of Adobe's Lens Correct.jsx (File > Automate >
+ * Lens Correction), which plays the same event.
  *
  * Each option is [schema, default, convert]: convert(value, name) checks the
  * caller's value and returns the script literal; a required option has no
@@ -23,7 +28,7 @@ const s = (id) => `app.stringIDToTypeID(${JSON.stringify(id)})`;
 const c = (id) => `app.charIDToTypeID(${JSON.stringify(id)})`;
 
 /** Statements that run an Action Manager event on layer `l`, with descriptor `d` filled by `lines`. */
-const am = (event, lines = []) => ['var d = new ActionDescriptor();', ...lines, 'doc.activeLayer = l;', `app.executeAction(${event}, d, DialogModes.NO)`].join('\n  ');
+export const am = (event, lines = []) => ['var d = new ActionDescriptor();', ...lines, 'doc.activeLayer = l;', `app.executeAction(${event}, d, DialogModes.NO)`].join('\n  ');
 
 const required = (value, name) => {
     if (value === undefined || value === null) throw new Error(`${name} is required`);
@@ -48,6 +53,19 @@ export const choice = (map, fallback, description) => {
     const names = Object.keys(map);
     return [{ type: 'string', enum: names, description: `${description}: ${names.join(', ')}` }, fallback, (value, name) => map[enumOf(required(value, name), names, { name })]];
 };
+
+/** An option that may be left out: '' when omitted, otherwise `spec`'s checked value. */
+const optional = ([schema, , convert]) => [schema, undefined, (value, name) => (value === undefined || value === null ? '' : convert(value, name))];
+
+/** An optional true/false setting ('' when omitted). */
+const optFlag = (description) => [{ type: 'boolean', description }, undefined, (value, name) => {
+    if (value === undefined || value === null) return '';
+    if (typeof value !== 'boolean') throw new Error(`${name} must be true or false`);
+    return bool(value);
+}];
+
+/** Descriptor statements for the optional settings given: `put(literal)` for each one with a value. */
+const puts = (v, list) => list.filter(([name]) => v(name) !== '').map(([name, put]) => put(v(name)));
 
 /** An optional point { x, y } in pixels, as a UnitPoint literal ('' when omitted). */
 const point = (description) => [{ type: 'object', properties: { x: { type: 'number' }, y: { type: 'number' } }, description }, undefined, (value, name) => {
@@ -119,6 +137,61 @@ export const preserveShape = (event, v) => am(s(event), [
 const f = (...ids) => ids.map((id) => `photoshop.filters.${id}`);
 const UNDEFINED_AREAS = { wrap_around: 'UndefinedAreas.WRAPAROUND', repeat_edge: 'UndefinedAreas.REPEATEDGEPIXELS' };
 const NOISE = { uniform: 'NoiseDistribution.UNIFORM', gaussian: 'NoiseDistribution.GAUSSIAN' };
+
+/** Lens Correction's Edge setting (LnFt): how the blank areas the correction leaves are filled. */
+const LENS_EDGE = { edge_extension: 1, transparency: 2, black: 3, white: 4 };
+
+/** Lens Correction: Auto Correction (profile) and Custom settings, with their $LnCr keys. */
+const LENS_OPTIONS = {
+    profile: [{ type: 'string', description: 'Auto Correction: lens profile name, as the Lens Profiles list shows it (LnPr). Default the profile matched from the photo\'s metadata' }, undefined, (value, name) => {
+        if (value === undefined || value === null) return '';
+        if (typeof value !== 'string' || !value.trim()) throw new Error(`${name} must be a profile name`);
+        return str(value);
+    }],
+    profileFile: [{ type: 'string', description: 'Auto Correction: a lens profile (.lcp) file to use instead (LnPp; absolute path)' }, undefined, (value, name) => (value === undefined || value === null ? '' : `new File(${jsxPath(paths.validate(value))}).fsName`)],
+    geometricDistortion: optFlag('Auto Correction: Geometric Distortion from the profile'),
+    chromaticAberration: optFlag('Auto Correction: Chromatic Aberration from the profile'),
+    vignette: optFlag('Auto Correction: Vignette from the profile'),
+    autoScale: optFlag('Auto Scale Image: scale the result to fill the original bounds'),
+    edge: optional(choice(LENS_EDGE, undefined, 'Edge: how blank areas are filled')),
+    removeDistortion: optional(number(-100, 100, undefined, 'Custom: Remove Distortion, -100 to 100')),
+    fringeRedCyan: optional(number(-100, 100, undefined, 'Custom: Fix Red/Cyan Fringe')),
+    fringeGreenMagenta: optional(number(-100, 100, undefined, 'Custom: Fix Green/Magenta Fringe')),
+    fringeBlueYellow: optional(number(-100, 100, undefined, 'Custom: Fix Blue/Yellow Fringe')),
+    vignetteAmount: optional(number(-100, 100, undefined, 'Custom: Vignette Amount (darken to lighten)')),
+    vignetteMidpoint: optional(int(-100, 100, undefined, 'Custom: Vignette Midpoint')),
+    verticalPerspective: optional(number(-100, 100, undefined, 'Custom: Transform, Vertical Perspective')),
+    horizontalPerspective: optional(number(-100, 100, undefined, 'Custom: Transform, Horizontal Perspective')),
+    angle: optional(number(-360, 360, undefined, 'Custom: Transform, Angle in degrees')),
+    scale: optional(number(50, 150, undefined, 'Custom: Transform, Scale, percent')),
+};
+const LENS_PUTS = [
+    ['profile', (x) => `d.putString(${c('LnPr')}, ${x});`],
+    ['profileFile', (x) => `d.putString(${c('LnPp')}, ${x});`],
+    ...[['geometricDistortion', 'LnAg'], ['chromaticAberration', 'LnAc'], ['vignette', 'LnAv'], ['autoScale', 'LnAs']].map(([k, id]) => [k, (x) => `d.putBoolean(${c(id)}, ${x});`]),
+    ['edge', (x) => `d.putInteger(${c('LnFt')}, ${x});`],
+    ...[['removeDistortion', 'LnIa'], ['fringeRedCyan', 'LnRc'], ['fringeGreenMagenta', 'LnGm'], ['fringeBlueYellow', 'LnBy'], ['vignetteAmount', 'LnSb']].map(([k, id]) => [k, (x) => `d.putDouble(${c(id)}, ${x});`]),
+    ['vignetteMidpoint', (x) => `d.putInteger(${c('LnSt')}, ${x});`],
+    ...[['verticalPerspective', 'LnVp'], ['horizontalPerspective', 'LnHp'], ['angle', 'LnRa'], ['scale', 'LnSi']].map(([k, id]) => [k, (x) => `d.putDouble(${c(id)}, ${x});`]),
+];
+
+/** Extrude settings and their keys. */
+const EXTRUDE_OPTIONS = {
+    type: optional(choice({ blocks: 'Blks', pyramids: 'Pyrm' }, undefined, 'Type')),
+    size: optional(int(2, 255, undefined, 'Size of each block or pyramid base, pixels')),
+    depth: optional(int(1, 255, undefined, 'Depth')),
+    depthMode: optional(choice({ random: 'Rndm', level_based: 'LvlB' }, undefined, 'Depth: random or level-based (brighter areas extend further)')),
+    solidFrontFaces: optFlag('Solid Front Faces (blocks)'),
+    maskIncompleteBlocks: optFlag('Mask Incomplete Blocks'),
+};
+const EXTRUDE_PUTS = [
+    ['type', (x) => `d.putEnumerated(${c('ExtT')}, ${c('ExtT')}, ${c(x)});`],
+    ['size', (x) => `d.putInteger(${c('ExtS')}, ${x});`],
+    ['depth', (x) => `d.putInteger(${c('ExtD')}, ${x});`],
+    ['depthMode', (x) => `d.putEnumerated(${c('ExtR')}, ${c('ExtR')}, ${c(x)});`],
+    ['solidFrontFaces', (x) => `d.putBoolean(${c('ExtF')}, ${x});`],
+    ['maskIncompleteBlocks', (x) => `d.putBoolean(${c('ExtM')}, ${x});`],
+];
 
 /** Filter Gallery filters: table key -> [event stringID, atlas feature]. They run with the gallery's last-used settings. */
 const GALLERY = {
@@ -368,13 +441,21 @@ export const MORE_FILTERS = {
         call: (v) => `l.applyLensFlare(${v('brightness')}, ${v('center') || '[new UnitValue(__px(doc.width) / 2, "px"), new UnitValue(__px(doc.height) / 2, "px")]'}, ${v('lensType')})`,
     },
     // Stylize
-    diffuse: { features: f('diffuse'), options: {}, call: () => am(s('diffuse')) },
+    diffuse: {
+        features: f('diffuse', 'diffuse_option.normal', 'diffuse_option.darken_only', 'diffuse_option.lighten_only'),
+        options: { mode: optional(choice({ normal: 'Nrml', darken_only: 'DrkO', lighten_only: 'LghO' }, undefined, 'Mode')) },
+        call: (v) => am(s('diffuse'), puts(v, [['mode', (x) => `d.putEnumerated(${c('Md  ')}, ${c('DfsM')}, ${c(x)});`]])),
+    },
     emboss: {
         features: f('emboss', 'emboss_option.angle', 'emboss_option.height', 'emboss_option.amount'),
         options: { angle: int(-360, 360, 135, 'Light angle in degrees'), height: int(1, 10, 3, 'Height, pixels'), amount: int(1, 500, 100, 'Percent') },
         call: (v) => am(s('emboss'), [`d.putInteger(${c('Angl')}, ${v('angle')});`, `d.putInteger(${c('Hght')}, ${v('height')});`, `d.putInteger(${c('Amnt')}, ${v('amount')});`]),
     },
-    extrude: { features: f('extrude'), options: {}, call: () => am(s('extrude')) },
+    extrude: {
+        features: f('extrude', 'extrude_option.blocks', 'extrude_option.pyramids', 'extrude_option.size', 'extrude_option.depth', 'extrude_option.random', 'extrude_option.level_based', 'extrude_option.solid_front_faces', 'extrude_option.mask_incomplete_blocks'),
+        options: EXTRUDE_OPTIONS,
+        call: (v) => am(s('extrude'), puts(v, EXTRUDE_PUTS)),
+    },
     find_edges: { features: f('find_edges'), options: {}, call: () => am(s('findEdges')) },
     oil_paint: {
         features: f('oil_paint', 'oil_paint_option.stylization', 'oil_paint_option.cleanliness', 'oil_paint_option.scale', 'oil_paint_option.bristle_detail', 'oil_paint_option.angle', 'oil_paint_option.shine'),
@@ -413,6 +494,17 @@ export const MORE_FILTERS = {
         options: { method: choice({ wind: 'Wnd ', blast: 'Blst', stagger: 'Stgr' }, 'wind', 'Method'), direction: choice({ left: 'Left', right: 'Rght' }, 'right', 'Direction') },
         call: (v) => am(s('wind'), [`d.putEnumerated(${c('WndM')}, ${c('WndM')}, ${c(v('method'))});`, `d.putEnumerated(${c('Drct')}, ${c('Drct')}, ${c(v('direction'))});`]),
     },
+    // Lens Correction and Adaptive Wide Angle
+    lens_correction: {
+        features: f('lens_correction', 'lens_correction_option.auto_correction', 'lens_correction_option.custom', 'lens_correction_option.chromatic_aberration', 'lens_correction_option.vignette', 'lens_correction_option.auto_scale_image', 'lens_correction_option.edge', 'lens_correction_option.lens_profiles', 'lens_correction_option.remove_distortion', 'lens_correction_option.fix_fringe_settings', 'lens_correction_option.vignette_amount', 'lens_correction_option.vignette_midpoint', 'lens_correction_option.vertical_perspective', 'lens_correction_option.horizontal_perspective', 'lens_correction_option.angle', 'lens_correction_option.scale'),
+        options: LENS_OPTIONS,
+        call: (v) => {
+            if (v('profile') && v('profileFile')) throw new Error('Give options.profile or options.profileFile, not both');
+            return am(c('LnCr'), puts(v, LENS_PUTS));
+        },
+    },
+    adaptive_wide_angle: { features: f('adaptive_wide_angle'), options: {}, call: () => am(s('22C3EEBF-A978-4ca9-91DF-E4F0CCEE5ACE')) },
+    filter_gallery: { features: f('filter_gallery'), options: {}, call: () => am(c('GEfc')) },
     // Video and Other
     de_interlace: {
         features: f('de_interlace', 'de_interlace_option.eliminate', 'de_interlace_option.duplication', 'de_interlace_option.interpolation'),

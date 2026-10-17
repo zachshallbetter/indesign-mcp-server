@@ -19,6 +19,14 @@ export const executor = createExecutor({
     winProcessName: 'Photoshop.exe',
 });
 
+// Under `node --test`, nothing may reach a real application: a test that forgets to stub the
+// executor fails here instead of running a script in the user's copy of Photoshop.
+if (process.env.NODE_TEST_CONTEXT) {
+    executor.runScript = async () => {
+        throw new Error('Tests must not run scripts in Photoshop: stub executor.runScript');
+    };
+}
+
 /**
  * Run a script built with script() and return a tool result. The script's
  * __result__ is JSON; it is parsed into `result`.

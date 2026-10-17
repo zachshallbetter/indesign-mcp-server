@@ -78,6 +78,14 @@ export const executor = createExecutor({
     winProcessName: 'AfterFX.exe',
 });
 
+// Under `node --test`, nothing may reach a real application: a test that forgets to stub the
+// executor fails here instead of running a script in the user's copy of After Effects.
+if (process.env.NODE_TEST_CONTEXT) {
+    executor.runScript = async () => {
+        throw new Error('Tests must not run scripts in After Effects: stub executor.runScript');
+    };
+}
+
 /**
  * Run a script built with script() and return a tool result. The script's
  * __result__ is JSON; it is parsed into `result`.
