@@ -103,9 +103,12 @@ There is one process to run: the MCP server is also the WebSocket server.
 | Sequences | `list_sequences`, `create_sequence` (default settings, a `.sqpreset`, or from clips), `open_sequence`, `get_sequence_settings`, `set_sequence_settings` (frame size, frame rate, pixel aspect, fields, editing mode, display formats, sample rate, previews, bit depth, render quality, linear colour), `duplicate_sequence`, `delete_sequence`, `close_sequence`, `create_subsequence` (Make Subsequence), `set_sequence_times` (in/out, zero point, work area, playhead), `move_playhead` (frames, edit points, gaps, markers, in/out), `run_scene_edit_detection` (cuts, markers or subclips), `get_sequence_properties`, `set_sequence_properties` (custom properties)|
 | Timeline | `list_tracks` (video, audio, caption), `list_clips` (or find by name), `insert_clip`, `overwrite_clip` (optionally a source range), `trim_clip` (source in/out, sequence start/end), `edit_clips` (slip, roll, slide, trim to playhead), `select_clips` (given clips, all, none, at the playhead, forward, backward, next, previous), `fit_clips_to_frame` (Set to Frame Size), `move_clips`, `remove_clips` (Clear or Ripple Delete), `set_clip_properties` (name, enable), `set_track_properties` (mute, rename), `insert_mogrt` |
 | Markers | `list_markers`, `add_marker`, `edit_marker` (name, comments, type, duration, colour, move), `remove_markers` (sequence or clip markers), `mark_clips` (Mark Clip, Mark Selection) |
-| Source | `create_subclip`, `set_source_in_out` (set or clear), `scale_to_frame_size`, `control_source_monitor` (open, play, close, Match Frame) |
-| Effects | `list_available_effects` (video effects, audio effects, video transitions), `list_clip_effects`, `apply_effect` (video by match or display name, audio by display name), `remove_effect`, `set_effect_param`, `add_keyframes` (with interpolation), `remove_keyframes`, `add_transition` (start, end or both; duration; single-sided), `remove_transition` |
-| Audio | `set_clip_volume` (the Volume effect's Level) |
+| Source | `create_subclip`, `set_source_in_out` (set or clear; also marks the audio range to edit), `scale_to_frame_size`, `control_source_monitor` (open, play, close, Match Frame) |
+| Effects | `list_available_effects` (video effects, audio effects, video transitions), `list_clip_effects`, `apply_effect` (video by match or display name, audio by display name), `remove_effect`, `set_effect_param`, `add_keyframes` (with interpolation), `remove_keyframes`, `add_transition` (start, end or both; duration; single-sided; replace), `remove_transition`, `set_clip_transform` (Motion or Vector Motion, Opacity, blend mode), `copy_clip_effects` (Paste Attributes), `manage_source_effects` (source clip effects) |
+| Keyframes | `jump_to_keyframe` (next or previous), `copy_keyframes` (to another parameter or clip), `retime_keyframes` (spread or squeeze an animation), `fade_clips` (Opacity or Volume fades) |
+| Colour | `set_lumetri_color` (Basic Correction, Creative, Color Wheels, HSL Secondary and Vignette settings by name, or any parameter by index), `set_clip_input_lut` (Input LUT override) |
+| Audio | `set_clip_volume` (the Volume effect's Level), `adjust_clip_audio` (change volume in dB, pan or balance) |
+| Graphics and captions | `list_graphics_templates` (installed `.mogrt` files), `insert_library_mogrt` (from a Creative Cloud Library), `list_transcription_languages` (and language packs), `import_captions` (SRT, SCC, MCC, DFXP, STL, XML) |
 | Transcripts | `transcribe_clip`, `export_transcript` (returned or written to `.json`) |
 | Export | `export_sequence` (encoder preset; now, to Media Encoder's queue, or Premiere Pro's queue; full or in to out; XMP; import the result), `encode_media` (a project item or a media file to Media Encoder's queue), `export_frame` (PNG, JPEG, TIFF, DPX, EXR, ...), `export_timeline` (Final Cut Pro XML, OpenTimelineIO, AAF) |
 | Metadata | `get_metadata` (project metadata and XMP), `set_metadata`, `get_metadata_display` (Project panel columns), `set_metadata_display` (columns, new schema fields) |
@@ -119,12 +122,13 @@ in their descriptions: `export_timeline` (26.2; AAF 26.3), renaming a track
 (26.3), `export_sequence`'s `startQueue` and `xmp` (26.3), the frame rate in
 `set_sequence_settings` (26.2), `close_sequence` (26.2), `create_subclip` (26.3), positioning the Source Monitor (26.3), the work area in `set_sequence_times` (26.5),
 `transcribe_clip` and `clear_media_cache` (26.5). On an older version those calls fail with a message
+`transcribe_clip` (26.5), listing languages in `list_transcription_languages` (26.3; checking given codes works earlier). On an older version those calls fail with a message
 naming the version.
 
 Not offered, because Premiere Pro's UXP API has no call for them: linking and
 unlinking clips, audio transitions, playing the Program Monitor, clip speed, clip gain (other than the
 Volume effect's Level), editing caption text, track targeting, nesting, menu
-commands, and undo.
+commands, undo, Lumetri's Auto button, and Lumetri curves (RGB and Hue Saturation curve points are not simple parameter values).
 
 ## How it stays out of your way
 
@@ -206,7 +210,23 @@ Pro:
   measured from the clip or the sequence is not documented, so use the times
   `list_clip_effects` reports.
 - **Volume.** `set_clip_volume` finds the Volume effect and its Level parameter
-  by their English display names.
+  by their English display names. `adjust_clip_audio` multiplies Level by the
+  decibel ratio, so it does not depend on how Level maps to dB, and passes pan
+  as Effect Controls shows it (-100 to 100); how the Panner stores it is not
+  confirmed.
+- **Effects by name.** `set_clip_transform`, `fade_clips`, `copy_clip_effects`
+  and `set_lumetri_color` find effects and parameters by their English display
+  names (Motion, Opacity, Blend Mode, Lumetri Color and its settings). None of
+  the Lumetri names is checked in Premiere Pro, nor the value types of Input LUT,
+  Look, the colour wheels and the HSL Secondary ranges; a name the effect lacks
+  is reported with the names it has. Blend modes are written as their position
+  in the Blend Mode menu (Normal = 0); `blendModeIndex` takes a raw value.
+- **Keyframes relative to the clip.** `jump_to_keyframe`, `copy_keyframes`,
+  `copy_clip_effects` and `fade_clips` treat keyframe times as the clip's source
+  time (the In point is the clip's first frame), as ExtendScript does. Whether
+  turning animation on adds a keyframe of its own is not known.
+- **Source clip effects.** Applying or removing them with `manage_source_effects`
+  is not documented; the tool checks the effect count changed.
 - **Exported frames.** `exportSequenceFrame` takes a file name and a folder; the
   server passes the base name and the folder separately.
 - **Media.** Layered files import merged (`importFiles` has no layer option),
