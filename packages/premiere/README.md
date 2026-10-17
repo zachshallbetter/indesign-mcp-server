@@ -107,8 +107,9 @@ There is one process to run: the MCP server is also the WebSocket server.
 | Effects | `list_available_effects` (video effects, audio effects, video transitions), `list_clip_effects`, `apply_effect` (video by match or display name, audio by display name), `remove_effect`, `set_effect_param`, `add_keyframes` (with interpolation), `remove_keyframes`, `add_transition` (start, end or both; duration; single-sided), `remove_transition` |
 | Audio | `set_clip_volume` (the Volume effect's Level) |
 | Transcripts | `transcribe_clip`, `export_transcript` (returned or written to `.json`) |
-| Export | `export_sequence` (encoder preset; now, to Media Encoder's queue, or Premiere Pro's queue; full or in to out; XMP), `export_frame` (PNG, JPEG, TIFF, DPX, EXR, ...), `export_timeline` (Final Cut Pro XML, OpenTimelineIO, AAF) |
+| Export | `export_sequence` (encoder preset; now, to Media Encoder's queue, or Premiere Pro's queue; full or in to out; XMP; import the result), `encode_media` (a project item or a media file to Media Encoder's queue), `export_frame` (PNG, JPEG, TIFF, DPX, EXR, ...), `export_timeline` (Final Cut Pro XML, OpenTimelineIO, AAF) |
 | Metadata | `get_metadata` (project metadata and XMP), `set_metadata`, `get_metadata_display` (Project panel columns), `set_metadata_display` (columns, new schema fields) |
+| Application | `wait_for_event` (project, sequence, Media Encoder, export and import events), `clear_media_cache`, `recover_project` (Auto-Save copies after a crash) |
 | Utility | `premiere_status`, `execute_premiere_code`, `help` |
 
 `help({ tool })` describes any tool's parameters.
@@ -117,7 +118,7 @@ Most tools work with Premiere Pro 25.6. These need a later version, and say so
 in their descriptions: `export_timeline` (26.2; AAF 26.3), renaming a track
 (26.3), `export_sequence`'s `startQueue` and `xmp` (26.3), the frame rate in
 `set_sequence_settings` (26.2), `close_sequence` (26.2), `create_subclip` (26.3), positioning the Source Monitor (26.3), the work area in `set_sequence_times` (26.5),
-`transcribe_clip` (26.5). On an older version those calls fail with a message
+`transcribe_clip` and `clear_media_cache` (26.5). On an older version those calls fail with a message
 naming the version.
 
 Not offered, because Premiere Pro's UXP API has no call for them: linking and
@@ -215,6 +216,15 @@ Pro:
   `set_project_media_settings` passes a scratch disk folder path where the
   reference names only the `ScratchDiskFolder` constants. Search bin queries
   are passed as given; their syntax is not documented.
+- **Media Encoder jobs.** `encode_media` passes the range as 0 (whole), 1 (in
+  to out) or 2 (work area), as Adobe's sample does; for a whole file it passes
+  an invalid end time (made by dividing a TickTime by zero, which the reference
+  says returns `TIME_INVALID`), as the sample passes `TickTime.TIME_INVALID`.
+- **Events.** What `wait_for_event` reports about an event is whatever plain
+  values the event object carries; the reference does not describe them.
+- **Auto-Save copies.** `recover_project` looks for copies named after the
+  project in the Auto Save scratch disk, or in "Adobe Premiere Pro Auto-Save"
+  beside the project when Premiere Pro reports the default symbolically.
 - **The panel's WebSocket.** Whether Premiere Pro's UXP sends an `Origin`
   header, and whether a narrower `network.domains` entry with a port would
   work, are not known; `premiere_status` shows the origin it saw.

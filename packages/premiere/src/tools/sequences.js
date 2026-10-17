@@ -82,7 +82,7 @@ return await __sequenceInfo(project, seq);`));
         inputSchema: { type: 'object', properties: { sequence: SEQUENCE_SCHEMA }, required: ['sequence'] },
         auditArgs: { sequence: { name: 'Main edit' } },
         hints: { idempotent: true },
-        features: ['premiere.sequences.open_sequence'],
+        features: ['premiere.sequences.open_sequence', 'premiere.ui.timeline_panel'],
         handler: (a) => run('Open sequence', script(`
 const project = await __project();
 const seq = await __sequence(project, ${sequenceSpec(a.sequence)});
@@ -245,7 +245,7 @@ return { deleted: name, guid: guid };`));
         auditArgs: { inPoint: 1, outPoint: 9, zeroPoint: 3600, workAreaIn: 0, workAreaOut: 30, playhead: 5 },
         hints: { idempotent: true },
         guarded: ['WorkAreaUtils', 'setWorkAreaInOutPoints'],
-        features: ['premiere.sequences.sequence_in_out', 'premiere.markers.mark_in', 'premiere.markers.mark_out', 'premiere.sequences.zero_point', 'premiere.sequences.work_area_bar', 'premiere.sequences.set_work_area_in', 'premiere.sequences.set_work_area_out', 'premiere.sequences.playhead'],
+        features: ['premiere.sequences.sequence_in_out', 'premiere.markers.mark_in', 'premiere.markers.mark_out', 'premiere.sequences.zero_point', 'premiere.sequences.work_area_bar', 'premiere.sequences.set_work_area_in', 'premiere.sequences.set_work_area_out', 'premiere.sequences.playhead', 'premiere.ui.program_monitor'],
         handler: (a) => {
             const t = (k) => (a[k] === undefined ? null : seconds(a[k], k));
             const [inP, outP, zero, wIn, wOut, head] = ['inPoint', 'outPoint', 'zeroPoint', 'workAreaIn', 'workAreaOut', 'playhead'].map(t);
@@ -382,7 +382,7 @@ return { sequence: seq.name, to: ${str(to)}, from: from, playhead: __s(await seq
             required: ['clips'],
         },
         auditArgs: { clips: { selected: true }, operation: 'marker', waitSeconds: 30 },
-        features: ['premiere.sequences.scene_edit_detection'],
+        features: ['premiere.sequences.scene_edit_detection', 'premiere.ai_features.scene_edit_detection_ai'],
         handler: (a) => {
             const operation = SCENE_OPERATIONS[enumOf(a.operation ?? 'cut', Object.keys(SCENE_OPERATIONS), { name: 'operation' })];
             const wait = num(a.waitSeconds ?? 0, { min: 0, max: 3600, name: 'waitSeconds' });

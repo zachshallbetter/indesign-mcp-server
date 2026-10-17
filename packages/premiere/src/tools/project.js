@@ -346,7 +346,7 @@ return info;`)),
             required: ['files'],
         },
         auditArgs: { files: [path.join(docs, 'a.mov'), path.join(docs, 'b.wav')], bin: { path: 'Footage' } },
-        features: ['premiere.projects.insertion_bin', ...IMPORT_FEATURES],
+        features: ['premiere.projects.insertion_bin', ...IMPORT_FEATURES, 'premiere.export.avid_to_premiere'],
         handler: (a) => {
             if (!Array.isArray(a.files) || !a.files.length) throw new Error("'files' must list at least one path");
             const files = a.files.map((f, i) => checkedPath(f, `files[${i}]`));

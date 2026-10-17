@@ -112,7 +112,7 @@ export const tools = [
             required: ['projectPath', 'sequences'],
         },
         auditArgs: { projectPath: path.join(process.env.HOME ?? '/tmp', 'Documents', 'other.prproj'), sequences: ['b6b3d1a2-0000-4000-8000-000000000000'] },
-        features: ['premiere.media_import.import_sequences_from_project'],
+        features: ['premiere.media_import.import_sequences_from_project', 'premiere.collaboration.move_between_projects'],
         handler: (a) => {
             const file = checkedPath(a.projectPath, 'projectPath', ['.prproj']);
             if (!Array.isArray(a.sequences) || !a.sequences.length) throw new Error("'sequences' must list at least one sequence guid");
@@ -144,7 +144,7 @@ return { imported: added.length, from: ${str(file)}, sequences: added };`));
             required: ['aepPath'],
         },
         auditArgs: { aepPath: path.join(process.env.HOME ?? '/tmp', 'Documents', 'motion.aep'), comps: ['Title', 'Lower third'], bin: { path: 'Graphics' } },
-        features: ['premiere.media_import.import_ae_comps', 'premiere.media_import.format_aep'],
+        features: ['premiere.media_import.import_ae_comps', 'premiere.media_import.format_aep', 'premiere.collaboration.dynamic_link'],
         handler: (a) => {
             const file = checkedPath(a.aepPath, 'aepPath', ['.aep', '.aepx']);
             if (a.comps !== undefined && (!Array.isArray(a.comps) || !a.comps.length)) throw new Error("'comps' must list at least one composition name (omit it to import all)");
@@ -182,7 +182,7 @@ return { imported: added.length, bin: target.path || "(root)", items: added };`)
         },
         auditArgs: { item: { path: 'Footage/a.mov' }, newPath: path.join(process.env.HOME ?? '/tmp', 'Documents', 'a.mov'), searchFolders: undefined, items: undefined },
         hints: { destructive: true },
-        features: ['premiere.media_import.link_media', 'premiere.media_import.replace_footage', 'premiere.media_import.relink_automatically', 'premiere.projects.where_is_the_file'],
+        features: ['premiere.media_import.link_media', 'premiere.media_import.replace_footage', 'premiere.media_import.relink_automatically', 'premiere.projects.where_is_the_file', 'premiere.collaboration.team_project_media'],
         handler: async (a) => {
             const override = bool(a.overrideChecks === true);
             if ((a.newPath === undefined) === (a.searchFolders === undefined)) throw new Error('Give newPath (with item) to relink one clip, or searchFolders to relink offline clips by file name');
@@ -260,7 +260,7 @@ return { relinked: relinked, failed: failed };`));
         },
         auditArgs: { action: 'attach_proxy', items: [{ path: 'Footage/a.mov' }], selected: false, mediaPath: path.join(process.env.HOME ?? '/tmp', 'Documents', 'Proxies', 'a_proxy.mov') },
         hints: { destructive: true },
-        features: ['premiere.media_import.refresh_media', 'premiere.media_import.make_offline', 'premiere.media_import.attach_proxies', 'premiere.media_import.ingest_proxy_workflow', 'premiere.media_import.reconnect_full_resolution'],
+        features: ['premiere.media_import.refresh_media', 'premiere.media_import.make_offline', 'premiere.media_import.attach_proxies', 'premiere.media_import.ingest_proxy_workflow', 'premiere.media_import.reconnect_full_resolution', 'premiere.collaboration.team_project_media'],
         handler: (a) => {
             const action = enumOf(a.action, ['refresh', 'make_offline', 'attach_proxy', 'attach_full_resolution'], { name: 'action' });
             const attach = action.startsWith('attach_');
