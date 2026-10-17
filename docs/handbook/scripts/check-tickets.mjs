@@ -18,7 +18,9 @@ const claimed = new Set();
 const toolsDir = path.join(repo, 'packages', app, 'src/tools');
 for (const f of fs.readdirSync(toolsDir).filter((n) => n.endsWith('.js'))) {
     const m = await import(pathToFileURL(path.join(toolsDir, f)));
-    for (const t of m.tools ?? []) for (const id of t.features ?? []) claimed.add(id);
+    // Every exported list of tools counts (`tools`, `audioTools`, ...), not only `tools`.
+    const lists = Object.values(m).filter((v) => Array.isArray(v) && v.some((t) => t && typeof t.name === 'string' && typeof t.handler === 'function'));
+    for (const list of lists) for (const t of list) for (const id of t.features ?? []) claimed.add(id);
 }
 if (app === 'indesign') {
     const tools = path.join(ATLAS, 'corpus/indesign/capabilities/tools.json');
