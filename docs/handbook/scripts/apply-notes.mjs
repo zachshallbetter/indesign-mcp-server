@@ -12,7 +12,7 @@ const list = (j) => (Array.isArray(j) ? j : j.features);
 const index = {};
 for (const [f, j] of Object.entries(docs)) for (const x of list(j)) index[x.id] = { file: f, feature: x };
 
-const ROUTES = new Set(['dom', 'menu_command', 'action_manager', 'action', 'native_sdk', 'none', 'unknown']);
+const ROUTES = new Set(['dom', 'menu_command', 'action_manager', 'uxp', 'action', 'native_sdk', 'none', 'unknown']);
 const changed = new Set();
 let applied = 0;
 for (const notesFile of process.argv.slice(2)) {
