@@ -9,6 +9,7 @@ import { tools as mediaTools } from './tools/media.js';
 import { tools as sequenceTools } from './tools/sequences.js';
 import { tools as timelineTools } from './tools/timeline.js';
 import { tools as markerTools } from './tools/markers.js';
+import { tools as sourceTools } from './tools/source.js';
 import { tools as effectTools, audioTools } from './tools/effects.js';
 import { tools as transcriptTools } from './tools/transcripts.js';
 import { tools as exportTools } from './tools/export.js';
@@ -39,6 +40,7 @@ const AREAS = [
     ['sequences', sequenceTools],
     ['timeline', timelineTools],
     ['markers', markerTools],
+    ['source', sourceTools],
     ['effects', effectTools],
     ['audio', audioTools],
     ['transcripts', transcriptTools],

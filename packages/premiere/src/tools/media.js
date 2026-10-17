@@ -430,7 +430,7 @@ return out;`)),
         },
         auditArgs: { ingestEnabled: true, scratchDisks: { capture: 'same_as_project', videoPreview: process.env.HOME ?? '/tmp', audioPreview: 'my_documents' }, pauseGrowing: false },
         hints: { idempotent: true },
-        features: ['premiere.media_import.ingest_settings', 'premiere.media_import.ingest_proxy_workflow', 'premiere.media_import.growing_files', 'premiere.projects.scratch_disks'],
+        features: ['premiere.media_import.ingest_settings', 'premiere.media_import.ingest_proxy_workflow', 'premiere.media_import.growing_files', 'premiere.projects.scratch_disks', 'premiere.sequences.preview_files'],
         handler: (a) => {
             if (a.scratchDisks !== undefined && (typeof a.scratchDisks !== 'object' || a.scratchDisks === null || Array.isArray(a.scratchDisks))) throw new Error("'scratchDisks' must be an object such as { videoPreview: \"same_as_project\" }");
             const disks = Object.entries(a.scratchDisks ?? {}).filter(([, v]) => v !== undefined).map(([k, v]) => {

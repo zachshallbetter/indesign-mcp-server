@@ -1,11 +1,13 @@
 /**
  * Markers on a sequence or on a clip project item: list, add, edit (name,
- * comments, type, duration, colour, position) and remove.
+ * comments, type, duration, colour, position) and remove; and marking a
+ * sequence's in and out around clips.
  */
 import { json, str, enumOf, index } from 'adobe-mcp-core';
 import { script } from '../script.js';
 import { run } from '../executor.js';
-import { SEQUENCE_SCHEMA, ITEM_SCHEMA, sequenceSpec, itemSpec, seconds } from '../args.js';
+import { SEQUENCE_SCHEMA, ITEM_SCHEMA, CLIPS_SCHEMA, sequenceSpec, itemSpec, clipsSpec, seconds } from '../args.js';
+import { WALK_HELPERS, TRACK_FILTER_PROPS, trackFilter } from './timeline.js';
 
 export const MARKER_TYPES = ['Comment', 'Chapter', 'WebLink', 'FLVCuePoint'];
 export const MARKER_COLORS = ['green', 'red', 'magenta', 'orange', 'yellow', 'blue', 'cyan'];
@@ -71,7 +73,7 @@ export const tools = [
         },
         auditArgs: { sequence: { name: 'Main edit' }, item: undefined },
         hints: { readOnly: true },
-        features: ['premiere.markers.marker_object', 'premiere.markers.sequence_markers', 'premiere.markers.clip_markers', 'premiere.markers.marker_types', 'premiere.markers.markers_panel'],
+        features: ['premiere.markers.marker_object', 'premiere.markers.sequence_markers', 'premiere.markers.clip_markers', 'premiere.markers.marker_types', 'premiere.markers.markers_panel', 'premiere.markers.marker_comments'],
         handler: (a) => run('List markers', script(`
 const project = await __project();
 ${ownerLines(a)}
@@ -97,7 +99,10 @@ return { owner: ownerName, count: out.length, markers: out };`)),
             required: ['start'],
         },
         auditArgs: { item: undefined, start: 3.5, name: 'Applause', duration: 2, comments: 'Cut here', color: 'magenta' },
-        features: ['premiere.markers.add_marker', 'premiere.markers.sequence_markers', 'premiere.markers.clip_markers', 'premiere.markers.marker_types', 'premiere.markers.marker_colors', 'premiere.markers.marker_dialog'],
+        features: [
+            'premiere.markers.add_marker', 'premiere.markers.sequence_markers', 'premiere.markers.clip_markers', 'premiere.markers.marker_types', 'premiere.markers.marker_colors',
+            'premiere.markers.marker_dialog', 'premiere.markers.chapter_markers_export', 'premiere.multicam.mark_for_sync',
+        ],
         handler: (a) => {
             const start = seconds(a.start, 'start');
             const duration = seconds(a.duration ?? 0, 'duration');
@@ -136,7 +141,7 @@ return { owner: ownerName, marker: info(all()[i], i) };`));
         },
         auditArgs: { item: { path: 'Footage/a.mov' }, sequence: undefined, guid: undefined, index: 1, name: 'Chorus', start: 8 },
         hints: { idempotent: true },
-        features: ['premiere.markers.marker_dialog', 'premiere.markers.move_markers', 'premiere.markers.marker_colors', 'premiere.markers.marker_types'],
+        features: ['premiere.markers.marker_dialog', 'premiere.markers.move_markers', 'premiere.markers.marker_colors', 'premiere.markers.marker_types', 'premiere.markers.marker_comments', 'premiere.markers.chapter_markers_export'],
         handler: (a) => {
             const spec = markerSpec(a);
             const lines = [];
@@ -175,7 +180,7 @@ return { owner: ownerName, marker: info(i >= 0 ? list[i] : m, i) };`));
         },
         auditArgs: { item: undefined, indexes: [0, 2], guids: undefined, all: false, type: undefined },
         hints: { destructive: true },
-        features: ['premiere.markers.clear_selected_marker', 'premiere.markers.sequence_markers', 'premiere.markers.clip_markers'],
+        features: ['premiere.markers.clear_selected_marker', 'premiere.markers.sequence_markers', 'premiere.markers.clip_markers', 'premiere.markers.clear_all_markers'],
         handler: (a) => {
             const indexes = (a.indexes ?? []).map((i) => Number(index(i, { name: 'indexes' })));
             const guids = (a.guids ?? []).map(String);
@@ -194,6 +199,45 @@ if (guids.length && doomed.filter((m) => m.guid && guids.includes(__id(m.guid)))
 const removed = doomed.map((m) => info(m, list.indexOf(m)));
 if (doomed.length) transact(project, "Remove markers", (add) => { for (const m of doomed) add(markers.createRemoveMarkerAction(m)); });
 return { owner: ownerName, removed: removed.length, markers: removed };`));
+        },
+    },
+    {
+        name: 'mark_clips',
+        description: 'Set a sequence\'s in and out points around clips: the clips under the playhead (Markers > Mark Clip) or the given or selected clips (Markers > Mark Selection), from the earliest start to the latest end. One undo step',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                sequence: SEQUENCE_SCHEMA,
+                clips: { ...CLIPS_SCHEMA, description: 'The clips to mark around (items from list_clips, or selected: true for Mark Selection). Default the clips under the playhead' },
+                ...TRACK_FILTER_PROPS,
+            },
+        },
+        auditArgs: { clips: undefined, track: 'video', trackIndex: 0 },
+        hints: { idempotent: true },
+        features: ['premiere.markers.mark_clip', 'premiere.markers.mark_selection', 'premiere.sequences.sequence_in_out'],
+        handler: (a) => {
+            const only = trackFilter(a);
+            if (a.clips !== undefined && only !== 'null') throw new Error('track and trackIndex are for the clips under the playhead: give clips or a track, not both');
+            const choose = a.clips !== undefined
+                ? `const clips = await __clips(seq, ${clipsSpec(a.clips)});`
+                : `const ph = __s(await seq.getPlayerPosition());
+const clips = (await __walkClips(seq, ["video", "audio"], ${only})).filter((c) => c.start <= ph && ph < c.end).map((c) => c.clip);
+if (!clips.length) throw new Error("No clip is under the playhead (" + ph + " s)");`;
+            return run('Mark clips', script(`${WALK_HELPERS}
+const project = await __project();
+const seq = await __sequence(project, ${sequenceSpec(a.sequence)});
+${choose}
+let first = null, last = null;
+for (const c of clips) {
+  const start = await c.getStartTime(), end = await c.getEndTime();
+  if (!first || start.seconds < first.seconds) first = start;
+  if (!last || end.seconds > last.seconds) last = end;
+}
+transact(project, "Mark clips", (add) => {
+  add(seq.createSetInPointAction(first));
+  add(seq.createSetOutPointAction(last));
+});
+return { sequence: seq.name, clips: clips.length, inPoint: __s(await seq.getInPoint()), outPoint: __s(await seq.getOutPoint()) };`));
         },
     },
 ];
