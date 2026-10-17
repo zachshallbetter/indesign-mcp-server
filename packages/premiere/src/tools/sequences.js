@@ -96,6 +96,7 @@ return await __sequenceInfo(project, seq);`)),
             'premiere.sequences.audio_sample_rate', 'premiere.sequences.audio_channel_format', 'premiere.sequences.audio_display_format',
             'premiere.sequences.preview_file_format', 'premiere.sequences.preview_size', 'premiere.sequences.maximum_bit_depth',
             'premiere.sequences.maximum_render_quality', 'premiere.sequences.composite_linear_color',
+            'premiere.media_import.audio_sample_rates', 'premiere.projects.timecode_display',
         ],
         handler: (a) => run('Sequence settings', script(`
 const project = await __project();
@@ -156,6 +157,7 @@ return out;`)),
             'premiere.sequences.fields', 'premiere.sequences.editing_mode', 'premiere.sequences.video_display_format', 'premiere.sequences.audio_display_format',
             'premiere.sequences.audio_sample_rate', 'premiere.sequences.preview_file_format', 'premiere.sequences.preview_size',
             'premiere.sequences.maximum_bit_depth', 'premiere.sequences.maximum_render_quality', 'premiere.sequences.composite_linear_color',
+            'premiere.media_import.audio_sample_rates', 'premiere.projects.timecode_display',
         ],
         handler: (a) => {
             if ((a.width === undefined) !== (a.height === undefined)) throw new Error('Give width and height together');
