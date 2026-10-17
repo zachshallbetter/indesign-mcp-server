@@ -1,40 +1,72 @@
 /**
  * Image adjustments and filters on pixel layers, through the object model's
- * ArtLayer.adjust... and ArtLayer.apply... methods. Both act on the selected
- * area when there is a selection, otherwise on the whole layer.
+ * ArtLayer.adjust... and ArtLayer.apply... methods, and through the Action
+ * Manager for the adjustments the object model lacks. Both act on the
+ * selected area when there is a selection, otherwise on the whole layer.
  */
 import { num, bool, enumOf, json } from 'adobe-mcp-core';
 import { script } from '../script.js';
 import { run } from '../executor.js';
 import { COLOR_SCHEMA, TARGET_SCHEMA, colorSpec, targetSpec } from '../args.js';
+import { AM_HELPERS, amCall, t } from '../am.js';
+import { TYPES, PHOTO_FILTERS, PHOTO_FILTER_OPTION } from '../adjustment-types.js';
 import { MORE_FILTERS, PRESERVE, choice, preserveShape } from './filters.js';
 
 const n = (min, max, description) => ({ type: 'number', minimum: min, maximum: max, ...(description ? { description } : {}) });
 const triple = (description) => ({ type: 'array', items: { type: 'number', minimum: -100, maximum: 100 }, minItems: 3, maxItems: 3, description });
 
+/** Run an Action Manager adjustment on the active layer `l` (the script includes AM_HELPERS when this is used). */
+const onLayer = (event, entries) => `doc.activeLayer = l; ${amCall(event, entries)}`;
+
+/** An adjustment from TYPES, applied with the type's own event and options. */
+const amAdjustment = (type, features) => ({
+    features,
+    options: TYPES[type].options,
+    call: (v) => onLayer(TYPES[type].event, TYPES[type].build(Object.fromEntries(Object.keys(TYPES[type].options).map((k) => [k, v(k)])), () => true, true)),
+});
+
 /**
  * Each adjustment: the atlas features it performs, its options (with defaults)
  * and the call it makes on `l`. `v(name)` returns the checked option as a
- * script literal.
+ * script literal, or, for an option with its own converter (a third element),
+ * the converted value.
  */
 export const ADJUSTMENTS = {
-    brightness_contrast: { features: ['photoshop.adjustments.brightness_contrast', 'photoshop.adjustments.brightness_contrast_option.brightness', 'photoshop.adjustments.brightness_contrast_option.contrast'], options: { brightness: [n(-150, 150), 0], contrast: [n(-50, 100), 0] }, call: (v) => `l.adjustBrightnessContrast(${v('brightness')}, ${v('contrast')})` },
-    levels: {
-        features: ['photoshop.adjustments.levels', 'photoshop.adjustments.levels_option.input_levels', 'photoshop.adjustments.levels_option.output_levels'],
-        options: { inputBlack: [n(0, 253), 0], inputWhite: [n(2, 255), 255], gamma: [n(0.1, 9.99), 1], outputBlack: [n(0, 255), 0], outputWhite: [n(0, 255), 255] },
-        call: (v) => `l.adjustLevels(${v('inputBlack')}, ${v('inputWhite')}, ${v('gamma')}, ${v('outputBlack')}, ${v('outputWhite')})`,
+    brightness_contrast: {
+        features: ['photoshop.adjustments.brightness_contrast', 'photoshop.adjustments.brightness_contrast_option.brightness', 'photoshop.adjustments.brightness_contrast_option.contrast', 'photoshop.adjustments.brightness_contrast_option.use_legacy'],
+        options: { brightness: [n(-150, 150), 0], contrast: [n(-50, 100), 0], useLegacy: TYPES.brightness_contrast.options.useLegacy },
+        call: (v) => (v('useLegacy')
+            ? onLayer('brightnessEvent', [['@Brgh', t.int(v('brightness'))], ['@Cntr', t.int(v('contrast'))], ['useLegacy', t.bool(true)]])
+            : `l.adjustBrightnessContrast(${v('brightness')}, ${v('contrast')})`),
     },
-    curves: { features: ['photoshop.adjustments.curves'], options: { points: [{ type: 'array', items: { type: 'array', items: { type: 'number', minimum: 0, maximum: 255 }, minItems: 2, maxItems: 2 }, minItems: 2, description: '[[input, output], ...], 0-255, e.g. [[0,0],[128,160],[255,255]]' }, null] }, call: (v) => `l.adjustCurves(${v('points')})` },
+    levels: {
+        features: ['photoshop.adjustments.levels', 'photoshop.adjustments.levels_option.input_levels', 'photoshop.adjustments.levels_option.output_levels', 'photoshop.adjustments.levels_option.channel', 'photoshop.adjustments.levels_option.auto'],
+        options: { inputBlack: [n(0, 253), 0], inputWhite: [n(2, 255), 255], gamma: [n(0.1, 9.99), 1], outputBlack: [n(0, 255), 0], outputWhite: [n(0, 255), 255], channel: TYPES.levels.options.channel, auto: TYPES.levels.options.auto },
+        call: (v) => (v('channel') === 'composite' && !v('auto')
+            ? `l.adjustLevels(${v('inputBlack')}, ${v('inputWhite')}, ${v('gamma')}, ${v('outputBlack')}, ${v('outputWhite')})`
+            : onLayer('levels', TYPES.levels.build({ channel: v('channel'), auto: v('auto'), ...Object.fromEntries(['inputBlack', 'inputWhite', 'gamma', 'outputBlack', 'outputWhite'].map((k) => [k, Number(v(k))])) }, () => true))),
+    },
+    curves: {
+        features: ['photoshop.adjustments.curves'],
+        options: { points: [{ type: 'array', items: { type: 'array', items: { type: 'number', minimum: 0, maximum: 255 }, minItems: 2, maxItems: 2 }, minItems: 2, description: '[[input, output], ...], 0-255, e.g. [[0,0],[128,160],[255,255]]' }, null], channel: TYPES.curves.options.channel },
+        call: (v) => (v('channel') === 'composite'
+            ? `l.adjustCurves(${v('points')})`
+            : onLayer('curves', TYPES.curves.build({ channel: v('channel'), points: JSON.parse(v('points')) }, () => true))),
+    },
     color_balance: {
         features: ['photoshop.adjustments.color_balance', 'photoshop.adjustments.color_balance_option.tone', 'photoshop.adjustments.color_balance_option.color_sliders', 'photoshop.adjustments.color_balance_option.preserve_luminosity'],
         options: { shadows: [triple('Cyan-red, magenta-green, yellow-blue, -100 to 100'), [0, 0, 0]], midtones: [triple(), [0, 0, 0]], highlights: [triple(), [0, 0, 0]], preserveLuminosity: [{ type: 'boolean' }, true] },
         call: (v) => `l.adjustColorBalance(${v('shadows')}, ${v('midtones')}, ${v('highlights')}, ${v('preserveLuminosity')})`,
     },
-    photo_filter: { features: ['photoshop.adjustments.photo_filter', 'photoshop.adjustments.photo_filter_option.color', 'photoshop.adjustments.photo_filter_option.density', 'photoshop.adjustments.photo_filter_option.preserve_luminosity'], options: { color: [COLOR_SCHEMA, '#EC8A00'], density: [n(1, 100), 25], preserveLuminosity: [{ type: 'boolean' }, true] }, call: (v) => `l.photoFilter(${v('color')}, ${v('density')}, ${v('preserveLuminosity')})` },
+    photo_filter: {
+        features: ['photoshop.adjustments.photo_filter', 'photoshop.adjustments.photo_filter_option.color', 'photoshop.adjustments.photo_filter_option.density', 'photoshop.adjustments.photo_filter_option.preserve_luminosity', 'photoshop.adjustments.photo_filter_option.filter'],
+        options: { color: [COLOR_SCHEMA, '#EC8A00'], density: [n(1, 100), 25], preserveLuminosity: [{ type: 'boolean' }, true], filter: PHOTO_FILTER_OPTION },
+        call: (v) => `l.photoFilter(${v('filter') ? `__color(${colorSpec(PHOTO_FILTERS[v('filter')])})` : v('color')}, ${v('density')}, ${v('preserveLuminosity')})`,
+    },
     shadows_highlights: {
-        features: ['photoshop.adjustments.shadows_highlights', 'photoshop.adjustments.shadows_highlights_option.amount', 'photoshop.adjustments.shadows_highlights_option.tonal_width', 'photoshop.adjustments.shadows_highlights_option.radius', 'photoshop.adjustments.shadows_highlights_option.midtone_contrast'],
-        options: { shadowAmount: [n(0, 100), 35], highlightAmount: [n(0, 100), 0], shadowWidth: [n(0, 100), 50], highlightWidth: [n(0, 100), 50], shadowRadius: [n(0, 2500), 30], highlightRadius: [n(0, 2500), 30], colorCorrection: [n(-100, 100), 20], midtoneContrast: [n(-100, 100), 0] },
-        call: (v) => `l.shadowHighlight(${v('shadowAmount')}, ${v('shadowWidth')}, ${v('shadowRadius')}, ${v('highlightAmount')}, ${v('highlightWidth')}, ${v('highlightRadius')}, ${v('colorCorrection')}, ${v('midtoneContrast')})`,
+        features: ['photoshop.adjustments.shadows_highlights', 'photoshop.adjustments.shadows_highlights_option.amount', 'photoshop.adjustments.shadows_highlights_option.tonal_width', 'photoshop.adjustments.shadows_highlights_option.radius', 'photoshop.adjustments.shadows_highlights_option.midtone_contrast', 'photoshop.adjustments.shadows_highlights_option.black_clip_and_white_clip'],
+        options: { shadowAmount: [n(0, 100), 35], highlightAmount: [n(0, 100), 0], shadowWidth: [n(0, 100), 50], highlightWidth: [n(0, 100), 50], shadowRadius: [n(0, 2500), 30], highlightRadius: [n(0, 2500), 30], colorCorrection: [n(-100, 100), 20], midtoneContrast: [n(-100, 100), 0], blackClip: [n(0, 50, 'Black Clip, percent'), 0.01], whiteClip: [n(0, 50, 'White Clip, percent'), 0.01] },
+        call: (v) => `l.shadowHighlight(${v('shadowAmount')}, ${v('shadowWidth')}, ${v('shadowRadius')}, ${v('highlightAmount')}, ${v('highlightWidth')}, ${v('highlightRadius')}, ${v('colorCorrection')}, ${v('midtoneContrast')}, ${v('blackClip')}, ${v('whiteClip')})`,
     },
     posterize: { features: ['photoshop.adjustments.posterize', 'photoshop.adjustments.posterize_option.levels'], options: { levels: [n(2, 255), 4] }, call: (v) => `l.posterize(${v('levels')})` },
     threshold: { features: ['photoshop.adjustments.threshold', 'photoshop.adjustments.threshold_option.threshold_level'], options: { level: [n(1, 255), 128] }, call: (v) => `l.threshold(${v('level')})` },
@@ -43,6 +75,22 @@ export const ADJUSTMENTS = {
     equalize: { features: ['photoshop.adjustments.equalize'], options: {}, call: () => 'l.equalize()' },
     auto_levels: { features: ['photoshop.adjustments.auto_tone'], options: {}, call: () => 'l.autoLevels()' },
     auto_contrast: { features: ['photoshop.adjustments.auto_contrast'], options: {}, call: () => 'l.autoContrast()' },
+    auto_color: { features: ['photoshop.adjustments.auto_color'], options: {}, call: () => onLayer('levels', [['autoBlackWhite', t.bool(true)], ['autoNeutrals', t.bool(true)]]) },
+    exposure: amAdjustment('exposure', ['photoshop.adjustments.exposure', 'photoshop.adjustments.exposure_option.exposure', 'photoshop.adjustments.exposure_option.offset', 'photoshop.adjustments.exposure_option.gamma']),
+    vibrance: amAdjustment('vibrance', ['photoshop.adjustments.vibrance', 'photoshop.adjustments.vibrance_option.vibrance', 'photoshop.adjustments.vibrance_option.saturation']),
+    hue_saturation: amAdjustment('hue_saturation', ['photoshop.adjustments.hue_saturation', 'photoshop.adjustments.hue_saturation_option.master', 'photoshop.adjustments.hue_saturation_option.hue', 'photoshop.adjustments.hue_saturation_option.saturation', 'photoshop.adjustments.hue_saturation_option.lightness', 'photoshop.adjustments.hue_saturation_option.colorize', 'photoshop.adjustments.hue_saturation_option.color_range']),
+    black_and_white: amAdjustment('black_and_white', ['photoshop.adjustments.black_and_white', 'photoshop.adjustments.black_and_white_option.tint', 'photoshop.adjustments.black_and_white_option.color_sliders']),
+    channel_mixer: {
+        features: ['photoshop.adjustments.channel_mixer', 'photoshop.adjustments.channel_mixer_option.monochrome'],
+        options: TYPES.channel_mixer.options,
+        call: (v) => (v('monochrome') ? `l.mixChannels(${json([v('gray')])}, true)` : `l.mixChannels(${json([v('red'), v('green'), v('blue')])}, false)`),
+    },
+    selective_color: {
+        features: ['photoshop.adjustments.selective_color', 'photoshop.adjustments.selective_color_option.relative', 'photoshop.adjustments.selective_color_option.absolute'],
+        options: TYPES.selective_color.options,
+        call: (v) => `l.selectiveColor(AdjustmentReference.${v('method') === 'absolute' ? 'ABSOLUTE' : 'RELATIVE'}, ${['reds', 'yellows', 'greens', 'cyans', 'blues', 'magentas', 'whites', 'neutrals', 'blacks'].map((k) => json(v(k))).join(', ')})`,
+    },
+    gradient_map: amAdjustment('gradient_map', ['photoshop.adjustments.gradient_map', 'photoshop.adjustments.gradient_map_option.dither', 'photoshop.adjustments.gradient_map_option.reverse', 'photoshop.color.gradient_editor', 'photoshop.color.gradient_editor_option.solid', 'photoshop.color.gradient_editor_option.noise', 'photoshop.color.gradient_editor_option.transparency', 'photoshop.color.gradient_editor_option.roughness', 'photoshop.color.gradient_editor_option.color_model', 'photoshop.color.gradient_editor_option.restrict_colors', 'photoshop.color.gradient_editor_option.add_transparency', 'photoshop.color.gradient_editor_option.randomize', 'photoshop.color.gradient_editor_option.perceptual', 'photoshop.color.gradient_editor_option.linear', 'photoshop.color.gradient_editor_option.classic', 'photoshop.color.gradient_interpolation']),
 };
 
 const DISTRIBUTION = { uniform: 'UNIFORM', gaussian: 'GAUSSIAN' };
@@ -131,7 +179,7 @@ function layerTool({ name, label, description, table }) {
         handler: (a) => {
             const key = enumOf(a[label], Object.keys(table), { name: label });
             const call = table[key].call(optionValues(table, key, a.options, label));
-            return run(label === 'adjustment' ? 'Adjust layers' : 'Apply filter', script(`
+            return run(label === 'adjustment' ? 'Adjust layers' : 'Apply filter', script(`${call.includes('__amDo') ? AM_HELPERS : ''}
 var items = __targets(doc, ${targetSpec(a.target ?? { active: true })});
 for (var i = 0; i < items.length; i++) {
   var l = items[i];

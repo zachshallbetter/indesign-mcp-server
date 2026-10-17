@@ -15,6 +15,8 @@ import { tools as channelTools } from './tools/channels.js';
 import { tools as transformTools } from './tools/transform.js';
 import { tools as analysisTools } from './tools/analysis.js';
 import { tools as adjustTools } from './tools/adjust.js';
+import { tools as adjustmentLayerTools } from './tools/adjustment-layers.js';
+import { tools as colorTools } from './tools/color.js';
 import { tools as filterTools } from './tools/filters.js';
 import { tools as paintTools } from './tools/paint.js';
 import { tools as textTools } from './tools/text.js';
@@ -66,6 +68,8 @@ const AREAS = [
     ['transformations', transformTools],
     ['analysis', analysisTools],
     ['adjustments', adjustTools],
+    ['adjustment layers', adjustmentLayerTools],
+    ['color', colorTools],
     ['filters', filterTools],
     ['painting', paintTools],
     ['type', textTools],
