@@ -89,12 +89,17 @@ const mixOpt = (def, d) => nums_(4, -200, 200, def, `${d}: [red, green, blue, co
 
 /** Write `key` only when `has(name)`. */
 const w = (has, name, key, value) => (has(name) ? [key, value] : null);
+/** Write the integer option `name` as `key` only when it was given (options whose default is Photoshop's own). */
+const given = (o, has, name, key) => (has(name) && o[name] !== undefined ? [key, t.int(o[name])] : null);
+const setting = (min, max, description) => num_(min, max, undefined, `${description}. Default Photoshop's`);
 const anyOf = (has, names) => names.some(has);
 
 /**
  * Adjustment types. `cls` is the adjustment-layer class (also the class of the
  * `to` descriptor when editing); `event` the Image > Adjustments command;
- * `classOnly` types are created with no settings.
+ * `classOnly` types are made by class alone, and those with a `build` then
+ * get the settings given through set. Types without a `kind` (no LayerKind
+ * in the object model) are recognised by their adjustment class.
  */
 export const TYPES = {
     brightness_contrast: {
@@ -138,6 +143,12 @@ export const TYPES = {
         cls: 'vibrance', event: 'vibrance', kind: 'VIBRANCE', features: ['photoshop.adjustments.vibrance_layer'],
         options: { vibrance: num_(-100, 100, 0), saturation: num_(-100, 100, 0) },
         build: (o, has) => entries([w(has, 'vibrance', 'vibrance', t.int(o.vibrance)), w(has, 'saturation', '@Strt', t.int(o.saturation))]),
+    },
+    color_and_vibrance: {
+        cls: 'vibrance', event: 'vibrance', kind: 'VIBRANCE',
+        features: ['photoshop.adjustments.color_and_vibrance_layer', ...['temperature', 'tint', 'vibrance', 'saturation'].map((k) => `photoshop.adjustments.color_and_vibrance_layer_option.${k}`)],
+        options: { temperature: setting(-100, 100, 'Temperature'), tint: setting(-100, 100, 'Tint'), vibrance: setting(-100, 100, 'Vibrance'), saturation: setting(-100, 100, 'Saturation') },
+        build: (o, has) => entries([given(o, has, 'temperature', 'temperature'), given(o, has, 'tint', 'tint'), given(o, has, 'vibrance', 'vibrance'), given(o, has, 'saturation', '@Strt')]),
     },
     hue_saturation: {
         cls: '@HStr', event: 'hueSaturation', kind: 'HUESATURATION', features: ['photoshop.adjustments.hue_saturation_layer'],
@@ -241,8 +252,18 @@ export const TYPES = {
     },
     invert: { cls: '@Invr', classOnly: true, kind: 'INVERSION', features: ['photoshop.adjustments.invert_layer'], options: {} },
     color_lookup: { cls: 'colorLookup', classOnly: true, kind: 'COLORLOOKUP', features: ['photoshop.adjustments.color_lookup_layer'], options: {} },
-    clarity_and_dehaze: { cls: 'clarity', classOnly: true, features: ['photoshop.adjustments.clarity_and_dehaze_layer'], options: {} },
-    grain: { cls: 'grainAdjustment', classOnly: true, features: ['photoshop.adjustments.grain_layer'], options: {} },
+    clarity_and_dehaze: {
+        cls: 'clarity', classOnly: true,
+        features: ['photoshop.adjustments.clarity_and_dehaze_layer', 'photoshop.adjustments.clarity_and_dehaze_layer_option.clarity', 'photoshop.adjustments.clarity_and_dehaze_layer_option.dehaze'],
+        options: { clarity: setting(-100, 100, 'Clarity'), dehaze: setting(-100, 100, 'Dehaze') },
+        build: (o, has) => entries([given(o, has, 'clarity', 'clarity'), given(o, has, 'dehaze', 'dehaze')]),
+    },
+    grain: {
+        cls: 'grainAdjustment', classOnly: true,
+        features: ['photoshop.adjustments.grain_layer', 'photoshop.adjustments.grain_layer_option.amount', 'photoshop.adjustments.grain_layer_option.size', 'photoshop.adjustments.grain_layer_option.roughness'],
+        options: { amount: setting(0, 100, 'Amount'), size: setting(0, 100, 'Size'), roughness: setting(0, 100, 'Roughness') },
+        build: (o, has) => entries([given(o, has, 'amount', 'grainAmount'), given(o, has, 'size', 'grainSize'), given(o, has, 'roughness', 'grainRoughness')]),
+    },
 };
 
 const GRADIENT_STYLES = { linear: '@Lnr ', radial: '@Rdl ', angle: '@Angl', reflected: '@Rflc', diamond: '@Dmnd' };
