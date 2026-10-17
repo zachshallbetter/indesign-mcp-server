@@ -99,9 +99,10 @@ There is one process to run: the MCP server is also the WebSocket server.
 | Area | Tools |
 |---|---|
 | Project | `get_project_info`, `create_project`, `open_project` (dialogs off), `save_project` (or Save As), `close_project`, `list_project_items` (or the Project panel selection), `get_clip_info` (media path, in/out, offline, proxy, footage interpretation), `import_media` (into a bin, image sequences), `create_bin`, `manage_items` (rename, move to a bin, label colour, delete) |
-| Sequences | `list_sequences`, `create_sequence` (default settings, a `.sqpreset`, or from clips), `open_sequence`, `get_sequence_settings`, `set_sequence_settings` (frame size, frame rate, pixel aspect, fields, editing mode, display formats, sample rate, previews, bit depth, render quality, linear colour), `duplicate_sequence`, `delete_sequence`, `set_sequence_times` (in/out, zero point, work area, playhead) |
-| Timeline | `list_tracks` (video, audio, caption), `list_clips`, `insert_clip`, `overwrite_clip`, `trim_clip` (source in/out, sequence start/end), `move_clips`, `remove_clips` (Clear or Ripple Delete), `set_clip_properties` (name, enable), `set_track_properties` (mute, rename), `insert_mogrt` |
-| Markers | `list_markers`, `add_marker`, `edit_marker` (name, comments, type, duration, colour, move), `remove_markers` (sequence or clip markers) |
+| Sequences | `list_sequences`, `create_sequence` (default settings, a `.sqpreset`, or from clips), `open_sequence`, `get_sequence_settings`, `set_sequence_settings` (frame size, frame rate, pixel aspect, fields, editing mode, display formats, sample rate, previews, bit depth, render quality, linear colour), `duplicate_sequence`, `delete_sequence`, `close_sequence`, `create_subsequence` (Make Subsequence), `set_sequence_times` (in/out, zero point, work area, playhead), `move_playhead` (frames, edit points, gaps, markers, in/out), `run_scene_edit_detection` (cuts, markers or subclips), `get_sequence_properties`, `set_sequence_properties` (custom properties), `set_preview_folders` |
+| Timeline | `list_tracks` (video, audio, caption), `list_clips` (or find by name), `insert_clip`, `overwrite_clip` (optionally a source range), `trim_clip` (source in/out, sequence start/end), `edit_clips` (slip, roll, slide, trim to playhead), `select_clips` (given clips, all, none, at the playhead, forward, backward, next, previous), `fit_clips_to_frame` (Set to Frame Size), `move_clips`, `remove_clips` (Clear or Ripple Delete), `set_clip_properties` (name, enable), `set_track_properties` (mute, rename), `insert_mogrt` |
+| Markers | `list_markers`, `add_marker`, `edit_marker` (name, comments, type, duration, colour, move), `remove_markers` (sequence or clip markers), `mark_clips` (Mark Clip, Mark Selection) |
+| Source | `create_subclip`, `set_source_in_out` (set or clear), `scale_to_frame_size`, `control_source_monitor` (open, play, close, Match Frame) |
 | Effects | `list_available_effects` (video effects, audio effects, video transitions), `list_clip_effects`, `apply_effect` (video by match or display name, audio by display name), `remove_effect`, `set_effect_param`, `add_keyframes` (with interpolation), `remove_keyframes`, `add_transition` (start, end or both; duration; single-sided), `remove_transition` |
 | Audio | `set_clip_volume` (the Volume effect's Level) |
 | Transcripts | `transcribe_clip`, `export_transcript` (returned or written to `.json`) |
@@ -114,12 +115,12 @@ There is one process to run: the MCP server is also the WebSocket server.
 Most tools work with Premiere Pro 25.6. These need a later version, and say so
 in their descriptions: `export_timeline` (26.2; AAF 26.3), renaming a track
 (26.3), `export_sequence`'s `startQueue` and `xmp` (26.3), the frame rate in
-`set_sequence_settings` (26.2), the work area in `set_sequence_times` (26.5),
+`set_sequence_settings` (26.2), `close_sequence` (26.2), `create_subclip` (26.3), positioning the Source Monitor (26.3), the work area in `set_sequence_times` (26.5),
 `transcribe_clip` (26.5). On an older version those calls fail with a message
 naming the version.
 
 Not offered, because Premiere Pro's UXP API has no call for them: linking and
-unlinking clips, audio transitions, clip speed, clip gain (other than the
+unlinking clips, audio transitions, playing the Program Monitor, clip speed, clip gain (other than the
 Volume effect's Level), editing caption text, track targeting, nesting, menu
 commands, and undo.
 

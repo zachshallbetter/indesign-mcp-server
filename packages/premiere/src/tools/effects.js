@@ -148,7 +148,7 @@ return { effect: effect, applied: out };`));
         },
         auditArgs: { clips: { items: [{ track: 'video', trackIndex: 0, clipIndex: 0 }] }, component: 3 },
         hints: { destructive: true },
-        features: ['premiere.effects_transitions.remove_effect'],
+        features: ['premiere.effects_transitions.remove_effect', 'premiere.editing.remove_attributes'],
         handler: (a) => run('Remove effect', script(`
 const project = await __project();
 const seq = await __sequence(project, ${sequenceSpec(a.sequence)});
@@ -180,7 +180,7 @@ return { removed: out };`)),
         },
         auditArgs: { clips: { items: [{ track: 'video', trackIndex: 0, clipIndex: 0 }] }, component: 1, param: 'Scale', paramIndex: undefined, value: 120, clearKeyframes: true },
         hints: { idempotent: true },
-        features: ['premiere.effects_transitions.component_param', 'premiere.effects_transitions.toggle_animation'],
+        features: ['premiere.effects_transitions.component_param', 'premiere.effects_transitions.toggle_animation', 'premiere.editing.properties_panel_editing'],
         handler: (a) => {
             const value = paramValue(a.value);
             return run('Set effect parameter', script(`
@@ -225,7 +225,7 @@ return { set: out };`));
             required: ['clip', 'component', 'keyframes'],
         },
         auditArgs: { clip: { track: 'video', trackIndex: 0, clipIndex: 0 }, component: 1, param: 'Position', paramIndex: undefined, keyframes: [{ time: 0, value: { x: 960, y: 540 } }, { time: 2, value: { x: 1200, y: 540 }, interpolation: 'bezier' }] },
-        features: ['premiere.effects_transitions.keyframes', 'premiere.effects_transitions.toggle_animation', 'premiere.effects_transitions.keyframe_interpolation'],
+        features: ['premiere.effects_transitions.keyframes', 'premiere.effects_transitions.toggle_animation', 'premiere.effects_transitions.keyframe_interpolation', 'premiere.editing.pen_tool_timeline'],
         handler: (a) => {
             if (!Array.isArray(a.keyframes) || !a.keyframes.length) throw new Error("'keyframes' must list at least one keyframe");
             const keys = a.keyframes.map((k, i) => {

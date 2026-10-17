@@ -176,7 +176,7 @@ return { count: matching.length, truncated: matching.length > ${limit}, items: m
         inputSchema: { type: 'object', properties: { item: ITEM_SCHEMA }, required: ['item'] },
         auditArgs: { item: { path: 'Footage/a.mov' } },
         hints: { readOnly: true },
-        features: ['premiere.projects.project_item', 'premiere.media_import.interpret_footage', 'premiere.media_import.offline_clip', 'premiere.media_import.attach_proxies'],
+        features: ['premiere.projects.project_item', 'premiere.media_import.interpret_footage', 'premiere.media_import.offline_clip', 'premiere.media_import.attach_proxies', 'premiere.multicam.multicam_source_sequence'],
         handler: (a) => run('Clip info', script(`
 const project = await __project();
 const entry = await __item(project, ${itemSpec(a.item)});
