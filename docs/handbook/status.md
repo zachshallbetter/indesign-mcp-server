@@ -1,17 +1,17 @@
-# Status (16 October 2026)
+# Status (16 October 2026, evening)
 
 | App | Package | Version | Published | Tools | Atlas features | Scriptable | Claimed by tools |
 |---|---|---|---|---:|---:|---:|---:|
 | InDesign | adobe-mcp-indesign | 2.5.0 | npm, MCP Registry | 423 | 2,742 | 2,609 | 2,524 (92%) |
 | Illustrator | adobe-mcp-illustrator | 0.9.0 | npm, MCP Registry | 308 | 2,540 | 1,951 | 1,562 (61%) |
-| Photoshop | adobe-mcp-photoshop | 0.1.0 | **not yet** | 205 | 2,609 | 1,456 | 1,413 (54%) |
-| After Effects | adobe-mcp-aftereffects | 0.1.0 | **not yet** | 164 | 3,198 | 2,559 | 2,555 (80%) |
-| Premiere Pro | adobe-mcp-premiere | 0.1.0 | **not yet** | 52 | 925 | 475 | 222 (24%) |
+| Photoshop | adobe-mcp-photoshop | 0.1.0 | **not yet** | 205 | 2,609 | 1,720 | 1,413 (54%) |
+| After Effects | adobe-mcp-aftereffects | 0.1.0 | **not yet** | 164 | 3,198 | 2,595 | 2,555 (80%) |
+| Premiere Pro | adobe-mcp-premiere | 0.1.0 | **not yet** | 96 | 925 | 494 | 413 (45%) |
 | Suite | adobe-mcp-suite | 0.1.7 | npm (InDesign + Illustrator) | all, prefixed | | | |
 | Core | adobe-mcp-core | 0.2.0 | npm | | | | |
 
 "Scriptable" counts features whose atlas route is the object model, a menu command,
-the Action Manager or a recorded Action. Most of the gap between scriptable and
+the Action Manager, the UXP API (Premiere Pro) or a recorded Action. Most of the gap between scriptable and
 claimed is now features recorded as findings (no unattended route) plus the
 deliberately unticketed items below. Every claimed feature is **statically tested**
 (the audit checks each script against the object model); **none is validated**
@@ -27,19 +27,23 @@ label):
 - InDesign: 18 epics, 72 tickets, issues #152–#241.
 - After Effects: 10 epics, 31 tickets, issues #266–#306.
 - Photoshop: 10 epics, 30 tickets, issues #319–#358.
+- Premiere Pro (UXP round): 4 epics, 16 tickets, issues #372–#391.
 
 ## Deliberately not ticketed
 
 - **Illustrator**: panel-opening menu items, swatch-library menu entries (the generic
   `execute_menu_command` runs them), tool-picker features with no scripted
   equivalent, help and account menus, cloud integrations.
-- **Photoshop**: 710 features are route `unknown`; 3D features are route `none`
-  (removed from Photoshop).
-- **After Effects**: 331 `unknown`, mostly undocumented preferences.
-- **Premiere Pro**: no second round yet. Its atlas routes describe the ExtendScript
-  object model, while the server uses UXP; the next round should first record which
-  features the UXP API reaches (13 claimed features already sit at route `unknown`
-  for this reason) and then plan from that.
+- **Photoshop**: 433 features are still route `unknown` (down from 710); 3D features
+  are route `none` (removed from Photoshop). About 300 newly routed features (mostly
+  Action Manager) have no tool yet: material for the next round. Research leads and
+  the ids not yet reached are in the work folder (`ps-proposals/remaining-unknown.json`).
+- **After Effects**: 191 `unknown` (down from 331), mostly preferences without a
+  documented key, aerender options, parametric meshes (26.3, not yet in the typings)
+  and colour. Notes in the work folder (`resume-ae-research.md`).
+- **Premiere Pro**: every feature the UXP API reaches is claimed; the rest are
+  ExtendScript/QE-only (route `dom`, with a "Not reachable through UXP" note), `none`
+  or `unknown` (246).
 
 ## Unverified, to check first on a machine with the applications
 
@@ -62,5 +66,6 @@ Each PR lists what its author was unsure of; the biggest groups:
    ([releasing.md](releasing.md)), then core and the suite are released.
 2. Validation passes on real installs, starting with the lists above; the atlas has
    a `validated` state per feature for recording the results.
-3. A Premiere Pro UXP coverage pass in the atlas, then a ticketed round.
-4. Research the `unknown` routes for Photoshop and After Effects.
+3. A Photoshop round for the newly routed Action Manager features.
+4. Finish researching the remaining `unknown` routes (Photoshop, After Effects,
+   Premiere Pro preferences).

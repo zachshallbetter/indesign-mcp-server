@@ -49,6 +49,11 @@ Problems met while building this repository, and what fixed them.
   stopped: the reset hid that the port was free. The bridge now opens a fresh
   connection per request (`agent: false`), so takeover sees ECONNREFUSED.
 
+- **Check every exported tool list.** A package may export more than `tools` (Premiere
+  Pro's `effects.js` also exports `audioTools`); `check-tickets.mjs` reads them all.
+- **New atlas routes need the scripts updated**: `apply-notes.mjs` rejects routes it
+  doesn't know, and `plan.mjs` only plans the routes it counts as scriptable.
+
 ## Machines and files
 
 - **`/tmp` (and `/private/tmp`) is wiped on reboot.** Plans, state, findings and
