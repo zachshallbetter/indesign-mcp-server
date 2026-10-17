@@ -11,7 +11,7 @@ repository uses it.
 
 | Layer | Path | Use here |
 |---|---|---|
-| Features | `features/<domain>.json`, `taxonomy.json` | Feature ids (`<app>.<domain>.<feature>`), names, menu paths, and the **automation route**: `dom`, `menu_command`, `action_manager` (Photoshop), `action`, `native_sdk`, `none` (established as not automatable), `unknown`. Notes and `dom_refs`/`event_ids` tell you how to reach it. |
+| Features | `features/<domain>.json`, `taxonomy.json` | Feature ids (`<app>.<domain>.<feature>`), names, menu paths, and the **automation route**: `dom`, `menu_command`, `action_manager` (Photoshop), `action`, `native_sdk`, `uxp` (Premiere Pro: the UXP API, members in `uxp_refs`), `none` (established as not automatable), `unknown`. Notes and `dom_refs`/`event_ids` tell you how to reach it. |
 | API | `api/` | The object model from types-for-adobe, per version where available. |
 | Commands | `commands/commands.json` | Menu command ids/strings and Photoshop Action Manager events, with `opens_dialog` where known. Unverified until run. |
 | Limitations | `limitations/` | How automation fails and the workaround. |

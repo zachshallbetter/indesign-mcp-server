@@ -9,8 +9,8 @@ const [app, configFile] = process.argv.slice(2);
 if (!app || !configFile) { console.error('Usage: node plan.mjs <app> <epics.json>'); process.exit(2); }
 const config = JSON.parse(fs.readFileSync(configFile, 'utf8'));
 
-const SCRIPTABLE = new Set(config.routes ?? ['dom', 'menu_command', 'action_manager', 'action']);
-const ROUTE = { dom: 'object model', menu_command: 'menu command', action_manager: 'Action Manager', action: 'Action' };
+const SCRIPTABLE = new Set(config.routes ?? ['dom', 'menu_command', 'action_manager', 'uxp', 'action']);
+const ROUTE = { dom: 'object model', menu_command: 'menu command', action_manager: 'Action Manager', uxp: 'UXP API', action: 'Action' };
 const toolsFile = path.join(ATLAS, 'corpus', app, 'capabilities', 'tools.json');
 const claimed = new Set(fs.existsSync(toolsFile) ? JSON.parse(fs.readFileSync(toolsFile, 'utf8')).tools.flatMap((t) => t.feature_ids ?? []) : []);
 const all = atlasFeatures(app);
