@@ -7,7 +7,13 @@ import { executor } from './executor.js';
 import { tools as documentTools } from './tools/documents.js';
 import { tools as imageTools } from './tools/image.js';
 import { tools as layerTools } from './tools/layers.js';
+import { tools as maskTools } from './tools/masks.js';
+import { tools as smartObjectTools } from './tools/smart-objects.js';
+import { tools as layerStyleTools } from './tools/layer-styles.js';
 import { tools as selectionTools } from './tools/selection.js';
+import { tools as channelTools } from './tools/channels.js';
+import { tools as transformTools } from './tools/transform.js';
+import { tools as analysisTools } from './tools/analysis.js';
 import { tools as adjustTools } from './tools/adjust.js';
 import { tools as adjustmentLayerTools } from './tools/adjustment-layers.js';
 import { tools as colorTools } from './tools/color.js';
@@ -18,6 +24,8 @@ import { tools as vectorTools } from './tools/vector.js';
 import { tools as exportTools } from './tools/export.js';
 import { tools as historyTools } from './tools/history.js';
 import { tools as videoTools } from './tools/video.js';
+import { tools as automationTools } from './tools/automation.js';
+import { tools as artboardTools } from './tools/artboards.js';
 import { tools as fileTools } from './tools/files.js';
 import { tools as printTools } from './tools/print.js';
 import { tools as applicationTools } from './tools/application.js';
@@ -52,7 +60,13 @@ const AREAS = [
     ['documents', documentTools],
     ['image', imageTools],
     ['layers', layerTools],
+    ['masks', maskTools],
+    ['smart objects', smartObjectTools],
+    ['layer styles', layerStyleTools],
     ['selection', selectionTools],
+    ['channels', channelTools],
+    ['transformations', transformTools],
+    ['analysis', analysisTools],
     ['adjustments', adjustTools],
     ['adjustment layers', adjustmentLayerTools],
     ['color', colorTools],
@@ -63,6 +77,8 @@ const AREAS = [
     ['export', exportTools],
     ['history', historyTools],
     ['video', videoTools],
+    ['automation', automationTools],
+    ['artboards', artboardTools],
     ['files', fileTools],
     ['print', printTools],
     ['application', applicationTools],
