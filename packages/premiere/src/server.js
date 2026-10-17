@@ -11,6 +11,9 @@ import { tools as timelineTools } from './tools/timeline.js';
 import { tools as markerTools } from './tools/markers.js';
 import { tools as sourceTools } from './tools/source.js';
 import { tools as effectTools, audioTools } from './tools/effects.js';
+import { tools as keyframeTools } from './tools/keyframes.js';
+import { tools as colorTools } from './tools/color.js';
+import { tools as graphicsTools } from './tools/graphics.js';
 import { tools as transcriptTools } from './tools/transcripts.js';
 import { tools as exportTools } from './tools/export.js';
 import { tools as metadataTools } from './tools/metadata.js';
@@ -42,7 +45,10 @@ const AREAS = [
     ['markers', markerTools],
     ['source', sourceTools],
     ['effects', effectTools],
+    ['keyframes', keyframeTools],
+    ['color', colorTools],
     ['audio', audioTools],
+    ['graphics', graphicsTools],
     ['transcripts', transcriptTools],
     ['export', exportTools],
     ['metadata', metadataTools],
@@ -61,7 +67,7 @@ const annotations = createAnnotations({
     destructive: hinted('destructive'),
     idempotent: hinted('idempotent'),
     openWorld: hinted('openWorld'),
-    words: { mogrt: 'Motion Graphics Template', xmp: 'XMP' },
+    words: { mogrt: 'Motion Graphics Template', xmp: 'XMP', lut: 'LUT' },
 });
 
 /** Tool definitions as advertised: name, description, schema, title, annotations. */
