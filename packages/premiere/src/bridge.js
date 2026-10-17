@@ -282,6 +282,10 @@ export function createBridge({
             const payload = body === undefined ? null : JSON.stringify(body);
             const req = http.request({
                 host: HOST, port, method, path,
+                // A fresh connection each time: a kept-alive socket to a process that has
+                // since stopped fails with a reset instead of ECONNREFUSED, which hides that
+                // the port is free to take over.
+                agent: false,
                 headers: {
                     ...(payload ? { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) } : {}),
                     ...(token ? { Authorization: `Bearer ${token}` } : {}),

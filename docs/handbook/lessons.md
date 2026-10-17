@@ -44,9 +44,10 @@ Problems met while building this repository, and what fixed them.
 - **The attribution check matched "Keyframe Assistant"**, an After Effects menu;
   `resolve-land.sh` allows it. MCP client names in install docs ("Claude Code",
   "claude mcp add") are allowed the same way.
-- **A flaky Premiere bridge test** (a second server taking over the port: "socket
-  hang up") failed once under a busy machine and passed on every rerun. Re-run the
-  landing; if it recurs, give the test more time.
+- **"socket hang up" in the Premiere bridge test** (a second server taking over the
+  port) was Node's keep-alive agent reusing a socket to the first server after it
+  stopped: the reset hid that the port was free. The bridge now opens a fresh
+  connection per request (`agent: false`), so takeover sees ECONNREFUSED.
 
 ## Machines and files
 
