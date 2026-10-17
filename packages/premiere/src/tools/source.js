@@ -79,7 +79,7 @@ return { source: entry.path, start: ${start}, end: ${end}, created: made.map(__i
         },
         auditArgs: { item: undefined, items: [{ path: 'Footage/Cam A.mov' }, { path: 'Footage/Cam B.mov' }], inPoint: 4.2, outPoint: undefined, clear: false },
         hints: { idempotent: true },
-        features: ['premiere.markers.clear_in_and_out', 'premiere.multicam.mark_for_sync', 'premiere.audio.source_monitor_audio'],
+        features: ['premiere.markers.clear_in_and_out', 'premiere.multicam.mark_for_sync', 'premiere.ui.source_monitor_in_out', 'premiere.audio.source_monitor_audio'],
         handler: (a) => {
             const list = itemList(a);
             const inP = a.inPoint === undefined ? null : seconds(a.inPoint, 'inPoint');
@@ -148,7 +148,7 @@ return { scaled: entries.map((e) => e.path) };`)),
         },
         auditArgs: { action: 'match_frame', item: undefined, position: undefined, speed: undefined, clip: undefined },
         guarded: ['setPosition'],
-        features: ['premiere.editing.play_stop', 'premiere.editing.shuttle', 'premiere.sequences.match_frame', 'premiere.audio.source_monitor_audio'],
+        features: ['premiere.editing.play_stop', 'premiere.editing.shuttle', 'premiere.sequences.match_frame', 'premiere.ui.source_monitor', 'premiere.ui.open_clip_source_monitor', 'premiere.ui.source_menu', 'premiere.audio.source_monitor_audio'],
         handler: (a) => {
             const action = enumOf(a.action, MONITOR_ACTIONS, { name: 'action' });
             const allowed = { open: ['item', 'position'], play: ['speed'], match_frame: ['sequence', 'clip'] }[action] ?? [];

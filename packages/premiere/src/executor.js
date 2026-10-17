@@ -25,13 +25,14 @@ export const executor = {
     /**
      * Send a script to the plugin. Resolves { ok: true, result } or
      * { ok: false, error }; rejects when Premiere Pro cannot be reached.
+     * options.timeoutMs replaces PREMIERE_SCRIPT_TIMEOUT_MS for this script.
      * Tests replace this.
      */
-    runScript: (source) => current().execute(source),
+    runScript: (source, options) => current().execute(source, options),
 
     /** As runScript, normalised to { ok, result | error }. */
-    async runStructured(source) {
-        const r = await executor.runScript(source);
+    async runStructured(source, options) {
+        const r = await executor.runScript(source, options);
         if (r && typeof r === 'object' && typeof r.ok === 'boolean') return r;
         return { ok: true, result: r ?? null };
     },
@@ -62,10 +63,10 @@ export const executor = {
  * Run a tool script and return a tool result.
  * @param {string} operation e.g. "Insert clip"
  * @param {string} source a script built with script()
- * @param {{ since?: string }} [opts] the Premiere Pro version the tool needs, named when a call fails because a method is missing
+ * @param {{ since?: string, timeoutMs?: number }} [opts] since: the Premiere Pro version the tool needs, named when a call fails because a method is missing; timeoutMs: how long this script may run
  */
-export async function run(operation, source, { since } = {}) {
-    const r = await executor.runStructured(source);
+export async function run(operation, source, { since, timeoutMs } = {}) {
+    const r = await executor.runStructured(source, timeoutMs ? { timeoutMs } : undefined);
     if (r.ok) return formatResponse(r.result, operation, () => false);
     let error = r.error;
     if (since && /is not a function|undefined is not|Cannot read properties of undefined/i.test(error)) {

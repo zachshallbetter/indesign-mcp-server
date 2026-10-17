@@ -333,7 +333,7 @@ return { param: param.displayName, keyframes: param.isTimeVarying() ? (param.get
             required: ['clips', 'transition'],
         },
         auditArgs: { clips: { items: [{ track: 'video', trackIndex: 0, clipIndex: 1 }] }, transition: 'AE.ADBE Cross Dissolve New', at: 'both', replace: true },
-        features: ['premiere.effects_transitions.apply_video_transition', 'premiere.effects_transitions.transitions_overview', 'premiere.effects_transitions.transition_duration', 'premiere.effects_transitions.single_sided_transitions', 'premiere.effects_transitions.replace_transitions', ...TRANSITION_FEATURES],
+        features: ['premiere.effects_transitions.apply_video_transition', 'premiere.effects_transitions.transitions_overview', 'premiere.effects_transitions.transition_duration', 'premiere.effects_transitions.single_sided_transitions', 'premiere.effects_transitions.replace_transitions', ...TRANSITION_FEATURES, 'premiere.ai_features.morph_cut_ai'],
         handler: (a) => {
             if (typeof a.transition !== 'string' || !a.transition.trim()) throw new Error("'transition' is empty");
             const at = enumOf(a.at ?? 'end', ['start', 'end', 'both'], { name: 'at' });

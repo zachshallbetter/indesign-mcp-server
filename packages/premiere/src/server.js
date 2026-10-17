@@ -17,6 +17,7 @@ import { tools as graphicsTools } from './tools/graphics.js';
 import { tools as transcriptTools } from './tools/transcripts.js';
 import { tools as exportTools } from './tools/export.js';
 import { tools as metadataTools } from './tools/metadata.js';
+import { tools as applicationTools } from './tools/application.js';
 import { tools as utilityTools, helpTool } from './tools/utility.js';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
@@ -52,6 +53,7 @@ const AREAS = [
     ['transcripts', transcriptTools],
     ['export', exportTools],
     ['metadata', metadataTools],
+    ['application', applicationTools],
     ['utility', utilityTools],
 ];
 
