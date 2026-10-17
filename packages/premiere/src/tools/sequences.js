@@ -17,7 +17,6 @@ const VIDEO_DISPLAY = ['FPS_23_976', 'FPS_25', 'FPS_29_97', 'FPS_29_97_NON_DROP'
 const AUDIO_DISPLAY = ['SAMPLE_RATE', 'MILLISECONDS'];
 const PLAYHEAD_TARGETS = ['next_frame', 'previous_frame', 'next_edit', 'previous_edit', 'next_gap', 'previous_gap', 'next_marker', 'previous_marker', 'in', 'out'];
 const SCENE_OPERATIONS = { cut: 'APPLYCUT', marker: 'CREATEMARKER', subclip: 'CREATESUBCLIP' };
-const PREVIEW_LOCATIONS = { same_as_project: 'SAME_AS_PROJECT', my_documents: 'MY_DOCUMENTS' };
 const PROPERTY_NAME = /^[\w .:/-]{1,200}$/;
 
 export const tools = [
@@ -103,6 +102,7 @@ return await __sequenceInfo(project, seq);`)),
             'premiere.sequences.audio_sample_rate', 'premiere.sequences.audio_channel_format', 'premiere.sequences.audio_display_format',
             'premiere.sequences.preview_file_format', 'premiere.sequences.preview_size', 'premiere.sequences.maximum_bit_depth',
             'premiere.sequences.maximum_render_quality', 'premiere.sequences.composite_linear_color',
+            'premiere.media_import.audio_sample_rates', 'premiere.projects.timecode_display',
         ],
         handler: (a) => run('Sequence settings', script(`
 const project = await __project();
@@ -164,6 +164,7 @@ return out;`)),
             'premiere.sequences.audio_sample_rate', 'premiere.sequences.preview_file_format', 'premiere.sequences.preview_size',
             'premiere.sequences.maximum_bit_depth', 'premiere.sequences.maximum_render_quality', 'premiere.sequences.composite_linear_color',
             'premiere.sequences.aspect_ratio_sequence',
+            'premiere.media_import.audio_sample_rates', 'premiere.projects.timecode_display',
         ],
         handler: (a) => {
             if ((a.width === undefined) !== (a.height === undefined)) throw new Error('Give width and height together');
@@ -475,34 +476,6 @@ const after = await ppro.Properties.getProperties(seq);
 const values = {};
 for (const [name] of sets) values[name] = after.hasValue(name) ? after.getValue(name) : null;
 return { sequence: seq.name, values: values, cleared: clear };`));
-        },
-    },
-    {
-        name: 'set_preview_folders',
-        description: 'Choose where the project keeps its video and audio preview files, the renders that let sequences play in real time (File > Project Settings > Scratch Disks: Video Previews, Audio Previews). Locations are Same as Project or Documents. Returns both folders. One undo step',
-        inputSchema: {
-            type: 'object',
-            properties: {
-                video: { type: 'string', enum: Object.keys(PREVIEW_LOCATIONS), description: 'Video Previews location' },
-                audio: { type: 'string', enum: Object.keys(PREVIEW_LOCATIONS), description: 'Audio Previews location' },
-            },
-        },
-        auditArgs: { video: 'same_as_project', audio: 'my_documents' },
-        hints: { idempotent: true },
-        features: ['premiere.sequences.preview_files'],
-        handler: (a) => {
-            const pick = (k) => (a[k] === undefined ? null : PREVIEW_LOCATIONS[enumOf(a[k], Object.keys(PREVIEW_LOCATIONS), { name: k })]);
-            const video = pick('video'), audio = pick('audio');
-            if (!video && !audio) throw new Error('Nothing to change: give video or audio');
-            return run('Set preview folders', script(`
-const project = await __project();
-const settings = await ppro.ProjectSettings.getScratchDiskSettings(project);
-if (!settings) throw new Error("Premiere Pro returned no scratch disk settings");
-${video ? `if (settings.setScratchDiskPath(__C.ScratchDiskFolderType.VIDEO_PREVIEW, __C.ScratchDiskFolder.${video}) === false) throw new Error("Premiere Pro refused the video preview location");` : ''}
-${audio ? `if (settings.setScratchDiskPath(__C.ScratchDiskFolderType.AUDIO_PREVIEW, __C.ScratchDiskFolder.${audio}) === false) throw new Error("Premiere Pro refused the audio preview location");` : ''}
-transact(project, "Preview folders", (add) => add(ppro.ProjectSettings.createSetScratchDiskSettingsAction(project, settings)));
-const now = await ppro.ProjectSettings.getScratchDiskSettings(project);
-return { videoPreviews: now.getScratchDiskPath(__C.ScratchDiskFolderType.VIDEO_PREVIEW), audioPreviews: now.getScratchDiskPath(__C.ScratchDiskFolderType.AUDIO_PREVIEW) };`));
         },
     },
 ];

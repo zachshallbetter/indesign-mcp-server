@@ -98,8 +98,9 @@ There is one process to run: the MCP server is also the WebSocket server.
 
 | Area | Tools |
 |---|---|
-| Project | `get_project_info`, `create_project`, `open_project` (dialogs off), `save_project` (or Save As), `close_project`, `list_project_items` (or the Project panel selection), `get_clip_info` (media path, in/out, offline, proxy, footage interpretation), `import_media` (into a bin, image sequences), `create_bin`, `manage_items` (rename, move to a bin, label colour, delete) |
-| Sequences | `list_sequences`, `create_sequence` (default settings, a `.sqpreset`, or from clips), `open_sequence`, `get_sequence_settings`, `set_sequence_settings` (frame size, frame rate, pixel aspect, fields, editing mode, display formats, sample rate, previews, bit depth, render quality, linear colour), `duplicate_sequence`, `delete_sequence`, `close_sequence`, `create_subsequence` (Make Subsequence), `set_sequence_times` (in/out, zero point, work area, playhead), `move_playhead` (frames, edit points, gaps, markers, in/out), `run_scene_edit_detection` (cuts, markers or subclips), `get_sequence_properties`, `set_sequence_properties` (custom properties), `set_preview_folders` |
+| Project | `get_project_info`, `create_project` (empty or from a template), `open_project` (dialogs off), `save_project` (or Save As), `close_project` (or all projects), `revert_project`, `list_project_items` (or the Project panel selection), `search_project_items` (name, media path, kind, offline), `get_clip_info` (media path, in/out, offline, proxy, footage interpretation), `import_media` (any importable format, into a bin, image sequences), `create_bin` (or a search bin), `manage_items` (rename, move to a bin, label colour, delete) |
+| Media | `import_project_sequences` (chosen sequences from another project), `import_after_effects_comps` (Dynamic Link), `relink_media` (one clip, or offline clips by file name), `manage_media` (refresh, make offline, attach proxy or full-resolution media), `modify_footage` (interpret footage, timecode, scale to frame size), `reveal_media_file` (Finder or Explorer), `get_project_media_settings`, `set_project_media_settings` (ingest, scratch disks, growing files) |
+| Sequences | `list_sequences`, `create_sequence` (default settings, a `.sqpreset`, or from clips), `open_sequence`, `get_sequence_settings`, `set_sequence_settings` (frame size, frame rate, pixel aspect, fields, editing mode, display formats, sample rate, previews, bit depth, render quality, linear colour), `duplicate_sequence`, `delete_sequence`, `close_sequence`, `create_subsequence` (Make Subsequence), `set_sequence_times` (in/out, zero point, work area, playhead), `move_playhead` (frames, edit points, gaps, markers, in/out), `run_scene_edit_detection` (cuts, markers or subclips), `get_sequence_properties`, `set_sequence_properties` (custom properties)|
 | Timeline | `list_tracks` (video, audio, caption), `list_clips` (or find by name), `insert_clip`, `overwrite_clip` (optionally a source range), `trim_clip` (source in/out, sequence start/end), `edit_clips` (slip, roll, slide, trim to playhead), `select_clips` (given clips, all, none, at the playhead, forward, backward, next, previous), `fit_clips_to_frame` (Set to Frame Size), `move_clips`, `remove_clips` (Clear or Ripple Delete), `set_clip_properties` (name, enable), `set_track_properties` (mute, rename), `insert_mogrt` |
 | Markers | `list_markers`, `add_marker`, `edit_marker` (name, comments, type, duration, colour, move), `remove_markers` (sequence or clip markers), `mark_clips` (Mark Clip, Mark Selection) |
 | Source | `create_subclip`, `set_source_in_out` (set or clear), `scale_to_frame_size`, `control_source_monitor` (open, play, close, Match Frame) |
@@ -107,7 +108,7 @@ There is one process to run: the MCP server is also the WebSocket server.
 | Audio | `set_clip_volume` (the Volume effect's Level) |
 | Transcripts | `transcribe_clip`, `export_transcript` (returned or written to `.json`) |
 | Export | `export_sequence` (encoder preset; now, to Media Encoder's queue, or Premiere Pro's queue; full or in to out; XMP), `export_frame` (PNG, JPEG, TIFF, DPX, EXR, ...), `export_timeline` (Final Cut Pro XML, OpenTimelineIO, AAF) |
-| Metadata | `get_metadata` (project metadata and XMP), `set_metadata` |
+| Metadata | `get_metadata` (project metadata and XMP), `set_metadata`, `get_metadata_display` (Project panel columns), `set_metadata_display` (columns, new schema fields) |
 | Utility | `premiere_status`, `execute_premiere_code`, `help` |
 
 `help({ tool })` describes any tool's parameters.
@@ -207,6 +208,13 @@ Pro:
   by their English display names.
 - **Exported frames.** `exportSequenceFrame` takes a file name and a folder; the
   server passes the base name and the folder separately.
+- **Media.** Layered files import merged (`importFiles` has no layer option),
+  and EDL, AAF and FCP XML go through `importFiles` like any file.
+  `modify_footage` sets field order and alpha with the `FIELD_TYPE_*` and
+  `ALPHACHANNEL_*` values the `FootageInterpretation` object carries.
+  `set_project_media_settings` passes a scratch disk folder path where the
+  reference names only the `ScratchDiskFolder` constants. Search bin queries
+  are passed as given; their syntax is not documented.
 - **The panel's WebSocket.** Whether Premiere Pro's UXP sends an `Origin`
   header, and whether a narrower `network.domains` entry with a port would
   work, are not known; `premiere_status` shows the origin it saw.

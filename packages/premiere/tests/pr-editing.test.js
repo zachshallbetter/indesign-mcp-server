@@ -345,16 +345,13 @@ test('sequence commands: close, subsequence, scene edits, properties and preview
     await assert.rejects(mcp.handleToolCall('set_sequence_properties', {}), /Nothing to change/);
     await assert.rejects(mcp.handleToolCall('set_sequence_properties', { values: { a: [1] } }), /text, a number or true\/false/);
     await assert.rejects(mcp.handleToolCall('set_sequence_properties', { values: { a: 1 }, clear: ['a'] }), /cannot be set and cleared/);
-    await assert.rejects(mcp.handleToolCall('set_preview_folders', {}), /Nothing to change/);
-    await assert.rejects(mcp.handleToolCall('set_preview_folders', { video: '/Volumes/Fast' }), /Allowed: same_as_project, my_documents/);
 
-    const [close, sub, scenes, get, set, previews] = await scriptsFor([
+    const [close, sub, scenes, get, set] = await scriptsFor([
         ['close_sequence', { sequence: { name: 'Rough cut' } }],
         ['create_subsequence', { allTracks: true }],
         ['run_scene_edit_detection', { clips: { selected: true }, operation: 'subclip', waitSeconds: 10 }],
         ['get_sequence_properties', { names: ['review.status'] }],
         ['set_sequence_properties', { values: { 'review.status': 'approved', takes: 3, final: false }, clear: ['old'], persistent: false }],
-        ['set_preview_folders', { video: 'same_as_project' }],
     ]);
     assert.match(body(close), /await project\.closeSequence\(seq\)/);
     assert.match(body(sub), /await seq\.createSubsequence\(true\)/);
@@ -364,7 +361,4 @@ test('sequence commands: close, subsequence, scene edits, properties and preview
     assert.match(body(get), /props\.hasValue\(name\) \? props\.getValue\(name\) : null/);
     assert.match(body(set), /const sets = \[\["review\.status","approved"\],\["takes",3\],\["final",false\]\], clear = \["old"\];/);
     assert.match(body(set), /__C\.PropertyType\.NON_PERSISTENT/);
-    assert.match(body(previews), /setScratchDiskPath\(__C\.ScratchDiskFolderType\.VIDEO_PREVIEW, __C\.ScratchDiskFolder\.SAME_AS_PROJECT\)/);
-    assert.doesNotMatch(body(previews), /AUDIO_PREVIEW, __C/);
-    assert.match(body(previews), /ppro\.ProjectSettings\.createSetScratchDiskSettingsAction\(project, settings\)/);
 });
