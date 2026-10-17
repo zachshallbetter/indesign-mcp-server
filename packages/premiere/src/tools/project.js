@@ -4,7 +4,7 @@
  */
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { createPathPolicy, json, bool, index, str } from 'adobe-mcp-core';
+import { createPathPolicy, json, bool, index, str, enumOf } from 'adobe-mcp-core';
 import { script } from '../script.js';
 import { run } from '../executor.js';
 import { ITEM_SCHEMA, itemSpec, itemSpecs } from '../args.js';
@@ -24,6 +24,21 @@ export function checkedPath(value, name, extensions) {
 }
 
 const docs = path.join(process.env.HOME ?? '/tmp', 'Documents');
+
+/**
+ * What import_media performs: Project.importFiles takes any file Premiere Pro
+ * can import, so each importable format and kind of file is one of these.
+ * After Effects projects go through import_after_effects_comps instead.
+ */
+const IMPORT_FEATURES = [
+    'import', 'import_from_media_browser', 'media_browser', 'import_still_images', 'import_image_sequence', 'import_layered_files',
+    'import_premiere_elements', 'import_avid_project', 'import_digital_audio', 'blackmagic_raw', 'batch_list_import',
+    ...[
+        'quicktime', 'mp4_h264', 'hevc', 'prores', 'mxf', 'dnxhd_dnxhr', 'avchd', 'r3d', 'arriraw', 'sony_raw', 'canon_raw', 'cinemadng',
+        'openexr', 'dpx', 'avi', 'wmv', 'mpeg', 'wav', 'aiff', 'mp3', 'aac', 'psd', 'ai_eps', 'jpeg', 'png', 'tiff', 'gif', 'heif', 'targa',
+        'aaf', 'edl', 'fcp_xml', 'chproj',
+    ].map((f) => `format_${f}`),
+].map((f) => `premiere.media_import.${f}`);
 
 export const tools = [
     {
@@ -47,17 +62,34 @@ return {
     },
     {
         name: 'create_project',
-        description: 'Create a new, empty project file (.prproj) and make it the active project. Other open projects stay open',
+        description: 'Create a new project file (.prproj) and make it the active project: empty, or a copy of a template project (its bins, sequences and settings; the template file is not changed). Other open projects stay open',
         inputSchema: {
             type: 'object',
-            properties: { filePath: { type: 'string', description: 'Absolute path of the new .prproj' } },
+            properties: {
+                filePath: { type: 'string', description: 'Absolute path of the new .prproj' },
+                template: { type: 'string', description: 'Absolute path of a .prproj to start from (a project template). Default: an empty project' },
+            },
             required: ['filePath'],
         },
-        auditArgs: { filePath: path.join(docs, 'audit.prproj') },
-        features: ['premiere.projects.new_project'],
+        auditArgs: { filePath: path.join(docs, 'audit.prproj'), template: undefined },
+        features: ['premiere.projects.new_project', 'premiere.projects.project_templates'],
         handler: (a) => {
             const file = checkedPath(a.filePath, 'filePath', ['.prproj']);
             if (existsSync(file)) throw new Error(`${file} already exists: open it with open_project, or choose another name`);
+            if (a.template !== undefined) {
+                const template = checkedPath(a.template, 'template', ['.prproj']);
+                if (!existsSync(template)) throw new Error(`The template ${template} does not exist`);
+                return run('Create project from template', script(`
+const options = new ppro.OpenProjectOptions();
+options.setShowConvertProjectDialog(false);
+options.setShowLocateFileDialog(false);
+options.setShowWarningDialog(false);
+options.setAddToMRUList(false);
+const project = await ppro.Project.open(${str(template)}, options);
+if (!project) throw new Error("Premiere Pro did not open the template " + ${str(template)});
+if (!(await project.saveAs(${str(file)}))) throw new Error("Premiere Pro opened the template but did not save it as " + ${str(file)});
+return { name: project.name, path: project.path, guid: __id(project.guid), template: ${str(template)} };`));
+            }
             return run('Create project', script(`
 const project = await ppro.Project.createProject(${str(file)});
 if (!project) throw new Error("Premiere Pro did not create the project");
@@ -77,7 +109,7 @@ return { name: project.name, path: project.path, guid: __id(project.guid) };`));
             required: ['filePath'],
         },
         auditArgs: { filePath: path.join(docs, 'audit.prproj') },
-        features: ['premiere.projects.open_project', 'premiere.projects.multiple_open_projects'],
+        features: ['premiere.projects.open_project', 'premiere.projects.multiple_open_projects', 'premiere.projects.where_is_the_file'],
         handler: (a) => {
             const file = checkedPath(a.filePath, 'filePath', ['.prproj']);
             const dialogs = bool(a.showDialogs === true);
@@ -117,14 +149,38 @@ return { saved: true, name: project.name, path: project.path };`));
     },
     {
         name: 'close_project',
-        description: 'Close the active project without prompting. Unsaved changes are lost unless save is true',
+        description: 'Close the active project, or every open project (File > Close All Projects), without prompting. Unsaved changes are lost unless save is true',
         inputSchema: {
             type: 'object',
-            properties: { save: { type: 'boolean', description: 'Save before closing. Default false', default: false } },
+            properties: {
+                save: { type: 'boolean', description: 'Save before closing. Default false', default: false },
+                all: { type: 'boolean', description: 'Close every open project, not only the active one. Default false', default: false },
+            },
         },
         hints: { destructive: true },
-        features: ['premiere.projects.close_project'],
-        handler: (a) => run('Close project', script(`
+        features: ['premiere.projects.close_project', 'premiere.projects.close_all_projects'],
+        handler: (a) => (a.all === true ? run('Close all projects', script(`
+const ids = (await ppro.ProjectUtils.getProjectViewIds()) || [];
+const seen = new Set();
+const projects = [];
+for (const id of ids) {
+  const p = await ppro.ProjectUtils.getProjectFromViewId(id);
+  if (p && !seen.has(__id(p.guid))) { seen.add(__id(p.guid)); projects.push(p); }
+}
+if (!projects.length) projects.push(await __project());
+const closed = [];
+for (const project of projects) {
+  const name = project.name, file = project.path;
+  ${a.save ? 'if (!(await project.save())) throw new Error("Premiere Pro did not save " + name + ", so it and the projects after it were left open (closed so far: " + closed.length + ")");' : ''}
+  const options = new ppro.CloseProjectOptions();
+  options.setPromptIfDirty(false);
+  options.setShowCancelButton(false);
+  options.setIsAppBeingPreparedToQuit(false);
+  options.setSaveWorkspace(true);
+  if (!(await project.close(options))) throw new Error("Premiere Pro did not close " + name + " (closed so far: " + closed.length + ")");
+  closed.push({ name: name, path: file });
+}
+return { closed: closed, saved: ${bool(a.save)} };`)) : run('Close project', script(`
 const project = await __project();
 const name = project.name, file = project.path;
 ${a.save ? 'if (!(await project.save())) throw new Error("Premiere Pro did not save the project, so it was left open");' : ''}
@@ -135,7 +191,32 @@ options.setIsAppBeingPreparedToQuit(false);
 options.setSaveWorkspace(true);
 const ok = await project.close(options);
 if (!ok) throw new Error("Premiere Pro did not close the project");
-return { closed: name, path: file, saved: ${bool(a.save)} };`)),
+return { closed: name, path: file, saved: ${bool(a.save)} };`))),
+    },
+    {
+        name: 'revert_project',
+        description: 'Discard the active project\'s unsaved changes by reopening its last saved version (File > Revert), with Premiere Pro\'s dialogs off',
+        inputSchema: { type: 'object', properties: {} },
+        hints: { destructive: true },
+        features: ['premiere.projects.revert'],
+        handler: () => run('Revert project', script(`
+const project = await __project();
+const name = project.name, file = project.path;
+if (!file) throw new Error("The project has not been saved, so there is no saved version to revert to");
+const close = new ppro.CloseProjectOptions();
+close.setPromptIfDirty(false);
+close.setShowCancelButton(false);
+close.setIsAppBeingPreparedToQuit(false);
+close.setSaveWorkspace(true);
+if (!(await project.close(close))) throw new Error("Premiere Pro did not close " + name);
+const options = new ppro.OpenProjectOptions();
+options.setShowConvertProjectDialog(false);
+options.setShowLocateFileDialog(false);
+options.setShowWarningDialog(false);
+options.setAddToMRUList(false);
+const reopened = await ppro.Project.open(file, options);
+if (!reopened) throw new Error("Premiere Pro closed " + name + " but did not reopen " + file + ": open it with open_project");
+return { reverted: reopened.name, path: reopened.path, guid: __id(reopened.guid) };`)),
     },
     {
         name: 'list_project_items',
@@ -152,7 +233,7 @@ return { closed: name, path: file, saved: ${bool(a.save)} };`)),
         },
         auditArgs: { bin: { path: 'Footage' }, kind: 'clip', selected: false },
         hints: { readOnly: true },
-        features: ['premiere.projects.project_item', 'premiere.projects.bin', 'premiere.projects.project_selection'],
+        features: ['premiere.projects.project_item', 'premiere.projects.bin', 'premiere.projects.project_selection', 'premiere.projects.project_panel'],
         handler: (a) => {
             const depth = index(a.depth ?? 10, { name: 'depth', max: 100 });
             const limit = index(a.limit ?? 500, { name: 'limit', max: 5000 });
@@ -168,6 +249,56 @@ entries = await __walk(project, start, ${depth});`}
 const kind = ${kind};
 const matching = entries.filter((e) => kind === null || e.kind === kind);
 return { count: matching.length, truncated: matching.length > ${limit}, items: matching.slice(0, ${limit}).map(__itemInfo) };`));
+        },
+    },
+    {
+        name: 'search_project_items',
+        description: 'Find project items (Edit > Find) by part of their name, part of their media file path, kind, or whether their media is offline, in the whole project or one bin. Returns ids and bin paths as list_project_items does, with the media path and offline state when those were searched',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                name: { type: 'string', description: 'Text the item name contains (any case)' },
+                mediaPath: { type: 'string', description: 'Text the media file path contains (any case); only clips match' },
+                kind: { type: 'string', enum: ['bin', 'clip', 'sequence'], description: 'Only items of this kind' },
+                offline: { type: 'boolean', description: 'true: only clips whose media is offline; false: only online clips' },
+                bin: { ...ITEM_SCHEMA, description: 'Search inside this bin. Default: the whole project' },
+                limit: { type: 'integer', minimum: 1, maximum: 5000, description: 'At most this many items. Default 500', default: 500 },
+            },
+        },
+        auditArgs: { name: 'interview', mediaPath: 'Card A', kind: 'clip', offline: true, bin: { path: 'Footage' } },
+        hints: { readOnly: true },
+        features: ['premiere.projects.find_dialog'],
+        handler: (a) => {
+            const text = (v, n) => {
+                if (v === undefined) return 'null';
+                if (typeof v !== 'string' || !v.trim()) throw new Error(`'${n}' is empty`);
+                return json(v.toLowerCase());
+            };
+            const name = text(a.name, 'name');
+            const media = text(a.mediaPath, 'mediaPath');
+            const kind = a.kind === undefined ? 'null' : json(enumOf(a.kind, ['bin', 'clip', 'sequence'], { name: 'kind' }));
+            const offline = a.offline === undefined ? 'null' : bool(a.offline);
+            if ([name, media, kind, offline].every((v) => v === 'null')) throw new Error('Give name, mediaPath, kind or offline to search for (list_project_items lists everything)');
+            const limit = index(a.limit ?? 500, { name: 'limit', max: 5000 });
+            return run('Search project items', script(`
+const project = await __project();
+const start = ${a.bin ? `await __bin(project, ${itemSpec(a.bin, 'bin')})` : 'null'};
+const entries = await __walk(project, start, 100);
+const name = ${name}, media = ${media}, kind = ${kind}, offline = ${offline};
+const hits = [];
+for (const e of entries) {
+  if (kind !== null && e.kind !== kind) continue;
+  if (name !== null && !String(e.name).toLowerCase().includes(name)) continue;
+  if (media === null && offline === null) { hits.push(__itemInfo(e)); continue; }
+  if (!e.clip || e.kind !== "clip") continue;
+  let file = null, off = null;
+  try { file = await e.clip.getMediaFilePath(); } catch (x) {}
+  try { off = await e.clip.isOffline(); } catch (x) {}
+  if (media !== null && !(file && String(file).toLowerCase().includes(media))) continue;
+  if (offline !== null && off !== offline) continue;
+  hits.push({ ...__itemInfo(e), mediaPath: file, offline: off });
+}
+return { count: hits.length, truncated: hits.length > ${limit}, items: hits.slice(0, ${limit}) };`));
         },
     },
     {
@@ -204,7 +335,7 @@ return info;`)),
     },
     {
         name: 'import_media',
-        description: 'Import media files into the project (File > Import) without Premiere Pro\'s dialogs, into the root or a bin. Image sequences import as one clip with numberedStills',
+        description: 'Import files into the project (File > Import, or Import from Media Browser by path) without Premiere Pro\'s dialogs, into the root or a bin: video (QuickTime, MP4, HEVC, ProRes, MXF, DNxHD, AVCHD, camera raw such as R3D, ARRIRAW, BRAW), audio (WAV, AIFF, MP3, AAC), stills and layered files (PSD, AI, JPEG, PNG, TIFF, EXR, DPX ...), projects (Premiere Pro, Premiere Elements, Character Animator) and interchange files (AAF, EDL, FCP XML, batch lists). Image sequences import as one clip with numberedStills. Layered files import merged',
         inputSchema: {
             type: 'object',
             properties: {
@@ -215,7 +346,7 @@ return info;`)),
             required: ['files'],
         },
         auditArgs: { files: [path.join(docs, 'a.mov'), path.join(docs, 'b.wav')], bin: { path: 'Footage' } },
-        features: ['premiere.media_import.import', 'premiere.projects.insertion_bin'],
+        features: ['premiere.projects.insertion_bin', ...IMPORT_FEATURES],
         handler: (a) => {
             if (!Array.isArray(a.files) || !a.files.length) throw new Error("'files' must list at least one path");
             const files = a.files.map((f, i) => checkedPath(f, `files[${i}]`));
@@ -232,25 +363,30 @@ return { imported: added.length, bin: target.path || "(root)", items: added };`)
     },
     {
         name: 'create_bin',
-        description: 'Add a bin to the project root or inside another bin',
+        description: 'Add a bin, or a search bin (File > New > Search Bin) that shows the items matching searchQuery, to the project root or inside another bin',
         inputSchema: {
             type: 'object',
             properties: {
                 name: { type: 'string', description: 'Bin name' },
                 parent: { ...ITEM_SCHEMA, description: 'Create inside this bin. Default: the project root' },
                 makeUnique: { type: 'boolean', description: 'If the name is taken, let Premiere Pro make it unique. Default true', default: true },
+                searchQuery: { type: 'string', description: 'Make a search bin showing the items that match this text' },
             },
             required: ['name'],
         },
         auditArgs: { parent: { path: 'Footage' } },
-        features: ['premiere.projects.new_bin', 'premiere.projects.bin'],
+        features: ['premiere.projects.new_bin', 'premiere.projects.bin', 'premiere.projects.search_bin'],
         handler: (a) => {
             if (typeof a.name !== 'string' || !a.name.trim()) throw new Error("'name' is empty");
+            if (a.searchQuery !== undefined && (typeof a.searchQuery !== 'string' || !a.searchQuery.trim())) throw new Error("'searchQuery' is empty");
+            const make = a.searchQuery !== undefined
+                ? `transact(project, "Create search bin", (add) => add(parent.bin.createSmartBinAction(${str(a.name)}, ${str(a.searchQuery)})));`
+                : `transact(project, "Create bin", (add) => add(parent.bin.createBinAction(${str(a.name)}, ${bool(a.makeUnique !== false)})));`;
             return run('Create bin', script(`
 const project = await __project();
 const parent = await __bin(project, ${a.parent ? itemSpec(a.parent, 'parent') : 'null'});
 const before = new Set((parent.children || []).map((c) => c.getId()));
-transact(project, "Create bin", (add) => add(parent.bin.createBinAction(${str(a.name)}, ${bool(a.makeUnique !== false)})));
+${make}
 const after = await __entry(parent.item, parent.path);
 const made = (after.children || []).filter((c) => !before.has(c.getId()));
 return { created: made.map((c) => ({ name: c.name, id: c.getId() })), parent: parent.path || "(root)" };`));
@@ -273,7 +409,7 @@ return { created: made.map((c) => ({ name: c.name, id: c.getId() })), parent: pa
         },
         auditArgs: { items: [{ path: 'Footage/a.mov' }], rename: 'Interview', moveTo: { path: 'Selects' }, moveToRoot: false, label: 3, delete: false },
         hints: { destructive: true },
-        features: ['premiere.projects.rename_item', 'premiere.projects.move_item_to_bin', 'premiere.projects.label_colors', 'premiere.projects.delete_bin'],
+        features: ['premiere.projects.rename_item', 'premiere.projects.move_item_to_bin', 'premiere.projects.label_colors', 'premiere.projects.delete_bin', 'premiere.projects.delete_items'],
         handler: (a) => {
             const del = a.delete === true;
             const changes = a.rename !== undefined || a.moveTo !== undefined || a.moveToRoot === true || a.label !== undefined;
