@@ -64,4 +64,3 @@ Each PR lists what its author was unsure of; the biggest groups:
    a `validated` state per feature for recording the results.
 3. A Premiere Pro UXP coverage pass in the atlas, then a ticketed round.
 4. Research the `unknown` routes for Photoshop and After Effects.
-5. A flaky Premiere bridge test (port takeover) to harden.
