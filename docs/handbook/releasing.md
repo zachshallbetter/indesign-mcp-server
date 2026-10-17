@@ -21,6 +21,15 @@ to npm and publishes `server.json` to the MCP Registry, both through GitHub OIDC
 Trusted publishing is set for `adobe-mcp-core`, `adobe-mcp-indesign`,
 `adobe-mcp-illustrator` and `adobe-mcp-suite`.
 
+## Core versions
+
+Each app pins an exact `adobe-mcp-core` version: InDesign, Illustrator, Photoshop and
+the suite pin `0.1.0`; After Effects and Premiere Pro pin `0.2.0` (they need its
+`winRun` hook and the audit's mixed-case enum support). In the workspace, npm links
+the local core only where the pin matches its version; the others install the
+published version they pin, so their tests run against that. When an app needs
+something newer, release the core first, then move that app's pin.
+
 ## Order
 
 A server that needs a newer core is released after the core. The suite pins exact
