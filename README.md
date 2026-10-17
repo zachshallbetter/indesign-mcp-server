@@ -12,8 +12,8 @@ client configuration.
 |---|---|---|
 | [adobe-mcp-indesign](packages/indesign) | Adobe InDesign: documents, pages, text, styles, tables, books, PDF and EPUB export (423 tools) | [`adobe-mcp-indesign`](https://www.npmjs.com/package/adobe-mcp-indesign) |
 | [adobe-mcp-illustrator](packages/illustrator) | Adobe Illustrator: documents, artboards, layers, shapes and paths, typography, colour and swatches, effects and 3D, symbols, patterns, Image Trace, images and links, variables and data sets, actions, export, prepress and printing (308 tools) | `adobe-mcp-illustrator` |
-| [adobe-mcp-photoshop](packages/photoshop) | Adobe Photoshop: documents, image and canvas size, layers, selections, adjustments and filters, type, export and history (55 tools) | `adobe-mcp-photoshop` |
-| [adobe-mcp-aftereffects](packages/aftereffects) | Adobe After Effects: projects, compositions, layers, keyframes and expressions, effects, text, masks and rendering (44 tools) | `adobe-mcp-aftereffects` |
+| [adobe-mcp-photoshop](packages/photoshop) | Adobe Photoshop: documents and formats, image and canvas, layers, masks, smart objects and layer styles, selections and channels, adjustments and fill layers, filters, painting and retouching, type and paths, video timeline, actions and batch, artboards, export, printing and preferences (205 tools) | `adobe-mcp-photoshop` |
+| [adobe-mcp-aftereffects](packages/aftereffects) | Adobe After Effects: projects and footage, compositions, layers and time, keyframes and expressions, every effect and its controls, text animators, masks and shape layers, paint and roto, 3D, tracking, colour, render queue and Essential Graphics (164 tools) | `adobe-mcp-aftereffects` |
 | [adobe-mcp-premiere](packages/premiere) | Adobe Premiere Pro: projects and bins, sequences, timeline edits, markers, effects, keyframes and transitions, transcripts, metadata and export, through a UXP plugin (52 tools; not yet tested against Premiere Pro) | `adobe-mcp-premiere` |
 | [adobe-mcp-suite](packages/suite) | InDesign, Illustrator, Photoshop, After Effects and Premiere Pro in one server, plus cross-application tools: Illustrator artwork into InDesign layouts, swatches with exact values | `adobe-mcp-suite` |
 | [adobe-mcp-core](packages/core) | The shared foundation: script escaping, the script runner, the server shell and the static script audit | `adobe-mcp-core` |
@@ -90,9 +90,12 @@ npm test         # every package's tests, including each server's static script 
 Run one package's tests with `npm test -w packages/illustrator`. The static
 audits run every tool against a stubbed application and check each generated
 script against the application's scripting object model; they do not need
-InDesign or Illustrator installed.
+the applications installed.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for releasing and for each package's guide.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for releasing and for each package's guide,
+and [docs/handbook/](docs/handbook/README.md) for the full handbook: architecture, per-application
+rules for writing tools, how work is planned from the capability atlas and landed,
+current status, and lessons learned.
 
 ## Licence
 
