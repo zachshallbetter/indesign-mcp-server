@@ -19,7 +19,9 @@ to npm and publishes `server.json` to the MCP Registry, both through GitHub OIDC
 - Releases of packages with trusted publishing set need nobody: just the tag.
 
 Trusted publishing is set for `adobe-mcp-core`, `adobe-mcp-indesign`,
-`adobe-mcp-illustrator` and `adobe-mcp-suite`.
+`adobe-mcp-illustrator`, `adobe-mcp-suite`, `adobe-mcp-photoshop`,
+`adobe-mcp-aftereffects` and `adobe-mcp-premiere`, all for `release.yml` in
+`zachshallbetter/adobe-mcp`.
 
 ## Core versions
 
@@ -36,37 +38,22 @@ A server that needs a newer core is released after the core. The suite pins exac
 versions of every app, so it is released last, and only when every app it depends on
 is on npm.
 
-## Not yet published (October 2026)
+## First publishes (October 2026)
 
-`adobe-mcp-photoshop`, `adobe-mcp-aftereffects` and `adobe-mcp-premiere` are merged
-at 0.1.0 but have never been published, so the suite (which depends on them) can't be
-released either. `adobe-mcp-core` has an unreleased change to its test audit since
-0.2.0 (it accepts mixed-case enum members); it doesn't affect the published servers.
-
-To publish them, the owner runs, from the repository root on an up-to-date `main`:
-
-```bash
-npm publish -w packages/photoshop --access public
-```
-
-```bash
-npm publish -w packages/aftereffects --access public
-```
-
-```bash
-npm publish -w packages/premiere --access public
-```
-
-then sets the trusted publisher for each on npmjs.com, and pushes the tags so the
-MCP Registry gets them:
+`adobe-mcp-photoshop@0.1.0`, `adobe-mcp-aftereffects@0.1.0` and
+`adobe-mcp-premiere@0.1.0` are published and visible on npm. The suite's pinned
+dependencies now resolve. `adobe-mcp-core` still has an unreleased change to its test
+audit since 0.2.0 (it accepts mixed-case enum members); it does not affect the
+published servers. With trusted publishing configured, push these annotated tags to
+publish the three `server.json` files to the MCP Registry:
 
 ```bash
 git tag -a adobe-mcp-photoshop@0.1.0 -m "adobe-mcp-photoshop 0.1.0" && git push origin adobe-mcp-photoshop@0.1.0
 ```
 
 (and the same for `adobe-mcp-aftereffects@0.1.0` and `adobe-mcp-premiere@0.1.0`).
-Bump the versions first if the packages should go out at a higher number given how
-much they've grown since 0.1.0. Then release the core and the suite by tag as usual.
+The workflow skips npm publishing for versions already present and publishes their
+server metadata to the MCP Registry.
 
 ## Retries
 
