@@ -150,6 +150,9 @@ Settings > Privacy & Security > Automation).
 | `ILLUSTRATOR_APP_NAME` | macOS: address a specific copy, e.g. `Adobe Illustrator 2025`. By default the server addresses Illustrator by its bundle id. |
 | `ILLUSTRATOR_ALLOWED_DIRS` | Extra directories for opening, placing and exporting files (`:`-separated on macOS, `;` on Windows). |
 | `ILLUSTRATOR_SCRIPT_TIMEOUT_MS` | How long to wait for Illustrator. Default 120000. |
+| `ILLUSTRATOR_BACKEND` / `ILLUSTRATOR_TARGET` | Set to `artcraft` or `vectorcraft` to route tool calls to VectorCraft via loopback JSON-lines. Default `auto` (routes to VectorCraft if listening on port 7979 when Adobe Illustrator is not running). |
+| `VECTORCRAFT_CONTROL_PORT` | Port for VectorCraft control channel. Default 7979. |
+| `VECTORCRAFT_CONTROL_TOKEN` | Token for VectorCraft authentication if required. |
 
 ## Development
 

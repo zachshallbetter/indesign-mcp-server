@@ -99,14 +99,17 @@ export const toolDefinitions = annotations.annotate(
     toolTable.map(({ name, description, inputSchema }) => ({ name, description, inputSchema }))
 );
 
-export { annotations };
+import { createRoutedHandlers, handlers as effectcraftHandlers } from './artcraft/effectcraft-adapter.js';
+
+export { annotations, createRoutedHandlers, effectcraftHandlers };
 
 export function createServer() {
     executor.cleanupTempScripts();
+    const rawHandlers = Object.fromEntries(toolTable.map((t) => [t.name, t.handler]));
     return createMcpServer({
         info: { name: pkg.name, version: pkg.version },
         instructions: SERVER_INSTRUCTIONS,
         tools: toolDefinitions,
-        handlers: Object.fromEntries(toolTable.map((t) => [t.name, t.handler])),
+        handlers: createRoutedHandlers(rawHandlers),
     });
 }

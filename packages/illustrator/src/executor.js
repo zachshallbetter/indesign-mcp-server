@@ -9,6 +9,8 @@
  */
 import { createExecutor, appleScriptString, powerShellString, formatResponse, formatErrorResponse } from 'adobe-mcp-core';
 
+import { client as vectorcraftClient } from './artcraft/vectorcraft-adapter.js';
+
 export const executor = createExecutor({
     label: 'Illustrator',
     envPrefix: 'ILLUSTRATOR',
@@ -19,6 +21,16 @@ export const executor = createExecutor({
     winProgIds: ['Illustrator.Application'],
     winInvoke: ({ scriptPath }) => `$app.DoJavaScriptFile(${powerShellString(scriptPath)})`,
     winProcessName: 'Illustrator.exe',
+    backends: [
+        {
+            name: 'artcraft',
+            targetApp: 'VectorCraft',
+            isAvailable: () => vectorcraftClient.isAvailable(),
+            run: async () => {
+                throw new Error('VectorCraft communicates via structured JSON-lines control channel rather than raw ExtendScript.');
+            },
+        },
+    ],
 });
 
 // Under `node --test`, nothing may reach a real application: a test that forgets to stub the

@@ -7,6 +7,8 @@
  */
 import { createExecutor, appleScriptString, powerShellString, formatResponse, formatErrorResponse } from 'adobe-mcp-core';
 
+import { client as photocraftClient } from './artcraft/photocraft-adapter.js';
+
 export const executor = createExecutor({
     label: 'Photoshop',
     envPrefix: 'PHOTOSHOP',
@@ -17,6 +19,16 @@ export const executor = createExecutor({
     winProgIds: ['Photoshop.Application'],
     winInvoke: ({ scriptPath }) => `$app.DoJavaScriptFile(${powerShellString(scriptPath)})`,
     winProcessName: 'Photoshop.exe',
+    backends: [
+        {
+            name: 'artcraft',
+            targetApp: 'PhotoCraft',
+            isAvailable: () => photocraftClient.isAvailable(),
+            run: async () => {
+                throw new Error('PhotoCraft communicates via structured JSON-lines control channel rather than raw ExtendScript.');
+            },
+        },
+    ],
 });
 
 // Under `node --test`, nothing may reach a real application: a test that forgets to stub the

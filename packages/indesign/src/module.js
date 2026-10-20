@@ -7,13 +7,14 @@ import { SERVER_INSTRUCTIONS, TOOL_HANDLERS } from './core/InDesignMCPServer.js'
 import { PARAM_ALIASES, normalizeValues } from './handlers/aliases.js';
 import { ScriptExecutor } from './core/scriptExecutor.js';
 import { validateFilePath } from './utils/jsxSafe.js';
+import { createRoutedHandlers, handlers as designcraftHandlers } from './artcraft/designcraft-adapter.js';
 
 export const app = {
     id: 'indesign',
     label: 'InDesign',
     instructions: SERVER_INSTRUCTIONS,
     tools: allToolDefinitions,
-    handlers: TOOL_HANDLERS,
+    handlers: createRoutedHandlers(TOOL_HANDLERS),
     aliases: PARAM_ALIASES,
     normalizeValues,
     /** Run ExtendScript in InDesign; resolves with the script's result as a string. */
@@ -25,5 +26,5 @@ export const app = {
     cleanup: () => ScriptExecutor.cleanupTempScripts(),
 };
 
-export { ScriptExecutor, SERVER_INSTRUCTIONS, TOOL_HANDLERS, allToolDefinitions };
+export { ScriptExecutor, SERVER_INSTRUCTIONS, TOOL_HANDLERS, allToolDefinitions, createRoutedHandlers, designcraftHandlers };
 export default app;

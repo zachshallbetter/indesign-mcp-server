@@ -24,6 +24,7 @@ import {
 import { ScriptExecutor } from './scriptExecutor.js';
 import { PARAM_ALIASES, normalizeValues } from '../handlers/aliases.js';
 import { moduleTools } from '../tools/index.js';
+import { createRoutedHandlers } from '../artcraft/designcraft-adapter.js';
 import { readFileSync } from 'node:fs';
 
 const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
@@ -245,7 +246,7 @@ export class InDesignMCPServer {
             info: { name: pkg.name, version: pkg.version },
             instructions: SERVER_INSTRUCTIONS,
             tools: allToolDefinitions,
-            handlers: TOOL_HANDLERS,
+            handlers: createRoutedHandlers(TOOL_HANDLERS),
             aliases: PARAM_ALIASES,
             normalizeValues,
         });

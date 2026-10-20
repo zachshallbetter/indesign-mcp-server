@@ -283,6 +283,11 @@ CI runs `check` and `npm test` on every push and pull request. The audit checks 
 | --- | --- |
 | ExtendScript / COM (default) | unset or `INDESIGN_BACKEND=extendscript` |
 | UXP bridge + plugin | `INDESIGN_BACKEND=uxp` (or `auto`) + `npx -p adobe-mcp-indesign adobe-mcp-indesign-uxp-bridge` + load `uxp/plugin` |
+| ArtCraft / DesignCraft | `INDESIGN_TARGET=craft` or automatic fallback when InDesign is absent and DesignCraft is running (`127.0.0.1:7979`) |
+
+### ArtCraft (DesignCraft) Support
+
+This server features transparent adapter support for Storytold's **DesignCraft** desktop publishing application. When InDesign is not installed or running, or when `INDESIGN_TARGET=craft` (or `ADOBE_TARGET=craft`) is set, compatible tools route directly to DesignCraft's loopback control protocol (`127.0.0.1:7979` by default or `DESIGNCRAFT_CONTROL_PORT`).
 
 Details: [`docs/architecture-execution.md`](./docs/architecture-execution.md) and [`uxp/README.md`](./uxp/README.md).
 

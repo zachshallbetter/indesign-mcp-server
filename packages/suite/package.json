@@ -48,7 +48,7 @@
   },
   "homepage": "https://github.com/zachshallbetter/adobe-mcp/tree/main/packages/suite#readme",
   "dependencies": {
-    "adobe-mcp-core": "0.1.0",
+    "adobe-mcp-core": "0.2.0",
     "adobe-mcp-indesign": "2.5.0",
     "adobe-mcp-illustrator": "0.9.0",
     "adobe-mcp-photoshop": "0.1.0",

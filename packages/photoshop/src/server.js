@@ -110,12 +110,34 @@ export const toolDefinitions = annotations.annotate(
 
 export { annotations };
 
+import { handlers as photocraftHandlers } from './artcraft/photocraft-adapter.js';
+
+/**
+ * Handlers routed between Adobe Photoshop (ExtendScript) and PhotoCraft (control channel).
+ */
+export function createRoutedHandlers(table = toolTable) {
+    return Object.fromEntries(table.map((t) => [
+        t.name,
+        async (args) => {
+            const backend = await executor.resolveBackend();
+            if (backend === 'artcraft') {
+                const adapter = photocraftHandlers[t.name];
+                if (typeof adapter === 'function') {
+                    return adapter(args);
+                }
+                return { success: false, error: `Tool '${t.name}' is not supported on PhotoCraft.` };
+            }
+            return t.handler(args);
+        },
+    ]));
+}
+
 export function createServer() {
     executor.cleanupTempScripts();
     return createMcpServer({
         info: { name: pkg.name, version: pkg.version },
         instructions: SERVER_INSTRUCTIONS,
         tools: toolDefinitions,
-        handlers: Object.fromEntries(toolTable.map((t) => [t.name, t.handler])),
+        handlers: createRoutedHandlers(toolTable),
     });
 }

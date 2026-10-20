@@ -102,6 +102,9 @@ Settings > Privacy & Security > Automation).
 | `PHOTOSHOP_APP_NAME` | macOS: address a specific copy, e.g. `Adobe Photoshop 2025`. By default the server addresses Photoshop by its bundle id. |
 | `PHOTOSHOP_ALLOWED_DIRS` | Extra directories for opening, saving and exporting files (`:`-separated on macOS, `;` on Windows). |
 | `PHOTOSHOP_SCRIPT_TIMEOUT_MS` | How long to wait for Photoshop. Default 120000. |
+| `PHOTOSHOP_BACKEND` / `PHOTOSHOP_TARGET` | Set to `artcraft` or `photocraft` to route tool calls to PhotoCraft via loopback JSON-lines. Default `auto` (routes to PhotoCraft if listening on port 7878 when Adobe Photoshop is not running). |
+| `PHOTOCRAFT_CONTROL_PORT` | Port for PhotoCraft control channel. Default 7878. |
+| `PHOTOCRAFT_CONTROL_TOKEN` | Token for PhotoCraft authentication if required. |
 
 ## Development
 

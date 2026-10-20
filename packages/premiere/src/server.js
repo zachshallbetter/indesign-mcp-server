@@ -77,14 +77,17 @@ export const toolDefinitions = annotations.annotate(
     toolTable.map(({ name, description, inputSchema }) => ({ name, description, inputSchema }))
 );
 
-export { annotations };
+import { createRoutedHandlers, handlers as filmcraftHandlers } from './artcraft/filmcraft-adapter.js';
+
+export { annotations, createRoutedHandlers, filmcraftHandlers };
 
 export function createServer() {
+    const rawHandlers = Object.fromEntries(toolTable.map((t) => [t.name, t.handler]));
     const mcp = createMcpServer({
         info: { name: pkg.name, version: pkg.version },
         instructions: SERVER_INSTRUCTIONS,
         tools: toolDefinitions,
-        handlers: Object.fromEntries(toolTable.map((t) => [t.name, t.handler])),
+        handlers: createRoutedHandlers(rawHandlers),
     });
     return {
         ...mcp,

@@ -22,8 +22,8 @@
     "start": "node src/index.js",
     "dev": "node --inspect src/index.js",
     "build": "echo 'No build step required for Node.js'",
-    "test": "node tests/unit/jsxSafe.test.js && node tests/unit/failure.test.js && node tests/unit/definitions.test.js && node tests/unit/aliases.test.js && node tests/unit/warnings.test.js && node tests/unit/paths.test.js && node tests/unit/protocol.test.js && node tests/unit/uxp.test.js && node tests/modules/run.js && node tests/audit/scripts.audit.js && node scripts/generate-tool-reference.js --check",
-    "test:unit": "node tests/unit/jsxSafe.test.js && node tests/unit/failure.test.js && node tests/unit/definitions.test.js && node tests/unit/aliases.test.js && node tests/unit/warnings.test.js && node tests/unit/paths.test.js",
+    "test": "node --test tests/unit/designcraft-adapter.test.js && node tests/unit/jsxSafe.test.js && node tests/unit/failure.test.js && node tests/unit/definitions.test.js && node tests/unit/aliases.test.js && node tests/unit/warnings.test.js && node tests/unit/paths.test.js && node tests/unit/protocol.test.js && node tests/unit/uxp.test.js && node tests/modules/run.js && node tests/audit/scripts.audit.js && node scripts/generate-tool-reference.js --check",
+    "test:unit": "node --test tests/unit/designcraft-adapter.test.js && node tests/unit/jsxSafe.test.js && node tests/unit/failure.test.js && node tests/unit/definitions.test.js && node tests/unit/aliases.test.js && node tests/unit/warnings.test.js && node tests/unit/paths.test.js",
     "test:integration": "node tests/index.js",
     "test:unified": "node tests/unified-test-runner.js",
     "check": "node scripts/check-syntax.js",
@@ -64,7 +64,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "adobe-mcp-core": "0.1.0",
+    "adobe-mcp-core": "0.2.0",
     "@modelcontextprotocol/sdk": "^1.32.1",
     "express": "^4.22.3",
     "ws": "^8.21.3"

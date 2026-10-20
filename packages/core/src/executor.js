@@ -232,8 +232,9 @@ export function createExecutor(app) {
 
     /** Configured backend: "extendscript", "auto", or the name of one of `backends`. */
     function configuredBackend() {
-        const raw = String(env('BACKEND') || 'extendscript').toLowerCase().trim();
-        return raw === 'auto' || raw === 'extendscript' || backends.some((b) => b.name === raw) ? raw : 'extendscript';
+        const raw = String(env('BACKEND') || env('TARGET') || 'extendscript').toLowerCase().trim();
+        const alias = (raw === 'photocraft' || raw === 'vectorcraft' || raw === 'designcraft' || raw === 'effectcraft' || raw === 'filmcraft') ? 'artcraft' : raw;
+        return alias === 'auto' || alias === 'extendscript' || backends.some((b) => b.name === alias) ? alias : 'extendscript';
     }
 
     async function resolveBackend({ forceRefresh = false } = {}) {
@@ -243,12 +244,18 @@ export function createExecutor(app) {
         if (mode !== 'auto') {
             resolved = mode;
         } else {
-            resolved = 'extendscript';
-            for (const b of backends) {
-                if (await b.isAvailable().catch(() => false)) {
-                    resolved = b.name;
-                    break;
+            const adobeRunning = await isRunning().catch(() => false);
+            if (adobeRunning) {
+                resolved = 'extendscript';
+            } else {
+                let found = null;
+                for (const b of backends) {
+                    if (await b.isAvailable().catch(() => false)) {
+                        found = b.name;
+                        break;
+                    }
                 }
+                resolved = found ?? 'extendscript';
             }
         }
         resolvedAt = Date.now();
@@ -302,6 +309,8 @@ export function createExecutor(app) {
 
     /** Environment and backend status, without contacting the application. */
     async function status() {
+        const resBackend = await resolveBackend({ forceRefresh: true });
+        const backendObj = backends.find((b) => b.name === resBackend);
         return {
             platform: process.platform,
             arch: process.arch,
@@ -309,7 +318,8 @@ export function createExecutor(app) {
             appName: IS_WINDOWS ? `Adobe ${label} (COM)` : await resolveAppName(),
             appNameSource: env('APP_NAME') ? 'env' : IS_WINDOWS ? 'windows-com' : 'resolved',
             running: await isRunning(),
-            backend: { configured: configuredBackend(), resolved: await resolveBackend({ forceRefresh: true }) },
+            backend: { configured: configuredBackend(), resolved: resBackend },
+            targetApp: resBackend === 'artcraft' ? (backendObj?.targetApp || 'ArtCraft') : `Adobe ${label}`,
             timeoutMs: timeoutMs(),
             tempDir: os.tmpdir(),
         };

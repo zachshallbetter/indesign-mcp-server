@@ -11,28 +11,53 @@ client configuration.
 | Package | What it drives | npm |
 |---|---|---|
 | [adobe-mcp-indesign](packages/indesign) | Adobe InDesign: documents, pages, text, styles, tables, books, PDF and EPUB export (423 tools) | [`adobe-mcp-indesign`](https://www.npmjs.com/package/adobe-mcp-indesign) |
-| [adobe-mcp-illustrator](packages/illustrator) | Adobe Illustrator: documents, artboards, layers, shapes and paths, typography, colour and swatches, effects and 3D, symbols, patterns, Image Trace, images and links, variables and data sets, actions, export, prepress and printing (308 tools) | `adobe-mcp-illustrator` |
-| [adobe-mcp-photoshop](packages/photoshop) | Adobe Photoshop: documents and formats, image and canvas, layers, masks, smart objects and layer styles, selections and channels, adjustments and fill layers, filters, painting and retouching, type and paths, video timeline, actions and batch, artboards, export, printing and preferences (205 tools) | `adobe-mcp-photoshop` |
-| [adobe-mcp-aftereffects](packages/aftereffects) | Adobe After Effects: projects and footage, compositions, layers and time, keyframes and expressions, every effect and its controls, text animators, masks and shape layers, paint and roto, 3D, tracking, colour, render queue and Essential Graphics (164 tools) | `adobe-mcp-aftereffects` |
-| [adobe-mcp-premiere](packages/premiere) | Adobe Premiere Pro: projects and bins, sequences, timeline edits, markers, effects, keyframes and transitions, transcripts, metadata and export, through a UXP plugin (96 tools; not yet tested against Premiere Pro) | `adobe-mcp-premiere` |
-| [adobe-mcp-suite](packages/suite) | InDesign, Illustrator, Photoshop, After Effects and Premiere Pro in one server, plus cross-application tools: Illustrator artwork into InDesign layouts, swatches with exact values | `adobe-mcp-suite` |
-| [adobe-mcp-core](packages/core) | The shared foundation: script escaping, the script runner, the server shell and the static script audit | `adobe-mcp-core` |
+| [adobe-mcp-illustrator](packages/illustrator) | Adobe Illustrator: documents, artboards, layers, shapes and paths, typography, colour and swatches, effects and 3D, symbols, patterns, Image Trace, images and links, variables and data sets, actions, export, prepress and printing (308 tools) | [`adobe-mcp-illustrator`](https://www.npmjs.com/package/adobe-mcp-illustrator) |
+| [adobe-mcp-photoshop](packages/photoshop) | Adobe Photoshop: documents and formats, image and canvas, layers, masks, smart objects and layer styles, selections and channels, adjustments and fill layers, filters, painting and retouching, type and paths, video timeline, actions and batch, artboards, export, printing and preferences (205 tools) | [`adobe-mcp-photoshop`](https://www.npmjs.com/package/adobe-mcp-photoshop) |
+| [adobe-mcp-aftereffects](packages/aftereffects) | Adobe After Effects: projects and footage, compositions, layers and time, keyframes and expressions, every effect and its controls, text animators, masks and shape layers, paint and roto, 3D, tracking, colour, render queue and Essential Graphics (164 tools) | [`adobe-mcp-aftereffects`](https://www.npmjs.com/package/adobe-mcp-aftereffects) |
+| [adobe-mcp-premiere](packages/premiere) | Adobe Premiere Pro: projects and bins, sequences, timeline edits, markers, effects, keyframes and transitions, transcripts, metadata and export, through a UXP plugin (96 tools; not yet tested against Premiere Pro) | [`adobe-mcp-premiere`](https://www.npmjs.com/package/adobe-mcp-premiere) |
+| [adobe-mcp-suite](packages/suite) | InDesign, Illustrator, Photoshop, After Effects and Premiere Pro in one server, plus cross-application tools: Illustrator artwork into InDesign layouts, swatches with exact values | [`adobe-mcp-suite`](https://www.npmjs.com/package/adobe-mcp-suite) |
+| [adobe-mcp-core](packages/core) | The shared foundation: script escaping, the script runner, the server shell and the static script audit | [`adobe-mcp-core`](https://www.npmjs.com/package/adobe-mcp-core) |
 
 Each server runs on the machine where the Adobe application is installed and
 talks to it through ExtendScript, the scripting interface the applications ship
 with. Premiere Pro has no outside scripting route, so its server talks to a
 UXP plugin inside Premiere Pro instead. macOS and Windows are supported.
 
-## Install one application
+The servers also support corresponding ArtCraft applications:
+- **PhotoCraft** for Photoshop (`PHOTOCRAFT_CONTROL_PORT`, default `7878`)
+- **VectorCraft** for Illustrator (`VECTORCRAFT_CONTROL_PORT`, default `7979`)
+- **DesignCraft** for InDesign (`DESIGNCRAFT_CONTROL_PORT`, default `7979`)
+- **EffectCraft** for After Effects (`EFFECTCRAFT_CONTROL_PORT`, default `9877`)
+- **FilmCraft** for Premiere Pro (`FILMCRAFT_CONTROL_PORT`, default `9876`)
+
+When an ArtCraft application is running or explicitly configured via `TARGET=craft` or `<APP>_TARGET=craft` (e.g. `PHOTOSHOP_TARGET=craft`, `DESIGNCRAFT_TARGET=craft`), compatible tools route transparently to ArtCraft over its loopback JSON-lines control channel.
+
+## Requirements
+
+- **Node.js 18+** (LTS recommended). `npx` comes with it.
+- The Adobe application(s) you want to drive, installed on the same machine:
+  InDesign, Illustrator, Photoshop, and/or After Effects **2023 or later**, or
+  Premiere Pro **25.6+** with its UXP plugin loaded (see
+  [packages/premiere](packages/premiere)).
+- An MCP client (Claude Code, Warp, Cursor, Claude Desktop, or any client that
+  reads an `mcpServers` block).
+
+Servers speak **MCP over stdio**. Your client starts the process; there is no
+hosted endpoint and no API key for the package itself. Tool calls that touch
+the application need that app open (or launchable) on the machine.
+
+## Install from npm
+
+### One application
 
 Claude Code:
 
 ```bash
-claude mcp add indesign -- npx -y adobe-mcp-indesign
-```
-
-```bash
-claude mcp add illustrator -- npx -y adobe-mcp-illustrator
+claude mcp add --scope user indesign -- npx -y adobe-mcp-indesign
+claude mcp add --scope user illustrator -- npx -y adobe-mcp-illustrator
+claude mcp add --scope user photoshop -- npx -y adobe-mcp-photoshop
+claude mcp add --scope user aftereffects -- npx -y adobe-mcp-aftereffects
+claude mcp add --scope user premiere -- npx -y adobe-mcp-premiere
 ```
 
 Any client that reads an `mcpServers` block:
@@ -41,22 +66,172 @@ Any client that reads an `mcpServers` block:
 {
   "mcpServers": {
     "indesign": { "command": "npx", "args": ["-y", "adobe-mcp-indesign"] },
-    "illustrator": { "command": "npx", "args": ["-y", "adobe-mcp-illustrator"] }
+    "illustrator": { "command": "npx", "args": ["-y", "adobe-mcp-illustrator"] },
+    "photoshop": { "command": "npx", "args": ["-y", "adobe-mcp-photoshop"] },
+    "aftereffects": { "command": "npx", "args": ["-y", "adobe-mcp-aftereffects"] },
+    "premiere": { "command": "npx", "args": ["-y", "adobe-mcp-premiere"] }
   }
 }
 ```
 
-## Install everything
+### Full suite
+
+One process with every application's tools (prefixed `indesign_…`,
+`illustrator_…`, and so on) plus cross-application tools when both sides are
+loaded:
 
 ```bash
-claude mcp add adobe -- npx -y adobe-mcp-suite
+claude mcp add --scope user adobe -- npx -y adobe-mcp-suite
 ```
 
-The suite offers every application's tools, prefixed with the application
-(`indesign_…`, `illustrator_…`), and the cross-application tools. Load only some
-applications with `--apps indesign` or `ADOBE_MCP_APPS`.
+```json
+{
+  "mcpServers": {
+    "adobe": {
+      "command": "npx",
+      "args": ["-y", "adobe-mcp-suite"]
+    }
+  }
+}
+```
 
-Each package's README covers its tools, conventions and configuration.
+Optional global install (puts `adobe-mcp-suite` on your `PATH`):
+
+```bash
+npm install -g adobe-mcp-suite
+```
+
+Then point the client at the binary instead of `npx`:
+
+```json
+{
+  "mcpServers": {
+    "adobe": {
+      "command": "adobe-mcp-suite",
+      "args": ["--apps", "indesign,illustrator"]
+    }
+  }
+}
+```
+
+Marketplace listing: [mcprush.com/zachshallbetter/adobe-mcp-suite](https://mcprush.com/zachshallbetter/adobe-mcp-suite).
+
+Each package's README covers its tools, conventions and per-app configuration.
+
+## Usage
+
+### Choosing applications (suite only)
+
+By default the suite loads every app. Restrict it with `--apps` or
+`ADOBE_MCP_APPS` (comma-separated ids: `indesign`, `illustrator`, `photoshop`,
+`aftereffects`, `premiere`):
+
+```bash
+npx -y adobe-mcp-suite --apps indesign,illustrator
+# equivalent
+ADOBE_MCP_APPS=indesign,illustrator npx -y adobe-mcp-suite
+```
+
+Client config:
+
+```json
+{
+  "mcpServers": {
+    "adobe": {
+      "command": "npx",
+      "args": ["-y", "adobe-mcp-suite", "--apps", "indesign,illustrator"],
+      "env": {
+        "INDESIGN_ALLOWED_DIRS": "/Users/you/Work:/Users/you/Desktop",
+        "ILLUSTRATOR_ALLOWED_DIRS": "/Users/you/Work:/Users/you/Desktop"
+      }
+    }
+  }
+}
+```
+
+On Windows, separate allowed directories with `;` instead of `:`.
+
+### What the model sees
+
+- **Single-app servers** expose that app's tools under their original names
+  (for example `create_text_frame`, `export_pdf`).
+- **The suite** prefixes every tool with the app (`indesign_create_text_frame`,
+  `illustrator_create_rectangle`). Names that already include the app keep it
+  once (`indesign_status`).
+- **Cross-application tools** (suite, when both apps are loaded):
+  - `place_illustrator_artwork_in_indesign` — place an artboard of the active
+    Illustrator document on an InDesign page, linked to the `.ai` file.
+  - `copy_swatches_illustrator_to_indesign` — copy colour swatches with exact
+    process/spot values.
+
+Reconnect or start a new client session after changing MCP config so the tool
+list refreshes.
+
+### Environment variables
+
+Common knobs (see each package README for the full set):
+
+| Variable | Purpose |
+|---|---|
+| `ADOBE_MCP_APPS` | Suite only: which apps to load (`indesign,illustrator,…`) |
+| `INDESIGN_ALLOWED_DIRS` | Extra directories InDesign tools may read/write |
+| `ILLUSTRATOR_ALLOWED_DIRS` | Extra directories Illustrator tools may read/write |
+| `INDESIGN_APP_NAME` / `ILLUSTRATOR_APP_NAME` | Override the target application name |
+| `INDESIGN_SCRIPT_TIMEOUT_MS` / `ILLUSTRATOR_SCRIPT_TIMEOUT_MS` | Per-script timeout |
+| `PREMIERE_WS_PORT`, `BRIDGE_TOKEN`, `PREMIERE_ALLOWED_DIRS` | Premiere UXP bridge |
+
+### Smoke-check without an MCP client
+
+The process waits on stdin for MCP JSON-RPC; it is not a conventional CLI with
+`--help` output. To confirm a binary starts and lists tools, send an
+`initialize` request then `tools/list` over stdio, or run the package tests
+(they stub the Adobe apps and do not need them installed):
+
+```bash
+npm test -w packages/suite
+```
+
+Real layout/work calls need the target Adobe application running on this
+machine.
+
+## Install and run from this repository
+
+Use this when developing the servers or when you want the monorepo versions
+before they are published.
+
+```bash
+git clone https://github.com/zachshallbetter/adobe-mcp.git
+cd adobe-mcp
+npm install
+```
+
+Run a server from source (stdio; suitable as a client `command`):
+
+```bash
+# suite (optionally limit apps)
+node packages/suite/src/index.js --apps indesign,illustrator
+
+# one application
+node packages/indesign/src/index.js
+node packages/illustrator/src/index.js
+```
+
+Point a client at the monorepo entry instead of `npx`:
+
+```json
+{
+  "mcpServers": {
+    "adobe": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/adobe-mcp/packages/suite/src/index.js",
+        "--apps",
+        "indesign,illustrator"
+      ]
+    }
+  }
+}
+```
 
 ## How the repository is organised
 

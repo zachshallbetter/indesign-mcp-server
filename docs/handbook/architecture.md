@@ -32,6 +32,23 @@ All but Premiere Pro send **ExtendScript** (ES3) and read a JSON result back.
 InDesign also has an optional UXP backend (`INDESIGN_BACKEND=uxp|auto`, bridge in
 `packages/indesign/uxp/bridge`), experimental.
 
+## ArtCraft transparent adapter architecture
+
+The servers support corresponding Storytold / ArtCraft desktop applications via loopback JSON-lines control channels:
+- **PhotoCraft** for Photoshop (`127.0.0.1:7878`)
+- **VectorCraft** for Illustrator (`127.0.0.1:7979`)
+- **DesignCraft** for InDesign (`127.0.0.1:7979`)
+- **EffectCraft** for After Effects (`127.0.0.1:9877`)
+- **FilmCraft** for Premiere Pro (`127.0.0.1:9876`)
+
+The shared foundation in `packages/core`:
+- `ControlClient` (`src/control-client.js`): Loopback TCP client handling JSON-lines framing, request/reply correlation, timeouts, connection probing, and token authentication.
+- `createCraftHarness` / `resolveExecutionRoute` (`src/craft-harness.js`): Standardizes execution routing between Adobe and ArtCraft, handler wrapping, and diagnostic status reporting.
+
+Routing is controlled via:
+1. `TARGET=craft` or `<APP>_TARGET=craft` (e.g. `PHOTOSHOP_TARGET=craft`, `DESIGNCRAFT_TARGET=craft`).
+2. Automatic fallback: when the Adobe application is not running or reachable and the ArtCraft control port is responsive.
+
 ## The tool shape
 
 Module tools (every app; InDesign's newer areas) are plain objects in

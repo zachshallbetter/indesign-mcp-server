@@ -48,7 +48,7 @@
   },
   "homepage": "https://github.com/zachshallbetter/adobe-mcp/tree/main/packages/photoshop#readme",
   "dependencies": {
-    "adobe-mcp-core": "0.1.0"
+    "adobe-mcp-core": "0.2.0"
   },
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.32.1",

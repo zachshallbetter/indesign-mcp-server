@@ -13,4 +13,6 @@ export { createFailureDetector, looksLikeFailure, formatResponse, formatErrorRes
 export { createArgNormalizer, distance } from './args.js';
 export { createAnnotations } from './annotations.js';
 export { createExecutor, runProcess, appleScriptString, powerShellString } from './executor.js';
+export { ControlClient, createControlClient } from './control-client.js';
+export { createCraftHarness, resolveExecutionRoute } from './craft-harness.js';
 export { createMcpServer } from './server.js';

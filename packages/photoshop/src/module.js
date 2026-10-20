@@ -2,7 +2,7 @@
  * The Photoshop server as a module: what the standalone server (src/index.js)
  * and adobe-mcp-suite build on. Importing it starts nothing.
  */
-import { SERVER_INSTRUCTIONS, toolDefinitions, toolTable } from './server.js';
+import { SERVER_INSTRUCTIONS, toolDefinitions, toolTable, createRoutedHandlers } from './server.js';
 import { executor } from './executor.js';
 import { script } from './script.js';
 import { paths } from './tools/documents.js';
@@ -12,7 +12,7 @@ export const app = {
     label: 'Photoshop',
     instructions: SERVER_INSTRUCTIONS,
     tools: toolDefinitions,
-    handlers: Object.fromEntries(toolTable.map((t) => [t.name, t.handler])),
+    handlers: createRoutedHandlers(toolTable),
     aliases: [],
     normalizeValues: undefined,
     /** Run ExtendScript in Photoshop; resolves with the script's result as a string. */

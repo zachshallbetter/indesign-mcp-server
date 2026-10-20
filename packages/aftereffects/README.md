@@ -105,6 +105,12 @@ Network, which file operations need.
 | `AFTEREFFECTS_EXE` | Windows: path to `AfterFX.exe`. |
 | `AFTEREFFECTS_ALLOWED_DIRS` | Extra directories for importing, saving and rendering (`:`-separated on macOS, `;` on Windows). |
 | `AFTEREFFECTS_SCRIPT_TIMEOUT_MS` | How long to wait for After Effects. Default 120000. |
+| `AFTEREFFECTS_TARGET` | Set to `craft` to route commands to EffectCraft. |
+| `EFFECTCRAFT_CONTROL_PORT` | Port for EffectCraft bridge (default `9877`). |
+
+## ArtCraft (EffectCraft) Support
+
+This server features transparent adapter support for Storytold's **EffectCraft** motion graphics application. When After Effects is not installed or running, or when `AFTEREFFECTS_TARGET=craft` (or `ADOBE_TARGET=craft`) is set, compatible tools route directly to EffectCraft's loopback bridge protocol (`127.0.0.1:9877` by default or `EFFECTCRAFT_CONTROL_PORT`).
 
 ## Development
 

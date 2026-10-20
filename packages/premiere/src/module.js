@@ -4,7 +4,7 @@
  * the plugin connection opens with the standalone server, or on the first
  * Premiere Pro call inside the suite.
  */
-import { SERVER_INSTRUCTIONS, toolDefinitions, toolTable } from './server.js';
+import { SERVER_INSTRUCTIONS, toolDefinitions, toolTable, createRoutedHandlers, filmcraftHandlers } from './server.js';
 import { executor, PLUGIN_DIR } from './executor.js';
 import { script } from './script.js';
 import { paths } from './tools/project.js';
@@ -14,7 +14,7 @@ export const app = {
     label: 'Premiere Pro',
     instructions: SERVER_INSTRUCTIONS,
     tools: toolDefinitions,
-    handlers: Object.fromEntries(toolTable.map((t) => [t.name, t.handler])),
+    handlers: createRoutedHandlers(Object.fromEntries(toolTable.map((t) => [t.name, t.handler]))),
     aliases: [],
     normalizeValues: undefined,
     /** Run UXP JavaScript (an async function body with ppro and transact in scope); resolves { ok, result | error }. */

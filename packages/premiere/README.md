@@ -251,6 +251,10 @@ Pro:
 
 Please report what you find, with the Premiere Pro version.
 
+## ArtCraft (FilmCraft) Support
+
+This server features transparent adapter support for Storytold's **FilmCraft** nonlinear timeline video editor. When Premiere Pro is not installed or running, or when `PREMIERE_TARGET=craft` (or `ADOBE_TARGET=craft`) is set, compatible tools route directly to FilmCraft's loopback bridge protocol (`127.0.0.1:9876` by default or `FILMCRAFT_CONTROL_PORT`).
+
 ## Development
 
 ```bash

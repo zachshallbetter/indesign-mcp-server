@@ -129,12 +129,34 @@ export const toolDefinitions = annotations.annotate(
 
 export { annotations };
 
+import { handlers as vectorcraftHandlers } from './artcraft/vectorcraft-adapter.js';
+
+/**
+ * Handlers routed between Adobe Illustrator (ExtendScript) and VectorCraft (control channel).
+ */
+export function createRoutedHandlers(table = toolTable) {
+    return Object.fromEntries(table.map((t) => [
+        t.name,
+        async (args) => {
+            const backend = await executor.resolveBackend();
+            if (backend === 'artcraft') {
+                const adapter = vectorcraftHandlers[t.name];
+                if (typeof adapter === 'function') {
+                    return adapter(args);
+                }
+                return { success: false, error: `Tool '${t.name}' is not supported on VectorCraft.` };
+            }
+            return t.handler(args);
+        },
+    ]));
+}
+
 export function createServer() {
     executor.cleanupTempScripts();
     return createMcpServer({
         info: { name: pkg.name, version: pkg.version },
         instructions: SERVER_INSTRUCTIONS,
         tools: toolDefinitions,
-        handlers: Object.fromEntries(toolTable.map((t) => [t.name, t.handler])),
+        handlers: createRoutedHandlers(toolTable),
     });
 }
