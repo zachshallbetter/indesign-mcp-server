@@ -37,11 +37,11 @@ is on npm.
 
 ## Current release state (21 October 2026)
 
-All five app packages, `adobe-mcp-core@0.2.0`, and `adobe-mcp-suite@0.2.1` are published
-to npm. Suite `0.2.1` is also published to the MCP Registry and Homebrew. Its registry
-description is within the limit. The Homebrew formula checksum is for the published npm
-tarball. Suite `0.3.0` changes the public tool surface to two coordinator workflows;
-app-specific tools remain available through their standalone servers.
+All five app packages, `adobe-mcp-core@0.2.0`, and `adobe-mcp-suite@0.3.0` are published
+to npm. Suite `0.3.0` is published to the MCP Registry. The Homebrew formula targets
+`0.3.0` and uses the SHA-256 of its published npm tarball. Its registry description is
+within the limit. The suite exposes two coordinator workflows; app-specific tools remain
+available through their standalone servers.
 
 ## Retries
 
