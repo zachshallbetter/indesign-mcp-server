@@ -13,6 +13,27 @@ Effects 2023 or later, or Premiere Pro 25.6 or later with its plugin loaded (see
 
 ## Install
 
+Install the published suite with npm:
+
+```bash
+npm install --global adobe-mcp-suite
+```
+
+Or use the pinned Homebrew formula (macOS and Linux):
+
+```bash
+brew install --formula https://raw.githubusercontent.com/zachshallbetter/adobe-mcp/main/Formula/adobe-mcp-suite.rb
+```
+
+The curl installer installs the current npm release globally:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/zachshallbetter/adobe-mcp/main/scripts/install.sh | sh
+```
+
+All three methods install the same suite package. It runs locally and still
+requires Node.js 18 or later and the Adobe apps you plan to use.
+
 Claude Code:
 
 ```bash
@@ -57,12 +78,13 @@ Tools across applications, offered when both are loaded:
 
 ## Configuration
 
-Each application's variables apply as they do in its own server:
-`INDESIGN_ALLOWED_DIRS`, `ILLUSTRATOR_ALLOWED_DIRS`, `INDESIGN_APP_NAME`,
-`ILLUSTRATOR_APP_NAME`, `INDESIGN_SCRIPT_TIMEOUT_MS`,
-`ILLUSTRATOR_SCRIPT_TIMEOUT_MS`, `INDESIGN_BACKEND` and the UXP bridge settings,
-and Premiere Pro's `PREMIERE_WS_PORT`, `BRIDGE_TOKEN` and `PREMIERE_ALLOWED_DIRS`.
-`ADOBE_MCP_APPS` chooses the applications.
+Each application's variables apply as they do in its own server. The allowed-path
+variables are `INDESIGN_ALLOWED_DIRS`, `ILLUSTRATOR_ALLOWED_DIRS`,
+`PHOTOSHOP_ALLOWED_DIRS`, `AFTEREFFECTS_ALLOWED_DIRS` and
+`PREMIERE_ALLOWED_DIRS`. App names, timeouts and backend variables are also
+supported; see each app's README for their exact behavior. Premiere Pro additionally
+needs its UXP plugin loaded and uses `PREMIERE_WS_PORT` and the optional
+`BRIDGE_TOKEN`. `ADOBE_MCP_APPS` chooses the applications.
 
 ## Development
 

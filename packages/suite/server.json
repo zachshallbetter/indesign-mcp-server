@@ -2,25 +2,25 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.zachshallbetter/adobe-mcp-suite",
   "title": "Adobe MCP Suite",
-  "description": "Drive Adobe InDesign and Illustrator from one MCP server, with tools that work across both.",
+  "description": "Drive Adobe InDesign, Illustrator, Photoshop, After Effects, and Premiere Pro from one local MCP server, with tools that work across apps.",
   "repository": {
     "url": "https://github.com/zachshallbetter/adobe-mcp",
     "source": "github",
     "subfolder": "packages/suite"
   },
-  "version": "0.1.7",
+  "version": "0.2.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "adobe-mcp-suite",
-      "version": "0.1.7",
+      "version": "0.2.0",
       "transport": {
         "type": "stdio"
       },
       "environmentVariables": [
         {
           "name": "ADOBE_MCP_APPS",
-          "description": "Applications to load, comma-separated: indesign, illustrator. Default all",
+          "description": "Applications to load, comma-separated: indesign, illustrator, photoshop, aftereffects, premiere. Default all five",
           "isRequired": false
         },
         {
@@ -32,6 +32,31 @@
           "name": "ILLUSTRATOR_ALLOWED_DIRS",
           "description": "Extra directories Illustrator tools may read and write (':' on macOS, ';' on Windows)",
           "isRequired": false
+      },
+      {
+        "name": "PHOTOSHOP_ALLOWED_DIRS",
+        "description": "Extra directories Photoshop tools may read and write (':' on macOS, ';' on Windows)",
+        "isRequired": false
+      },
+      {
+        "name": "AFTEREFFECTS_ALLOWED_DIRS",
+        "description": "Extra directories After Effects tools may read and write (':' on macOS, ';' on Windows)",
+        "isRequired": false
+      },
+      {
+        "name": "PREMIERE_ALLOWED_DIRS",
+        "description": "Extra directories Premiere Pro tools may read and write (':' on macOS, ';' on Windows)",
+        "isRequired": false
+      },
+      {
+        "name": "PREMIERE_WS_PORT",
+        "description": "Loopback port used to connect the Premiere Pro UXP plugin; defaults to 3011",
+        "isRequired": false
+      },
+      {
+        "name": "BRIDGE_TOKEN",
+        "description": "Optional shared secret for the local Premiere Pro UXP bridge",
+        "isRequired": false
         }
       ]
     }

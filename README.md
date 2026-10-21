@@ -12,10 +12,10 @@ client configuration.
 |---|---|---|
 | [adobe-mcp-indesign](packages/indesign) | Adobe InDesign: documents, pages, text, styles, tables, books, PDF and EPUB export (423 tools) | [`adobe-mcp-indesign`](https://www.npmjs.com/package/adobe-mcp-indesign) |
 | [adobe-mcp-illustrator](packages/illustrator) | Adobe Illustrator: documents, artboards, layers, shapes and paths, typography, colour and swatches, effects and 3D, symbols, patterns, Image Trace, images and links, variables and data sets, actions, export, prepress and printing (308 tools) | [`adobe-mcp-illustrator`](https://www.npmjs.com/package/adobe-mcp-illustrator) |
-| [adobe-mcp-photoshop](packages/photoshop) | Adobe Photoshop: documents and formats, image and canvas, layers, masks, smart objects and layer styles, selections and channels, adjustments and fill layers, filters, painting and retouching, type and paths, video timeline, actions and batch, artboards, export, printing and preferences (205 tools) | [`adobe-mcp-photoshop`](https://www.npmjs.com/package/adobe-mcp-photoshop) |
+| [adobe-mcp-photoshop](packages/photoshop) | Adobe Photoshop: documents and formats, image and canvas, layers, masks, smart objects and layer styles, selections and channels, adjustments and fill layers, filters, painting and retouching, type and paths, video timeline, actions and batch, artboards, export, printing and preferences (207 tools) | [`adobe-mcp-photoshop`](https://www.npmjs.com/package/adobe-mcp-photoshop) |
 | [adobe-mcp-aftereffects](packages/aftereffects) | Adobe After Effects: projects and footage, compositions, layers and time, keyframes and expressions, every effect and its controls, text animators, masks and shape layers, paint and roto, 3D, tracking, colour, render queue and Essential Graphics (164 tools) | [`adobe-mcp-aftereffects`](https://www.npmjs.com/package/adobe-mcp-aftereffects) |
 | [adobe-mcp-premiere](packages/premiere) | Adobe Premiere Pro: projects and bins, sequences, timeline edits, markers, effects, keyframes and transitions, transcripts, metadata and export, through a UXP plugin (96 tools; not yet tested against Premiere Pro) | [`adobe-mcp-premiere`](https://www.npmjs.com/package/adobe-mcp-premiere) |
-| [adobe-mcp-suite](packages/suite) | InDesign, Illustrator, Photoshop, After Effects and Premiere Pro in one server, plus cross-application tools: Illustrator artwork into InDesign layouts, swatches with exact values | [`adobe-mcp-suite`](https://www.npmjs.com/package/adobe-mcp-suite) |
+| [adobe-mcp-suite](packages/suite) | InDesign, Illustrator, Photoshop, After Effects and Premiere Pro in one server (1,200 tools), plus cross-application tools: Illustrator artwork into InDesign layouts, swatches with exact values | [`adobe-mcp-suite`](https://www.npmjs.com/package/adobe-mcp-suite) |
 | [adobe-mcp-core](packages/core) | The shared foundation: script escaping, the script runner, the server shell and the static script audit | [`adobe-mcp-core`](https://www.npmjs.com/package/adobe-mcp-core) |
 
 Each server runs on the machine where the Adobe application is installed and
@@ -100,6 +100,23 @@ Optional global install (puts `adobe-mcp-suite` on your `PATH`):
 ```bash
 npm install -g adobe-mcp-suite
 ```
+
+### Homebrew or curl
+
+On macOS or Linux, install the same suite release with Homebrew:
+
+```bash
+brew install --formula https://raw.githubusercontent.com/zachshallbetter/adobe-mcp/main/Formula/adobe-mcp-suite.rb
+```
+
+Or use the installer script, which installs the latest npm release globally:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/zachshallbetter/adobe-mcp/main/scripts/install.sh | sh
+```
+
+Both methods require Node.js 18 or later. The curl installer supports macOS and
+Linux shells; Windows users can use `npm install -g adobe-mcp-suite`.
 
 Then point the client at the binary instead of `npx`:
 

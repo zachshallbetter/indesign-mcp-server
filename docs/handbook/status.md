@@ -1,14 +1,22 @@
-# Status (16 October 2026, evening)
+# Status (21 October 2026)
 
 | App | Package | Version | Published | Tools | Atlas features | Scriptable | Claimed by tools |
 |---|---|---|---|---:|---:|---:|---:|
-| InDesign | adobe-mcp-indesign | 2.5.0 | npm, MCP Registry | 423 | 2,742 | 2,609 | 2,524 (92%) |
-| Illustrator | adobe-mcp-illustrator | 0.9.0 | npm, MCP Registry | 308 | 2,540 | 1,951 | 1,562 (61%) |
-| Photoshop | adobe-mcp-photoshop | 0.1.0 | **not yet** | 205 | 2,609 | 1,720 | 1,413 (54%) |
-| After Effects | adobe-mcp-aftereffects | 0.1.0 | **not yet** | 164 | 3,198 | 2,595 | 2,555 (80%) |
-| Premiere Pro | adobe-mcp-premiere | 0.1.0 | **not yet** | 96 | 925 | 494 | 413 (45%) |
-| Suite | adobe-mcp-suite | 0.1.7 | npm (InDesign + Illustrator) | all, prefixed | | | |
+| InDesign | adobe-mcp-indesign | 2.5.0 | npm | 423 | 2,742 | 2,609 | 2,524 (92%) |
+| Illustrator | adobe-mcp-illustrator | 0.9.0 | npm | 308 | 2,540 | 1,951 | 1,562 (61%) |
+| Photoshop | adobe-mcp-photoshop | 0.1.0 | npm | 207 | 2,609 | 1,720 | 1,413 (54%) |
+| After Effects | adobe-mcp-aftereffects | 0.1.0 | npm | 164 | 3,198 | 2,595 | 2,555 (80%) |
+| Premiere Pro | adobe-mcp-premiere | 0.1.0 | npm | 96 | 925 | 494 | 413 (45%) |
+| Suite | adobe-mcp-suite | 0.1.7 published; 0.2.0 candidate | npm release pending | 1,200 | — | — | — |
 | Core | adobe-mcp-core | 0.2.0 | npm | | | | |
+
+The published suite `0.1.7` still depends on core `0.1.0`, InDesign `2.4.0` and
+Illustrator `0.9.0`. The 0.2.0 candidate depends on core `0.2.0` and all five app
+packages; its MCP `tools/list` contains 1,200 unique tools (423 InDesign, 308
+Illustrator, 207 Photoshop, 164 After Effects, 96 Premiere Pro, and 2 cross-app).
+MCPRush currently reports two tools for its suite listing, matching the published
+release rather than the current source. A suite release and listing refresh are still
+needed to make the full tool set available from npm and MCPRush.
 
 "Scriptable" counts features whose atlas route is the object model, a menu command,
 the Action Manager, the UXP API (Premiere Pro) or a recorded Action. Most of the gap between scriptable and

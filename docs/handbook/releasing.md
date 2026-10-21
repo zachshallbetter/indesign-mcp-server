@@ -25,12 +25,9 @@ Trusted publishing is set for `adobe-mcp-core`, `adobe-mcp-indesign`,
 
 ## Core versions
 
-Each app pins an exact `adobe-mcp-core` version: InDesign, Illustrator, Photoshop and
-the suite pin `0.1.0`; After Effects and Premiere Pro pin `0.2.0` (they need its
-`winRun` hook and the audit's mixed-case enum support). In the workspace, npm links
-the local core only where the pin matches its version; the others install the
-published version they pin, so their tests run against that. When an app needs
-something newer, release the core first, then move that app's pin.
+Every app package and the suite pin `adobe-mcp-core@0.2.0`. In the workspace, npm
+links the local core because the pin matches its version. When an app needs a newer
+core, release the core first, then move that app's pin.
 
 ## Order
 
@@ -38,22 +35,14 @@ A server that needs a newer core is released after the core. The suite pins exac
 versions of every app, so it is released last, and only when every app it depends on
 is on npm.
 
-## First publishes (October 2026)
+## Current release state (21 October 2026)
 
-`adobe-mcp-photoshop@0.1.0`, `adobe-mcp-aftereffects@0.1.0` and
-`adobe-mcp-premiere@0.1.0` are published and visible on npm. The suite's pinned
-dependencies now resolve. `adobe-mcp-core` still has an unreleased change to its test
-audit since 0.2.0 (it accepts mixed-case enum members); it does not affect the
-published servers. With trusted publishing configured, push these annotated tags to
-publish the three `server.json` files to the MCP Registry:
-
-```bash
-git tag -a adobe-mcp-photoshop@0.1.0 -m "adobe-mcp-photoshop 0.1.0" && git push origin adobe-mcp-photoshop@0.1.0
-```
-
-(and the same for `adobe-mcp-aftereffects@0.1.0` and `adobe-mcp-premiere@0.1.0`).
-The workflow skips npm publishing for versions already present and publishes their
-server metadata to the MCP Registry.
+All five app packages and `adobe-mcp-core@0.2.0` are published to npm at the versions
+listed in [status.md](status.md). The published suite `0.1.7` still includes only
+InDesign and Illustrator. The source candidate `0.2.0` adds Photoshop, After Effects
+and Premiere Pro and pins the already-published versions of all five apps and core.
+Update the suite's package metadata, `server.json`, README and changelog together;
+then release the suite last using its annotated version tag.
 
 ## Retries
 
