@@ -1,7 +1,7 @@
 {
   "name": "adobe-mcp-suite",
-  "version": "0.2.1",
-  "description": "One local MCP server for five Adobe apps, plus cross-app creative tools.",
+  "version": "0.3.0",
+  "description": "Local MCP coordinator for cross-app Adobe workflows.",
   "mcpName": "io.github.zachshallbetter/adobe-mcp-suite",
   "type": "module",
   "main": "src/server.js",
@@ -48,6 +48,7 @@
   },
   "homepage": "https://github.com/zachshallbetter/adobe-mcp/tree/main/packages/suite#readme",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
     "adobe-mcp-core": "0.2.0",
     "adobe-mcp-indesign": "2.5.0",
     "adobe-mcp-illustrator": "0.9.0",
@@ -56,7 +57,6 @@
     "adobe-mcp-premiere": "0.1.0"
   },
   "devDependencies": {
-    "@modelcontextprotocol/sdk": "^1.32.1",
     "types-for-adobe": "^7.2.6"
   }
 }

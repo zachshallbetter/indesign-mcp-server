@@ -8,9 +8,8 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { wrapScriptForStructuredResult } from 'adobe-mcp-core';
 import { checkScript, loadTypings } from 'adobe-mcp-core/testing';
-import { suiteToolName } from '../src/naming.js';
 import { selectedApps } from '../src/apps.js';
-import { createSuiteServer } from '../src/server.js';
+import { appEnvironment, createSuiteServer } from '../src/server.js';
 
 const require = createRequire(import.meta.url);
 const types = path.dirname(require.resolve('types-for-adobe/package.json'));
@@ -31,106 +30,102 @@ test('MCP Registry metadata matches the package and stays within its description
     assert.equal(serverJson.version, packageJson.version);
     assert.equal(serverJson.packages[0].version, packageJson.version);
     assert.ok(serverJson.description.length <= 100, 'server description exceeds the MCP Registry limit');
+    const appsVariable = serverJson.packages[0].environmentVariables.find(({ name }) => name === 'ADOBE_MCP_APPS');
+    assert.match(appsVariable.description, /Defaults to InDesign and Illustrator/);
 });
 
-test('suite tool names carry the app once', () => {
-    assert.equal(suiteToolName('indesign', 'create_document'), 'indesign_create_document');
-    assert.equal(suiteToolName('indesign', 'indesign_status'), 'indesign_status');
-    assert.equal(suiteToolName('indesign', 'execute_indesign_code'), 'indesign_execute_code');
-    assert.equal(suiteToolName('illustrator', 'execute_illustrator_code'), 'illustrator_execute_code');
-    assert.equal(suiteToolName('illustrator', 'help'), 'illustrator_help');
-    assert.equal(suiteToolName('photoshop', 'photoshop_status'), 'photoshop_status');
-    assert.equal(suiteToolName('photoshop', 'execute_photoshop_code'), 'photoshop_execute_code');
-    assert.equal(suiteToolName('aftereffects', 'execute_aftereffects_code'), 'aftereffects_execute_code');
-    assert.equal(suiteToolName('premiere', 'premiere_status'), 'premiere_status');
-    assert.equal(suiteToolName('premiere', 'execute_premiere_code'), 'premiere_execute_code');
-});
-
-test('apps are chosen by --apps, then ADOBE_MCP_APPS, else all', () => {
-    assert.deepEqual(selectedApps([], {}), ['indesign', 'illustrator', 'photoshop', 'aftereffects', 'premiere']);
+test('apps are chosen by --apps, then ADOBE_MCP_APPS, else cross-workflow defaults', () => {
+    assert.deepEqual(selectedApps([], {}), ['indesign', 'illustrator']);
+    assert.deepEqual(selectedApps([], { ADOBE_MCP_APPS: 'all' }), ['indesign', 'illustrator', 'photoshop', 'aftereffects', 'premiere']);
     assert.deepEqual(selectedApps(['--apps', 'illustrator'], { ADOBE_MCP_APPS: 'indesign' }), ['illustrator']);
     assert.deepEqual(selectedApps(['--apps=InDesign, illustrator'], {}), ['indesign', 'illustrator']);
     assert.deepEqual(selectedApps([], { ADOBE_MCP_APPS: 'indesign' }), ['indesign']);
     assert.throws(() => selectedApps(['--apps', 'lightroom'], {}), /Unknown app\(s\): lightroom/);
 });
 
-test('the combined server has every app tool once, plus the cross-app tools', async () => {
+test('app child processes inherit only their documented config variables', () => {
+    const env = appEnvironment('illustrator', {
+        ILLUSTRATOR_ALLOWED_DIRS: '/safe',
+        VECTORCRAFT_CONTROL_TOKEN: 'craft-token',
+        ADOBE_TARGET: 'craft',
+        ARTCRAFT_ENABLED: 'true',
+        ARTCRAFT_CONTROL_TOKEN: 'shared-craft-token',
+        UXP_BRIDGE_URL: 'http://127.0.0.1:4321',
+        INDESIGN_ALLOWED_DIRS: '/other-app',
+        BRIDGE_TOKEN: 'bridge-token',
+        NPM_TOKEN: 'must-not-be-forwarded',
+    });
+    assert.equal(env.ILLUSTRATOR_ALLOWED_DIRS, '/safe');
+    assert.equal(env.VECTORCRAFT_CONTROL_TOKEN, 'craft-token');
+    assert.equal(env.ADOBE_TARGET, 'craft');
+    assert.equal(env.ARTCRAFT_ENABLED, 'true');
+    assert.equal(env.ARTCRAFT_CONTROL_TOKEN, 'shared-craft-token');
+    assert.equal(env.UXP_BRIDGE_URL, undefined);
+    assert.equal(env.INDESIGN_ALLOWED_DIRS, undefined);
+    assert.equal(env.BRIDGE_TOKEN, undefined);
+    assert.equal(env.NPM_TOKEN, undefined);
+    const indesignEnv = appEnvironment('indesign', {
+        INDESIGN_BACKEND: 'uxp',
+        UXP_BRIDGE_URL: 'http://127.0.0.1:4321',
+        BRIDGE_TOKEN: 'bridge-token',
+        PREMIERE_WS_PORT: '3011',
+    });
+    assert.equal(indesignEnv.INDESIGN_BACKEND, 'uxp');
+    assert.equal(indesignEnv.UXP_BRIDGE_URL, 'http://127.0.0.1:4321');
+    assert.equal(indesignEnv.BRIDGE_TOKEN, 'bridge-token');
+    assert.equal(indesignEnv.PREMIERE_WS_PORT, undefined);
+    assert.throws(() => appEnvironment('unknown', {}), /Unknown Adobe app/);
+});
+
+test('the coordinator advertises only the workflows supported by its connected apps', async () => {
     const suite = await createSuiteServer({ apps: ['indesign', 'illustrator'] });
     const names = suite.tools.map((t) => t.name);
     assert.equal(new Set(names).size, names.length, 'duplicate names');
-    assert.equal(names.filter((n) => n.startsWith('indesign_')).length, suite.apps.indesign.tools.length);
-    assert.equal(names.filter((n) => n.startsWith('illustrator_')).length, suite.apps.illustrator.tools.length);
-    assert.ok(names.includes('place_illustrator_artwork_in_indesign'));
-    assert.ok(names.includes('copy_swatches_illustrator_to_indesign'));
+    assert.deepEqual(names, ['place_illustrator_artwork_in_indesign', 'copy_swatches_illustrator_to_indesign']);
     for (const t of suite.tools) {
         assert.ok(t.name.length <= 64, `${t.name} is longer than 64 characters`);
         assert.equal(typeof t.annotations?.readOnlyHint, 'boolean', `${t.name} annotations`);
-        if (t.name.startsWith('indesign_')) assert.match(t.description, /^InDesign: /);
-        if (t.name.startsWith('illustrator_')) assert.match(t.description, /^Illustrator: /);
     }
+    await suite.close();
 });
 
-test('Photoshop joins the suite with its tools prefixed', async () => {
+test('apps without cross-app workflows add no app tools to the coordinator', async () => {
     const suite = await createSuiteServer({ apps: ['photoshop', 'illustrator'] });
-    const ps = suite.tools.filter((t) => t.name.startsWith('photoshop_'));
-    assert.equal(ps.length, suite.apps.photoshop.tools.length);
-    assert.ok(ps.every((t) => /^Photoshop: /.test(t.description)));
-    assert.ok(suite.tools.some((t) => t.name === 'photoshop_list_layers'));
+    assert.deepEqual(suite.tools, []);
+    await suite.close();
 });
 
-test('Premiere Pro joins the suite with its tools prefixed, and loading it opens no port', async () => {
+test('connecting Premiere Pro does not open its plugin port until a tool is called', async () => {
     const suite = await createSuiteServer({ apps: ['premiere', 'illustrator'] });
-    const pr = suite.tools.filter((t) => t.name.startsWith('premiere_'));
-    assert.equal(pr.length, suite.apps.premiere.tools.length);
-    assert.ok(pr.every((t) => /^Premiere Pro: /.test(t.description)));
-    assert.ok(suite.tools.some((t) => t.name === 'premiere_insert_clip'));
-    assert.ok(suite.tools.some((t) => t.name === 'premiere_execute_code'));
     const { executor } = await import('adobe-mcp-premiere');
     assert.equal((await executor.status()).mode, 'stopped', 'the plugin port opens on the first Premiere Pro call');
+    await suite.close();
 });
 
 test('one app alone offers no cross-app tools', async () => {
     const suite = await createSuiteServer({ apps: ['illustrator'] });
-    assert.ok(suite.tools.every((t) => t.name.startsWith('illustrator_')));
-});
-
-test('argument aliases stay with their own app', async () => {
-    const suite = await createSuiteServer({ apps: ['indesign', 'illustrator'] });
-    const { ScriptExecutor } = await import('adobe-mcp-indesign');
-    const original = ScriptExecutor.executeInDesignScript;
-    ScriptExecutor.executeInDesignScript = async () => 'OK';
-    try {
-        const r = await suite.handleToolCall('indesign_create_rectangle', { x: 10, y: 10, width: 20, height: 20, strokeWidth: 2 });
-        assert.deepEqual(r.warnings, ["'strokeWidth' is deprecated; use 'strokeWeight'"]);
-    } finally {
-        ScriptExecutor.executeInDesignScript = original;
-    }
-    const ai = await suite.handleToolCall('illustrator_help', { tool: 'illustrator_create_rectangle', strokeWidth: 2 });
-    assert.deepEqual(ai.warnings, ["Unknown parameter 'strokeWidth' was ignored"]);
-});
-
-test('each app\'s help accepts the suite\'s tool names', async () => {
-    const suite = await createSuiteServer({ apps: ['indesign', 'illustrator'] });
-    const ai = await suite.handleToolCall('illustrator_help', { tool: 'illustrator_create_rectangle' });
-    assert.equal(ai.success, true);
-    assert.equal(ai.result.name, 'create_rectangle');
-    const id = await suite.handleToolCall('indesign_help', { tool: 'indesign_create_text_frame' });
-    assert.notEqual(id.success, false);
-    assert.match(JSON.stringify(id.result), /create_text_frame/);
+    assert.deepEqual(suite.tools, []);
+    await suite.close();
 });
 
 /** Run a cross-app tool with both apps stubbed; return the scripts each was sent. */
 async function runCross(name, args, replies) {
     const suite = await createSuiteServer({ apps: ['indesign', 'illustrator'] });
     const sent = { indesign: [], illustrator: [] };
-    for (const id of ['indesign', 'illustrator']) {
-        suite.apps[id].runStructured = async (source) => {
-            sent[id].push(source);
-            return { ok: true, result: JSON.stringify(replies[id].shift()) };
-        };
+    const calls = [];
+    try {
+        for (const id of ['indesign', 'illustrator']) {
+            suite.apps[id].callTool = async (toolName, { code }) => {
+                calls.push({ app: id, tool: toolName });
+                sent[id].push(code);
+                return { content: [{ type: 'text', text: JSON.stringify({ success: true, result: JSON.stringify(replies[id].shift()) }) }] };
+            };
+        }
+        const result = await suite.handleToolCall(name, args);
+        return { result, sent, calls };
+    } finally {
+        await suite.close();
     }
-    const result = await suite.handleToolCall(name, args);
-    return { result, sent };
 }
 
 function assertValidScripts(sent) {
@@ -141,7 +136,7 @@ function assertValidScripts(sent) {
 
 test('placing artwork: reads the .ai in Illustrator, places that artboard in InDesign', async () => {
     const ai = path.join(os.homedir(), 'Documents', 'logo.ai');
-    const { result, sent } = await runCross('place_illustrator_artwork_in_indesign', { artboardIndex: 1, pageIndex: 0, x: 20, y: 30, width: 60 }, {
+    const { result, sent, calls } = await runCross('place_illustrator_artwork_in_indesign', { artboardIndex: 1, pageIndex: 0, x: 20, y: 30, width: 60 }, {
         illustrator: [{ file: ai, artboard: 'Mark', artboards: 2 }],
         indesign: [{ page: '1', x: 20, y: 30, width: 60, height: 40, linked: ai }],
     });
@@ -149,6 +144,10 @@ test('placing artwork: reads the .ai in Illustrator, places that artboard in InD
     assert.equal(result.result.indesign.linked, ai);
     assert.equal(sent.illustrator.length, 1);
     assert.equal(sent.indesign.length, 1);
+    assert.deepEqual(calls, [
+        { app: 'illustrator', tool: 'execute_illustrator_code' },
+        { app: 'indesign', tool: 'execute_indesign_code' },
+    ]);
     assert.match(sent.indesign[0], /prefs\.pageNumber = 2;/, 'artboard 1 is PDF page 2');
     assert.match(sent.indesign[0], /prefs\.pdfCrop = PDFCrop\.CROP_ART;/);
     assert.match(sent.indesign[0], /\} finally \{\n {2}prefs\.pageNumber = oldPage;/, 'place preferences are restored');
@@ -163,7 +162,7 @@ test('placing artwork refuses a file outside the allowed folders', async () => {
 });
 
 test('copying swatches: exact values, spot inks, gradients reported', async () => {
-    const { result, sent } = await runCross('copy_swatches_illustrator_to_indesign', {}, {
+    const { result, sent, calls } = await runCross('copy_swatches_illustrator_to_indesign', {}, {
         illustrator: [{
             colorMode: 'CMYK',
             swatches: [
@@ -177,6 +176,10 @@ test('copying swatches: exact values, spot inks, gradients reported', async () =
     assert.equal(result.success, true);
     assert.deepEqual(result.result.created, ['Brand Orange', 'PANTONE 185 C']);
     assert.deepEqual(result.result.notCopied, [{ name: 'Sunset', kind: 'GradientColor' }]);
+    assert.deepEqual(calls, [
+        { app: 'illustrator', tool: 'execute_illustrator_code' },
+        { app: 'indesign', tool: 'execute_indesign_code' },
+    ]);
     assert.match(sent.indesign[0], /\[0,60,100,0\]/, 'CMYK values reach InDesign unconverted');
     assertValidScripts(sent);
 });
@@ -188,20 +191,61 @@ test('copying named swatches that do not exist is an error', async () => {
     }), /no swatch named: Nope/);
 });
 
-test('an MCP client sees the chosen apps', async () => {
-    const { app: ai } = await import('adobe-mcp-illustrator');
-    const { app: id } = await import('adobe-mcp-indesign');
-    for (const [apps, expect] of [['illustrator', ai.tools.length], ['indesign,illustrator', ai.tools.length + id.tools.length + 2]]) {
+test('standalone app MCPs retain their full tool inventories', async () => {
+    for (const name of ['adobe-mcp-illustrator', 'adobe-mcp-indesign', 'adobe-mcp-photoshop', 'adobe-mcp-aftereffects', 'adobe-mcp-premiere']) {
+        const { app } = await import(name);
+        const packageJsonPath = require.resolve(`${name}/package.json`);
+        const appPackage = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+        const executable = appPackage.bin?.[name];
+        assert.equal(typeof executable, 'string', `${name} executable`);
         const client = new Client({ name: 'test', version: '0' });
-        await client.connect(new StdioClientTransport({ command: process.execPath, args: [new URL('../src/index.js', import.meta.url).pathname, '--apps', apps] }));
+        await client.connect(new StdioClientTransport({
+            command: process.execPath,
+            args: [path.resolve(path.dirname(packageJsonPath), executable)],
+        }));
         try {
             const { tools } = await client.listTools();
-            assert.equal(tools.length, expect, apps);
-            const instructions = client.getInstructions();
-            assert.match(instructions, /## Illustrator/);
-            if (apps.includes('indesign')) assert.match(instructions, /## InDesign/);
+            assert.equal(tools.length, app.tools.length, name);
+            const help = await client.callTool({ name: 'help', arguments: {} });
+            assert.equal(help.isError, false, `${name} help handler`);
         } finally {
             await client.close();
         }
+    }
+});
+
+test('cross-app workflow delegates through the connected MCP tool clients', async () => {
+    const suite = await createSuiteServer({ apps: ['indesign', 'illustrator'] });
+    const calls = [];
+    for (const app of Object.values(suite.apps)) {
+        app.callTool = async (name, args) => {
+            calls.push({ app: app.id, name, args });
+            return { content: [{ type: 'text', text: JSON.stringify({ success: true, result: JSON.stringify(app.id === 'illustrator' ? { file: path.join(os.homedir(), 'logo.ai'), artboard: 'A', artboards: 1 } : { page: '1', x: 10, y: 10, width: 20, height: 20, linked: path.join(os.homedir(), 'logo.ai') }) }) }] };
+        };
+    }
+    const result = await suite.handleToolCall('place_illustrator_artwork_in_indesign', { pageIndex: 0 });
+    assert.equal(result.success, true);
+    assert.deepEqual(calls.map(({ app, name }) => [app, name]), [
+        ['illustrator', 'execute_illustrator_code'],
+        ['indesign', 'execute_indesign_code'],
+    ]);
+    await suite.close();
+});
+
+test('an MCP client sees only coordinator workflows over stdio', async () => {
+    const client = new Client({ name: 'suite-list-test', version: '0' });
+    await client.connect(new StdioClientTransport({
+        command: process.execPath,
+        args: [new URL('../src/index.js', import.meta.url).pathname, '--apps', 'indesign,illustrator'],
+    }));
+    try {
+        const { tools } = await client.listTools();
+        assert.deepEqual(tools.map((tool) => tool.name), [
+            'place_illustrator_artwork_in_indesign',
+            'copy_swatches_illustrator_to_indesign',
+        ]);
+        assert.match(client.getInstructions(), /direct control of an application/i);
+    } finally {
+        await client.close();
     }
 });

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://formal-project-bootstrap.local/schemas/external-state-instance.schema.json",
+  "title": "External State Instance",
+  "type": "object",
+  "required": ["format", "instanceId", "protocol", "lifecycle", "state", "authority", "owner", "records"],
+  "properties": {
+    "format": {"const": "1"},
+    "instanceId": {"type": "string", "minLength": 1},
+    "protocol": {"type": "object", "required": ["id", "version", "revisionOrDigest"], "properties": {"id":{"const":"esp"},"version":{"type":"string"},"revisionOrDigest":{"type":"string"}}, "additionalProperties": false},
+    "lifecycle": {"enum": ["bootstrap", "discover", "define", "contract", "baseline", "map", "prepare", "execute", "observe", "qualify", "decide", "commit", "promote", "measure", "learn", "continue"]},
+    "state": {"enum": ["unbound", "active", "paused", "closed"]},
+    "authority": {"type": "object", "required": ["owner", "qualification", "promotion"], "properties": {"owner":{"type":["string","null"]},"qualification":{"type":["string","null"]},"promotion":{"type":["string","null"]}}, "additionalProperties": false},
+    "owner": {"type": ["string", "null"]},
+    "records": {"type": "object", "required": ["campaigns", "commitments", "evidence", "qualifications", "receipts", "measurements", "learning", "events"], "properties": {"campaigns":{"type":"string"},"commitments":{"type":"string"},"evidence":{"type":"string"},"qualifications":{"type":"string"},"receipts":{"type":"string"},"measurements":{"type":"string"},"learning":{"type":"string"},"events":{"type":"string"}}, "additionalProperties": false},
+    "lastReceiptId": {"type": ["string", "null"]}
+  },
+  "additionalProperties": false
+}

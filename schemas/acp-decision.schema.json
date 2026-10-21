@@ -1,0 +1,257 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/acp-decision.schema.json",
+  "title": "AcpAuthorizationDecision",
+  "description": "The subset of an acp-gateway POST /internal/authorize response that a worker must read and record, or the fail-closed DENY that scripts/acp.py synthesizes when no valid decision was obtained (synthetic: true). Additional gateway fields are permitted.",
+  "type": "object",
+  "required": [
+    "decision",
+    "reason",
+    "action",
+    "request_id",
+    "evaluated_at"
+  ],
+  "properties": {
+    "decision": {
+      "type": "string",
+      "enum": [
+        "ALLOW",
+        "DENY",
+        "AUTH_REQUIRED",
+        "REVERIFY_REQUIRED",
+        "QUARANTINE",
+        "LOCKED",
+        "RECOVERY_AUTHORIZED",
+        "VERIFY_RECOVERY"
+      ]
+    },
+    "code": {
+      "type": "string",
+      "enum": [
+        "A0",
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A7"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable reason code. Synthetic decisions use GATEWAY_UNAVAILABLE, ACP_NOT_GOVERNING or AUTHORIZED_ACTION_MISMATCH."
+    },
+    "action": {
+      "type": "string",
+      "minLength": 1
+    },
+    "action_class": {
+      "type": "string",
+      "enum": [
+        "local",
+        "protected",
+        "administrative",
+        "unrecognized",
+        "unknown"
+      ]
+    },
+    "authorized_action": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Present only on ALLOW and RECOVERY_AUTHORIZED. Permits exactly this action, ref and SHA pair.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "old_sha": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "new_sha": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "capability": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Describes the capability issued with ALLOW or RECOVERY_AUTHORIZED (scope, expiry). Informational; the boundary checks capability_token."
+    },
+    "capability_token": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Short-lived signed token for /internal/verify-capability and /internal/recovery/complete. Absent when the gateway holds no signing key. Never recorded."
+    },
+    "recovery": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Present when a recovery authorization is required; names the class of authority that can grant it."
+    },
+    "policy_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "policy_version": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "policy_effect": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "What the decision means for the caller. NOT_GOVERNED on an ALLOW means no policy names this repository: not an authorization."
+    },
+    "repository_trust": {
+      "type": "string",
+      "enum": [
+        "VERIFIED",
+        "SELF_REPORTED",
+        "UNVERIFIED",
+        "QUARANTINED"
+      ]
+    },
+    "trust_code": {
+      "type": "string",
+      "enum": [
+        "T0",
+        "T1",
+        "T2",
+        "T3"
+      ]
+    },
+    "authorization_state": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "incident_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "security_version": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evaluated_at": {
+      "type": "string"
+    },
+    "verification": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string"
+        },
+        "attempted": {
+          "type": "boolean"
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "installed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "auth": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Present on AUTH_REQUIRED: the designated flow to complete before retrying."
+    },
+    "detail": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "synthetic": {
+      "type": "boolean",
+      "description": "True when the client produced this DENY locally because no valid gateway decision was obtained."
+    },
+    "gateway_decision": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "On a synthetic decision, the gateway's own answer that was refused (decision, reason, policy_effect, request_id)."
+    },
+    "gateway_error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "remedy": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "synthetic": {
+            "const": true
+          }
+        },
+        "required": [
+          "synthetic"
+        ]
+      },
+      "then": {
+        "properties": {
+          "decision": {
+            "const": "DENY"
+          },
+          "reason": {
+            "enum": [
+              "GATEWAY_UNAVAILABLE",
+              "ACP_NOT_GOVERNING",
+              "AUTHORIZED_ACTION_MISMATCH"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "format": "2",
+  "description": "Deterministic source-selection policy for generated project context.",
+  "includeExtensions": [
+    ".md",
+    ".txt",
+    ".json",
+    ".yaml",
+    ".yml",
+    ".toml",
+    ".rs",
+    ".ts",
+    ".tsx",
+    ".js",
+    ".jsx",
+    ".py",
+    ".sh",
+    ".sql",
+    ".c",
+    ".h",
+    ".cpp",
+    ".hpp",
+    ".proto",
+    ".graphql",
+    ".css",
+    ".html"
+  ],
+  "excludeDirectories": [
+    ".git",
+    "node_modules",
+    "target",
+    "dist",
+    "build",
+    "coverage",
+    "__pycache__",
+    ".venv",
+    ".cache",
+    "release",
+    ".formal-bootstrap"
+  ],
+  "excludePaths": [
+    ".agents/llms.txt",
+    ".agents/llms-full.txt",
+    ".agents/llms-fpb.txt",
+    ".agents/llms-full-fpb.txt",
+    ".agents/context-lock.json",
+    "docs/handbook/llms.txt",
+    "docs/handbook/llms-full.txt",
+    "docs/handbook/context-lock.json",
+    "PACKAGE_MANIFEST.json",
+    ".env",
+    ".env.local"
+  ],
+  "excludePatterns": [
+    ".env.*",
+    "*.pem",
+    "*.key",
+    "*.p12",
+    "*.pfx",
+    "*credentials*.json",
+    "*secrets*.json"
+  ],
+  "maxFileBytes": 1048576,
+  "maxTotalBytes": 16777216,
+  "includeVendor": true,
+  "note": "Full corpus is for deterministic search/transport. Active worker context should still be issue-bounded.",
+  "includeFiles": [
+    "VERSION"
+  ]
+}

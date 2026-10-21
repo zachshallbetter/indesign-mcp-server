@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://formal-project-bootstrap.local/schemas/recipient-contract.schema.json",
+  "title": "Recipient Contract Record",
+  "type": "object",
+  "required": ["recipient"],
+  "properties": {
+    "recipient": {
+      "type": ["object", "null"],
+      "required": ["name", "relation", "need", "obligation", "stated_on"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "relation": {"type": "string", "minLength": 1},
+        "need": {"type": "string", "minLength": 1},
+        "obligation": {
+          "type": "object",
+          "required": ["deliverable", "due"],
+          "properties": {"deliverable": {"type": "string", "minLength": 1}, "due": {"type": "string", "format": "date"}},
+          "additionalProperties": false
+        },
+        "stated_on": {"type": "string", "format": "date"}
+      },
+      "additionalProperties": false
+    },
+    "delivered": {"type": "boolean"}
+  },
+  "additionalProperties": false
+}

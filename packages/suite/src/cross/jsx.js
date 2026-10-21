@@ -35,12 +35,16 @@ function __json(v) {
  * parsed from JSON when it is JSON. Throws with the app's error message.
  */
 export async function runIn(app, source) {
-    const r = await app.runStructured(source);
-    if (!r.ok) throw new Error(`${app.label}: ${r.error}`);
-    if (typeof r.result !== 'string') return r.result;
+    const response = await app.callTool(app.executeTool, { code: source });
+    const text = response.content?.find((item) => item.type === 'text')?.text;
+    if (typeof text !== 'string') throw new Error(`${app.label}: MCP tool returned no text result`);
+    let r;
     try {
-        return JSON.parse(r.result);
+        r = JSON.parse(text);
     } catch {
-        return r.result;
+        throw new Error(`${app.label}: MCP tool returned invalid JSON`);
     }
+    if (response.isError || r.success === false) throw new Error(`${app.label}: ${r.error ?? 'tool call failed'}`);
+    if (typeof r.result !== 'string') return r.result;
+    try { return JSON.parse(r.result); } catch { return r.result; }
 }

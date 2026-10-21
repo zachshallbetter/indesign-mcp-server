@@ -1,0 +1,2833 @@
+{
+  "format": "2",
+  "generatorVersion": "0.6.0",
+  "root": ".",
+  "validityBasis": "aggregate-source-digest",
+  "selectedPaths": [],
+  "sourceSelection": {
+    "includedCount": 560,
+    "includedBytes": 8903085,
+    "excludedCounts": {
+      "excluded-directory": 4038,
+      "excluded-path": 1,
+      "extension": 38,
+      "symlink": 18
+    }
+  },
+  "repositoryState": {
+    "available": true,
+    "validationRole": "provenance",
+    "repositories": [
+      {
+        "path": ".",
+        "commit": "9352ed5aee811ade83a0d1ca4087803dd8856c96",
+        "branch": "release/adobe-mcp-suite-0.3.0",
+        "dirty": true,
+        "remote": "https://github.com/zachshallbetter/adobe-mcp.git"
+      }
+    ]
+  },
+  "aggregateSourceDigest": "f139fc0614aabc24cd71ea972add3216d42486d1782a67767265b3603c9737eb",
+  "sources": [
+    {
+      "path": ".formal-bootstrap.json",
+      "bytes": 282,
+      "sha256": "fb68ea36845c1a1c2b32517d6450d005ae11d7e9840f87fe65f4f4eeb47b2136"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/bug_report.yml",
+      "bytes": 1372,
+      "sha256": "ac1c647659891d57b03efcdcfb79622e83f615992b97121be15392ce1fdf5fce"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/config.yml",
+      "bytes": 231,
+      "sha256": "a19ce1b666568f2ab117095d72b6deb3e46cbd79283826704a9cb4d5711881cb"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/feature_request.yml",
+      "bytes": 528,
+      "sha256": "a66bfc2666559ec0e3c1fd62489529d8776f29256cd7ff7c02775c6164a9d0e3"
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "bytes": 586,
+      "sha256": "ed61ee112a36bd2f11e86f9a360430ecd063625cbb710b507918697ec470996b"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 606,
+      "sha256": "de1c984e64f6b54cdffd9337cdb06799fda1006219d68bd7212e9eb8a0481d97"
+    },
+    {
+      "path": ".github/workflows/registry-status.yml",
+      "bytes": 2110,
+      "sha256": "f3df3535ad5464df6a9afa99ad50b672b2b861a062e9f7ff3940863493ca8609"
+    },
+    {
+      "path": ".github/workflows/release.yml",
+      "bytes": 3702,
+      "sha256": "f10ace0b4f38d40fd80d4e07e7560eea5e5352b81ae0f327ff4298bc6ce528eb"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 13159,
+      "sha256": "3b67b41eed8ac2f2ae301ddc9d222810e93ef71776c8cf16515ae0a636b3c0ac"
+    },
+    {
+      "path": "CONTEXT_SOURCES.json",
+      "bytes": 1317,
+      "sha256": "1ceffd805fa1974611b3c3062de134b95837e4c7c3a853ca037019c37e34b415"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "bytes": 3846,
+      "sha256": "6e5b7ff4d9dcb5a467dfbac80c6be02dd0a1d03c29e3db2abd4c4ad9bcd771fd"
+    },
+    {
+      "path": "FORMAL_RESOURCE_MANIFEST.json",
+      "bytes": 274,
+      "sha256": "8d6e7258f8bfd9344c585c3cc32f2a625921877a56daeee353935b98b5912f90"
+    },
+    {
+      "path": "NEW_AGENT_PROMPT.md",
+      "bytes": 1010,
+      "sha256": "7fd2a102cb560b4e792ccf05a61aaf4fbf0d5139a708f03010d5d1577503bd2f"
+    },
+    {
+      "path": "PROJECT_INTENT.md",
+      "bytes": 2522,
+      "sha256": "f50e5c472015dc93cb79e36ba3cdbbad41c3e5e8de61f185864ba8d85d5e85cf"
+    },
+    {
+      "path": "PROJECT_PROFILE.json",
+      "bytes": 4131,
+      "sha256": "45ba754d8b67d489160007e769ad0a07b16967084664b030f9b0b91e3ae9b933"
+    },
+    {
+      "path": "README.md",
+      "bytes": 12128,
+      "sha256": "f3b28ca255397e952645d5912c7b6ded072393eb834c8510d2e72077fd8b7e84"
+    },
+    {
+      "path": "SECURITY.md",
+      "bytes": 2822,
+      "sha256": "00380effba30de975465958162941df15facf1b36fece8eea133ebd02def3e48"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 6,
+      "sha256": "97a5d6e540a6120d09c39ddb667e0e8e2bac7fcc2ffef813b82e08fd60365bce"
+    },
+    {
+      "path": "bindings/PROJECT_BINDINGS.yaml",
+      "bytes": 2964,
+      "sha256": "c9890b179d45743696df7d4637fcd99f4c197f5b1b1a271c23bf691c5273aee6"
+    },
+    {
+      "path": "contracts/README.md",
+      "bytes": 387,
+      "sha256": "574c6218c0c957efb2eb3bfa4bf51fbf3ab0165cc81a033a249d4ba4cc2af78e"
+    },
+    {
+      "path": "contracts/acp-protected-effects.yaml",
+      "bytes": 4298,
+      "sha256": "51039f1b5961ad5c81ea713025b84c2fc843ba7d0802578d11ba283bd6c26376"
+    },
+    {
+      "path": "docs/ACP_INTEGRATION.md",
+      "bytes": 18056,
+      "sha256": "ae97eb38ddd97ab3ab223ac143ac5a0c4a25ac566e82cdace69ae4fa89215680"
+    },
+    {
+      "path": "docs/AGENT_CAPABILITIES.md",
+      "bytes": 1095,
+      "sha256": "9dd7e5efd745a85880c8b428ab41d25c994c033e7f5d1376a6defd343cbfdb68"
+    },
+    {
+      "path": "docs/ALIGNMENT.md",
+      "bytes": 1588,
+      "sha256": "9e241f47e102b9feeb3b8e6bff3c95a146d69384f196eefc2327b363a96bf7a0"
+    },
+    {
+      "path": "docs/AUTHORITY_MODEL.md",
+      "bytes": 3352,
+      "sha256": "8f92dd06848c5557c49fbce42f48aebea389cebb07017d46690af85ec4d6a3b9"
+    },
+    {
+      "path": "docs/BOOTSTRAP_SEQUENCE.md",
+      "bytes": 6140,
+      "sha256": "82d04fa96aa477837c64b61a7c5f9e7617d0e325ef3e205dbd037f6ff1e91d51"
+    },
+    {
+      "path": "docs/CONFORMANCE.md",
+      "bytes": 3027,
+      "sha256": "91a89475f94537685db35af38306d5455ee9bb30488fb5247527293a2e0320ba"
+    },
+    {
+      "path": "docs/CONTEXT_COMPILATION.md",
+      "bytes": 2568,
+      "sha256": "cedad34d38ef2363ab29c40d29f38a5a93168e95ed647b6f729757648d748117"
+    },
+    {
+      "path": "docs/EVIDENCE_METHOD.md",
+      "bytes": 1039,
+      "sha256": "a7422b9cc99adfc462a8c6d44ee883f9483c1127fbcaf0f44b1328d1d30fd4c9"
+    },
+    {
+      "path": "docs/EXECUTION_PIPELINE.md",
+      "bytes": 1861,
+      "sha256": "529c01ec25ac7d0552a19d591514244ec7bbe3f1966f1dd38d2c2f69494ba2db"
+    },
+    {
+      "path": "docs/EXECUTION_PROVIDER_CONTRACT.md",
+      "bytes": 2134,
+      "sha256": "f8884fe13ab6503ddc5fdb53264001b24a6bf846b00473e3f8deca5d018d5ee5"
+    },
+    {
+      "path": "docs/EXISTING_PROJECT_ADOPTION.md",
+      "bytes": 4615,
+      "sha256": "549abfc3926076d522d677ba6dcaec5e6a4e1d9e3043aba70880632ffcdcbbe5"
+    },
+    {
+      "path": "docs/FORMAL_RESOURCES.md",
+      "bytes": 2845,
+      "sha256": "bf93374182ba0212c7e64328a751c9dc3cfacd816779f983eca50f9157851289"
+    },
+    {
+      "path": "docs/INITIAL_EPICS_TEMPLATE.md",
+      "bytes": 1234,
+      "sha256": "c3e6414393bbfb7905b4113f10571a695204538c19bbab90b5a486e7ae6a3039"
+    },
+    {
+      "path": "docs/LANDING_AND_PROMOTION.md",
+      "bytes": 1135,
+      "sha256": "675a228edb135427a399e08c7fdf3a983a7802da5a20d63deb83af40fe366a23"
+    },
+    {
+      "path": "docs/MULTI_AGENT_COORDINATION.md",
+      "bytes": 2078,
+      "sha256": "c27fc5594ef31ff4574582b4c6f2e69dc684bb897b9f9455fce1b50ca44f968a"
+    },
+    {
+      "path": "docs/NEGATIVE_KNOWLEDGE.md",
+      "bytes": 2169,
+      "sha256": "01ef93bc7c5b75ce991d6ed0cd78faba1d8e6cdc8f1b43b10231025a0975a91e"
+    },
+    {
+      "path": "docs/PROTOCOL_ADAPTERS.md",
+      "bytes": 2229,
+      "sha256": "1b546812abd66d29217fb8b11370201760ad43769f5e9c1f5e685625a7bb40aa"
+    },
+    {
+      "path": "docs/RECOVERY.md",
+      "bytes": 1115,
+      "sha256": "b084f0a4bbad4012bd9d2525a07239e38ff4f563bbdefbd8491518fec14882e9"
+    },
+    {
+      "path": "docs/SKILLS_INDEX.md",
+      "bytes": 1049,
+      "sha256": "fff86a343840e9a401ffc2bc6c5ddaed9d9e4cb570efd07af50790b3d70f887c"
+    },
+    {
+      "path": "docs/UPGRADING.md",
+      "bytes": 1998,
+      "sha256": "123cf17c5ac29a5530da30388d1342a200b1c09b7543523862c5eeef03627a06"
+    },
+    {
+      "path": "docs/WORK_GRAPH.md",
+      "bytes": 2029,
+      "sha256": "c92b74464dc44413fe264aef7082d4b065eb1e289f0ed0d85790fd74731a2dc8"
+    },
+    {
+      "path": "docs/handbook/README.md",
+      "bytes": 2960,
+      "sha256": "daf4a82136f4d1b2071d8eda444934a7dc61125fcd54adf260b593d74ba98f70"
+    },
+    {
+      "path": "docs/handbook/adding-tools.md",
+      "bytes": 5487,
+      "sha256": "38561142991b8b8cf87639c9e63c6a655222ffb4c3098aea59a6d763b488297a"
+    },
+    {
+      "path": "docs/handbook/architecture.md",
+      "bytes": 8534,
+      "sha256": "9bceb33168a105031d15242f8491bf6b7eddbc967ce798006c043c2bf3016079"
+    },
+    {
+      "path": "docs/handbook/briefs/aftereffects.md",
+      "bytes": 2196,
+      "sha256": "bb7e6dfe1c3fcfd61822b9b1edb4b535a9691ec1f45b0e516f8afa0033fea1df"
+    },
+    {
+      "path": "docs/handbook/briefs/common.md",
+      "bytes": 4550,
+      "sha256": "d46ccbbe3db769e577d6d2545399207ca90fb13347f4fd02396968dded686196"
+    },
+    {
+      "path": "docs/handbook/briefs/illustrator.md",
+      "bytes": 1566,
+      "sha256": "a8bd6fce6d9b2bc9ff30609aa4b0a3c3dc5e189366b6a5ed7c9ad38783a7db8e"
+    },
+    {
+      "path": "docs/handbook/briefs/indesign.md",
+      "bytes": 2832,
+      "sha256": "d1fc4df8b897e47739e02d5a0d8406f887a5c376e7ef46c6e84ce093310d55ed"
+    },
+    {
+      "path": "docs/handbook/briefs/photoshop.md",
+      "bytes": 2358,
+      "sha256": "a4eaf36551ff15b1572b0f71d626ee7b6f5a62bbdea0884a5ba0e8cac5d612a7"
+    },
+    {
+      "path": "docs/handbook/briefs/premiere.md",
+      "bytes": 1539,
+      "sha256": "4c271903b0b70cd011e44207836916fe53987dbd1425c507135517c7b3e2ab9a"
+    },
+    {
+      "path": "docs/handbook/capability-atlas.md",
+      "bytes": 3838,
+      "sha256": "1af0f86413b65923eafb28ac2943069306f118bfea65ef7844116579bd2d78c3"
+    },
+    {
+      "path": "docs/handbook/lessons.md",
+      "bytes": 5280,
+      "sha256": "ea609433591cfd4b1ea47f20c5958a93f1e8d381e60327549f2079700169cbab"
+    },
+    {
+      "path": "docs/handbook/releasing.md",
+      "bytes": 2542,
+      "sha256": "698792b95f1c746cf7d1da4e5fedf0fa76457ae7799d1aa3728b5075fc5e0294"
+    },
+    {
+      "path": "docs/handbook/rules/ci.md",
+      "bytes": 1139,
+      "sha256": "04f63a639bb87b537b2d059b6f252cfef0e648d392ec105e091e86ee2af3a2df"
+    },
+    {
+      "path": "docs/handbook/rules/codestyle.md",
+      "bytes": 3139,
+      "sha256": "62923830e444431d07e29e990168c4dba13026ed0ef6c530ed783daf500d720e"
+    },
+    {
+      "path": "docs/handbook/rules/governance.md",
+      "bytes": 1181,
+      "sha256": "43ad0bca0a6b0533b075cf8d6057a9a10b31cfd45daf9fd185ba457040790143"
+    },
+    {
+      "path": "docs/handbook/rules/security.md",
+      "bytes": 934,
+      "sha256": "fbc0c29f0c286a5f216bdc66d8d13a5c91dca8de12311806960d56669e7085ab"
+    },
+    {
+      "path": "docs/handbook/rules/standards.md",
+      "bytes": 3223,
+      "sha256": "2dbf08cffb7497e349c61917f8620caab78a48773149cbc3204f3146b5f35a00"
+    },
+    {
+      "path": "docs/handbook/rules/types.md",
+      "bytes": 3209,
+      "sha256": "15ebec204bb08ff126397aa0b5fdd5f941f88143efb07ebfd187a9e8405203d5"
+    },
+    {
+      "path": "docs/handbook/rules/workflow.md",
+      "bytes": 7678,
+      "sha256": "ea83934293589cdcee7e720e83b6b2d14814636c5bb264ba948bec8f9f6dafc7"
+    },
+    {
+      "path": "docs/handbook/scripts/README.md",
+      "bytes": 1887,
+      "sha256": "2a0b08d2e8969cd8d004e40d0df29c6942cd39f0f6eb1e0bf18cfac044b70f99"
+    },
+    {
+      "path": "docs/handbook/scripts/epics.example.json",
+      "bytes": 2375,
+      "sha256": "6e7eb149ea43db3c3052f0615631d8557f9d1fd799be2bece0f572534686fea3"
+    },
+    {
+      "path": "docs/handbook/scripts/land-queue.sh",
+      "bytes": 927,
+      "sha256": "ae8bb59bb1b68af887bb72ebc916aac38b7d98ef946115f9c609d80e87370b02"
+    },
+    {
+      "path": "docs/handbook/scripts/merge-pr.sh",
+      "bytes": 615,
+      "sha256": "bf0d2cc05b5c376e120af7d89dcb97c214051a01e0cb79fc687c485fc6627e20"
+    },
+    {
+      "path": "docs/handbook/scripts/resolve-land.sh",
+      "bytes": 2583,
+      "sha256": "5c2603bfffabdaf3e4d1e8ae1bef48905769f45af5d50305e3dcd31a3265bd2e"
+    },
+    {
+      "path": "docs/handbook/scripts/safe-union.py",
+      "bytes": 1922,
+      "sha256": "837c9e4083e89759da782094460ae7e3f389f2387b6e6ed9904e4d065227c8b3"
+    },
+    {
+      "path": "docs/handbook/scripts/union.py",
+      "bytes": 541,
+      "sha256": "0221111420d6243f1de168d177c4623d74ffb01bf65a1a852e8db2241e9f3c92"
+    },
+    {
+      "path": "docs/handbook/skills/authorize-protected-effect/SKILL.md",
+      "bytes": 4650,
+      "sha256": "c7658c6ef7903015a694d17efa4331ee220f4540a25b50cfd3a300e92220d10f"
+    },
+    {
+      "path": "docs/handbook/skills/compile-context/SKILL.md",
+      "bytes": 1156,
+      "sha256": "83e4e984f67d99aad8a733a1bafa419a5c32f2800d65d6e627f1652d2e928ea8"
+    },
+    {
+      "path": "docs/handbook/skills/coordinate-workers/SKILL.md",
+      "bytes": 1488,
+      "sha256": "b9d8766ae870785be0fbbcb356fde17497ed1ff0b069c5bc9ce5e95d6218df0b"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/SKILL.md",
+      "bytes": 20163,
+      "sha256": "cf7dafb5c6d7fc84193d03c1e4bc414e5919fa039f8f438f81f178fa7ae29c3c"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/assets/roles/resolver.md",
+      "bytes": 1524,
+      "sha256": "5997cbcc50c7825f46e686b0f60c3d0d91ef38076c348132d33d9ebadda0c21f"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/assets/roles/triager.md",
+      "bytes": 813,
+      "sha256": "436a8fc2ddcf90131d846e186fd7567f1d84e03592682cfd8297ad9d244051c4"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/assets/roles/verifier.md",
+      "bytes": 710,
+      "sha256": "7a4e1145f353d8e6707070db23b19e4f5e695eaa4e1d92d38d4f43e7c99fce6a"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/references/cli.md",
+      "bytes": 7339,
+      "sha256": "5e7ff18948919caf0161638f990eb28f8a48b8f500afcfa88b840b14be49751b"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/references/conventions.md",
+      "bytes": 6734,
+      "sha256": "7eccf778c74e7075a280b946ba9967fd0e297f785f08a1728c1afb2f88f7d083"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/references/coordinator.md",
+      "bytes": 7854,
+      "sha256": "ec44682ed3a71873a5575d73d10a44136c2f71274a708ed904712ff9b8edc3dc"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/references/gotchas.md",
+      "bytes": 8489,
+      "sha256": "80f04b7a0258b08530dc2b766bdfc882c5699367f4a9eec5a5023b3fdf5b53cd"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/references/graphql.md",
+      "bytes": 11606,
+      "sha256": "ed8864ffa957aa6c3a519c0abbccf9e7a0c3a1440e9ba9fd0b1026a63693abb4"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/references/recipes.md",
+      "bytes": 6158,
+      "sha256": "28f30cb4e79f3b915a2c98ea6cc0c9ddd5b77d78d6f186fd098ecfae592a5e22"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/scripts/add-item.sh",
+      "bytes": 1396,
+      "sha256": "43d55a90f1aef4364811ba14fb569eb290983dea2ee37c74cca49cbb8a458f86"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/scripts/claim.sh",
+      "bytes": 3534,
+      "sha256": "4d2715aff9f8d11bcd7526980655b17afc1d9097bed945e7eb8271426fb6c156"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/scripts/claims.sh",
+      "bytes": 3189,
+      "sha256": "adc007c8479e8a802e90bf5690bd878d3fc10a1f12d2b467c984d852d04de911"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/scripts/coord.sh",
+      "bytes": 3741,
+      "sha256": "d467b230831ee2b64a50e9ec9a448c6d3ccce50d5df18bb7379845bd8d8b70cf"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/scripts/coordinator.sh",
+      "bytes": 11844,
+      "sha256": "9cb6815731dad06f33156d629456a695e171cae7503bc7ff528968b3b370c3b6"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/scripts/lib.sh",
+      "bytes": 10177,
+      "sha256": "2872ad22f8492acc694c684cc76e2164ef9d7489abcd405857f72eb7d0b7ae0d"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/scripts/new-item.sh",
+      "bytes": 2876,
+      "sha256": "2f51893ffbfe6409085b207ce7b182f2c64df905398ffdd6f0501169f51ee692"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/scripts/project-ids.sh",
+      "bytes": 3253,
+      "sha256": "377059b5ccee0da7946d24b85a97acaeb43b7e9d89518649a694a9bf5678f74b"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/scripts/project.sh",
+      "bytes": 2976,
+      "sha256": "1b4fabefb57e05251f63656e08cbe8d6bf58aa86c3285816bb60233b4cb517e4"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/scripts/protect.sh",
+      "bytes": 1624,
+      "sha256": "6dadbc8f6a460619419a4bdc62e794155669ed01d0b9088571550f7b0027ff04"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/scripts/release.sh",
+      "bytes": 1161,
+      "sha256": "1b31ae119f85717b3c4b8d61cf736e8bc6fa3c4f0e8c1cf02dbd87c4629873fd"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/scripts/repo-map.sh",
+      "bytes": 3814,
+      "sha256": "73238acc3510cfeb3c8601132c0b9a949d377723a7f97bc02165f58b40d39677"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/scripts/set-field.sh",
+      "bytes": 6016,
+      "sha256": "515b4cf985c2014d6de2cbeb0d590a0628827be195021f6cde9ec58ffbadc62a"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/scripts/snapshot.sh",
+      "bytes": 6161,
+      "sha256": "28f82ef1bba6e62dd6652d5e2f857907cc1d9daed1260a72808b66c920cba029"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/scripts/spawn.sh",
+      "bytes": 3809,
+      "sha256": "fdcdfc51393912c85b554834e35eddcacbec64020847520c6432446714a38271"
+    },
+    {
+      "path": "docs/handbook/skills/github-projects/tests/test_acp_context.sh",
+      "bytes": 3406,
+      "sha256": "f0fcc64c52fc6090823f2828febc78929302f531d20e83543f4b0739a935e850"
+    },
+    {
+      "path": "docs/handbook/skills/operate-frontier/SKILL.md",
+      "bytes": 1741,
+      "sha256": "72c34f48c763e06656da167a31bd20ead7fe111939a0d734555afac3c0ed37a0"
+    },
+    {
+      "path": "docs/handbook/skills/reconcile-project/SKILL.md",
+      "bytes": 1945,
+      "sha256": "8e671f9b635f206d78be6fec73d67be5b6e8d8a4b9f125f1f0cc9d9157ea1894"
+    },
+    {
+      "path": "docs/handbook/skills/verify-outcome/SKILL.md",
+      "bytes": 1309,
+      "sha256": "daa4c70bc8011c38b079c8c5a3773361c45b1dad268758d878beba4f4941a7a1"
+    },
+    {
+      "path": "docs/handbook/status.md",
+      "bytes": 4298,
+      "sha256": "663561e39fa6ca010a7f6146385ac93184d6c5675c232330a585b584f34c31df"
+    },
+    {
+      "path": "docs/handbook/workflow.md",
+      "bytes": 5993,
+      "sha256": "f7823983ab516bb2598d2f193f639b4a2dbe241168a8f0067fc8e9ce36ef0247"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 63949,
+      "sha256": "8a81141a76fc43baeca6ee2e0b8dd5978759abda849036d007307a2b5a479e79"
+    },
+    {
+      "path": "package.json",
+      "bytes": 504,
+      "sha256": "2225d13cabc9007614305f719b21ec1bbc79852ed2a5604b4a8cb7b5f72d6eff"
+    },
+    {
+      "path": "packages/aftereffects/README.md",
+      "bytes": 13779,
+      "sha256": "d986bd5a5df225e80fd46db60d05e81bdb63cb5b9786c8ade41f4fa282387c32"
+    },
+    {
+      "path": "packages/aftereffects/package.json",
+      "bytes": 1581,
+      "sha256": "fb0755b6bdb58feda7319ee2015f7eccd8818952126e3afd089c72f930b82a00"
+    },
+    {
+      "path": "packages/aftereffects/scripts/check-syntax.js",
+      "bytes": 767,
+      "sha256": "bd3535c28b832e24c29138e4633054d1018a6336e4ddbaca45202e324cc4459e"
+    },
+    {
+      "path": "packages/aftereffects/scripts/update-effects.js",
+      "bytes": 4047,
+      "sha256": "167504e157a2bda134eb5b548ef5ac823e824cf4dfceac51b497afd296da4704"
+    },
+    {
+      "path": "packages/aftereffects/scripts/update-feature-ids.js",
+      "bytes": 1334,
+      "sha256": "76d863db8e75022d95b0b653330dd09fa58e581bbb03281b1599d0e6e560f3ac"
+    },
+    {
+      "path": "packages/aftereffects/server.json",
+      "bytes": 1365,
+      "sha256": "f750c5f28a3066747a3a2a3b8543e425f4d6d996039e180f99fdb35693a20223"
+    },
+    {
+      "path": "packages/aftereffects/src/args.js",
+      "bytes": 5370,
+      "sha256": "b253f4e6daefdf117a7e18a0208f453aafab4a062708f44610ea3e7898b71caa"
+    },
+    {
+      "path": "packages/aftereffects/src/artcraft/effectcraft-adapter.js",
+      "bytes": 5595,
+      "sha256": "bee9ca9c9d208e7bf60de5b9f5ad9901c36f4080d47ff24b2b6e1807833f4bef"
+    },
+    {
+      "path": "packages/aftereffects/src/data/effects.json",
+      "bytes": 174099,
+      "sha256": "5d1fc3af6544149f8928e240307e7d35fb93ca43dcb3ebb3a9e273fc41dcf308"
+    },
+    {
+      "path": "packages/aftereffects/src/executor.js",
+      "bytes": 4040,
+      "sha256": "85994be46e1ea37eda3337c2213dde80890e9c561b2fd1f1c418768cd4cfa0e3"
+    },
+    {
+      "path": "packages/aftereffects/src/index.js",
+      "bytes": 294,
+      "sha256": "2cd5bb04bde71c06a4fa0c81a9279e0411f55e92e2bce79b76de861217b3515b"
+    },
+    {
+      "path": "packages/aftereffects/src/module.js",
+      "bytes": 1375,
+      "sha256": "c81c25aec531a6da84bd32c46b6771fed96602fbfc66dc9437026c53e7008c80"
+    },
+    {
+      "path": "packages/aftereffects/src/script.js",
+      "bytes": 6062,
+      "sha256": "9944b8ee35547ba3e09ce85ba7187f2dfaf50d08cbc79dbd4f4ab1a9d6370a44"
+    },
+    {
+      "path": "packages/aftereffects/src/server.js",
+      "bytes": 5915,
+      "sha256": "659a3c67f0a4d18b0f6be0964d1c704a6f2cb76a336f2405b7976de54d38fb0a"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/animation.js",
+      "bytes": 16670,
+      "sha256": "34b1db1a14a4f387118d6633c94f94f90a73213f1e56e4b3cfdb75aa0772e898"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/application.js",
+      "bytes": 17847,
+      "sha256": "6d3a55f688d0c4ab908a5346c71b2046b5bc4bd4d408c25b12888be221fc1f71"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/audio.js",
+      "bytes": 7459,
+      "sha256": "d026db66da42cd54b5a2f8bb46a0f5f5856e72e3c9de434bdc056a1bafb6de62"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/automation.js",
+      "bytes": 8381,
+      "sha256": "3b391d6f28b2f3a843bc6d755049ddf1a337cca85cdce4b145e3bc28d4dd9edb"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/collaboration.js",
+      "bytes": 5351,
+      "sha256": "055994986c6b6b963cd021f02bfe8a5fbb3610aa73b14ff8c7b6d2b848909443"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/color.js",
+      "bytes": 15163,
+      "sha256": "c0d27a9004499650dcae2201b88ded2eec309e59c89b489f96079842060ffcaa"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/comp-edits.js",
+      "bytes": 16131,
+      "sha256": "09b6d72f3468c87b695a52d96c5fa5cad985d3617a47289a81e3d7450ea37903"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/comps.js",
+      "bytes": 15354,
+      "sha256": "aa5c5954227aa6b1c3696808216abf15aceee0d15b664c750584c9a78ea3dc85"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/effect-controls.js",
+      "bytes": 25695,
+      "sha256": "8c1a26cfd8ab7c95b26f96fed42e2c3b79e6f668f8a89e8f0ea79a89d3bba6eb"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/effects.js",
+      "bytes": 7109,
+      "sha256": "1cdc752f73455f387dc42f9f2ecc853a9ddfa798106f3f76397d3ae23fb3611b"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/essential.js",
+      "bytes": 15972,
+      "sha256": "aed72ebf73f90474068e16302bf47380a50214c0bcebf11e54b22718d483468a"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/footage.js",
+      "bytes": 32918,
+      "sha256": "18164791ff77a1123c0c5dadd048b3419e4f1a2ee2fe28369010b1ba076fec25"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/interface.js",
+      "bytes": 27879,
+      "sha256": "55553a675c5bee3338c6d9845000adba3125c73c1a69742aa694a5c1bdaba99e"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/keyframes.js",
+      "bytes": 44009,
+      "sha256": "9f98d34dd5033c5ac8fc8e5c2f499cbd478133be256a28e40991a014739e7c4b"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/layer-edits.js",
+      "bytes": 33132,
+      "sha256": "193de524e6eb00e254c88b2d2d6a49d3f43fc771ab9dc808d60d5f316ec8ba1b"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/layers.js",
+      "bytes": 23720,
+      "sha256": "0155aa1514e8684313cc1a5859c33c18f724302932d321774181b8793619cac7"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/masks.js",
+      "bytes": 35479,
+      "sha256": "3ca6dc901b1cd3205b3756ad0b82f3624579f0d47c80c870882efcf1504d64d1"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/paint.js",
+      "bytes": 22081,
+      "sha256": "e741233ee1bd5e854347bea76a7768d3a89abdddb7555f8b3e55d06eea5910fb"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/project.js",
+      "bytes": 36437,
+      "sha256": "ccc88c9dc10f1a5b869bd30b6bf4771ae130bbed39ccec962aee67a7c479a1cc"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/render.js",
+      "bytes": 44396,
+      "sha256": "ad72deb311d8aeef03af36ca11373d9113ca7edb4e3d82d464ddbf4cd2bf9cfa"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/shapes.js",
+      "bytes": 39531,
+      "sha256": "725208d0f43251237615774d32de63816f1ef37a7c47084d93dda23da7e8e59d"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/text.js",
+      "bytes": 63751,
+      "sha256": "a4ee4e1fc1cab9ede0b555e1f9b93c79c841b0440b19226f819fc704b851ec47"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/threed.js",
+      "bytes": 33668,
+      "sha256": "e7584dab78765d3fed859d6d9c23f9bd5789abb1f2516ea15b1601169b4c6f88"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/time.js",
+      "bytes": 16930,
+      "sha256": "84445d71e4fed542f60a1174ea0632135388370c99e937467d727d0aca9c7819"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/tracking.js",
+      "bytes": 31257,
+      "sha256": "b82826544ac61fcd74f2a532fbcd70c19178bd7b946a9aa97e005ce0bc45d623"
+    },
+    {
+      "path": "packages/aftereffects/src/tools/utility.js",
+      "bytes": 4948,
+      "sha256": "228748f127e610ec76ddca78c7cd75d3b51ca7e4bf1a5e7de22e7203466ba49a"
+    },
+    {
+      "path": "packages/aftereffects/tests/animation.test.js",
+      "bytes": 11080,
+      "sha256": "a854a6c02f50b482dfc8b2e87b68fd2ef2e4f4172cbb160f04524c36588bee55"
+    },
+    {
+      "path": "packages/aftereffects/tests/app.test.js",
+      "bytes": 12816,
+      "sha256": "64d0883b7a653beb306b4b2ac91e78cb35eca32f8ef1f7f4f0baed9917f5bee1"
+    },
+    {
+      "path": "packages/aftereffects/tests/audit.js",
+      "bytes": 3338,
+      "sha256": "79580e6abf831df0790a41eb0203d813c0a4397ebfc8f07d418b70c7936ca740"
+    },
+    {
+      "path": "packages/aftereffects/tests/color.test.js",
+      "bytes": 5234,
+      "sha256": "f34b494c850f77feed0bf8fc0a26a6853cf645ff50f4539e82a0fc67fc0b5311"
+    },
+    {
+      "path": "packages/aftereffects/tests/effectcraft-adapter.test.js",
+      "bytes": 2368,
+      "sha256": "88901c29add7e97b388d32cf6c4a4ef4abf1deebaabea69586228984b78fa57f"
+    },
+    {
+      "path": "packages/aftereffects/tests/effects.test.js",
+      "bytes": 8251,
+      "sha256": "ba2745f71a44630af0ce2752b771094a5b4a992198b018f736e61aa6eae55c8a"
+    },
+    {
+      "path": "packages/aftereffects/tests/fixtures/feature-ids.json",
+      "bytes": 159423,
+      "sha256": "26fc91355631a837a05e41601ea3d6fff44c6bc53013751fd8d94b7130f0943d"
+    },
+    {
+      "path": "packages/aftereffects/tests/footage.test.js",
+      "bytes": 16822,
+      "sha256": "3bea81013792e861da0c9d775b707930109ab20fae464aa48c11afcc6478064a"
+    },
+    {
+      "path": "packages/aftereffects/tests/helpers.js",
+      "bytes": 1322,
+      "sha256": "c1a6d6857aebd840997847f6018f344e0859e0e97d95fce0b63c5aa481036f91"
+    },
+    {
+      "path": "packages/aftereffects/tests/layers.test.js",
+      "bytes": 18220,
+      "sha256": "eaaeaa485017eb01abddb75e2ad702fd22f7843df1fb19614fe92aad0f1a10a8"
+    },
+    {
+      "path": "packages/aftereffects/tests/masks.test.js",
+      "bytes": 14833,
+      "sha256": "4aead902670a6048694b28e8d35ca0215daac4c324d90a23c4e5541ec871f31f"
+    },
+    {
+      "path": "packages/aftereffects/tests/no-app.test.js",
+      "bytes": 399,
+      "sha256": "7c0b765e825787e4c30d132231f2ca0c0052fc029d6db3c278b00e513ea5a3a3"
+    },
+    {
+      "path": "packages/aftereffects/tests/render.test.js",
+      "bytes": 12462,
+      "sha256": "d967dc1445135d6ddb40f8b7f0c8946825b0e2fa628e6ce14fea255c8cb755f2"
+    },
+    {
+      "path": "packages/aftereffects/tests/server.test.js",
+      "bytes": 7634,
+      "sha256": "c992cd350bd8e232aad271d08653a6b5125fff5e938d80c3a5df8c12c9e79139"
+    },
+    {
+      "path": "packages/aftereffects/tests/text.test.js",
+      "bytes": 12454,
+      "sha256": "8ccec4301f416cfd4d5936c815f9bf4681d8d2f158b99ff0426bb8619d13c81f"
+    },
+    {
+      "path": "packages/aftereffects/tests/threed.test.js",
+      "bytes": 10527,
+      "sha256": "692f3bc1a951b6968f0fbfb64e68d199e60a8b1bb27f27699a856c1a009a8dfb"
+    },
+    {
+      "path": "packages/aftereffects/tests/tracking.test.js",
+      "bytes": 6877,
+      "sha256": "b64603f1f0bb25b15d30a9008fd762ddf65e91d80e178e8877eda6bfed3b6754"
+    },
+    {
+      "path": "packages/core/README.md",
+      "bytes": 4168,
+      "sha256": "a19c97c9bc51282f7546c8a3ce4daa78ccf026717f557f91fe72f06f2a00a31f"
+    },
+    {
+      "path": "packages/core/package.json",
+      "bytes": 1186,
+      "sha256": "fabb99cc72fbbd0b11348f6e848a915fdea98669b0ca7dfc7eae138df860c3af"
+    },
+    {
+      "path": "packages/core/scripts/check-syntax.js",
+      "bytes": 767,
+      "sha256": "bd3535c28b832e24c29138e4633054d1018a6336e4ddbaca45202e324cc4459e"
+    },
+    {
+      "path": "packages/core/src/annotations.js",
+      "bytes": 2543,
+      "sha256": "20441cf5905f2bcf27aadd8990c19947915e98ff6d5271eacf5039307b4718c8"
+    },
+    {
+      "path": "packages/core/src/args.js",
+      "bytes": 3988,
+      "sha256": "ea2f6ca3fcfde449c763cd132cccb4ad4a176bbf0eeaff21c4f70c3e697a46d3"
+    },
+    {
+      "path": "packages/core/src/control-client.js",
+      "bytes": 8192,
+      "sha256": "da39970688502da8d477cfaecc0f137d74e6d115ccd19ccf448bafe476f818e5"
+    },
+    {
+      "path": "packages/core/src/craft-harness.js",
+      "bytes": 6435,
+      "sha256": "e9b56652d8e8b873ad00dc2b2f72a32437d78a84851f16302869264725c1a30e"
+    },
+    {
+      "path": "packages/core/src/executor.js",
+      "bytes": 14790,
+      "sha256": "7d90c536a5854005ac3196da0278b71c6eaf5a0674546a3aaefc309f2d06ef09"
+    },
+    {
+      "path": "packages/core/src/index.js",
+      "bytes": 1206,
+      "sha256": "36863781ce726ad87be181d8c4986c78be07808c4acbebea8424399af7726ceb"
+    },
+    {
+      "path": "packages/core/src/jsx.js",
+      "bytes": 3190,
+      "sha256": "f754c3fa8ab5ed500b7e3a6de9227a143cb29e98ba0d10073068d647e96181c2"
+    },
+    {
+      "path": "packages/core/src/paths.js",
+      "bytes": 3132,
+      "sha256": "768fab0720a98fe8cc1824abb19b4aa4108a95ea60650a7554ed9f47775d603e"
+    },
+    {
+      "path": "packages/core/src/result.js",
+      "bytes": 2244,
+      "sha256": "2cf3e092ecf6a3cf4c7b4ad38efd4272fb5550c4ad4f4377462093ee0205be5e"
+    },
+    {
+      "path": "packages/core/src/server.js",
+      "bytes": 3822,
+      "sha256": "2ea2df8bbd4428a25663de2e0f9dff23856bd5ce105a9d4e7bf37e0fcef533d9"
+    },
+    {
+      "path": "packages/core/src/structured.js",
+      "bytes": 5460,
+      "sha256": "d18ae1d8a256f5e90732fc008da1fe681e1cd78c7cccf3d41385adfbf4693966"
+    },
+    {
+      "path": "packages/core/src/testing/audit.js",
+      "bytes": 10348,
+      "sha256": "03fb85eb80046f3d395d0a9406a1a92f64878d268378d56c0d73f4a7bff68b3e"
+    },
+    {
+      "path": "packages/core/tests/control-client.test.js",
+      "bytes": 2573,
+      "sha256": "ad0cc31c9efda973dcc5e7c41dce338cbc02d99c6173f1fd33b0863c0a93afc3"
+    },
+    {
+      "path": "packages/core/tests/craft-harness.test.js",
+      "bytes": 3061,
+      "sha256": "11a05bae8a804fd8f0898908bd388c8a311d202869384adede9fbf606ba4c508"
+    },
+    {
+      "path": "packages/core/tests/jsx-paths.test.js",
+      "bytes": 3390,
+      "sha256": "13dc528c70ad529f2e0a4a9341464f4fb74ad127395c5387fc2aea5956e7294d"
+    },
+    {
+      "path": "packages/core/tests/results.test.js",
+      "bytes": 3844,
+      "sha256": "1e3e0c979bf0d94c9df907154bf32600face347a36adc1ac7b82868ae644b54e"
+    },
+    {
+      "path": "packages/core/tests/server.test.js",
+      "bytes": 8079,
+      "sha256": "0a70343861bc5d143f5e4b59e99fb6bdcef0e5cd7ac5240bc97b84ce7f108940"
+    },
+    {
+      "path": "packages/illustrator/README.md",
+      "bytes": 20070,
+      "sha256": "a20cf98e05c5a348a9d40760e5dc358e2063169c65c32888081ac4c5ffc67259"
+    },
+    {
+      "path": "packages/illustrator/package.json",
+      "bytes": 1677,
+      "sha256": "c83de3615b76cc5263f8f50303646881ccd4eaab307d4cbd2209fdefa3ae7364"
+    },
+    {
+      "path": "packages/illustrator/scripts/check-syntax.js",
+      "bytes": 767,
+      "sha256": "bd3535c28b832e24c29138e4633054d1018a6336e4ddbaca45202e324cc4459e"
+    },
+    {
+      "path": "packages/illustrator/server.json",
+      "bytes": 1351,
+      "sha256": "3f969b3b6fb1181db6e57df9a700851124ca43694d86cfcba40afb6886c5db4e"
+    },
+    {
+      "path": "packages/illustrator/src/action.js",
+      "bytes": 3440,
+      "sha256": "879d907abdc60f11c7e9125c7de412e5c068001d39b2208245bd45f0f87bba51"
+    },
+    {
+      "path": "packages/illustrator/src/aia.js",
+      "bytes": 15180,
+      "sha256": "1f5a5e3585b3a40a752b05520d624efa6ec2824873e8187f68e1ba3f6a387ede"
+    },
+    {
+      "path": "packages/illustrator/src/args.js",
+      "bytes": 3225,
+      "sha256": "889698b203579e25b5e9954e8143c9869206b34b18e8bdfcfa500489e28b8d0d"
+    },
+    {
+      "path": "packages/illustrator/src/artcraft/vectorcraft-adapter.js",
+      "bytes": 6649,
+      "sha256": "0568346484f135b5251de25be6becac627554bfef38d19dcf117d73d8c7a4bfd"
+    },
+    {
+      "path": "packages/illustrator/src/blend.js",
+      "bytes": 4369,
+      "sha256": "74b371d1a0ecff12127aa2c1821f5126cf30db651b3ac40027666d36a76c04af"
+    },
+    {
+      "path": "packages/illustrator/src/data/menu-commands.json",
+      "bytes": 157047,
+      "sha256": "71b5bc37a53d8f243899cc92857475519a4cb578900161f4126dbdd3ef397318"
+    },
+    {
+      "path": "packages/illustrator/src/data/tools.json",
+      "bytes": 2737,
+      "sha256": "3d44b7ca89e3734d6aec36ee9c782d5331a3d2f4df08711eb001fb54262d22ed"
+    },
+    {
+      "path": "packages/illustrator/src/effects.js",
+      "bytes": 30648,
+      "sha256": "e6c93a8462a5265032c515cce498cd4de05ffa1fc948dabd248d064e14b57f76"
+    },
+    {
+      "path": "packages/illustrator/src/executor.js",
+      "bytes": 2449,
+      "sha256": "c882b0732bcd34925da7b7753962eccd7cffba65b6d818b26f7ee105ad14528a"
+    },
+    {
+      "path": "packages/illustrator/src/flatten.js",
+      "bytes": 2222,
+      "sha256": "bbde70c056609988ad850383eabd4f7d5239c308693b4ca15e1f1ed1f6a02df5"
+    },
+    {
+      "path": "packages/illustrator/src/import-options.js",
+      "bytes": 7358,
+      "sha256": "90600dfcb26765e60922ccccf499f582847a9217fafa238d801e119fa3d1bcb1"
+    },
+    {
+      "path": "packages/illustrator/src/index.js",
+      "bytes": 292,
+      "sha256": "c0950202eb2828b13eecd2ccfef1a55c2c92562991cb4bc079df348b6f35f7c5"
+    },
+    {
+      "path": "packages/illustrator/src/module.js",
+      "bytes": 1293,
+      "sha256": "11faa75072b5088af111a77a67cb05cffcc300246cf7792b997e2fec0565ae9d"
+    },
+    {
+      "path": "packages/illustrator/src/script.js",
+      "bytes": 7328,
+      "sha256": "42c3171ac8b81e26104ca31643f3a321f50320dbef91628f313a9696157fcc7c"
+    },
+    {
+      "path": "packages/illustrator/src/server.js",
+      "bytes": 8719,
+      "sha256": "f3bad3573dda3a0bad16c6b9f5bfef02c2b268fb807b4ce2ac575913a0644ae9"
+    },
+    {
+      "path": "packages/illustrator/src/tools/actions.js",
+      "bytes": 42657,
+      "sha256": "a7ab5c84950d82b558fc5c7857de2eac65011bc5f2ecb0cb334ddd6aa616bd5c"
+    },
+    {
+      "path": "packages/illustrator/src/tools/appearance.js",
+      "bytes": 18652,
+      "sha256": "a153251c68188e767b586d25e27e5c3b136ba2fe1d1261c2844a6524f1d6dc08"
+    },
+    {
+      "path": "packages/illustrator/src/tools/arrange.js",
+      "bytes": 24078,
+      "sha256": "27dc1e0791e0140feef593b9008521cdbfc71b864e67a45f8d25175546157619"
+    },
+    {
+      "path": "packages/illustrator/src/tools/artwork.js",
+      "bytes": 21906,
+      "sha256": "e06d5b90583789aa312366c948797469227c560ae0eecb48212913fb50a395d0"
+    },
+    {
+      "path": "packages/illustrator/src/tools/assets.js",
+      "bytes": 24971,
+      "sha256": "35750d0eaabf37b93507316a2d44539b834e04b0c65463319341b9880492284d"
+    },
+    {
+      "path": "packages/illustrator/src/tools/blends.js",
+      "bytes": 8902,
+      "sha256": "1fcea93dcde47ff07b1c5839b82dc898a01ad47925fb8c9b15ecb69ef8018e78"
+    },
+    {
+      "path": "packages/illustrator/src/tools/brushes.js",
+      "bytes": 12422,
+      "sha256": "ce708f5c7e13670eb312c69fb5f9f596143047cdea337a0049c58118cc7b2839"
+    },
+    {
+      "path": "packages/illustrator/src/tools/color.js",
+      "bytes": 68241,
+      "sha256": "2e93eac371f231a584c4c08944b6a2e93b6f5a3759d1cb97e393b3e682c79b49"
+    },
+    {
+      "path": "packages/illustrator/src/tools/document-setup.js",
+      "bytes": 34760,
+      "sha256": "d0042b6a3c30d31edad45d8b5ad48952a2e1b0555a82d9ba3876fb74cc008251"
+    },
+    {
+      "path": "packages/illustrator/src/tools/documents.js",
+      "bytes": 37108,
+      "sha256": "460fe51ac70846c870edebe253d059f597a422f67d8bc6120bf100d305d59397"
+    },
+    {
+      "path": "packages/illustrator/src/tools/effects.js",
+      "bytes": 33071,
+      "sha256": "85b23f91656380c4f6cda5b7bd68c9a577013d82d8d12623dc7507bb17e9aa4f"
+    },
+    {
+      "path": "packages/illustrator/src/tools/formats.js",
+      "bytes": 24824,
+      "sha256": "4032883418883000b36e8c5e38bee3e2ea72efcb820890a4593b75d26a0c27a7"
+    },
+    {
+      "path": "packages/illustrator/src/tools/images.js",
+      "bytes": 30735,
+      "sha256": "b87bde542000a60549e1dbeca2a8061576260cd68418eba11764b93912d8852d"
+    },
+    {
+      "path": "packages/illustrator/src/tools/layers.js",
+      "bytes": 39940,
+      "sha256": "319647e08f0dab7b805d010b7c980cffea4ac8a506202c03d0d4062f6614bf8d"
+    },
+    {
+      "path": "packages/illustrator/src/tools/misc.js",
+      "bytes": 12492,
+      "sha256": "0b371b9ff197b12cddd54c3ff3c803d295e5c5f8d5d20e0e2d4033aa2db23b17"
+    },
+    {
+      "path": "packages/illustrator/src/tools/output.js",
+      "bytes": 56967,
+      "sha256": "7c06cbb30abeb3117e13da00f0540cebeda68ece87b59afe30fbeef586b607fc"
+    },
+    {
+      "path": "packages/illustrator/src/tools/path-edit.js",
+      "bytes": 20720,
+      "sha256": "664c9ca30754d3d8f8de293c841b673e05d21019b52d2e04fd9dae505cbbb843"
+    },
+    {
+      "path": "packages/illustrator/src/tools/paths.js",
+      "bytes": 17838,
+      "sha256": "6082a0c377cb6881b19715e18ac911965d306206f283175628dfac891b205403"
+    },
+    {
+      "path": "packages/illustrator/src/tools/patterns.js",
+      "bytes": 26397,
+      "sha256": "99e22e902e43f70f9a8eb11f1b61622d1f7b8d4d92a1c5afa5e205c303576743"
+    },
+    {
+      "path": "packages/illustrator/src/tools/perspective.js",
+      "bytes": 12442,
+      "sha256": "c8d92ae60f511569e592cb9eaa191c13bb79ff0a122c944af259de1fd46b231f"
+    },
+    {
+      "path": "packages/illustrator/src/tools/prepress.js",
+      "bytes": 36091,
+      "sha256": "ec07d4cae4bfa6135dec9619614affed551b3713f0c48b3b44d2de54efa85980"
+    },
+    {
+      "path": "packages/illustrator/src/tools/select.js",
+      "bytes": 20618,
+      "sha256": "1a3e057bbdc33ddaceb6aebb61ee97516ef9ae0b94abf81a30eafadf4ede8f13"
+    },
+    {
+      "path": "packages/illustrator/src/tools/shapes.js",
+      "bytes": 26000,
+      "sha256": "0b1ff2ca66b204ea3bf964111f148a6db8c824a942974355c0bb55b3c91c66bc"
+    },
+    {
+      "path": "packages/illustrator/src/tools/styles.js",
+      "bytes": 27143,
+      "sha256": "0e196f99ee905653b32ae1f28c765563f6541bde87ba17cce5a18f4f3bd7e43f"
+    },
+    {
+      "path": "packages/illustrator/src/tools/symbols.js",
+      "bytes": 21909,
+      "sha256": "def3032b8deacb0bede979721b6c60bfdf85d3daf2fd41bc28280d72a60f684d"
+    },
+    {
+      "path": "packages/illustrator/src/tools/text-format.js",
+      "bytes": 69919,
+      "sha256": "4185ac9e350091890e94f950db885d70152d9dc9cd81a88f5a2b8df25d7a9a69"
+    },
+    {
+      "path": "packages/illustrator/src/tools/text.js",
+      "bytes": 49844,
+      "sha256": "ad71881a38ddc09be48713c1bf12b5fdcc14ebe13c48271d945ca0185f9ede39"
+    },
+    {
+      "path": "packages/illustrator/src/tools/three_d.js",
+      "bytes": 13942,
+      "sha256": "02523f73e62a61b9a85d8261c8b34d02043773e64f8de85036bcd0c2a4458f82"
+    },
+    {
+      "path": "packages/illustrator/src/tools/trace.js",
+      "bytes": 17793,
+      "sha256": "48c4dc1f3ae44fc3e62de5cc51229b2a9946bb3e87d1975b810b31c17df1c6c7"
+    },
+    {
+      "path": "packages/illustrator/src/tools/transform.js",
+      "bytes": 37902,
+      "sha256": "163f66460a16dfde0fc63b18ef4586d24af955026f236a4bb7c092cfb9f8187d"
+    },
+    {
+      "path": "packages/illustrator/src/tools/utility.js",
+      "bytes": 6955,
+      "sha256": "c86a09291ffac6cfb6b6c5d4b70372e4e911cc71fead63eb1e1996fd498a232f"
+    },
+    {
+      "path": "packages/illustrator/src/tools/variables.js",
+      "bytes": 21060,
+      "sha256": "94c19d8394478475de1982dcacb33621fc1655402057bb54c0c06a868cf2a721"
+    },
+    {
+      "path": "packages/illustrator/tests/actions.test.js",
+      "bytes": 18506,
+      "sha256": "0abaae5f36c8967f8917ff92b4712e40743c3464a407476975563c9b98e317f2"
+    },
+    {
+      "path": "packages/illustrator/tests/assets.test.js",
+      "bytes": 10006,
+      "sha256": "b5d7024890cc47f3f89d739a8ecc8864e9a9ebf632c1196f1350055d79fd0402"
+    },
+    {
+      "path": "packages/illustrator/tests/audit.js",
+      "bytes": 6637,
+      "sha256": "7dc119b5f5538b3572ae15f15ccfb2afab32513b18d6a338705f6849b4b60400"
+    },
+    {
+      "path": "packages/illustrator/tests/color-more.test.js",
+      "bytes": 13918,
+      "sha256": "1b4b178f79b2480f9c429737a21c1fb57b7b20b34415095fe60849127638221c"
+    },
+    {
+      "path": "packages/illustrator/tests/docs.test.js",
+      "bytes": 13474,
+      "sha256": "ea30a7d567e0b261d08612265cff280ad222491d1f49a652d3357013c19802cb"
+    },
+    {
+      "path": "packages/illustrator/tests/effects-more.test.js",
+      "bytes": 11800,
+      "sha256": "6289927ade21975bc93a628333321af412ab3eceac3f2a79c01554ccc0fd9288"
+    },
+    {
+      "path": "packages/illustrator/tests/fixtures/actions/batch/notes.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "packages/illustrator/tests/fixtures/feature-ids.json",
+      "bytes": 120303,
+      "sha256": "e6e5c0ef1b561d39d4e9d11fedcec5ddec8f334ce85ed0581904e7978e612c6c"
+    },
+    {
+      "path": "packages/illustrator/tests/fixtures/illustrator-object-model.json",
+      "bytes": 29747,
+      "sha256": "37ca3b6b40a9f418c1a08d124634bb1c72eab61465ce40209e2a4b753e1d8f7a"
+    },
+    {
+      "path": "packages/illustrator/tests/formats.test.js",
+      "bytes": 18236,
+      "sha256": "a6051f6fee7a76c890631f63f04fde96f6f842c736065e47bb74100a2379e2a3"
+    },
+    {
+      "path": "packages/illustrator/tests/helpers.js",
+      "bytes": 1320,
+      "sha256": "ae7265bebe0445ccd80ed5fc1e1df6b9c825547a4dc64c4fe59c6b808fe023e3"
+    },
+    {
+      "path": "packages/illustrator/tests/images.test.js",
+      "bytes": 8833,
+      "sha256": "5110849784ba633aa8a05dd16c9f1a6fdc25fc7221ec7e0513c936476fcf549a"
+    },
+    {
+      "path": "packages/illustrator/tests/investigate.test.js",
+      "bytes": 8864,
+      "sha256": "14ebf8dc27367d5e03d289eab2bdd5d476d56094701b3deae5359d79785028d0"
+    },
+    {
+      "path": "packages/illustrator/tests/layers-artboards.test.js",
+      "bytes": 11674,
+      "sha256": "f3807af0a88b45e8b3f7c176126a2cb36086b39cc8ad03c24a96d186b2d13c91"
+    },
+    {
+      "path": "packages/illustrator/tests/misc.test.js",
+      "bytes": 8858,
+      "sha256": "ebefcd0cfd823ad3ace4e3dfe5cda5667aa7cdb8984fdc7d6a84537e2a237d97"
+    },
+    {
+      "path": "packages/illustrator/tests/no-app.test.js",
+      "bytes": 393,
+      "sha256": "cd6ff2c7e53cb639e937e6e184adb6c87e5263e98abe21ab09b0b9ad2cc7dcfd"
+    },
+    {
+      "path": "packages/illustrator/tests/paths-more.test.js",
+      "bytes": 7941,
+      "sha256": "40ce0cd1db0cefc0feac5bcab83db7730e10d1cfad8bd0c3db2167d81e64d71e"
+    },
+    {
+      "path": "packages/illustrator/tests/patterns.test.js",
+      "bytes": 8713,
+      "sha256": "107db52e08f8207ba9fddc19073de6ee0767bb5077b83b686e547709c60b51e8"
+    },
+    {
+      "path": "packages/illustrator/tests/select.test.js",
+      "bytes": 8998,
+      "sha256": "b24d277830364aa741b0e9ede62400cf9ece613680b3df8b23697afc617394c5"
+    },
+    {
+      "path": "packages/illustrator/tests/server.test.js",
+      "bytes": 32370,
+      "sha256": "5a1d4c7f2ddc470d13ddddf199bf183a80b55ceced2fc3cd93572c68058b7227"
+    },
+    {
+      "path": "packages/illustrator/tests/shapes.test.js",
+      "bytes": 8016,
+      "sha256": "6147b2192fae21aa44f46ba607c91f9ab389b00abd583405251f92e3a7d3a567"
+    },
+    {
+      "path": "packages/illustrator/tests/styles.test.js",
+      "bytes": 8353,
+      "sha256": "04d56c62dfe78e04562f8bda980d2c0eb905a7c57e1cfe565b57917d7712bab9"
+    },
+    {
+      "path": "packages/illustrator/tests/text-format.test.js",
+      "bytes": 17637,
+      "sha256": "75b1c56eab91b35c7315b047c42f53c821f1eb4ea8e3f4e2f1cce52b259d65f8"
+    },
+    {
+      "path": "packages/illustrator/tests/text.test.js",
+      "bytes": 12240,
+      "sha256": "171488a91fbeedd4151afb48bcfed5aa45944bbf0e4a5d1e654f6d3080529d19"
+    },
+    {
+      "path": "packages/illustrator/tests/trace-symbols.test.js",
+      "bytes": 9923,
+      "sha256": "f454fd57f4d717ddd5a3e5ed330a67a940999f745c0458448f78f98e6fb6aaf4"
+    },
+    {
+      "path": "packages/illustrator/tests/transform.test.js",
+      "bytes": 10442,
+      "sha256": "6694832f9fa1f919f36e372a91f14613207328791d1ee0c47785ec919c11c859"
+    },
+    {
+      "path": "packages/illustrator/tests/vectorcraft-adapter.test.js",
+      "bytes": 4442,
+      "sha256": "be90d0c95a2451cd8582ed1691e0a5643f77f53a6211c82f79eb99150d00185a"
+    },
+    {
+      "path": "packages/indesign/CONTRIBUTING.md",
+      "bytes": 7097,
+      "sha256": "833cb4688ebc858fc63e18c7c8778c68898185e9536cf84ddc18e47c4362ce87"
+    },
+    {
+      "path": "packages/indesign/README.md",
+      "bytes": 15155,
+      "sha256": "dd521774573c66cb9cf4baeae0103e2c61b58b6dcf0bb5b1f5953e173baddc04"
+    },
+    {
+      "path": "packages/indesign/docs/CHANGELOG.md",
+      "bytes": 21924,
+      "sha256": "3be0bac01f0427fa1c7e822980898ac16fe7082567ce198c5a5ed29d28468c6a"
+    },
+    {
+      "path": "packages/indesign/docs/LLM_PROMPT.md",
+      "bytes": 12292,
+      "sha256": "e5082079f67d4f93ea7489b0399797f6b7c34c0de187b8676bbc4d0b79913687"
+    },
+    {
+      "path": "packages/indesign/docs/MCP_INSTRUCTIONS.md",
+      "bytes": 9680,
+      "sha256": "c8985f134c75e27d672c27709b5d5a01e406948ff121032165f021efa1b67100"
+    },
+    {
+      "path": "packages/indesign/docs/TOOLS.md",
+      "bytes": 407954,
+      "sha256": "988bd5e6f1b9266c8892e837fb7372210ece664f7655cf10c28f1e87826cc53b"
+    },
+    {
+      "path": "packages/indesign/docs/architecture-execution.md",
+      "bytes": 10085,
+      "sha256": "c75cbc973473e94ff09616db2834d5055ea0c3f375416270bb1f48dd36f20f42"
+    },
+    {
+      "path": "packages/indesign/examples/basic-flyer.md",
+      "bytes": 4165,
+      "sha256": "7c17837cbd8ef6e450a0adab7b94345b562a88874fb602ab13642381f20c6b46"
+    },
+    {
+      "path": "packages/indesign/examples/mcp-config-uxp.json",
+      "bytes": 304,
+      "sha256": "bb028e9926fd3d627d1277673d0164b6a94ba842170ce8a3e7a62a4b1e66f9ea"
+    },
+    {
+      "path": "packages/indesign/examples/mcp-config.json",
+      "bytes": 211,
+      "sha256": "20b14d86ee0cb52359b36a164b5d6454eac8254176a41b470ef8cfef18363401"
+    },
+    {
+      "path": "packages/indesign/index.js",
+      "bytes": 587,
+      "sha256": "da347c3847aaaaebf8d0d2e69fbb53c9768a1c783fce0f277e3c4b6ec0b8d849"
+    },
+    {
+      "path": "packages/indesign/package.json",
+      "bytes": 3278,
+      "sha256": "26692a4f98f07ce320ec90990471115e50c9edeb482f5f7f84a6d5c03a280057"
+    },
+    {
+      "path": "packages/indesign/scripts/check-syntax.js",
+      "bytes": 879,
+      "sha256": "6d8744fb842a1c40d6d16bc2f61bce85b69484f8880512be25eeb3d87fa47314"
+    },
+    {
+      "path": "packages/indesign/scripts/generate-tool-reference.js",
+      "bytes": 4072,
+      "sha256": "643532061d975084252e2dbd2e33daeb64425ad9df6a8210b9eacb63814a7eed"
+    },
+    {
+      "path": "packages/indesign/server.json",
+      "bytes": 1248,
+      "sha256": "027c4a5ab27e588661a57cf56f42473e3ebaa84ce2d6b481fae9b3d46f77766c"
+    },
+    {
+      "path": "packages/indesign/src/README.md",
+      "bytes": 6905,
+      "sha256": "e441cbb42bf747b9a505871be99aa533b513ff59d8533b3372e2d3d4df7456af"
+    },
+    {
+      "path": "packages/indesign/src/artcraft/designcraft-adapter.js",
+      "bytes": 7710,
+      "sha256": "999fe6a7b920cae9684b95dc2c757472a1edec738f03d9c4996e5c2e7bed4a3c"
+    },
+    {
+      "path": "packages/indesign/src/core/InDesignMCPServer.js",
+      "bytes": 14967,
+      "sha256": "5871194dd550c37f3b26fc36c5cf2c1030dfd991ba668727962b9e830717a73c"
+    },
+    {
+      "path": "packages/indesign/src/core/scriptExecutor.js",
+      "bytes": 14267,
+      "sha256": "5a73f4156913f8994fa2daaef7d6f90b5cb3d67780d4e87b3361b51271c9f119"
+    },
+    {
+      "path": "packages/indesign/src/core/sessionManager.js",
+      "bytes": 17445,
+      "sha256": "cfe80eb7fcef763fce0b5422d2a959e2b8b515920a15d1b51c59d9507be1382f"
+    },
+    {
+      "path": "packages/indesign/src/handlers/aliases.js",
+      "bytes": 3883,
+      "sha256": "3919340d74595c12fef6fe36c0c13198f182730c2cd2b1571bb0ff9795fcbaa3"
+    },
+    {
+      "path": "packages/indesign/src/handlers/bookHandlers.js",
+      "bytes": 14809,
+      "sha256": "933d14c43da99f06467e30283331e9ff05f10033ab9bfd9ecabf46e25599b904"
+    },
+    {
+      "path": "packages/indesign/src/handlers/documentHandlers.js",
+      "bytes": 66757,
+      "sha256": "fcc1023cbb3fa8507700be16f8e8fbe5f87caf40f4be6780dd3965eb81c49645"
+    },
+    {
+      "path": "packages/indesign/src/handlers/exportHandlers.js",
+      "bytes": 13622,
+      "sha256": "1d72b47b3959c367694531770fb0b38303f26b77396abbd1533f0f4143d5e204"
+    },
+    {
+      "path": "packages/indesign/src/handlers/graphicsHandlers.js",
+      "bytes": 15842,
+      "sha256": "ff596df73bf984331a6314fb464ffa6d5bc866eda01f8c95dc47c64ce915069a"
+    },
+    {
+      "path": "packages/indesign/src/handlers/groupHandlers.js",
+      "bytes": 12103,
+      "sha256": "d40f9b6765d7386f01b1e2e95231b9f8a91c723b8873c39595e1009024149a43"
+    },
+    {
+      "path": "packages/indesign/src/handlers/helpHandlers.js",
+      "bytes": 9146,
+      "sha256": "c901eab5a2b02fb2497c7aac47cdcb6ac801ebeb6d1ca37b5d2d6ffb18d2b3f1"
+    },
+    {
+      "path": "packages/indesign/src/handlers/index.js",
+      "bytes": 2734,
+      "sha256": "92af7d5d9b03e38daad19eb01269135a4849104c0b8d28708c8b6450dea28f25"
+    },
+    {
+      "path": "packages/indesign/src/handlers/layerHandlers.js",
+      "bytes": 5547,
+      "sha256": "7f9a7d3ac8f1f0b9daf4ea13873b0a9876224b4935b98f6bc06463ea76576199"
+    },
+    {
+      "path": "packages/indesign/src/handlers/masterSpreadHandlers.js",
+      "bytes": 22573,
+      "sha256": "18b2a2074b18ac41c03f282d00821956969656f7bed66d84415ef29c894365c0"
+    },
+    {
+      "path": "packages/indesign/src/handlers/pageHandlers.js",
+      "bytes": 31125,
+      "sha256": "899037e26ccce4647e97cf6ca3399d60adcad3995c4dc8f61eaefddfeeef3b10"
+    },
+    {
+      "path": "packages/indesign/src/handlers/pageItemHandlers.js",
+      "bytes": 17090,
+      "sha256": "2df5ab1f88b6faf7af4d43846fb0b7a9c7533960b38dd7ebe0755c54dc2003ab"
+    },
+    {
+      "path": "packages/indesign/src/handlers/spreadHandlers.js",
+      "bytes": 21949,
+      "sha256": "0e25f40eb7112847468c0f487fad7be016831b1bc18e0f6802fd6b83024f245d"
+    },
+    {
+      "path": "packages/indesign/src/handlers/styleHandlers.js",
+      "bytes": 15106,
+      "sha256": "c5e75f0f9ad1468fabfc2422f535826e1286dfc55e0a7f120be5050154a2fd4d"
+    },
+    {
+      "path": "packages/indesign/src/handlers/textHandlers.js",
+      "bytes": 11491,
+      "sha256": "b99ffae9836b6497f43391aae4d506f61ba2b155d3a61a18478ad197b51a42e3"
+    },
+    {
+      "path": "packages/indesign/src/handlers/utilityHandlers.js",
+      "bytes": 4599,
+      "sha256": "0477647808bb4e264c331dc83c3709c3d10bd723e49326553f25678fe86d2ec3"
+    },
+    {
+      "path": "packages/indesign/src/index.js",
+      "bytes": 451,
+      "sha256": "e43e23b410dacb0d5c246f023d8aa7fa30cdafaa0506cb6fa83a6764147db1aa"
+    },
+    {
+      "path": "packages/indesign/src/module.js",
+      "bytes": 1479,
+      "sha256": "a3ded05e6c4713b2d9e4627a4fde76d8412d9a2c8e3cd2c7b2fa6b1aaf771ca2"
+    },
+    {
+      "path": "packages/indesign/src/tools/automation.js",
+      "bytes": 42508,
+      "sha256": "3a0a9f5f865e9ae625b47190d67f8bb4db98756c77d0626879d73d378761390b"
+    },
+    {
+      "path": "packages/indesign/src/tools/character.js",
+      "bytes": 100369,
+      "sha256": "c53f70d25c353839f0b1a7799b7a6f426bbdc559a7c0a7648ede4ad5c2d5bb8b"
+    },
+    {
+      "path": "packages/indesign/src/tools/checks.js",
+      "bytes": 4805,
+      "sha256": "c69a489c84c448e7326cf22db0a427232b2ba0019fed1c8e55c9086981d6f740"
+    },
+    {
+      "path": "packages/indesign/src/tools/color.js",
+      "bytes": 86705,
+      "sha256": "dc3e70c1d2229f2440e1645065aa63be26062d8e0e4ba8f8a5cf6084403f851b"
+    },
+    {
+      "path": "packages/indesign/src/tools/commands.js",
+      "bytes": 3527,
+      "sha256": "3d7d4cded78f5889ea6276c15a083266956c50ebbade3de5802285d002ba691d"
+    },
+    {
+      "path": "packages/indesign/src/tools/data-merge.js",
+      "bytes": 19190,
+      "sha256": "f7f3e932581e9a2b13f322a7ed925bfbdf1ffa073ce0c4c371e3617713b360ef"
+    },
+    {
+      "path": "packages/indesign/src/tools/documents.js",
+      "bytes": 27169,
+      "sha256": "bb8adb403cb8b9d62c2af224d6cc278b5065a007cb98a6aaf967afed4cf9306a"
+    },
+    {
+      "path": "packages/indesign/src/tools/effects.js",
+      "bytes": 45708,
+      "sha256": "6df0cb81cc65a0bca445eb1f0685f1d051d16b5c9e04c23a229e7f5a2d334ca6"
+    },
+    {
+      "path": "packages/indesign/src/tools/find-change.js",
+      "bytes": 31837,
+      "sha256": "98d8e8c86133a224056abdba37fb6234c30079a879d5631b0cd0fbe4b911a7a6"
+    },
+    {
+      "path": "packages/indesign/src/tools/formatOptions.js",
+      "bytes": 38467,
+      "sha256": "18c2c1e74cd9f355b2c9b8b32ed0082455df0cce077d1eac68c40ea5005a2441"
+    },
+    {
+      "path": "packages/indesign/src/tools/formats.js",
+      "bytes": 61984,
+      "sha256": "6bde02efb6708063686296ad336adfa163bfa94c310f99d7098ff9e4707b6197"
+    },
+    {
+      "path": "packages/indesign/src/tools/frames.js",
+      "bytes": 78087,
+      "sha256": "3218d1d2d4b88a57f6515c2943c4121e7e304cccfe73352a944a7980f4eac2f7"
+    },
+    {
+      "path": "packages/indesign/src/tools/history.js",
+      "bytes": 2321,
+      "sha256": "827e38dba6400901a2f60146d7cf232148ab468a9b6a71560886c8dcf5dab600"
+    },
+    {
+      "path": "packages/indesign/src/tools/images.js",
+      "bytes": 60240,
+      "sha256": "fbe4daf0c45300099c4353aacc5792bbe4c04c81f57f4b8bea578551e4832b4e"
+    },
+    {
+      "path": "packages/indesign/src/tools/incopy.js",
+      "bytes": 26977,
+      "sha256": "4ccc25fac521e5b77342fb6ed2cfad9ffd2b2887aa4e749b21ca629e99aeebe6"
+    },
+    {
+      "path": "packages/indesign/src/tools/index.js",
+      "bytes": 9055,
+      "sha256": "a532e396a8b9485fe241aef1cd3aed129ad30aab0bece8b35105e43717e1bb6e"
+    },
+    {
+      "path": "packages/indesign/src/tools/interactive.js",
+      "bytes": 111070,
+      "sha256": "f9691485986091a4034a64cdcb2f516287139c3d1f3b9318cc2f6adc0e626f06"
+    },
+    {
+      "path": "packages/indesign/src/tools/layers.js",
+      "bytes": 13072,
+      "sha256": "1d2a513a3a4b8f7952012e882cc634d19ec8521e0e17b6b138e27621e7778bdf"
+    },
+    {
+      "path": "packages/indesign/src/tools/layout.js",
+      "bytes": 76102,
+      "sha256": "1515aa6bfa001c7e2ead2cccb1538b2d34500c89e02d9075e37c171bda54c062"
+    },
+    {
+      "path": "packages/indesign/src/tools/long-documents.js",
+      "bytes": 120430,
+      "sha256": "f3e58cabed651c888667e592c2167a5dcb8a5c4ced8c57cc951b58e0cd74eeaa"
+    },
+    {
+      "path": "packages/indesign/src/tools/pages.js",
+      "bytes": 26872,
+      "sha256": "0a0d0cbdefcda550c45853a90ce44707ec5675f8863ed945e7c9ae86e581bbf7"
+    },
+    {
+      "path": "packages/indesign/src/tools/paragraph.js",
+      "bytes": 57788,
+      "sha256": "dd09fb2233adfce6fa10da3e4ea8a0314fcd9ee161c04640a2f2000d490774e9"
+    },
+    {
+      "path": "packages/indesign/src/tools/paths.js",
+      "bytes": 37192,
+      "sha256": "ae056099dda06b759ccd9f08e2bf7dc4a9662bf2f6da9b4a738ace0421100e9d"
+    },
+    {
+      "path": "packages/indesign/src/tools/preferences.js",
+      "bytes": 38241,
+      "sha256": "f6d4482ffab39c346cc8c9a69d2341fcbd5e5154602f6c6708b45f672fa2d78a"
+    },
+    {
+      "path": "packages/indesign/src/tools/prepress.js",
+      "bytes": 94343,
+      "sha256": "c90455c84f7641632ab4008ec592721edf6f54d25784d2bee3cc05fb7d2c49e4"
+    },
+    {
+      "path": "packages/indesign/src/tools/proofing.js",
+      "bytes": 19648,
+      "sha256": "554de5a7148c48143835e289ad609330febcc34996d531ae9d54c12cf0ebf380"
+    },
+    {
+      "path": "packages/indesign/src/tools/run.js",
+      "bytes": 2477,
+      "sha256": "cfdd4b23b42a2a8447a59a6b228eb8a20f3135c11a1a41690028347bdb8679af"
+    },
+    {
+      "path": "packages/indesign/src/tools/script.js",
+      "bytes": 5340,
+      "sha256": "d95fc046cf700960cc79ad2ed6aa1f4ea04a85f595469070e60bd2ebee370de1"
+    },
+    {
+      "path": "packages/indesign/src/tools/selection.js",
+      "bytes": 18459,
+      "sha256": "823e743df3054e6dec40531e380746f07bda081d9a9014673f97c718fd01d47b"
+    },
+    {
+      "path": "packages/indesign/src/tools/styles.js",
+      "bytes": 129944,
+      "sha256": "0bf379e2e093e948ea714e89e9cc5987707358724fedbb77f635e1d2f56f5bb8"
+    },
+    {
+      "path": "packages/indesign/src/tools/tables.js",
+      "bytes": 101586,
+      "sha256": "85b09270dcd0025dd943546ae8376feb2d9f7b3852fc9f2dea29c3eaa2189155"
+    },
+    {
+      "path": "packages/indesign/src/tools/text-frames.js",
+      "bytes": 88850,
+      "sha256": "484832901869a61355f6555dc49135b00212094511d6184a5748ab7f535e3aab"
+    },
+    {
+      "path": "packages/indesign/src/tools/transform.js",
+      "bytes": 33337,
+      "sha256": "e0be2c18f11d3deb1897d5249767f6ec8d4a406d2e15d14aceab6193a6a25e10"
+    },
+    {
+      "path": "packages/indesign/src/tools/xml.js",
+      "bytes": 84927,
+      "sha256": "68de884254dc10affef3c81bc53c4a9e46ad83d4c10e7272938897c398c88511"
+    },
+    {
+      "path": "packages/indesign/src/types/annotations.js",
+      "bytes": 3885,
+      "sha256": "381d0262007444774b87a1630b98a690ac9426c7f8563938033b8fab401d54ea"
+    },
+    {
+      "path": "packages/indesign/src/types/index.js",
+      "bytes": 2373,
+      "sha256": "ca1cb82af00e20bdf334b1b4e55d32cacb7fb8c5b4de12e35c39e7e499cb7f64"
+    },
+    {
+      "path": "packages/indesign/src/types/toolDefinitionsBook.js",
+      "bytes": 9883,
+      "sha256": "c24d7b9b76529be5b61232ed715b742adf549fd376afcbbf13263081e9f4eff9"
+    },
+    {
+      "path": "packages/indesign/src/types/toolDefinitionsContent.js",
+      "bytes": 19910,
+      "sha256": "ae861759d0b266fc6eea65d2cead0f47907daea9f096030fa312143bd9b9b248"
+    },
+    {
+      "path": "packages/indesign/src/types/toolDefinitionsDocument.js",
+      "bytes": 30189,
+      "sha256": "32ae261013219e0fec3227db9866eb2669db03e116df7a6e7f99ea90890e101d"
+    },
+    {
+      "path": "packages/indesign/src/types/toolDefinitionsExport.js",
+      "bytes": 4411,
+      "sha256": "9afe9c7608586e4d1bfcdd22d0ae0ed832ab17f67b977c386ad4c083e96d1d6f"
+    },
+    {
+      "path": "packages/indesign/src/types/toolDefinitionsLayer.js",
+      "bytes": 1524,
+      "sha256": "18b5835d8f91df4c7f03c32287f0ae9a19b2b7acb3546249f1eb2c805171fb1d"
+    },
+    {
+      "path": "packages/indesign/src/types/toolDefinitionsMasterSpread.js",
+      "bytes": 9992,
+      "sha256": "d98d652d57c8b12d18e830d0c0d551f0038c4d7e05954e3693d586779068ccc1"
+    },
+    {
+      "path": "packages/indesign/src/types/toolDefinitionsPage.js",
+      "bytes": 15658,
+      "sha256": "ae5aff339ac97d69af0233568f6de525826053187a13ab1c94995fe977003d65"
+    },
+    {
+      "path": "packages/indesign/src/types/toolDefinitionsPageItemGroup.js",
+      "bytes": 15294,
+      "sha256": "6a5982548e4c8f094aa69f8c2c753d0d83f378c1803185dbb2b7a6eb72cbc4d3"
+    },
+    {
+      "path": "packages/indesign/src/types/toolDefinitionsSpread.js",
+      "bytes": 9954,
+      "sha256": "0d86da0a239b7deb588af0b8f0310d06c7f15be521cf39a0ec15633a2445e1e9"
+    },
+    {
+      "path": "packages/indesign/src/types/toolDefinitionsUtility.js",
+      "bytes": 1865,
+      "sha256": "e618057854af548caee1fc4df814b3cc23eb788b2f8facdcc63c610856447eb4"
+    },
+    {
+      "path": "packages/indesign/src/utils/jsxSafe.js",
+      "bytes": 2486,
+      "sha256": "522d1e4e4dd1ea5b1d4bacaa0bbfcb5f7c5cc397a56510818d31e6691094a682"
+    },
+    {
+      "path": "packages/indesign/src/utils/stringUtils.js",
+      "bytes": 4956,
+      "sha256": "30cea88b309b5c0e33473f65d323964ba1f1f801299408453719d47cd7f7a3c9"
+    },
+    {
+      "path": "packages/indesign/tests/README.md",
+      "bytes": 3779,
+      "sha256": "b7ad9282790690a6f5bd6a3e787aea20d4951dbd7da078cf44c806f2aea53c65"
+    },
+    {
+      "path": "packages/indesign/tests/audit/collectScripts.js",
+      "bytes": 3482,
+      "sha256": "486253a382a4b48912666eb1f7b73fe2b3fa9688ae8e1ffcfbcee63d4716ce47"
+    },
+    {
+      "path": "packages/indesign/tests/audit/scripts.audit.js",
+      "bytes": 9598,
+      "sha256": "202f68c7d9260357f424eea70cc75b08d76f4e7bff4b9335641d14e9efa74024"
+    },
+    {
+      "path": "packages/indesign/tests/fixtures/feature-ids.json",
+      "bytes": 133280,
+      "sha256": "310d286b470e4f4c182b59aa1298ccdd7fe654049dce77d541b058c3ee0c05da"
+    },
+    {
+      "path": "packages/indesign/tests/index.js",
+      "bytes": 19599,
+      "sha256": "9df55becb1e8efd7804fe00052179f12359462ee13cce069a7c76acfea69c2a3"
+    },
+    {
+      "path": "packages/indesign/tests/modules/char.test.js",
+      "bytes": 18088,
+      "sha256": "2e2220d75dd85e73bad630eb0549e25bea29237c0f3d5320f4732967840c192f"
+    },
+    {
+      "path": "packages/indesign/tests/modules/color.test.js",
+      "bytes": 23662,
+      "sha256": "ce8711afbd7bf6533a66a626c4cfaef8c832ddf4b1a72c3f65856ea210ba5d06"
+    },
+    {
+      "path": "packages/indesign/tests/modules/documents.test.js",
+      "bytes": 22905,
+      "sha256": "a5f67262e730777ba04aada0cd85957fa3554a54d436afc440d0815b6d0fe823"
+    },
+    {
+      "path": "packages/indesign/tests/modules/effects.test.js",
+      "bytes": 11553,
+      "sha256": "c89faba1694392bffab58d5a80683506876d17fb68d7f05c3008a8b10fa20e0d"
+    },
+    {
+      "path": "packages/indesign/tests/modules/findchange.test.js",
+      "bytes": 32572,
+      "sha256": "c9a4b5d6a83063b371f291ace2e731c22477e4bcc6c9bf394b27b72b3f7ca7ed"
+    },
+    {
+      "path": "packages/indesign/tests/modules/formats.test.js",
+      "bytes": 24832,
+      "sha256": "4bfa0cf5643dc9d61c7579e00e24cd8bfa7ab17a35a75a519f7486942715c078"
+    },
+    {
+      "path": "packages/indesign/tests/modules/frames.test.js",
+      "bytes": 21604,
+      "sha256": "a6d44aa98ef8615d5e231fcd0b876b691dc43c08af6010479b7df32a233e72cc"
+    },
+    {
+      "path": "packages/indesign/tests/modules/geometry.test.js",
+      "bytes": 19204,
+      "sha256": "250fd08b16eb2e3692f94847b161fd0405f84a00ede34ca210b927570022737d"
+    },
+    {
+      "path": "packages/indesign/tests/modules/helpers.js",
+      "bytes": 1491,
+      "sha256": "f30b3164f5bdd59cbee6b03245c9ee3dca5682624c4c402fcf929bcdf687d3f8"
+    },
+    {
+      "path": "packages/indesign/tests/modules/images.test.js",
+      "bytes": 15770,
+      "sha256": "3903d31fbfdfb9eb9bc89f95d1d25fe34c7a37f9e33135f243603ad6915b1cb7"
+    },
+    {
+      "path": "packages/indesign/tests/modules/interactive.test.js",
+      "bytes": 34421,
+      "sha256": "3d45b0cb74e9ec2efa06549106ba45166ca1a6b10badc68231362ad51032f85c"
+    },
+    {
+      "path": "packages/indesign/tests/modules/layout.test.js",
+      "bytes": 20040,
+      "sha256": "17b007d7a9c287337d8d7a9e5f4d9e800649ec055d8e9b71d1e3b5bfaaa06df1"
+    },
+    {
+      "path": "packages/indesign/tests/modules/longdocs.test.js",
+      "bytes": 39546,
+      "sha256": "bed0412cb71be0f42aa63806dbabefed9e11de067093f242a88fe294c7c117cb"
+    },
+    {
+      "path": "packages/indesign/tests/modules/para.test.js",
+      "bytes": 13746,
+      "sha256": "d7d08b132386d11f39ad7687f5191799c63fbd040cff36e3b2d629dc06c9925e"
+    },
+    {
+      "path": "packages/indesign/tests/modules/prefs.test.js",
+      "bytes": 12449,
+      "sha256": "c546bb52a5f3128a2f7a90e36fd62953eb1751a76ce85997e5e6f45b1083c4f7"
+    },
+    {
+      "path": "packages/indesign/tests/modules/prepress.test.js",
+      "bytes": 22905,
+      "sha256": "223275ad4a1c0f55d2799e63e2f8a7d25ece725703039a3b129e734a67f69ec3"
+    },
+    {
+      "path": "packages/indesign/tests/modules/registry.test.js",
+      "bytes": 1845,
+      "sha256": "5a4b21622a1ec46d6239ef70f3dbf49126cf5f6e83f1a9b1478efd2999204162"
+    },
+    {
+      "path": "packages/indesign/tests/modules/run.js",
+      "bytes": 698,
+      "sha256": "d52812346e4051659588ae15e761ea96da35db12c3d0ed20d2f89b33ef0796d9"
+    },
+    {
+      "path": "packages/indesign/tests/modules/styles.test.js",
+      "bytes": 26211,
+      "sha256": "2a2daf0b07c98f3759e22178e7adcc0cdf11ef09388541240b5fe99a5313b0bc"
+    },
+    {
+      "path": "packages/indesign/tests/modules/tables.test.js",
+      "bytes": 25547,
+      "sha256": "adffc10e50d52fc5e68bd43adc757c7065b4a9253f3f718c175e20487e0a9c1b"
+    },
+    {
+      "path": "packages/indesign/tests/modules/textframes.test.js",
+      "bytes": 18595,
+      "sha256": "cea85e137c0647a3ec237ee0fe5cf5ac33fcbc6ee247222490777a816a95faa5"
+    },
+    {
+      "path": "packages/indesign/tests/modules/xml.test.js",
+      "bytes": 21946,
+      "sha256": "19239f958d09317cceaf10a46530296109be61ab03ba6c1adb89586e3ab3f40f"
+    },
+    {
+      "path": "packages/indesign/tests/test-absolute-path.js",
+      "bytes": 7091,
+      "sha256": "0303d0a089285db780daccdd305c4ca6d4548110a6cff7db7bf61d0be1105232"
+    },
+    {
+      "path": "packages/indesign/tests/test-advanced-features.js",
+      "bytes": 12862,
+      "sha256": "4bf237eccafa853290728b128de2daff6239251a4ead593055e1f8dee9b16000"
+    },
+    {
+      "path": "packages/indesign/tests/test-basic-workflow.js",
+      "bytes": 8828,
+      "sha256": "6c608a024b4a867fd91983c2883c52c3a6bdaee57861d3b934e54a1cd86f2748"
+    },
+    {
+      "path": "packages/indesign/tests/test-bounds-checking.js",
+      "bytes": 11191,
+      "sha256": "4c3b5b4b41670768fde4b5b9225e07591b9333d086c3ed22198e445ddf8114fb"
+    },
+    {
+      "path": "packages/indesign/tests/test-content-management.js",
+      "bytes": 11804,
+      "sha256": "1f6901a12f5d92d5b3cb3c71ccc09878f818b9fec5e2772f6106e749b7fef8be"
+    },
+    {
+      "path": "packages/indesign/tests/test-document-and-page.js",
+      "bytes": 4500,
+      "sha256": "d965a910765853f2642465096f60adff1f245a6316dbb198b76010347181807f"
+    },
+    {
+      "path": "packages/indesign/tests/test-document-preferences.js",
+      "bytes": 11346,
+      "sha256": "8ad92a9649bce3f3eba205ca98dd0177602df3e4615548e73ae017827bd7360a"
+    },
+    {
+      "path": "packages/indesign/tests/test-enhanced-functionality.js",
+      "bytes": 6225,
+      "sha256": "3e3e8e3273519c5f32d777b1bc5a533b96c14b5cd1704ab07c620dccb6135517"
+    },
+    {
+      "path": "packages/indesign/tests/test-error-handling.js",
+      "bytes": 8531,
+      "sha256": "a8bc7a17466ac7d0a4bd67287d834bc79fe75ca950d966e2920b736b1e0c650a"
+    },
+    {
+      "path": "packages/indesign/tests/test-grid-layout.js",
+      "bytes": 9640,
+      "sha256": "c881c0b6d5f341f035dd176babd1442e5f306ad567bd6e6203500da48a09a414"
+    },
+    {
+      "path": "packages/indesign/tests/test-image-assets.js",
+      "bytes": 15857,
+      "sha256": "c085ea613a1cfd12dd4cc1b0c5dad1891748a7b2b1dea7884a23daa81839af1b"
+    },
+    {
+      "path": "packages/indesign/tests/test-image-fix.js",
+      "bytes": 7552,
+      "sha256": "827231eb6746581e7adea232f0e4f37afd5e7fddd72d0e248b0a26f4fd5e5135"
+    },
+    {
+      "path": "packages/indesign/tests/test-indesign-basic.js",
+      "bytes": 8526,
+      "sha256": "6e72770caad7e1f07c6b72799e3c2d8b750b46c430cb5c925ba55fd9f23bcd7c"
+    },
+    {
+      "path": "packages/indesign/tests/test-mcp-protocol.js",
+      "bytes": 3351,
+      "sha256": "e1002c17b0a78813d7c7bef32071f7a42283cafd521e378494b62771a2c7621f"
+    },
+    {
+      "path": "packages/indesign/tests/test-pageitem-group.js",
+      "bytes": 9582,
+      "sha256": "7daad7a1c9fe1445c661b412195f8af2310b55cd8356ab1a3f18a5f54541b107"
+    },
+    {
+      "path": "packages/indesign/tests/test-real-image.js",
+      "bytes": 10166,
+      "sha256": "2e266047e30b70b47e9743755716ad2993b383370fb2d25baa50a1870005341f"
+    },
+    {
+      "path": "packages/indesign/tests/test-simple-document.js",
+      "bytes": 6844,
+      "sha256": "00451f3306aa02384390d73ea2045e2081358d18c410ec0efbb18a2cce55e230"
+    },
+    {
+      "path": "packages/indesign/tests/test-standard-document.js",
+      "bytes": 13607,
+      "sha256": "42e8e1c157194517251c053d964f2de1c13e4e5c5c2b7d717c8aa573193fdf88"
+    },
+    {
+      "path": "packages/indesign/tests/test-swatches-and-backgrounds.js",
+      "bytes": 11067,
+      "sha256": "ec25e9a38b362c2f061f6800d8c839b47441be38b2d930cd4d910589e67af528"
+    },
+    {
+      "path": "packages/indesign/tests/unified-test-runner.js",
+      "bytes": 12842,
+      "sha256": "310fefbeab36c8b6c1a30a1c4a7c5547a494e7f89167cd01da0919390983e36f"
+    },
+    {
+      "path": "packages/indesign/tests/unit/aliases.test.js",
+      "bytes": 7540,
+      "sha256": "3c2b5a51b24004b7cf5c992ce1c0302c7d2555949b91d78abb2a5905e73a4f3e"
+    },
+    {
+      "path": "packages/indesign/tests/unit/definitions.test.js",
+      "bytes": 4152,
+      "sha256": "aeef8a4b0ac8f1f53dddea33a3071c114c2fdc849346185e83d209ede53b41ef"
+    },
+    {
+      "path": "packages/indesign/tests/unit/designcraft-adapter.test.js",
+      "bytes": 2380,
+      "sha256": "6e9be63249973a5697afd1d2032098a1e2302a734e74a63df604110e844a0b47"
+    },
+    {
+      "path": "packages/indesign/tests/unit/failure.test.js",
+      "bytes": 1975,
+      "sha256": "a803b707374920e09ad8d9805701bec5f0ffd0ebf32f2aa5325f3b6fbf0657fe"
+    },
+    {
+      "path": "packages/indesign/tests/unit/jsxSafe.test.js",
+      "bytes": 6433,
+      "sha256": "a8326689bba7bf44ab9c582c9f1778c1204da1bb75adeaf050a90f32145376db"
+    },
+    {
+      "path": "packages/indesign/tests/unit/paths.test.js",
+      "bytes": 2281,
+      "sha256": "dc5d3bb630a5512d237bbcb13afe5a563c4300cbceb2ddf48ee2019dba4803da"
+    },
+    {
+      "path": "packages/indesign/tests/unit/protocol.test.js",
+      "bytes": 4658,
+      "sha256": "39a8535673a3881d9f92f3bacaa62c3d3321a5e7a9f9b5cbd0e82828ac3bcef7"
+    },
+    {
+      "path": "packages/indesign/tests/unit/uxp.test.js",
+      "bytes": 28671,
+      "sha256": "1cfce22832f9ae1123ee4eb393d834955628fade0848abb9d74ce95aa47845ce"
+    },
+    {
+      "path": "packages/indesign/tests/unit/warnings.test.js",
+      "bytes": 7652,
+      "sha256": "d8fdd178ce0f9c08a1cac1a2e4f8f2480766ab5ec4290cbf7d1ce2b20a7f3e5e"
+    },
+    {
+      "path": "packages/indesign/uxp/README.md",
+      "bytes": 7923,
+      "sha256": "7e9437883359bce62949a88985bd29e8bfbcc50f6a41a29990571399f9b19a5e"
+    },
+    {
+      "path": "packages/indesign/uxp/bridge/server.js",
+      "bytes": 8691,
+      "sha256": "a76b32cae83d06b386c8dfd1af553616e8d6ee6d1f10d17c14c44e035e461646"
+    },
+    {
+      "path": "packages/indesign/uxp/plugin/index.html",
+      "bytes": 488,
+      "sha256": "e083a1ec56076399c8a4b89974791fedfc096e3d58d88671b5381bbc9f150740"
+    },
+    {
+      "path": "packages/indesign/uxp/plugin/index.js",
+      "bytes": 4986,
+      "sha256": "c253b4b2feb125bec04a131830e065f6861432baffdbf415b23f86368a56897f"
+    },
+    {
+      "path": "packages/indesign/uxp/plugin/manifest.json",
+      "bytes": 498,
+      "sha256": "7e36a33e466538a89aa7efb2afe8f43e0a5696d6eb227a9ae85f3d64768c18ec"
+    },
+    {
+      "path": "packages/indesign/uxp/plugin/runtime.js",
+      "bytes": 21213,
+      "sha256": "3d1dad228c50f5982e049a9513c045fd36e92d8c7f549e6ca15dfc6715ea3c04"
+    },
+    {
+      "path": "packages/photoshop/README.md",
+      "bytes": 13593,
+      "sha256": "185276c63f1e7c11317a3067c6209130f8c81fff229294002964e2b40e2dbdab"
+    },
+    {
+      "path": "packages/photoshop/package.json",
+      "bytes": 1574,
+      "sha256": "c8c136bcc6bc52d2e468f271a5c2ee9dd44f6d364da947b309f26d226819d8d9"
+    },
+    {
+      "path": "packages/photoshop/scripts/check-syntax.js",
+      "bytes": 767,
+      "sha256": "bd3535c28b832e24c29138e4633054d1018a6336e4ddbaca45202e324cc4459e"
+    },
+    {
+      "path": "packages/photoshop/scripts/update-feature-ids.js",
+      "bytes": 1320,
+      "sha256": "1a6d24721a96ebeaba7de25948a8a8888af9ec28dc96818c100befb3c07b4918"
+    },
+    {
+      "path": "packages/photoshop/server.json",
+      "bytes": 1330,
+      "sha256": "34ea8193afed08043d6b8b3ca84f90547e43c95231746523ef61e6db8abccdfe"
+    },
+    {
+      "path": "packages/photoshop/src/action-manager.js",
+      "bytes": 9087,
+      "sha256": "04ef062b4868ce15f3aa192049bd322625cfdffab77bec847870d12f2fc8ed6b"
+    },
+    {
+      "path": "packages/photoshop/src/actions.js",
+      "bytes": 1807,
+      "sha256": "f999bc5148b52525e6dcaa9fba5c7c5c28751bc137eedaa2aee354b76a29e7fb"
+    },
+    {
+      "path": "packages/photoshop/src/adjustment-types.js",
+      "bytes": 24676,
+      "sha256": "9dd78168735e512a418de24071a54966a2696dd1c9745c75724c47fc693248f8"
+    },
+    {
+      "path": "packages/photoshop/src/am.js",
+      "bytes": 12516,
+      "sha256": "e3304069ef3e6caf8d33d6d278cc5b11a3061b2404c8776936fc393ce86bf8c4"
+    },
+    {
+      "path": "packages/photoshop/src/args.js",
+      "bytes": 3770,
+      "sha256": "9c2e12170e7187c6aecf47e2fb93bde346411711c8be239b00c3cfe6f8c28e02"
+    },
+    {
+      "path": "packages/photoshop/src/artcraft/photocraft-adapter.js",
+      "bytes": 9163,
+      "sha256": "b27a4504fff5f08e0f9bf6730a3ab9ae7bf8b02ab6583f36ea8f480e30bd8183"
+    },
+    {
+      "path": "packages/photoshop/src/executor.js",
+      "bytes": 2286,
+      "sha256": "26e4a9b542c23139803f57d7ab74450dac2782a1536ef33dea718b014abeb35b"
+    },
+    {
+      "path": "packages/photoshop/src/index.js",
+      "bytes": 290,
+      "sha256": "2b17b45bf22d937e4f563ad97abe7357b39402e1b8d6c05a3ecf6e19b05f4b4a"
+    },
+    {
+      "path": "packages/photoshop/src/module.js",
+      "bytes": 1273,
+      "sha256": "4e5f419f28b05a4a282fc73b24260d55051b4547d0a025772bff8dddc6a83d7a"
+    },
+    {
+      "path": "packages/photoshop/src/options.js",
+      "bytes": 3721,
+      "sha256": "decd3bd13d6b1e0f1eda8db3df31d6dec31368da6328e1e190f6cbc63ace28ae"
+    },
+    {
+      "path": "packages/photoshop/src/script.js",
+      "bytes": 6532,
+      "sha256": "549cee80cd665cb219b893b50f6b5d1cfe03e07fca1fefeac99b59fcd33dd742"
+    },
+    {
+      "path": "packages/photoshop/src/server.js",
+      "bytes": 6871,
+      "sha256": "f47ee8a8a44dde99ba711b760ded2d167a9f50670edc34bfb62dcedeb87e911b"
+    },
+    {
+      "path": "packages/photoshop/src/tool-options.js",
+      "bytes": 6689,
+      "sha256": "9b8e2574e2563dc415edeb5eb6aded5ce3ccd9170df4aa5007572985f162d250"
+    },
+    {
+      "path": "packages/photoshop/src/tools/adjust.js",
+      "bytes": 25625,
+      "sha256": "f4e79040d112b6dbd7263d2925610dfe089b67b5d0d633c1a475daee54f656a5"
+    },
+    {
+      "path": "packages/photoshop/src/tools/adjustment-layers.js",
+      "bytes": 13020,
+      "sha256": "b9e7407f643c493bb93b1c80ecf40ccddfd722adedef2bcf03e65d2a49b2c957"
+    },
+    {
+      "path": "packages/photoshop/src/tools/analysis.js",
+      "bytes": 9684,
+      "sha256": "06212f302729a0e3611334ecf2b45f6066cf155eb904e58ab2e2c2e20f9151e7"
+    },
+    {
+      "path": "packages/photoshop/src/tools/application.js",
+      "bytes": 30256,
+      "sha256": "2dc43f6711bccef2b823398f0ee204b00da530295759c53aec2a7d46bd00384d"
+    },
+    {
+      "path": "packages/photoshop/src/tools/artboards.js",
+      "bytes": 26365,
+      "sha256": "b97110bf3ffa23fa397246504a215697a0349d80211ba1763eb1029299afe395"
+    },
+    {
+      "path": "packages/photoshop/src/tools/automation.js",
+      "bytes": 47404,
+      "sha256": "66942fe69396a05ea703236dc8d60dd4cd31e75b3bf17c1abeb3156f289e4701"
+    },
+    {
+      "path": "packages/photoshop/src/tools/cameraraw.js",
+      "bytes": 43585,
+      "sha256": "2b96a149002b797297dd7f021b0704cd77fcf4b2c4c88edaf02d2e23cdf46dbc"
+    },
+    {
+      "path": "packages/photoshop/src/tools/channels.js",
+      "bytes": 19810,
+      "sha256": "fd7ef44d26ce18b90f09a42aa9017ee7e35fd93a89f6c19e8d3c8d67e4812126"
+    },
+    {
+      "path": "packages/photoshop/src/tools/color.js",
+      "bytes": 14332,
+      "sha256": "0f124f151d8f28875d2159d37b04b84b2f6ab79716c23965185ef89e589921da"
+    },
+    {
+      "path": "packages/photoshop/src/tools/documents.js",
+      "bytes": 37871,
+      "sha256": "9ab1de60fa3717f73739c9b936ed8992b3c141993626c519fe0c74389c234570"
+    },
+    {
+      "path": "packages/photoshop/src/tools/export.js",
+      "bytes": 29933,
+      "sha256": "2d32f3b8714cbf6b166708975ca27d95f9cb6f05d6e50725ee3710eebf5d680b"
+    },
+    {
+      "path": "packages/photoshop/src/tools/files.js",
+      "bytes": 20552,
+      "sha256": "0774acf23094283805bf62392e1916a370781e17bf74da4cf46cb7ee6dee41b3"
+    },
+    {
+      "path": "packages/photoshop/src/tools/filters.js",
+      "bytes": 43263,
+      "sha256": "7395f3f684fa3f3e60a2a9a97513c8c2ba8d80bc14967faf5f9a4870deb76400"
+    },
+    {
+      "path": "packages/photoshop/src/tools/generative.js",
+      "bytes": 8092,
+      "sha256": "7cabff9217d2582d9c06eae4fb8d0d151483ed41f17eda0dbdeb654ce5c22195"
+    },
+    {
+      "path": "packages/photoshop/src/tools/history.js",
+      "bytes": 11586,
+      "sha256": "04d98cfbe80133f14449bffd1b5878ee830e4f806cb893433cdc6d863aafb40b"
+    },
+    {
+      "path": "packages/photoshop/src/tools/image.js",
+      "bytes": 28728,
+      "sha256": "dfb2deb86ea79d36c4eec7bf431f3971e4423baf7b931c5ce158fe0dd25fd23f"
+    },
+    {
+      "path": "packages/photoshop/src/tools/interface.js",
+      "bytes": 21072,
+      "sha256": "d9195fd1ae55f488a0d4d2fabe7ba6cfb79c0332ecdff0eb4c172b5049988fe3"
+    },
+    {
+      "path": "packages/photoshop/src/tools/layer-styles.js",
+      "bytes": 38196,
+      "sha256": "ea69c1d9d49fe9c83051fd31f549bd5f2290063f39a168090eccc2d7e5f4aaf3"
+    },
+    {
+      "path": "packages/photoshop/src/tools/layers.js",
+      "bytes": 39473,
+      "sha256": "d0fc36c348702101dd3609d416268401f2af50c92b85f9187ce7b1a9f4f905f8"
+    },
+    {
+      "path": "packages/photoshop/src/tools/masks.js",
+      "bytes": 21264,
+      "sha256": "8c36bdebe4cb94bfe6396b75c9459c66fb91659f8504b6d9961727998ccc4576"
+    },
+    {
+      "path": "packages/photoshop/src/tools/paint.js",
+      "bytes": 78011,
+      "sha256": "88ba56bab65a7b4806ffac50b70e711d3c67b3c17f8f67c372da463863968f02"
+    },
+    {
+      "path": "packages/photoshop/src/tools/print.js",
+      "bytes": 12047,
+      "sha256": "dfcd2dab8c4bcd7ab667a3220a84c57bed0312d5ec492de5d84598089433dd50"
+    },
+    {
+      "path": "packages/photoshop/src/tools/selection.js",
+      "bytes": 30017,
+      "sha256": "fcd89ee5d45f2efbb8f269b4b4d54adeec5da086ef8dd24e22b9101890e0521c"
+    },
+    {
+      "path": "packages/photoshop/src/tools/smart-objects.js",
+      "bytes": 14603,
+      "sha256": "0fc693737820e80478f3554b8b01f3b57ae3858cd0465d1fc9842ece6ce1cdf5"
+    },
+    {
+      "path": "packages/photoshop/src/tools/text.js",
+      "bytes": 35385,
+      "sha256": "7a432cfd8aeb333139fc68d422362718d9169def92954b706945dc7f5dd5858a"
+    },
+    {
+      "path": "packages/photoshop/src/tools/transform.js",
+      "bytes": 22733,
+      "sha256": "4dd6e5e446e9e14a753bf819a4cd03ed1b6ee58935c1d1dc38b52f1df7af2c33"
+    },
+    {
+      "path": "packages/photoshop/src/tools/utility.js",
+      "bytes": 4447,
+      "sha256": "19d82aa4330e8413e80cbeef2b72934abe1a64056332c47afa5599a5d5987386"
+    },
+    {
+      "path": "packages/photoshop/src/tools/vector.js",
+      "bytes": 36961,
+      "sha256": "610909e54eba3b6087dd0bb07190555badd7244aa1c0e4f043674408bed79b60"
+    },
+    {
+      "path": "packages/photoshop/src/tools/video.js",
+      "bytes": 32398,
+      "sha256": "e8553b48af14657e76db87a6d74bf3cc1d5ecf51f468e43b490b473b422bc8f0"
+    },
+    {
+      "path": "packages/photoshop/tests/audit.js",
+      "bytes": 2944,
+      "sha256": "f71d740910eac7957e4981051252cfabfb24ca50208834daa1180d0ebabc3d9a"
+    },
+    {
+      "path": "packages/photoshop/tests/fixtures/feature-ids.json",
+      "bytes": 116546,
+      "sha256": "c7c2657a97a1b998c0e949cf6f6ea0194675f7adf5a135c1c991ccb86197ebaf"
+    },
+    {
+      "path": "packages/photoshop/tests/helpers.js",
+      "bytes": 1318,
+      "sha256": "23f1195604e3119f4d6afbc6248e6a74f76b53ade0c9215b3d61baceea60a722"
+    },
+    {
+      "path": "packages/photoshop/tests/no-app.test.js",
+      "bytes": 387,
+      "sha256": "1793ef10f960ff2434438afae44ec8e6c59c10877ae6dbf0383f300bccfe9e65"
+    },
+    {
+      "path": "packages/photoshop/tests/photocraft-adapter.test.js",
+      "bytes": 3875,
+      "sha256": "c1558a29684b38da9e5398171aa41aabf74b95766ebec9a4a4e14c51cf5275e9"
+    },
+    {
+      "path": "packages/photoshop/tests/ps-adjust.test.js",
+      "bytes": 13111,
+      "sha256": "25aa7cfdb0b6f43261594dcc85da26be2ec24be4c4971cac825ef77b17c967bb"
+    },
+    {
+      "path": "packages/photoshop/tests/ps-app.test.js",
+      "bytes": 14889,
+      "sha256": "71b0505091355bd84a1c7097f08553d3daec87860068f2b4c38c87d2c1aeee77"
+    },
+    {
+      "path": "packages/photoshop/tests/ps-auto.test.js",
+      "bytes": 24625,
+      "sha256": "60d71dda46a6d294bcb7a2a3ecf9118ec4039c30b62a96ca3fdf3ea5068dcc17"
+    },
+    {
+      "path": "packages/photoshop/tests/ps-docs.test.js",
+      "bytes": 19480,
+      "sha256": "49ceca887951dc737ea2acdf03e295189a6b59780653f331925cb33b3bd40d02"
+    },
+    {
+      "path": "packages/photoshop/tests/ps-filters.test.js",
+      "bytes": 11595,
+      "sha256": "a65f0b8bf2c684aa5f10d885a747945c83241aa975556decaa93b831638a1f56"
+    },
+    {
+      "path": "packages/photoshop/tests/ps-image.test.js",
+      "bytes": 14804,
+      "sha256": "2f4a67384dfc7e91bf0a66b3f61daeaea21883e18fcce24f0f81bc488e87022e"
+    },
+    {
+      "path": "packages/photoshop/tests/ps-layers.test.js",
+      "bytes": 23991,
+      "sha256": "4d84f174102afb592428db02d9f6b1d93cdcbebfcae358754025e24863b60913"
+    },
+    {
+      "path": "packages/photoshop/tests/ps-paint.test.js",
+      "bytes": 16791,
+      "sha256": "85ea68846effb05e7ee001055a3d64986ead682ae66646e961d84c4e2ec58a94"
+    },
+    {
+      "path": "packages/photoshop/tests/ps-type.test.js",
+      "bytes": 17210,
+      "sha256": "aaf91c01c385ab337295e4906a958f2e2c1b75dc4d0eff0fb27a470bc8899fa3"
+    },
+    {
+      "path": "packages/photoshop/tests/ps-video.test.js",
+      "bytes": 12036,
+      "sha256": "8ef2ce792b225512dca1b13339da87bdc43f3dc4e7e26610b40231be6999c0af"
+    },
+    {
+      "path": "packages/photoshop/tests/ps2-filters.test.js",
+      "bytes": 18746,
+      "sha256": "d92238782d119d7a2ef62e64adeaf17693f5902730f827a2dc5418400a1a841a"
+    },
+    {
+      "path": "packages/photoshop/tests/ps2-paint.test.js",
+      "bytes": 14623,
+      "sha256": "8095dc5a2f9683b9bfaa2823110566d8690b04dbe3eb7144ebcacec4f4a3e20d"
+    },
+    {
+      "path": "packages/photoshop/tests/server.test.js",
+      "bytes": 10237,
+      "sha256": "34d00ade758d7ed99d9771d65a279034368d5e49cc63b18b85538f26f418f9e6"
+    },
+    {
+      "path": "packages/premiere/README.md",
+      "bytes": 18752,
+      "sha256": "ed2177a94395cc60db1b1a452cb58dcb82ce39c08f585007f1cf4040c099fe4d"
+    },
+    {
+      "path": "packages/premiere/package.json",
+      "bytes": 1670,
+      "sha256": "03a86b7c0aa5027ce15caa088baefb0ebdafbc66a6dd1f8ea70e6f545b76ac60"
+    },
+    {
+      "path": "packages/premiere/scripts/check-syntax.js",
+      "bytes": 832,
+      "sha256": "cfbe8550bf085ab47b932aae0263a921c4601dca6b1723bac48ca40ea0164226"
+    },
+    {
+      "path": "packages/premiere/scripts/generate-fixtures.js",
+      "bytes": 7821,
+      "sha256": "7038d0bb0cd1fa59e305bed77b91f4b8c8310d87afde41ee9719b212b76ffa18"
+    },
+    {
+      "path": "packages/premiere/server.json",
+      "bytes": 1799,
+      "sha256": "7f9c94d16bc6d7e1daddf6460cfb100c89de9a1e48b2bac9b1f6202a8ca44029"
+    },
+    {
+      "path": "packages/premiere/src/args.js",
+      "bytes": 6222,
+      "sha256": "e105cc522bcc9e075c0d7102bd7e142f4b1e60bd885cf283d2ce1132baa48236"
+    },
+    {
+      "path": "packages/premiere/src/artcraft/filmcraft-adapter.js",
+      "bytes": 3950,
+      "sha256": "f90e9583d791814e937d35229ae0c0c0f34cb3663a7deeded50f9fe0a7877d62"
+    },
+    {
+      "path": "packages/premiere/src/bridge.js",
+      "bytes": 19865,
+      "sha256": "302b7d367ac08348fd842e692da6a69d373543fe0c8169c528b47b75d4a3f665"
+    },
+    {
+      "path": "packages/premiere/src/executor.js",
+      "bytes": 3058,
+      "sha256": "3b11461d32548e243802235961c84e5fb34e746df8c371db365c5981d57ee07d"
+    },
+    {
+      "path": "packages/premiere/src/features.js",
+      "bytes": 2595,
+      "sha256": "d332a369d13ac569a7daa37b5e8cab79566a4d40be48341c48d192f07015f7bb"
+    },
+    {
+      "path": "packages/premiere/src/fx.js",
+      "bytes": 3413,
+      "sha256": "5b88c6595bd835909838ccae3183ae4945bc956e1d889e28d9a016547ae18468"
+    },
+    {
+      "path": "packages/premiere/src/index.js",
+      "bytes": 394,
+      "sha256": "b4a2261c4339685c1f453a3c9533541e14989606b0afd95a57c314a4a6c94cd0"
+    },
+    {
+      "path": "packages/premiere/src/module.js",
+      "bytes": 1456,
+      "sha256": "063d65beb05fd11f27d9e68e7d81f382fc17a871a6ce2fb87e8c8028413c04b1"
+    },
+    {
+      "path": "packages/premiere/src/script.js",
+      "bytes": 11882,
+      "sha256": "10498eb9021ba65015f6643a35737449f09d3298f374b85da65c97d03b89de06"
+    },
+    {
+      "path": "packages/premiere/src/server.js",
+      "bytes": 5366,
+      "sha256": "066f26dea60a6d2558c9fbc9f4a3708fc9613a00f5452971d19ebdda6e302149"
+    },
+    {
+      "path": "packages/premiere/src/tools/application.js",
+      "bytes": 11503,
+      "sha256": "340feede4562eb10fe8053e69c228aecff247f562ea1a4fb4a13aee9864b77ac"
+    },
+    {
+      "path": "packages/premiere/src/tools/color.js",
+      "bytes": 14081,
+      "sha256": "9b15c858f607b0f941bfbc8a1512d3b8982c1f05ca0536b1160a94d7a508a22d"
+    },
+    {
+      "path": "packages/premiere/src/tools/effects.js",
+      "bytes": 48464,
+      "sha256": "58b2f08cc22dda0e7bb3e61e07f3381e9a5a995851de774db8813bc380a0dcf0"
+    },
+    {
+      "path": "packages/premiere/src/tools/export.js",
+      "bytes": 18081,
+      "sha256": "93c8194cf75dd680d7be7a2f116e8eef7e8ac20566c97df6e0f546e5a11cf309"
+    },
+    {
+      "path": "packages/premiere/src/tools/graphics.js",
+      "bytes": 10556,
+      "sha256": "55afc0ce8ab4e5ba45992e746ce82f8fca70230a3daddecb17c1481e42076a71"
+    },
+    {
+      "path": "packages/premiere/src/tools/keyframes.js",
+      "bytes": 13639,
+      "sha256": "786d0d0d925477e94371e86b29c4ccec775dfed2cc5eb8d2d66ab2b42158fc52"
+    },
+    {
+      "path": "packages/premiere/src/tools/markers.js",
+      "bytes": 14289,
+      "sha256": "427193a7d86383493120c5815ecf0adc3b4ad2a231e92104a5fad3e9fc0e2cb6"
+    },
+    {
+      "path": "packages/premiere/src/tools/media.js",
+      "bytes": 31664,
+      "sha256": "4f9fed60e827b0a93683b69daa626b89e9b575a0cbd723d0802d3aca6f6b8a17"
+    },
+    {
+      "path": "packages/premiere/src/tools/metadata.js",
+      "bytes": 7603,
+      "sha256": "25546376d2ea3015927749de28fa03aa2a6db9a369ed48848dac5ed7c82c2a9d"
+    },
+    {
+      "path": "packages/premiere/src/tools/project.js",
+      "bytes": 27202,
+      "sha256": "1cdc699948d69b47dad14eb7a378e67f66658c02609eec5154f299f427f106d5"
+    },
+    {
+      "path": "packages/premiere/src/tools/sequences.js",
+      "bytes": 34686,
+      "sha256": "a45467b3c34031df69e86c3cb73c80990ef5a90e939d0372fd04403fe7ee5e7f"
+    },
+    {
+      "path": "packages/premiere/src/tools/source.js",
+      "bytes": 14265,
+      "sha256": "fdfbff79404f756a2e90f98be6c3eec2fbb3eb3c81711ab06ac27d72950a8449"
+    },
+    {
+      "path": "packages/premiere/src/tools/timeline.js",
+      "bytes": 40597,
+      "sha256": "575b8cb1b68ef3176b0d416858944399f556a06f9af296e7e803272f8c28b991"
+    },
+    {
+      "path": "packages/premiere/src/tools/transcripts.js",
+      "bytes": 3841,
+      "sha256": "8e1b9723e926ec7504887ee38b37c492cc70777734b952a3c7ba1370e2a35cb8"
+    },
+    {
+      "path": "packages/premiere/src/tools/utility.js",
+      "bytes": 4479,
+      "sha256": "dfa8f0a618a2de984267a7dd9894f1438fc541522895e209b1b9ad8af190d741"
+    },
+    {
+      "path": "packages/premiere/tests/audit.js",
+      "bytes": 13692,
+      "sha256": "1a1ffe52f08fe08a9f0769827add9204c6ce5dbf6ae94f374fb0a31f7a037adb"
+    },
+    {
+      "path": "packages/premiere/tests/bridge.test.js",
+      "bytes": 11038,
+      "sha256": "a2fd5ea16a0e451eea95ab96a62a0a7148212d9777f05bb738edb7a3e5b78b74"
+    },
+    {
+      "path": "packages/premiere/tests/fake-premiere.js",
+      "bytes": 4019,
+      "sha256": "b47a4036d67d77b36887ceb3e1ff8f96a3f3a3bc7cd8447f60b2583383208266"
+    },
+    {
+      "path": "packages/premiere/tests/filmcraft-adapter.test.js",
+      "bytes": 2353,
+      "sha256": "d7c99d4b96b7d2825934452faf8e3c98f027c0b89a6e567a9cb3e8b68e8a3553"
+    },
+    {
+      "path": "packages/premiere/tests/fixtures/feature-ids.json",
+      "bytes": 37221,
+      "sha256": "273e234b695ce8746bc4aaa4ecb8b147dba3c233d01a75652470bc2d9992687d"
+    },
+    {
+      "path": "packages/premiere/tests/fixtures/premiere-uxp-api.json",
+      "bytes": 35086,
+      "sha256": "962c906398f9440c0e660227e8f00a927c3b26b8bd7d7dae40b987c03c366432"
+    },
+    {
+      "path": "packages/premiere/tests/helpers.js",
+      "bytes": 3521,
+      "sha256": "70821533d53ba85bb17957086218ee271ca821791ab53343b544fb718388f008"
+    },
+    {
+      "path": "packages/premiere/tests/pr-editing.test.js",
+      "bytes": 24822,
+      "sha256": "455bb41551a3b774532a9235251f5802ce99d8ca65aed243594ede62a3344ee5"
+    },
+    {
+      "path": "packages/premiere/tests/pr-effects.test.js",
+      "bytes": 20536,
+      "sha256": "1e1b29482393a36a9eac1a53a67af1c47e30c7d1e8b731044a750add135fd576"
+    },
+    {
+      "path": "packages/premiere/tests/pr-export.test.js",
+      "bytes": 13958,
+      "sha256": "33972fd28c589f4d438f15f05b70db4ca98cb757d73dca594de6bc75e78a1880"
+    },
+    {
+      "path": "packages/premiere/tests/pr-media.test.js",
+      "bytes": 23334,
+      "sha256": "12e9f3412c4e58665f19190fb6685faec43697424846330af7605eb966abbeb5"
+    },
+    {
+      "path": "packages/premiere/tests/runtime.test.js",
+      "bytes": 5910,
+      "sha256": "3cc273a512b50ab8f29c83c96508982989edfbbb3d5b750ad9f60b96c1d9c5d9"
+    },
+    {
+      "path": "packages/premiere/tests/server.test.js",
+      "bytes": 8519,
+      "sha256": "74aa7601d69614955ead863291ffb867005f5884149924f86716f4f92adef379"
+    },
+    {
+      "path": "packages/premiere/tests/tools.test.js",
+      "bytes": 18411,
+      "sha256": "5b46c4ca940c1b1a5808c47e36d74f7ecc78dc30d1558dbfd83c2f144457165e"
+    },
+    {
+      "path": "packages/premiere/uxp/plugin/index.html",
+      "bytes": 739,
+      "sha256": "c6d08dff1eb0f9d9e3638156347e3ab698a616f22c5851621a5c65684e181a97"
+    },
+    {
+      "path": "packages/premiere/uxp/plugin/index.js",
+      "bytes": 4238,
+      "sha256": "09a3cdfdb054f59d1a3abf40df9090435b2e2c7310e924e65d0035858c7443c2"
+    },
+    {
+      "path": "packages/premiere/uxp/plugin/manifest.json",
+      "bytes": 602,
+      "sha256": "8ea9cd0ac32d345a00f50319d30e82a376f447692bb957c8674ef35e067f24b7"
+    },
+    {
+      "path": "packages/premiere/uxp/plugin/runtime.js",
+      "bytes": 4348,
+      "sha256": "0ca9988d29d98112d3fec228dc2d6d28206fb6c0d83daa8d5138fd5a0588b822"
+    },
+    {
+      "path": "packages/suite/CHANGELOG.md",
+      "bytes": 692,
+      "sha256": "4e3f2fba6547825afb5e3d4f5b57c62d2dc8c538d3770220f37af383ae34040b"
+    },
+    {
+      "path": "packages/suite/README.md",
+      "bytes": 3798,
+      "sha256": "b3e56514f1db092059bae1f9d7569fe8dacf9a12ac6d0f91884f95782f9ec3b3"
+    },
+    {
+      "path": "packages/suite/package.json",
+      "bytes": 1555,
+      "sha256": "2cb0d15b3e90ca370c4d715e5fc6ed5b32629fa4af727326246019cb26552c17"
+    },
+    {
+      "path": "packages/suite/scripts/check-syntax.js",
+      "bytes": 767,
+      "sha256": "bd3535c28b832e24c29138e4633054d1018a6336e4ddbaca45202e324cc4459e"
+    },
+    {
+      "path": "packages/suite/server.json",
+      "bytes": 3958,
+      "sha256": "b4b2ef032c1f92f89b407140c67661da02db187b48adc43a5d33bc069920de0e"
+    },
+    {
+      "path": "packages/suite/src/apps.js",
+      "bytes": 1594,
+      "sha256": "d8ef548d8014dcd560dd9a03bc9f6258e662f30a5e368139e1bdb1051bc2c998"
+    },
+    {
+      "path": "packages/suite/src/cross/artwork.js",
+      "bytes": 5171,
+      "sha256": "4931cc27b3de6425027aec8cf183a9fba6fe0621b23ac3dd281a6985380f956d"
+    },
+    {
+      "path": "packages/suite/src/cross/jsx.js",
+      "bytes": 1930,
+      "sha256": "6281b3568da4de92f79ccc66c08ab0b6ebd8324d4300fd7e9e107e24917c943a"
+    },
+    {
+      "path": "packages/suite/src/cross/swatches.js",
+      "bytes": 4273,
+      "sha256": "49e66327187ae0f9152f02e892f82e8a6b4457d2b786ae0d199b95b5c6ba0faf"
+    },
+    {
+      "path": "packages/suite/src/index.js",
+      "bytes": 470,
+      "sha256": "f25a38352cb52a5a78db0b28bd705845a6703e9a95c3372343ec401220e588e9"
+    },
+    {
+      "path": "packages/suite/src/server.js",
+      "bytes": 6689,
+      "sha256": "02c0993ffd80017ed012b2e942b43fe05275ebb82d726c26943151345cb9d21f"
+    },
+    {
+      "path": "packages/suite/tests/suite.test.js",
+      "bytes": 12824,
+      "sha256": "f367fa831d1cb5552533d0ae698862d6dc41f59b53059fc214669d5cc08fe0df"
+    },
+    {
+      "path": "schemas/acp-decision.schema.json",
+      "bytes": 5605,
+      "sha256": "2a870190e4a3d208b765054b04de35819570770639e93e16ebb52d4365e8c76c"
+    },
+    {
+      "path": "schemas/agent-message.schema.json",
+      "bytes": 2269,
+      "sha256": "88c346d6ce2cf34d3bba9f35e2ef54e77776707b125b22bbc4ecc910ac33bedc"
+    },
+    {
+      "path": "schemas/context-lock.schema.json",
+      "bytes": 3274,
+      "sha256": "977a8963c6e58c1f3c68b96878e8082c09ad0fd48f43558a712beb671544d728"
+    },
+    {
+      "path": "schemas/context-sources.schema.json",
+      "bytes": 1330,
+      "sha256": "a12460da1fda3c38c5810b4adb6c17225bb92ce14c67cf98b641883cbb77c224"
+    },
+    {
+      "path": "schemas/external-state-instance.schema.json",
+      "bytes": 1750,
+      "sha256": "fe28e2309ba983eb46d9dcca11d2fa3ea6c29808d5d91b5b9ce2e031472c43cb"
+    },
+    {
+      "path": "schemas/formal-resource-manifest.schema.json",
+      "bytes": 1676,
+      "sha256": "465c3eae445d530087e1149d7f14e267400b32df00fa5b506e0b3af278a9b928"
+    },
+    {
+      "path": "schemas/interaction-contract.schema.json",
+      "bytes": 2509,
+      "sha256": "77772853ca61f842d778001873c5bab35922d9d2f3b9281f9616871987ae98cd"
+    },
+    {
+      "path": "schemas/protocol-adapter.schema.json",
+      "bytes": 2590,
+      "sha256": "7ee509a9e37c8104e18781871e9b2455baf560c1920c5c97ca5a6c927cc0d4b2"
+    },
+    {
+      "path": "schemas/qualification-record.schema.json",
+      "bytes": 1612,
+      "sha256": "e1561f13338dfe675a064803422d028de9efce07f35c235f8ef50c340bfb8335"
+    },
+    {
+      "path": "schemas/recipient-contract.schema.json",
+      "bytes": 1027,
+      "sha256": "273e599266d5a87bfc6dec1aea779dd3225f18ec9f6e85b272949577af3a15bc"
+    },
+    {
+      "path": "schemas/semantic-surface.schema.json",
+      "bytes": 1010,
+      "sha256": "460473f332f3b6f9eab8efad14a7c6f73d2a4dec4a0f9660138bcb6ed101cefd"
+    },
+    {
+      "path": "schemas/work-disposition.schema.json",
+      "bytes": 2062,
+      "sha256": "a0426bb2095e37891627c5b3de78266863522bf36e5305dc0ba525e9617d2987"
+    },
+    {
+      "path": "scripts/acp-check.py",
+      "bytes": 11196,
+      "sha256": "ef1863692a470634adae144c0b6f3aadfc375543915c7b9c428b6b99f4c9225a"
+    },
+    {
+      "path": "scripts/acp.py",
+      "bytes": 25463,
+      "sha256": "6fca8c5738deb7864a77838d95214cf388a6b80dcfac97fe9446eb0aa83176dd"
+    },
+    {
+      "path": "scripts/check-protocol-integrity.py",
+      "bytes": 6917,
+      "sha256": "fdac207980574121a5a7be9316c6cbb436c9f32c521c2d6100d14ce16733f96d"
+    },
+    {
+      "path": "scripts/esp-instance.py",
+      "bytes": 6455,
+      "sha256": "50d18578225fd4956c12d1aad4a3641d6749cc1c3a945f0eea27f00497550f91"
+    },
+    {
+      "path": "scripts/esp-record.py",
+      "bytes": 3349,
+      "sha256": "bef91b795da6027db2d607d4e97278dce0f170c478fd27d130b00d6e86d3a464"
+    },
+    {
+      "path": "scripts/gen-context.py",
+      "bytes": 13025,
+      "sha256": "eee7f301274b03d452987e5f3eb82891c828a951900454cf983cca3a97b25c87"
+    },
+    {
+      "path": "scripts/iepe-adopt.py",
+      "bytes": 3463,
+      "sha256": "cb992581bd7f1436b7049387ef9bdb19708cb384af0bcf10eeac9ef73a149931"
+    },
+    {
+      "path": "scripts/install.sh",
+      "bytes": 418,
+      "sha256": "526e35e68a709b85a92dba3a9a2d38b3538f79ade7031f5ab03210c266d66cbb"
+    },
+    {
+      "path": "scripts/recipient-status.py",
+      "bytes": 1417,
+      "sha256": "1c513611c928a6a4b7a8c16ae071172fd434a9e8c4675a7fb91089f469a26e78"
+    },
+    {
+      "path": "scripts/reconcile-project.py",
+      "bytes": 11596,
+      "sha256": "a9d4002736f1fef51ba2c124f4abb2414e67fd131016b42604bd57c633facedd"
+    },
+    {
+      "path": "scripts/upgrade-project.py",
+      "bytes": 14138,
+      "sha256": "e0ac6478ec44fee27f8ead869ebaae80952a817203d253e1556701b6d522e346"
+    },
+    {
+      "path": "scripts/validate-bootstrap.py",
+      "bytes": 11977,
+      "sha256": "bc015e7bcbc2bb0c23a0de1f7eab7e99070a781ced687639383ed600692de896"
+    },
+    {
+      "path": "scripts/validate-interaction-contract.py",
+      "bytes": 2441,
+      "sha256": "74de7cf8d3efa6cca102e2982377d9829f35218632dbea1eb0f6ab7d39706b2a"
+    },
+    {
+      "path": "scripts/validate-protocol-adapters.py",
+      "bytes": 2670,
+      "sha256": "ac74eb0216a520051b10bf86c31c078b4b7a5723fd0e8862bc30a4590114ec95"
+    },
+    {
+      "path": "scripts/validate-qualification.py",
+      "bytes": 2530,
+      "sha256": "5bb33c997b5ef86dc69a8b6b4d39b8fe4931c3c6a44521250aea7739d1a42188"
+    },
+    {
+      "path": "scripts/validate-semantic-surface.py",
+      "bytes": 1973,
+      "sha256": "3de4a4152442b5bb34fbbfd94ee6fdad6839fda8f80a41bbfb7f6647c6897797"
+    }
+  ]
+}

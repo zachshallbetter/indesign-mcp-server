@@ -1,8 +1,7 @@
 # adobe-mcp
 
-MCP servers for Adobe applications. Install one application's server on its
-own, or the suite: one server for every application, with tools that work
-across them.
+MCP servers for Adobe applications. Install each app's server for direct control,
+and add the Suite coordinator for workflows that span InDesign and Illustrator.
 
 The InDesign server was published as `indesign-mcp-server` up to 2.3.0. It is
 now `adobe-mcp-indesign`, with the same tools; replace the package name in your
@@ -15,7 +14,7 @@ client configuration.
 | [adobe-mcp-photoshop](packages/photoshop) | Adobe Photoshop: documents and formats, image and canvas, layers, masks, smart objects and layer styles, selections and channels, adjustments and fill layers, filters, painting and retouching, type and paths, video timeline, actions and batch, artboards, export, printing and preferences (207 tools) | [`adobe-mcp-photoshop`](https://www.npmjs.com/package/adobe-mcp-photoshop) |
 | [adobe-mcp-aftereffects](packages/aftereffects) | Adobe After Effects: projects and footage, compositions, layers and time, keyframes and expressions, every effect and its controls, text animators, masks and shape layers, paint and roto, 3D, tracking, colour, render queue and Essential Graphics (164 tools) | [`adobe-mcp-aftereffects`](https://www.npmjs.com/package/adobe-mcp-aftereffects) |
 | [adobe-mcp-premiere](packages/premiere) | Adobe Premiere Pro: projects and bins, sequences, timeline edits, markers, effects, keyframes and transitions, transcripts, metadata and export, through a UXP plugin (96 tools; not yet tested against Premiere Pro) | [`adobe-mcp-premiere`](https://www.npmjs.com/package/adobe-mcp-premiere) |
-| [adobe-mcp-suite](packages/suite) | InDesign, Illustrator, Photoshop, After Effects and Premiere Pro in one server (1,200 tools), plus cross-application tools: Illustrator artwork into InDesign layouts, swatches with exact values | [`adobe-mcp-suite`](https://www.npmjs.com/package/adobe-mcp-suite) |
+| [adobe-mcp-suite](packages/suite) | MCP coordinator for two InDesign and Illustrator workflows: place Illustrator artwork in InDesign and copy swatches with exact values | [`adobe-mcp-suite`](https://www.npmjs.com/package/adobe-mcp-suite) |
 | [adobe-mcp-core](packages/core) | The shared foundation: script escaping, the script runner, the server shell and the static script audit | [`adobe-mcp-core`](https://www.npmjs.com/package/adobe-mcp-core) |
 
 Each server runs on the machine where the Adobe application is installed and
@@ -74,11 +73,11 @@ Any client that reads an `mcpServers` block:
 }
 ```
 
-### Full suite
+### Suite coordinator
 
-One process with every application's tools (prefixed `indesign_…`,
-`illustrator_…`, and so on) plus cross-application tools when both sides are
-loaded:
+One coordinator process connects to the InDesign and Illustrator MCP server
+implementations and exposes the cross-application workflows. Add the individual
+servers below when you also need direct app-specific tools:
 
 ```bash
 claude mcp add --scope user adobe -- npx -y adobe-mcp-suite
@@ -140,9 +139,9 @@ Each package's README covers its tools, conventions and per-app configuration.
 
 ### Choosing applications (suite only)
 
-By default the suite loads every app. Restrict it with `--apps` or
-`ADOBE_MCP_APPS` (comma-separated ids: `indesign`, `illustrator`, `photoshop`,
-`aftereffects`, `premiere`):
+The coordinator connects to apps selected by `--apps` or `ADOBE_MCP_APPS`
+(comma-separated ids: `indesign`, `illustrator`, `photoshop`, `aftereffects`,
+`premiere`). Its current workflows require both `indesign` and `illustrator`:
 
 ```bash
 npx -y adobe-mcp-suite --apps indesign,illustrator
@@ -173,10 +172,9 @@ On Windows, separate allowed directories with `;` instead of `:`.
 
 - **Single-app servers** expose that app's tools under their original names
   (for example `create_text_frame`, `export_pdf`).
-- **The suite** prefixes every tool with the app (`indesign_create_text_frame`,
-  `illustrator_create_rectangle`). Names that already include the app keep it
-  once (`indesign_status`).
-- **Cross-application tools** (suite, when both apps are loaded):
+- **The Suite coordinator** exposes only cross-app workflows and delegates their
+  steps to the standalone app servers over MCP. It does not re-export app tools.
+- **Cross-application tools** (coordinator, when both apps are selected):
   - `place_illustrator_artwork_in_indesign` — place an artboard of the active
     Illustrator document on an InDesign page, linked to the `.ai` file.
   - `copy_swatches_illustrator_to_indesign` — copy colour swatches with exact
@@ -197,6 +195,9 @@ Common knobs (see each package README for the full set):
 | `INDESIGN_APP_NAME` / `ILLUSTRATOR_APP_NAME` | Override the target application name |
 | `INDESIGN_SCRIPT_TIMEOUT_MS` / `ILLUSTRATOR_SCRIPT_TIMEOUT_MS` | Per-script timeout |
 | `PREMIERE_WS_PORT`, `BRIDGE_TOKEN`, `PREMIERE_ALLOWED_DIRS` | Premiere UXP bridge |
+| `ADOBE_TARGET`, `ADOBE_BACKEND` | Optional shared target/backend choice, including local ArtCraft adapters |
+| `ARTCRAFT_ENABLED`, `ARTCRAFT_CONTROL_*` | Enable or configure fallback local ArtCraft control connections |
+| `UXP_BRIDGE_URL` | InDesign UXP bridge address |
 
 ### Smoke-check without an MCP client
 
@@ -261,16 +262,15 @@ packages/
   photoshop/     adobe-mcp-photoshop
   aftereffects/  adobe-mcp-aftereffects
   premiere/      adobe-mcp-premiere       with its UXP plugin in uxp/plugin
-  suite/         adobe-mcp-suite          every application in one server
+  suite/         adobe-mcp-suite          coordinator for cross-app workflows
 ```
 
 The servers share their infrastructure through `adobe-mcp-core`, so a fix to
 escaping, path checks, result handling or the script runner reaches every
 server. What differs between applications stays in each package: its tools,
 its instructions, and how the application is told to run a script. Each
-application package exports a module (its tools, handlers, instructions and
-script runner); its own server and the suite are both built from it, so a tool
-is written once.
+application package exports its standalone server factory; coordinator workflows
+call that server through MCP instead of copying its tool inventory.
 
 ## Development
 

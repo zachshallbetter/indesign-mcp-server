@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://formal-project-bootstrap.local/schemas/semantic-surface.schema.json",
+  "title": "Renderer-neutral semantic surface",
+  "type": "object",
+  "required": ["format", "resolutionId", "sourceState", "purpose", "context", "access", "members", "explanation", "dependencies"],
+  "properties": {
+    "format": {"const": "1"},
+    "resolutionId": {"type": "string", "minLength": 1},
+    "sourceState": {"type": "string", "minLength": 1},
+    "purpose": {"type": "string", "minLength": 1},
+    "context": {"type": "string", "minLength": 1},
+    "access": {"type": "string", "minLength": 1},
+    "members": {"type": "array", "items": {"type": "object"}},
+    "explanation": {"type": "string", "minLength": 1},
+    "dependencies": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "rendererNeutral": {"type": "boolean"},
+    "operations": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

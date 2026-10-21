@@ -33,7 +33,7 @@ commands; `corpus/<app>/api/` the object model.
 
 - Few well-grouped tools with enums and option objects, not one tool per property.
   `verb_noun` snake_case names that don't clash with **any** tool in the server or in
-  the other packages (list them first; the suite rejects duplicates).
+  the other packages (list them first; each standalone server owns its own tool list).
 - Descriptions are plain and user-facing, naming the menu/panel/dialog in
   parentheses. Every parameter has a description. Validate arguments early with clear
   errors.

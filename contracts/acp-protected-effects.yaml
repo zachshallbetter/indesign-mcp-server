@@ -1,0 +1,107 @@
+# Projection of the project authority model onto ACP action names.
+# See docs/ACP_INTEGRATION.md. This file maps; it does not grant.
+# Editing it to reclassify an effect as unprotected is a policy.modify
+# effect and is refused by ACP without the administrative credential.
+# The one-time owner-authorized outage release in PROJECT_PROFILE.json is a
+# separate instrument; it does not change these ACP action classifications.
+
+format: "1"
+provider: acp-gateway
+governedFromEffectClass: E2
+client: scripts/acp.py
+
+# Operations the agent performs, the effect class they belong to, and the
+# ACP action to request. `requiresRecoveryAuthorization` marks E4 actions
+# that need a server-side recovery grant in addition to VERIFIED trust.
+operations:
+  - operation: read repository, inspect source, run local analysis or tests
+    effectClass: E0
+    acpAction: [repository.read, source.inspect, local.analysis, local.test]
+    governed: false
+
+  - operation: mutate an isolated branch, worktree or sandbox
+    effectClass: E1
+    acpAction: null
+    governed: false
+
+  - operation: push to a non-protected remote ref
+    effectClass: E2
+    acpAction: git.remote.update
+    governed: true
+
+  - operation: update a protected ref (fast-forward merge or push to main/release)
+    effectClass: E3
+    acpAction: git.protected_ref.update
+    governed: true
+    contextRequired: [ref, old_sha, new_sha]
+
+  - operation: deploy to production
+    effectClass: E3
+    acpAction: production.deploy
+    governed: true
+
+  - operation: rewrite history or force-push a protected ref
+    effectClass: E4
+    acpAction: git.history.rewrite
+    governed: true
+    requiresRecoveryAuthorization: true
+
+  - operation: change the default branch
+    effectClass: E4
+    acpAction: git.default_branch.change
+    governed: true
+    requiresRecoveryAuthorization: true
+
+  - operation: transfer the repository
+    effectClass: E4
+    acpAction: repository.transfer
+    governed: true
+    requiresRecoveryAuthorization: true
+
+  - operation: create, widen, rotate or delete credentials
+    effectClass: E4
+    acpAction: credential.modify
+    governed: true
+    administrativeCredential: true
+
+  - operation: change the ACP policy that binds this repository
+    effectClass: E4
+    acpAction: policy.modify
+    governed: true
+    administrativeCredential: true
+
+# Decisions and the disposition the agent must take. Mirrors
+# schemas/acp-decision.schema.json and docs/ACP_INTEGRATION.md.
+decisions:
+  ALLOW:               { code: A0, proceed: exact-authorized-action }
+  DENY:                { code: A1, proceed: never, record: AUTHORITY_MISSING }
+  AUTH_REQUIRED:       { code: A2, proceed: after-designated-auth-flow, retry: once }
+  REVERIFY_REQUIRED:   { code: A3, proceed: never, record: provider-blocker }
+  QUARANTINE:          { code: A4, proceed: never, repair: never, stop: resource }
+  LOCKED:              { code: A5, proceed: never, stop: resource }
+  RECOVERY_AUTHORIZED: { code: A6, proceed: one-recovery-transition-once, report: "/internal/recovery/complete" }
+  VERIFY_RECOVERY:     { code: A7, proceed: never }
+  # Synthesized locally by scripts/acp.py (synthetic: true); always A1.
+  GATEWAY_UNAVAILABLE: { code: A1, proceed: never, record: provider-blocker, note: "no valid decision could be obtained" }
+  ACP_NOT_GOVERNING:   { code: A1, proceed: never, record: setup-blocker, note: "ALLOW with policy_effect NOT_GOVERNED under failClosed" }
+  AUTHORIZED_ACTION_MISMATCH: { code: A1, proceed: never, record: provider-blocker, note: "authorized_action differs from the request" }
+
+# What the project reports, and when. Reports never authorize; the gateway
+# grades severity and rejects any event type not listed in its contract.
+reports:
+  - when: session start
+    event: SESSION_STARTED
+    checkpoint: SESSION_START
+    snapshot: true
+  - when: session resume
+    event: SESSION_RESUMED
+    checkpoint: SESSION_RESUME
+    snapshot: true
+  - when: before commit, push, merge or deploy
+    event: PROTECTED_EFFECT_PENDING
+    checkpoint: [PRE_COMMIT, PRE_PUSH, PRE_MERGE, PRE_DEPLOY]
+    evidence: [action]
+    snapshot: true
+  - when: control-plane change observed
+    event: [REMOTE_CHANGED, BRANCH_PROTECTION_CHANGED, POLICY_DIGEST_CHANGED, NOTICE_DIGEST_CHANGED, CREDENTIALS_ROTATED]
+    evidence: [detail]

@@ -9,8 +9,8 @@ briefs in [briefs/](briefs/) are the complete version.
 
 - **Few tools, grouped by panel or dialog**, with enums and option objects, rather
   than one tool per property. `verb_noun` snake_case.
-- **Names are unique across the whole repository.** The suite prefixes names with the
-  app (`indesign_…`), so a clash inside one app breaks that server and the suite.
+- **Names are unique within each app server.** Coordinator workflow names are unique
+  within the suite; app tool names live on separate MCP servers and are not copied.
   Before naming a tool, list every existing name:
   `node -e` over the app's `src/tools/*.js` (and, for InDesign, `allToolDefinitions`
   in `src/types/index.js`). When two contributors add the same tool, keep the richer

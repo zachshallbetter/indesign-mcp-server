@@ -40,8 +40,8 @@ is on npm.
 All five app packages, `adobe-mcp-core@0.2.0`, and `adobe-mcp-suite@0.2.1` are published
 to npm. Suite `0.2.1` is also published to the MCP Registry and Homebrew. Its registry
 description is within the limit. The Homebrew formula checksum is for the published npm
-tarball. The MCPRush suite listing currently reports the two cross-app tools; its manual
-tool-list editor has a 500-tool cap, below the suite's dynamic 1,200-tool inventory.
+tarball. Suite `0.3.0` changes the public tool surface to two coordinator workflows;
+app-specific tools remain available through their standalone servers.
 
 ## Retries
 

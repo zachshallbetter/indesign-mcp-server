@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * adobe-mcp-suite over stdio. Choose applications with --apps indesign,illustrator
- * or ADOBE_MCP_APPS; default all.
+ * or ADOBE_MCP_APPS; defaults to the apps used by the current cross-app workflows.
  */
 import { createSuiteServer } from './server.js';
 

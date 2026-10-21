@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://formal-project-bootstrap.local/schemas/qualification-record.schema.json",
+  "title": "Evidence Qualification Record",
+  "type": "object",
+  "required": ["format", "qualificationId", "candidate", "claim", "context", "profile", "obligations", "evidence", "evaluator", "authority", "disposition"],
+  "properties": {
+    "format": {"const": "1"},
+    "qualificationId": {"type": "string", "minLength": 1},
+    "candidate": {"type": "string", "minLength": 1},
+    "claim": {"type": "string", "minLength": 1},
+    "context": {"type": "string", "minLength": 1},
+    "profile": {"type": "string", "minLength": 1},
+    "obligations": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "status"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "status": {"enum": ["consumed", "rejected", "contradictory", "out-of-scope", "superseded"]},
+          "reason": {"type": "string"}
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "evaluator": {"type": "string", "minLength": 1},
+    "authority": {"type": "string", "minLength": 1},
+    "disposition": {"enum": ["QUALIFIED", "NOT_QUALIFIED", "BLOCKED", "SUPERSEDED"]},
+    "scope": {"type": "string"},
+    "freshness": {"type": "string"},
+    "contradictions": {"type": "array", "items": {"type": "string"}},
+    "supersedes": {"type": ["string", "null"]}
+  },
+  "additionalProperties": false
+}

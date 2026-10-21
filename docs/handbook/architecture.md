@@ -10,12 +10,14 @@
 | `packages/photoshop` | `adobe-mcp-photoshop` | Photoshop, module tools; much of it through the Action Manager. |
 | `packages/aftereffects` | `adobe-mcp-aftereffects` | After Effects, module tools. |
 | `packages/premiere` | `adobe-mcp-premiere` | Premiere Pro, through a UXP plugin (no AppleScript or COM exists). |
-| `packages/suite` | `adobe-mcp-suite` | One server that loads any set of the above, prefixes their tools with `<app>_`, and adds cross-application tools. |
+| `packages/suite` | `adobe-mcp-suite` | MCP coordinator that connects to app servers and exposes only cross-application workflows. |
 
-Every app package exports `src/module.js`, an `app` object (`name`, tools, handlers,
-instructions, `runStructured`) that both its own server (`src/server.js`,
-`src/index.js`) and the suite use. Each app package depends only on the core at run
-time; Premiere Pro also needs `ws`.
+Every app package exports `src/module.js` with an `app` object describing its tool
+inventory and safeguards. The coordinator starts selected standalone server
+processes, connects over stdio MCP, and calls their public `execute_<app>_code` tools
+for cross-app scripts. App tools and schemas are not copied into the coordinator.
+Each app package depends on the core at run time; the coordinator also depends on the
+MCP SDK client transport.
 
 ## How each server reaches its application
 
@@ -134,6 +136,8 @@ user's home folder or the package's `<APP>_ALLOWED_DIRS` (`INDESIGN_ALLOWED_DIRS
 - InDesign also checks that `docs/TOOLS.md` matches the definitions
   (`node scripts/generate-tool-reference.js`).
 
-The suite's tests load every app together and fail on duplicate prefixed names.
+The suite's tests verify that app servers retain their own complete tool inventories,
+the coordinator exposes only supported cross-app workflows, and workflow scripts
+are delegated through the MCP client interface.
 `npm test --workspaces` at the root runs everything; CI runs it on Ubuntu (Node 20,
 22) and macOS (Node 22).

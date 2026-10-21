@@ -1,0 +1,11 @@
+{
+  "format": "1",
+  "projectId": "adobe-mcp",
+  "resources": [],
+  "integrityPolicy": {
+    "requireCanonicalSource": true,
+    "preferImmutableRevisionOrDigest": true,
+    "rejectRemoteLatestForRequiredResources": true,
+    "rejectGeneratedContextAsAuthority": true
+  }
+}

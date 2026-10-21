@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://formal-project-bootstrap.invalid/schemas/context-lock.schema.json",
+  "title": "ContextLock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "generatorVersion",
+    "root",
+    "validityBasis",
+    "selectedPaths",
+    "sourceSelection",
+    "repositoryState",
+    "aggregateSourceDigest",
+    "sources"
+  ],
+  "properties": {
+    "format": {
+      "const": "2"
+    },
+    "generatorVersion": {
+      "type": "string"
+    },
+    "root": {
+      "type": "string"
+    },
+    "validityBasis": {
+      "const": "aggregate-source-digest"
+    },
+    "selectedPaths": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "sourceSelection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "includedCount",
+        "includedBytes",
+        "excludedCounts"
+      ],
+      "properties": {
+        "includedCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "includedBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "excludedCounts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "repositoryState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "available",
+        "validationRole",
+        "repositories"
+      ],
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "validationRole": {
+          "const": "provenance"
+        },
+        "repositories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "commit",
+              "branch",
+              "dirty",
+              "remote"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "commit": {
+                "type": "string"
+              },
+              "branch": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "dirty": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "remote": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "aggregateSourceDigest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "bytes",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    }
+  }
+}

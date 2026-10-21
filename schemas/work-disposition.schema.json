@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/work-disposition.schema.json",
+  "title": "WorkDisposition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "workItemId",
+    "worker",
+    "verdict",
+    "contextDigest",
+    "claimState",
+    "timestamp"
+  ],
+  "properties": {
+    "workItemId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "worker": {
+      "type": "string",
+      "minLength": 1
+    },
+    "verdict": {
+      "type": "string",
+      "enum": [
+        "done",
+        "blocked",
+        "failed",
+        "superseded",
+        "abandoned",
+        "waiting_external"
+      ]
+    },
+    "contextDigest": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidateRef": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "repositoryOrArtifact": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "revision": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "negativePaths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "peerMessages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "recommendedTransition": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "claimState": {
+      "type": "string",
+      "enum": [
+        "held",
+        "released",
+        "transferred",
+        "parked"
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

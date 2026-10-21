@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://formal-project-bootstrap.local/schemas/protocol-adapter.schema.json",
+  "title": "Formal Project Bootstrap Protocol Adapter",
+  "type": "object",
+  "required": ["format", "adapterId", "protocol", "supportedBootstrap", "authority", "mappings", "unsupported", "compatibility", "checks", "migration"],
+  "properties": {
+    "format": {"const": "1"},
+    "adapterId": {"type": "string", "minLength": 1},
+    "protocol": {
+      "type": "object",
+      "required": ["id", "version", "revisionOrDigest", "canonicalSource"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "revisionOrDigest": {"type": "string", "minLength": 1},
+        "canonicalSource": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "supportedBootstrap": {"type": "string", "minLength": 1},
+    "authority": {
+      "type": "object",
+      "required": ["role", "sourceOfTruth", "promotionBoundary"],
+      "properties": {
+        "role": {"type": "string"},
+        "sourceOfTruth": {"type": "string"},
+        "promotionBoundary": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "mappings": {
+      "type": "object",
+      "required": ["imports", "projects", "lifecycle", "evidence"],
+      "properties": {
+        "imports": {"type": "array", "items": {"type": "string"}},
+        "projects": {"type": "array", "items": {"type": "string"}},
+        "lifecycle": {"type": "array", "items": {"type": "string"}},
+        "evidence": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "unsupported": {"type": "array", "items": {"type": "string"}},
+    "compatibility": {
+      "type": "object",
+      "required": ["syntax", "schema", "behavior", "semantics", "authority", "evidence"],
+      "properties": {
+        "syntax": {"type": "string"}, "schema": {"type": "string"},
+        "behavior": {"type": "string"}, "semantics": {"type": "string"},
+        "authority": {"type": "string"}, "evidence": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "checks": {"type": "array", "items": {"type": "string"}},
+    "migration": {
+      "type": "object",
+      "required": ["adopt", "repin", "deviation"],
+      "properties": {
+        "adopt": {"type": "string"}, "repin": {"type": "string"}, "deviation": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

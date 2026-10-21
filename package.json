@@ -1,7 +1,7 @@
 {
   "name": "adobe-mcp",
   "private": true,
-  "description": "MCP servers for Adobe applications: one package per app, and a suite that combines them",
+  "description": "MCP servers for Adobe applications with a cross-app workflow coordinator",
   "workspaces": [
     "packages/core",
     "packages/indesign",

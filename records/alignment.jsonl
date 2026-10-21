@@ -1,0 +1,1 @@
+{"meaning":"Adopted the bootstrap's local-secret rule and the generated-context paths resolved through the existing .agents symlink; the existing .env.* rule already covered local env files.","paths":[".gitignore"],"relation":"extended","status":"reconciled","type":"bootstrap_collision"}

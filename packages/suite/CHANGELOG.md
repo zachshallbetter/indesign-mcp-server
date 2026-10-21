@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0 — unreleased
+
+- Make the suite an MCP coordinator that exposes only cross-application workflows.
+- Delegate workflow scripts to the standalone InDesign and Illustrator servers.
+- Keep direct application tools in their standalone servers.
+
 ## 0.2.1 — 2026-10-21
 
 - Shorten the MCP Registry description to its 100-character limit.

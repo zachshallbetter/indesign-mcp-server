@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://formal-project-bootstrap.invalid/schemas/context-sources.schema.json",
+  "title": "ContextSources",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "includeExtensions",
+    "excludeDirectories",
+    "excludePaths",
+    "maxFileBytes"
+  ],
+  "properties": {
+    "format": { "const": "2" },
+    "description": { "type": "string" },
+    "includeExtensions": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^\\.[a-z0-9]+$" },
+      "uniqueItems": true
+    },
+    "excludeDirectories": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "excludePaths": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "excludePatterns": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "maxFileBytes": { "type": "integer", "minimum": 1 },
+    "maxTotalBytes": { "type": "integer", "minimum": 1 },
+    "includeVendor": { "type": "boolean" },
+    "note": { "type": "string" },
+    "includeFiles": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    }
+  }
+}

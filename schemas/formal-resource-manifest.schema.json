@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://formal-project-bootstrap.local/schemas/formal-resource-manifest.schema.json",
+  "title": "Formal Resource Manifest",
+  "type": "object",
+  "required": ["format", "projectId", "resources", "integrityPolicy"],
+  "properties": {
+    "format": {"type": "string"},
+    "projectId": {"type": "string", "minLength": 1},
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "required", "canonicalSource", "authorityRole"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "kind": {"type": "string", "minLength": 1},
+          "required": {"type": "boolean"},
+          "version": {"type": ["string", "null"]},
+          "revisionOrDigest": {"type": ["string", "null"]},
+          "canonicalSource": {"type": "string", "minLength": 1},
+          "mountOrAddress": {"type": ["string", "null"]},
+          "authorityRole": {"type": "string", "minLength": 1},
+          "inventory": {"type": "array", "items": {"type": "string"}},
+          "compatibility": {
+            "type": "object",
+            "properties": {
+              "syntax": {"type": "string"},
+              "schema": {"type": "string"},
+              "behavior": {"type": "string"},
+              "semantics": {"type": "string"},
+              "authority": {"type": "string"},
+              "evidence": {"type": "string"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "integrityPolicy": {"type": "object"}
+  },
+  "additionalProperties": true
+}

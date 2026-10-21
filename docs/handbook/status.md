@@ -7,17 +7,13 @@
 | Photoshop | adobe-mcp-photoshop | 0.1.0 | npm | 207 | 2,609 | 1,720 | 1,413 (54%) |
 | After Effects | adobe-mcp-aftereffects | 0.1.0 | npm | 164 | 3,198 | 2,595 | 2,555 (80%) |
 | Premiere Pro | adobe-mcp-premiere | 0.1.0 | npm | 96 | 925 | 494 | 413 (45%) |
-| Suite | adobe-mcp-suite | 0.2.1 | npm, MCP Registry, Homebrew | 1,200 | — | — | — |
+| Suite | adobe-mcp-suite | 0.3.0 candidate | not published | 2 coordinator workflows | — | — | — |
 | Core | adobe-mcp-core | 0.2.0 | npm | | | | |
 
-Suite `0.2.1` is published to npm and the MCP Registry. It exposes 1,200 unique tools
-(423 InDesign, 308 Illustrator, 207 Photoshop, 164 After Effects, 96 Premiere Pro, and
-2 cross-app). Homebrew installs the published npm tarball; its formula checksum matches
-that tarball. The curl installer installs the latest npm release globally. MCPRush's
-suite listing shows the two cross-app tools because its manual tools editor permits at
-most 500 tools and the local server's app-specific inventory is assembled at startup.
-The listing copy names all five apps; the installed suite still exposes the full dynamic
-inventory.
+Suite `0.2.1` remains the published version. The working `0.3.0` candidate changes the
+suite into a coordinator: it connects to standalone app MCP servers and exposes the two
+InDesign/Illustrator workflows. Direct app tools remain in their standalone servers.
+The MCPRush listing should report only those two coordinator tools.
 
 "Scriptable" counts features whose atlas route is the object model, a menu command,
 the Action Manager, the UXP API (Premiere Pro) or a recorded Action. Most of the gap between scriptable and

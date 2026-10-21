@@ -1,0 +1,124 @@
+{
+  "projectId": "adobe-mcp",
+  "projectName": "Adobe MCP",
+  "profileVersion": "0.6.0",
+  "profileStatus": "provisional",
+  "intentRef": "PROJECT_INTENT.md",
+  "authorityRef": "docs/AUTHORITY_MODEL.md",
+  "bindingsRef": "bindings/PROJECT_BINDINGS.yaml",
+  "contextSourcesRef": "CONTEXT_SOURCES.json",
+  "operatingMode": "existing",
+  "executionProvider": {
+    "name": "Codex local execution and GitHub Actions",
+    "workGraph": "github-projects-v2",
+    "repository": "github",
+    "dispatch": "Codex desktop workspace",
+    "verification": "repository npm checks and release.yml",
+    "protection": "acp-gateway",
+    "observability": "acp-gateway:/internal/report"
+  },
+  "authorizationProvider": {
+    "name": "acp-gateway",
+    "status": "declared",
+    "integrationRef": "docs/ACP_INTEGRATION.md",
+    "decisionSchema": "schemas/acp-decision.schema.json",
+    "actionMap": "contracts/acp-protected-effects.yaml",
+    "gatewayUrlEnv": "ACP_GATEWAY_URL",
+    "gatewayTokenEnv": "ACP_GATEWAY_TOKEN",
+    "boardEnvFile": ".agents/board.env",
+    "board": {
+      "owner": null,
+      "number": null
+    },
+    "authorizedEffectClassesMinimum": "E2",
+    "failClosed": true,
+    "localOutageMode": {
+      "allowedEffectClasses": ["E0", "E1"],
+      "workspace": "isolated-local-branch-or-worktree",
+      "endCondition": "ACP returns a valid decision",
+      "governedEffects": "blocked-until-ACP-authorization"
+    },
+    "outageReleaseAuthorization": {
+      "id": "adobe-mcp-suite-0.3.0-acp-outage",
+      "authority": "repository owner explicit instruction",
+      "workItemRef": "records/local-work-items.jsonl",
+      "deviationRef": "records/deviations.jsonl",
+      "package": "adobe-mcp-suite@0.3.0",
+      "allowedActions": ["git.remote.update", "git.protected_ref.update", "production.deploy"],
+      "releaseWorkflow": ".github/workflows/release.yml",
+      "endCondition": "release complete or first valid ACP response, whichever occurs first",
+      "excludedActions": ["git.history.rewrite", "credential.modify", "policy.modify", "repository.transfer", "recovery"]
+    },
+    "reportOnSessionStart": true,
+    "reportBeforeProtectedEffect": true,
+    "checkScript": "scripts/acp-check.py",
+    "clientScript": "scripts/acp.py"
+  },
+  "serviceOperations": [
+    {
+      "service": "acp-gateway",
+      "interface": "official-api",
+      "allowedEnvironments": [
+        "local",
+        "staging",
+        "production"
+      ],
+      "allowedEffects": [
+        "read",
+        "authorize",
+        "report",
+        "verify-capability",
+        "integrity-snapshot",
+        "recovery-complete",
+        "board-discovery",
+        "board-context"
+      ],
+      "protectedEffects": [
+        "policy.modify",
+        "credential.modify"
+      ]
+    },
+    {
+      "service": "github",
+      "interface": "official-cli",
+      "allowedEnvironments": [
+        "local"
+      ],
+      "allowedEffects": [
+        "read",
+        "reversible-write"
+      ],
+      "protectedEffects": [
+        "git.protected_ref.update",
+        "git.history.rewrite",
+        "git.default_branch.change",
+        "repository.transfer"
+      ]
+    }
+  ],
+  "authorityBindings": {
+    "projectMutation": "repository owner acting through the authorized work item",
+    "qualification": "work item evaluator",
+    "promotion": "acp-gateway:decision",
+    "productionOperation": "acp-gateway:decision",
+    "deviation": "repository owner records; ACP registers overrides",
+    "recovery": "acp-gateway:recovery-authorization"
+  },
+  "autonomy": {
+    "frontierReselection": true,
+    "continueOnLocalizedBlocker": true,
+    "maxConcurrentMutationClaims": 2,
+    "humanEscalation": "decision-boundaries-only",
+    "protectedEffectsRequireAcpDecision": true,
+    "oneTimeOutageReleaseExceptionRef": "authorizationProvider.outageReleaseAuthorization"
+  },
+  "contextPolicy": {
+    "compiledContextRequired": true,
+    "generatedContextNormative": false,
+    "requireContextLock": true,
+    "refreshOnMaterialSourceChange": true
+  },
+  "protocolAdapters": [],
+  "profiles": [],
+  "formalResourceManifest": "FORMAL_RESOURCE_MANIFEST.json"
+}

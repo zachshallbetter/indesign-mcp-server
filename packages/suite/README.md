@@ -1,15 +1,14 @@
 # Adobe MCP Suite
 
-One MCP server for Adobe InDesign, Illustrator, Photoshop, After Effects and
-Premiere Pro together, with tools that work across them. Use it when you work in both applications; to drive only one,
-install that application's server instead
+An MCP coordinator for workflows that span Adobe InDesign and Illustrator. It
+starts those applications' standalone MCP servers and exposes two coordinated workflows.
+For direct application tools, install the matching standalone server:
 ([adobe-mcp-indesign](../indesign), [adobe-mcp-illustrator](../illustrator),
 [adobe-mcp-photoshop](../photoshop), [adobe-mcp-aftereffects](../aftereffects),
 [adobe-mcp-premiere](../premiere)).
 
-Requires Node.js 18 or later, and InDesign, Illustrator, Photoshop and/or After
-Effects 2023 or later, or Premiere Pro 25.6 or later with its plugin loaded (see
-[adobe-mcp-premiere](../premiere)), on macOS or Windows.
+Requires Node.js 18 or later and InDesign and Illustrator on this computer.
+Install the other app servers separately for direct access.
 
 ## Install
 
@@ -50,7 +49,9 @@ Any client that reads an `mcpServers` block:
 }
 ```
 
-Load only some applications with `--apps` (or `ADOBE_MCP_APPS`):
+By default the coordinator starts the InDesign and Illustrator MCP servers. Select
+different servers with `--apps` (or `ADOBE_MCP_APPS`); its current workflows require
+both InDesign and Illustrator:
 
 ```json
 { "command": "npx", "args": ["-y", "adobe-mcp-suite", "--apps", "illustrator"] }
@@ -58,16 +59,11 @@ Load only some applications with `--apps` (or `ADOBE_MCP_APPS`):
 
 ## Tools
 
-Every tool of each application is included, unchanged, with the application's
-name in front: `indesign_create_text_frame`, `illustrator_create_rectangle`,
-`indesign_export_pdf`. A tool that already names its application keeps it once:
-`indesign_status`, `illustrator_execute_code`. Each application keeps its own
-units and conventions (InDesign: millimetres from the page's top-left;
-Illustrator: points from the artboard's top-left; Photoshop: pixels from the
-document's top-left; After Effects: pixels from the composition's top-left and
-seconds; Premiere Pro: seconds, with clips chosen by track and clip index), and
-the server's instructions describe each. Premiere Pro's plugin port opens on
-the first Premiere Pro call.
+The coordinator exposes only cross-application workflows. It calls the standalone
+InDesign and Illustrator servers as local stdio MCP processes, so their tools, schemas, argument
+normalization, and safeguards remain defined by those servers. The coordinator does
+not proxy their full tool inventories. Add individual app servers to your MCP client
+when you also need direct app-specific tools.
 
 Tools across applications, offered when both are loaded:
 
@@ -78,13 +74,14 @@ Tools across applications, offered when both are loaded:
 
 ## Configuration
 
-Each application's variables apply as they do in its own server. The allowed-path
-variables are `INDESIGN_ALLOWED_DIRS`, `ILLUSTRATOR_ALLOWED_DIRS`,
-`PHOTOSHOP_ALLOWED_DIRS`, `AFTEREFFECTS_ALLOWED_DIRS` and
-`PREMIERE_ALLOWED_DIRS`. App names, timeouts and backend variables are also
-supported; see each app's README for their exact behavior. Premiere Pro additionally
-needs its UXP plugin loaded and uses `PREMIERE_WS_PORT` and the optional
-`BRIDGE_TOKEN`. `ADOBE_MCP_APPS` chooses the applications.
+The coordinator forwards each child server only its own app-prefixed variables,
+plus the shared routing variables `ADOBE_TARGET`, `ADOBE_BACKEND`, `TARGET`,
+`BACKEND`, and `ARTCRAFT_*`. `UXP_BRIDGE_URL` and `BRIDGE_TOKEN` go only to the
+servers that use those local bridges. Allowed-path variables are
+`INDESIGN_ALLOWED_DIRS`, `ILLUSTRATOR_ALLOWED_DIRS`, `PHOTOSHOP_ALLOWED_DIRS`,
+`AFTEREFFECTS_ALLOWED_DIRS` and `PREMIERE_ALLOWED_DIRS`. App names, timeouts,
+backends and ArtCraft control settings are forwarded to their matching app server;
+see each app's README for exact behavior. `ADOBE_MCP_APPS` chooses the applications.
 
 ## Development
 
@@ -92,11 +89,10 @@ needs its UXP plugin loaded and uses `PREMIERE_WS_PORT` and the optional
 npm test -w packages/suite
 ```
 
-The tests check tool naming, that each application's argument aliases stay
-with its own tools, that each application's `help` accepts the suite's names,
-and that the cross-application tools generate valid scripts for both
-applications' object models, with both applications stubbed. Nothing here has
-been run against InDesign or Illustrator.
+The tests verify that the coordinator lists only its supported workflows, standalone
+servers retain their complete tool inventories, calls delegate through MCP clients,
+and generated scripts pass the static checks for both application object models.
+They do not exercise a live Adobe installation.
 
 ## Licence
 

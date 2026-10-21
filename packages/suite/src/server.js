@@ -1,104 +1,162 @@
 /**
- * The suite: one MCP server with the tools of every chosen Adobe application,
- * plus tools that work across them.
- *
- * Each application's tools come from its own package, unchanged; the suite
- * prefixes their names with the application (see naming.js) and keeps each
- * one's argument aliases and value rewrites scoped to that application.
+ * The suite coordinates cross-application workflows through each app's MCP
+ * server. Direct app tools remain available from their standalone servers.
  */
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import path from 'node:path';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport, getDefaultEnvironment } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { createMcpServer } from 'adobe-mcp-core';
 import { loadApps, selectedApps } from './apps.js';
-import { suiteToolName, suiteDescription } from './naming.js';
 import { placeArtwork } from './cross/artwork.js';
 import { copySwatches } from './cross/swatches.js';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+const require = createRequire(import.meta.url);
+const ENV_PREFIXES = {
+    indesign: ['INDESIGN_', 'DESIGNCRAFT_'],
+    illustrator: ['ILLUSTRATOR_', 'VECTORCRAFT_'],
+    photoshop: ['PHOTOSHOP_', 'PHOTOCRAFT_'],
+    aftereffects: ['AFTEREFFECTS_', 'EFFECTCRAFT_'],
+    premiere: ['PREMIERE_', 'FILMCRAFT_'],
+};
+const ROUTING_ENV = [
+    'ADOBE_TARGET', 'ADOBE_BACKEND', 'TARGET', 'BACKEND', 'ARTCRAFT_ENABLED',
+    'ARTCRAFT_CONTROL_PORT', 'ARTCRAFT_CONTROL_TOKEN', 'ARTCRAFT_CONTROL_TOKEN_FILE',
+];
+const APP_ENV = {
+    indesign: ['UXP_BRIDGE_URL', 'BRIDGE_TOKEN'],
+    illustrator: [],
+    photoshop: [],
+    aftereffects: [],
+    premiere: ['BRIDGE_TOKEN'],
+};
 
-/** Tools that span applications. Each is offered only when every app it needs is loaded. */
+export function appEnvironment(id, source = process.env) {
+    const prefixes = ENV_PREFIXES[id];
+    if (!prefixes) throw new Error(`Unknown Adobe app: ${id}`);
+    return Object.fromEntries([
+        ...Object.entries(getDefaultEnvironment()),
+        ...Object.entries(source).filter(([name]) => ROUTING_ENV.includes(name)
+            || APP_ENV[id].includes(name)
+            || prefixes.some((prefix) => name.startsWith(prefix))),
+    ]);
+}
+
+/** Workflows that require multiple connected app servers. */
 export const CROSS_TOOLS = [placeArtwork, copySwatches];
 
 function instructions(apps, cross) {
-    const list = Object.values(apps);
-    const parts = [
-        `This server drives Adobe applications on the user's machine: ${list.map((a) => a.label).join(', ')}.`,
-        `Each application's tools are prefixed with its name (${list.map((a) => `${a.id}_…`).join(', ')}). Each application has its own units and conventions, described below; follow the section for the tool you call.`,
-    ];
-    if (cross.length) {
-        parts.push(`Tools without a prefix work across applications: ${cross.map((t) => t.name).join(', ')}.`);
-    }
-    for (const a of list) {
-        parts.push(`## ${a.label}\n\nIn this section tool names are written without the ${a.id}_ prefix.\n\n${a.instructions}`);
-    }
-    return parts.join('\n\n');
+    const names = Object.values(apps).map((app) => app.label);
+    return [
+        `This coordinator connects to the standalone MCP servers for ${names.join(', ')}.`,
+        `It exposes only cross-application workflows: ${cross.map((tool) => tool.name).join(', ') || 'none for the selected applications'}.`,
+        'For direct control of an application, configure that application’s standalone MCP server in your client.',
+    ].join('\n\n');
 }
 
-/**
- * Combine apps into one tool list.
- * @param {Record<string, object>} apps loaded app modules, by id
- */
+/** Register cross-app tools whose required app MCP servers are connected. */
 export function combine(apps) {
     const tools = [];
     const handlers = {};
-    const aliases = [];
-    const origin = new Map();
-
-    for (const app of Object.values(apps)) {
-        const names = new Map(app.tools.map((t) => [t.name, suiteToolName(app.id, t.name)]));
-        for (const t of app.tools) {
-            const name = names.get(t.name);
-            if (handlers[name]) throw new Error(`Two tools would be named ${name}`);
-            tools.push({ ...t, name, description: suiteDescription(app.label, t.description) });
-            origin.set(name, { app, original: t.name });
-            handlers[name] = t.name === 'help' ? helpFor(app, names, app.handlers.help) : app.handlers[t.name];
-        }
-        for (const alias of app.aliases ?? []) {
-            aliases.push({ ...alias, tools: (alias.tools ?? app.tools.map((t) => t.name)).map((n) => names.get(n)).filter(Boolean) });
-        }
-    }
-
-    for (const cross of CROSS_TOOLS) {
-        if (!cross.requires.every((id) => id in apps)) continue;
-        if (handlers[cross.name]) throw new Error(`Two tools would be named ${cross.name}`);
+    const cross = CROSS_TOOLS.filter((tool) => tool.requires.every((id) => id in apps));
+    for (const workflow of cross) {
+        if (handlers[workflow.name]) throw new Error(`Duplicate coordinator tool: ${workflow.name}`);
         tools.push({
-            name: cross.name,
-            title: cross.name.split('_').map((w) => ({ indesign: 'InDesign' })[w] ?? w[0].toUpperCase() + w.slice(1)).join(' '),
-            description: cross.description,
-            inputSchema: cross.inputSchema,
-            annotations: cross.annotations,
+            name: workflow.name,
+            title: workflow.name.split('_').map((word) => ({ indesign: 'InDesign' })[word] ?? word[0].toUpperCase() + word.slice(1)).join(' '),
+            description: workflow.description,
+            inputSchema: workflow.inputSchema,
+            annotations: workflow.annotations,
         });
-        handlers[cross.name] = (args) => cross.handler(apps, args);
+        handlers[workflow.name] = (args) => workflow.handler(apps, args);
     }
-
-    /** Each app's value rewrites, applied only to that app's tools, with its own tool names. */
-    function normalizeValues(tool, out, props, warnings) {
-        const o = origin.get(tool);
-        o?.app.normalizeValues?.(o.original, out, props, warnings);
-    }
-
-    return { tools, handlers, aliases, normalizeValues, instructions: instructions(apps, CROSS_TOOLS.filter((c) => handlers[c.name])) };
+    return { tools, handlers, instructions: instructions(apps, cross) };
 }
 
-/** An app's help, accepting the suite's prefixed names as well as its own. */
-function helpFor(app, names, help) {
-    const original = new Map([...names].map(([orig, suite]) => [suite, orig]));
-    return (args = {}) => help({ ...args, ...(args.tool ? { tool: original.get(args.tool) ?? args.tool } : {}) });
+async function connectApp(app) {
+    const client = new Client({ name: `${pkg.name}-${app.id}-client`, version: pkg.version });
+    const packageName = `adobe-mcp-${app.id}`;
+    const packageJsonPath = require.resolve(`${packageName}/package.json`);
+    const appPackage = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+    const executable = appPackage.bin?.[packageName];
+    if (typeof executable !== 'string') throw new Error(`${packageName} has no ${packageName} executable`);
+    const transport = new StdioClientTransport({
+        command: process.execPath,
+        args: [path.resolve(path.dirname(packageJsonPath), executable)],
+        env: appEnvironment(app.id),
+    });
+    try {
+        await client.connect(transport);
+        const { tools } = await client.listTools();
+        const executeTool = `execute_${app.id}_code`;
+        if (!tools.some((tool) => tool.name === executeTool)) {
+            throw new Error(`${app.label} MCP server does not expose ${executeTool}`);
+        }
+        return {
+            id: app.id,
+            label: app.label,
+            validatePath: app.validatePath,
+            executeTool,
+            callTool: (name, args) => client.callTool({ name, arguments: args }),
+            close: () => client.close(),
+        };
+    } catch (error) {
+        await client.close();
+        throw error;
+    }
 }
 
-/** The suite server for the chosen apps (default: from --apps / ADOBE_MCP_APPS, else all). */
+/** Start a coordinator connected to selected app servers (default: InDesign + Illustrator). */
 export async function createSuiteServer({ apps: ids = selectedApps() } = {}) {
-    const apps = await loadApps(ids);
-    for (const app of Object.values(apps)) app.cleanup?.();
-    const suite = combine(apps);
-    return {
-        apps,
-        ...createMcpServer({
+    const modules = await loadApps(ids);
+    const apps = {};
+    try {
+        for (const [id, app] of Object.entries(modules)) apps[id] = await connectApp(app);
+        const suite = combine(apps);
+        const server = createMcpServer({
             info: { name: pkg.name, version: pkg.version },
             instructions: suite.instructions,
             tools: suite.tools,
             handlers: suite.handlers,
-            aliases: suite.aliases,
-            normalizeValues: suite.normalizeValues,
-        }),
-    };
+        });
+        let closed = false;
+        const closeSuite = async () => {
+            if (closed) return;
+            closed = true;
+            process.stdin.off('end', onInputEnd);
+            process.off('SIGINT', onSignal);
+            process.off('SIGTERM', onSignal);
+            await Promise.all(Object.values(apps).map((app) => app.close()));
+            await server.server.close();
+        };
+        const closeFromProcessEvent = () => {
+            void closeSuite().catch((error) => {
+                console.error('Failed to close Adobe MCP Suite:', error.message);
+                process.exitCode = 1;
+            });
+        };
+        const onInputEnd = () => closeFromProcessEvent();
+        const onSignal = () => closeFromProcessEvent();
+        return {
+            ...server,
+            apps,
+            close: closeSuite,
+            async run() {
+                process.stdin.once('end', onInputEnd);
+                process.once('SIGINT', onSignal);
+                process.once('SIGTERM', onSignal);
+                try {
+                    await server.run();
+                } catch (error) {
+                    await closeSuite();
+                    throw error;
+                }
+            },
+        };
+    } catch (error) {
+        await Promise.all(Object.values(apps).map((app) => app.close()));
+        throw error;
+    }
 }

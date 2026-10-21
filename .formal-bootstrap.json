@@ -1,0 +1,11 @@
+{
+  "format": "2",
+  "bootstrap": "formal-project-bootstrap",
+  "bootstrapVersion": "0.6.0",
+  "projectId": "adobe-mcp",
+  "projectName": "Adobe MCP",
+  "mode": "existing",
+  "profiles": [],
+  "createdAt": "2026-10-21T20:48:28.751373+00:00",
+  "unresolvedBootstrapCollisions": []
+}

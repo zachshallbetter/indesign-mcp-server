@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/agent-message.schema.json",
+  "title": "AgentMessage",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "sender",
+    "relatedWorkItem",
+    "impact",
+    "statementClass",
+    "summary",
+    "observedState",
+    "timestamp"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sender": {
+      "type": "string",
+      "minLength": 1
+    },
+    "recipient": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "relatedWorkItem": {
+      "type": "string",
+      "minLength": 1
+    },
+    "impact": {
+      "type": "string",
+      "enum": [
+        "informational",
+        "blocks",
+        "unblocks",
+        "supersedes",
+        "requests_handoff",
+        "requests_review",
+        "invalidates_assumption"
+      ]
+    },
+    "statementClass": {
+      "type": "string",
+      "enum": [
+        "observation",
+        "inference",
+        "proposal",
+        "request"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "affectedScope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "observedState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contextDigest"
+      ],
+      "properties": {
+        "contextDigest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "repository": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "revision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "branch": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "requestedDisposition": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "continue",
+        "pause",
+        "handoff",
+        "supersede",
+        "revert",
+        "abandon",
+        null
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

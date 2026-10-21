@@ -2,25 +2,65 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.zachshallbetter/adobe-mcp-suite",
   "title": "Adobe MCP Suite",
-  "description": "One local MCP server for five Adobe apps, plus cross-app creative tools.",
+  "description": "Local MCP coordinator for cross-app Adobe workflows.",
   "repository": {
     "url": "https://github.com/zachshallbetter/adobe-mcp",
     "source": "github",
     "subfolder": "packages/suite"
   },
-  "version": "0.2.1",
+  "version": "0.3.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "adobe-mcp-suite",
-      "version": "0.2.1",
+      "version": "0.3.0",
       "transport": {
         "type": "stdio"
       },
       "environmentVariables": [
         {
           "name": "ADOBE_MCP_APPS",
-          "description": "Applications to load, comma-separated: indesign, illustrator, photoshop, aftereffects, premiere. Default all five",
+          "description": "Applications to load, comma-separated: indesign, illustrator, photoshop, aftereffects, premiere. Defaults to InDesign and Illustrator",
+          "isRequired": false
+        },
+        {
+          "name": "ADOBE_TARGET",
+          "description": "Optional shared execution target, including adobe, craft, artcraft, or auto",
+          "isRequired": false
+        },
+        {
+          "name": "ADOBE_BACKEND",
+          "description": "Optional shared execution backend, including extendscript, uxp, craft, or auto",
+          "isRequired": false
+        },
+        {
+          "name": "TARGET",
+          "description": "Alias for ADOBE_TARGET when choosing the shared execution target",
+          "isRequired": false
+        },
+        {
+          "name": "BACKEND",
+          "description": "Alias for ADOBE_BACKEND when choosing the shared execution backend",
+          "isRequired": false
+        },
+        {
+          "name": "ARTCRAFT_ENABLED",
+          "description": "Probe a compatible local ArtCraft app when the selected backend is auto",
+          "isRequired": false
+        },
+        {
+          "name": "ARTCRAFT_CONTROL_PORT",
+          "description": "Fallback loopback port for local ArtCraft control connections",
+          "isRequired": false
+        },
+        {
+          "name": "ARTCRAFT_CONTROL_TOKEN",
+          "description": "Fallback authentication token for local ArtCraft control connections",
+          "isRequired": false
+        },
+        {
+          "name": "ARTCRAFT_CONTROL_TOKEN_FILE",
+          "description": "File containing the fallback ArtCraft control token",
           "isRequired": false
         },
         {
@@ -54,8 +94,13 @@
           "isRequired": false
         },
         {
+          "name": "UXP_BRIDGE_URL",
+          "description": "InDesign UXP bridge URL; defaults to http://127.0.0.1:3000",
+          "isRequired": false
+        },
+        {
           "name": "BRIDGE_TOKEN",
-          "description": "Optional shared secret for the local Premiere Pro UXP bridge",
+          "description": "Optional shared secret for the local InDesign or Premiere Pro UXP bridge",
           "isRequired": false
         }
       ]

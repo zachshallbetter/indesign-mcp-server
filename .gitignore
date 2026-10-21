@@ -114,3 +114,11 @@ DerivedData/
 .env.*
 
 !.env.example
+
+# formal-project-bootstrap: secrets stay out; AGENTS.md and the .agents/ tree stay in
+.env.local
+docs/handbook/llms.txt
+docs/handbook/llms-full.txt
+!.agents/
+!**/.agents/
+!AGENTS.md

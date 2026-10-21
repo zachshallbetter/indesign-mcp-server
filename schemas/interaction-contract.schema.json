@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://formal-project-bootstrap.local/schemas/interaction-contract.schema.json",
+  "title": "Interaction Contract",
+  "type": "object",
+  "required": ["format", "contractId", "intent", "participants", "boundary", "state", "actions", "checks", "transition", "effect", "invariants", "recovery", "receipt", "closure"],
+  "properties": {
+    "format": {"const": "1"},
+    "contractId": {"type": "string", "minLength": 1},
+    "intent": {"type": "string", "minLength": 1},
+    "participants": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "boundary": {"type": "string", "minLength": 1},
+    "state": {"enum": ["declared", "validated", "authorized", "executing", "observed", "verified", "closed", "recovered"]},
+    "actions": {"type": "object", "required": ["available", "authorized", "enabled", "exposed"], "properties": {"available":{"type":"array","items":{"type":"string"}},"authorized":{"type":"array","items":{"type":"string"}},"enabled":{"type":"array","items":{"type":"string"}},"exposed":{"type":"array","items":{"type":"string"}}}, "additionalProperties": false},
+    "checks": {"type": "array", "items": {"type": "string"}},
+    "transition": {"type": "string", "minLength": 1},
+    "effect": {"type": "object", "required": ["class", "target"], "properties": {"class":{"type":"string","minLength":1},"target":{"type":"string","minLength":1}}, "additionalProperties": false},
+    "invariants": {"type": "array", "items": {"type": "string"}},
+    "authorization": {"type": ["object", "null"], "properties": {"decision":{"type":"string"},"decisionId":{"type":"string"},"idempotencyKey":{"type":"string","minLength":1},"auditRecordId":{"type":"string","minLength":1}}, "additionalProperties": false},
+    "recovery": {"type": "object", "required": ["plan", "reversibleBeforeCommit"], "properties": {"plan":{"type":"string","minLength":1},"reversibleBeforeCommit":{"type":"boolean"}}, "additionalProperties": false},
+    "receipt": {"type": ["object", "null"], "required": ["receiptId", "outcome", "observedAt"], "properties": {"receiptId":{"type":"string","minLength":1},"outcome":{"type":"string","minLength":1},"observedAt":{"type":"string","minLength":1}}, "additionalProperties": false},
+    "closure": {"type": "object", "required": ["status"], "properties": {"status":{"enum":["open","closed","recovered"]},"reason":{"type":"string"}}, "additionalProperties": false}
+  },
+  "additionalProperties": false
+}
