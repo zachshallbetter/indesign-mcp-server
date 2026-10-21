@@ -1,8 +1,8 @@
 class AdobeMcpSuite < Formula
   desc "Local MCP server for Adobe creative applications"
   homepage "https://github.com/zachshallbetter/adobe-mcp"
-  url "https://registry.npmjs.org/adobe-mcp-suite/-/adobe-mcp-suite-0.2.0.tgz"
-  sha256 "459cd86884fafc3c149b9b6858a953aab31779ea0beb76bf1407e04dcc2796ea"
+  url "https://registry.npmjs.org/adobe-mcp-suite/-/adobe-mcp-suite-0.2.1.tgz"
+  sha256 "8d06bcbcc9338a30363027a84822f4e4f623773bdce293203686eadf7c56c95b"
   license "MIT"
 
   depends_on "node"
@@ -14,7 +14,7 @@ class AdobeMcpSuite < Formula
 
   test do
     package = JSON.parse((libexec/"lib/node_modules/adobe-mcp-suite/package.json").read)
-    assert_equal "0.2.0", package["version"]
+    assert_equal "0.2.1", package["version"]
     assert_path_exists bin/"adobe-mcp-suite"
   end
 end

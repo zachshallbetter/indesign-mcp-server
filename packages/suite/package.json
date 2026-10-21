@@ -1,7 +1,7 @@
 {
   "name": "adobe-mcp-suite",
-  "version": "0.2.0",
-  "description": "One MCP server for Adobe InDesign, Illustrator, Photoshop, After Effects, and Premiere Pro, with tools that work across them",
+  "version": "0.2.1",
+  "description": "One local MCP server for five Adobe apps, plus cross-app creative tools.",
   "mcpName": "io.github.zachshallbetter/adobe-mcp-suite",
   "type": "module",
   "main": "src/server.js",

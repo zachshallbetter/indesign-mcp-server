@@ -38,11 +38,10 @@ is on npm.
 ## Current release state (21 October 2026)
 
 All five app packages and `adobe-mcp-core@0.2.0` are published to npm at the versions
-listed in [status.md](status.md). The published suite `0.1.7` still includes only
-InDesign and Illustrator. The source candidate `0.2.0` adds Photoshop, After Effects
-and Premiere Pro and pins the already-published versions of all five apps and core.
-Update the suite's package metadata, `server.json`, README and changelog together;
-then release the suite last using its annotated version tag.
+listed in [status.md](status.md). Suite `0.2.0` is published to npm with all five apps,
+but its MCP Registry publication failed because the description exceeded the registry
+limit. Candidate `0.2.1` shortens the description and adds a regression check; publish it
+with its annotated version tag, then refresh the MCPRush listing.
 
 ## Retries
 

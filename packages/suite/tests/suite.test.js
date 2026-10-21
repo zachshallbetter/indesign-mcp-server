@@ -25,6 +25,14 @@ const typings = {
     }),
 };
 
+test('MCP Registry metadata matches the package and stays within its description limit', () => {
+    const packageJson = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+    const serverJson = JSON.parse(readFileSync(new URL('../server.json', import.meta.url), 'utf8'));
+    assert.equal(serverJson.version, packageJson.version);
+    assert.equal(serverJson.packages[0].version, packageJson.version);
+    assert.ok(serverJson.description.length <= 100, 'server description exceeds the MCP Registry limit');
+});
+
 test('suite tool names carry the app once', () => {
     assert.equal(suiteToolName('indesign', 'create_document'), 'indesign_create_document');
     assert.equal(suiteToolName('indesign', 'indesign_status'), 'indesign_status');

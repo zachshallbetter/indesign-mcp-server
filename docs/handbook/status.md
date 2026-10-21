@@ -7,16 +7,15 @@
 | Photoshop | adobe-mcp-photoshop | 0.1.0 | npm | 207 | 2,609 | 1,720 | 1,413 (54%) |
 | After Effects | adobe-mcp-aftereffects | 0.1.0 | npm | 164 | 3,198 | 2,595 | 2,555 (80%) |
 | Premiere Pro | adobe-mcp-premiere | 0.1.0 | npm | 96 | 925 | 494 | 413 (45%) |
-| Suite | adobe-mcp-suite | 0.1.7 published; 0.2.0 candidate | npm release pending | 1,200 | — | — | — |
+| Suite | adobe-mcp-suite | 0.2.0 (npm); 0.2.1 candidate | npm 0.2.0 published; MCP Registry validation failed | 1,200 | — | — | — |
 | Core | adobe-mcp-core | 0.2.0 | npm | | | | |
 
-The published suite `0.1.7` still depends on core `0.1.0`, InDesign `2.4.0` and
-Illustrator `0.9.0`. The 0.2.0 candidate depends on core `0.2.0` and all five app
-packages; its MCP `tools/list` contains 1,200 unique tools (423 InDesign, 308
-Illustrator, 207 Photoshop, 164 After Effects, 96 Premiere Pro, and 2 cross-app).
-MCPRush currently reports two tools for its suite listing, matching the published
-release rather than the current source. A suite release and listing refresh are still
-needed to make the full tool set available from npm and MCPRush.
+The npm suite `0.2.0` contains core `0.2.0` and all five published app packages; its
+MCP `tools/list` contains 1,200 unique tools (423 InDesign, 308 Illustrator, 207
+Photoshop, 164 After Effects, 96 Premiere Pro, and 2 cross-app). MCP Registry
+publication of `0.2.0` failed because the server description exceeded its 100-character
+limit. Source `0.2.1` shortens that description; the npm publish and registry retry are
+pending. MCPRush still needs its listing refreshed from the new release.
 
 "Scriptable" counts features whose atlas route is the object model, a menu command,
 the Action Manager, the UXP API (Premiere Pro) or a recorded Action. Most of the gap between scriptable and
