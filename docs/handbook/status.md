@@ -7,15 +7,17 @@
 | Photoshop | adobe-mcp-photoshop | 0.1.0 | npm | 207 | 2,609 | 1,720 | 1,413 (54%) |
 | After Effects | adobe-mcp-aftereffects | 0.1.0 | npm | 164 | 3,198 | 2,595 | 2,555 (80%) |
 | Premiere Pro | adobe-mcp-premiere | 0.1.0 | npm | 96 | 925 | 494 | 413 (45%) |
-| Suite | adobe-mcp-suite | 0.2.0 (npm); 0.2.1 candidate | npm 0.2.0 published; MCP Registry validation failed | 1,200 | — | — | — |
+| Suite | adobe-mcp-suite | 0.2.1 | npm, MCP Registry, Homebrew | 1,200 | — | — | — |
 | Core | adobe-mcp-core | 0.2.0 | npm | | | | |
 
-The npm suite `0.2.0` contains core `0.2.0` and all five published app packages; its
-MCP `tools/list` contains 1,200 unique tools (423 InDesign, 308 Illustrator, 207
-Photoshop, 164 After Effects, 96 Premiere Pro, and 2 cross-app). MCP Registry
-publication of `0.2.0` failed because the server description exceeded its 100-character
-limit. Source `0.2.1` shortens that description; the npm publish and registry retry are
-pending. MCPRush still needs its listing refreshed from the new release.
+Suite `0.2.1` is published to npm and the MCP Registry. It exposes 1,200 unique tools
+(423 InDesign, 308 Illustrator, 207 Photoshop, 164 After Effects, 96 Premiere Pro, and
+2 cross-app). Homebrew installs the published npm tarball; its formula checksum matches
+that tarball. The curl installer installs the latest npm release globally. MCPRush's
+suite listing shows the two cross-app tools because its manual tools editor permits at
+most 500 tools and the local server's app-specific inventory is assembled at startup.
+The listing copy names all five apps; the installed suite still exposes the full dynamic
+inventory.
 
 "Scriptable" counts features whose atlas route is the object model, a menu command,
 the Action Manager, the UXP API (Premiere Pro) or a recorded Action. Most of the gap between scriptable and
@@ -69,10 +71,8 @@ Each PR lists what its author was unsure of; the biggest groups:
 
 ## Next
 
-1. The owner publishes Photoshop, After Effects and Premiere Pro to npm
-   ([releasing.md](releasing.md)), then core and the suite are released.
-2. Validation passes on real installs, starting with the lists above; the atlas has
+1. Validation passes on real installs, starting with the lists above; the atlas has
    a `validated` state per feature for recording the results.
-3. A Photoshop round for the newly routed Action Manager features.
-4. Finish researching the remaining `unknown` routes (Photoshop, After Effects,
+2. A Photoshop round for the newly routed Action Manager features.
+3. Finish researching the remaining `unknown` routes (Photoshop, After Effects,
    Premiere Pro preferences).

@@ -106,7 +106,8 @@ npm install -g adobe-mcp-suite
 On macOS or Linux, install the same suite release with Homebrew:
 
 ```bash
-brew install --formula https://raw.githubusercontent.com/zachshallbetter/adobe-mcp/main/Formula/adobe-mcp-suite.rb
+brew tap zachshallbetter/adobe-mcp https://github.com/zachshallbetter/adobe-mcp.git
+brew install zachshallbetter/adobe-mcp/adobe-mcp-suite
 ```
 
 Or use the installer script, which installs the latest npm release globally:

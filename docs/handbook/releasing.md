@@ -37,11 +37,11 @@ is on npm.
 
 ## Current release state (21 October 2026)
 
-All five app packages and `adobe-mcp-core@0.2.0` are published to npm at the versions
-listed in [status.md](status.md). Suite `0.2.0` is published to npm with all five apps,
-but its MCP Registry publication failed because the description exceeded the registry
-limit. Candidate `0.2.1` shortens the description and adds a regression check; publish it
-with its annotated version tag, then refresh the MCPRush listing.
+All five app packages, `adobe-mcp-core@0.2.0`, and `adobe-mcp-suite@0.2.1` are published
+to npm. Suite `0.2.1` is also published to the MCP Registry and Homebrew. Its registry
+description is within the limit. The Homebrew formula checksum is for the published npm
+tarball. The MCPRush suite listing currently reports the two cross-app tools; its manual
+tool-list editor has a 500-tool cap, below the suite's dynamic 1,200-tool inventory.
 
 ## Retries
 
