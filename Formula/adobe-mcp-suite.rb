@@ -2,7 +2,7 @@ class AdobeMcpSuite < Formula
   desc "Local MCP server for Adobe creative applications"
   homepage "https://github.com/zachshallbetter/adobe-mcp"
   url "https://registry.npmjs.org/adobe-mcp-suite/-/adobe-mcp-suite-0.2.1.tgz"
-  sha256 "8d06bcbcc9338a30363027a84822f4e4f623773bdce293203686eadf7c56c95b"
+  sha256 "f3c9f9cbe2954c0865f5fe801c42b989e434c5a1e52b5f5d4bb982de58efdc93"
   license "MIT"
 
   depends_on "node"
